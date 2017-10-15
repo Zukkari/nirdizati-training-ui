@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="nirdizati-training-ui:war">
-    <output-path>$PROJECT_DIR$/target</output-path>
-    <root id="archive" name="nirdizati-training-ui.war">
-      <element id="artifact" artifact-name="nirdizati-training-ui:war exploded" />
-    </root>
-  </artifact>
-</component>
