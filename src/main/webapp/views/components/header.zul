@@ -1,0 +1,3 @@
+<div hflex="1" vflex="1" apply="cs.ut.HeaderController">
+    <image vflex="1" src="/images/logo.png"/>
+</div>
