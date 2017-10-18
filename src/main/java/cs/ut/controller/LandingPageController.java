@@ -1,4 +1,4 @@
-package cs.ut;
+package cs.ut.controller;
 
 import cs.ut.config.PageConfigurationProvider;
 import org.zkoss.zk.ui.Component;
