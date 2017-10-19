@@ -48,6 +48,7 @@
     white-space: initial;
     line-height: 130%;
     border-radius: 0;
+    margin-top: 30px;
 }
 
 .big-grey-btn:active {
@@ -69,4 +70,11 @@
     font-weight: bold;
     font-size: larger;
     min-font-size: larger;
+}
+
+.error-label {
+    color: red;
+    padding: 10px;
+    border-radius: 3px;
+    background-color: rgba(255,21,0,0.38);
 }
