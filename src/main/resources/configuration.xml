@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<pageConfig>
-    <page>
-        <id>landing</id>
-        <uri>/views/landing.zul</uri>
-    </page>
-    <page>
-        <id>uploadLog</id>
-        <uri>/views/upload_page.zul</uri>
-    </page>
-</pageConfig>
+
+<configuration>
+    <pageConfig>
+        <page>
+            <id>landing</id>
+            <uri>/views/landing.zul</uri>
+        </page>
+        <page>
+            <id>uploadLog</id>
+            <uri>/views/upload_page.zul</uri>
+        </page>
+    </pageConfig>
+    <userLogDirectory>../userlogs/</userLogDirectory>
+</configuration>

@@ -1,5 +1,6 @@
 package cs.ut.controller;
 
+import cs.ut.config.MasterConfiguration;
 import cs.ut.config.PageConfigurationProvider;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
@@ -26,8 +27,7 @@ public class LandingPageController extends SelectorComposer<Component> {
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
 
-        pageProvider = new PageConfigurationProvider();
-        pageProvider.readPages();
+        pageProvider = MasterConfiguration.getInstance().getPageConfigurationProvider();
 
         wireButtons();
     }
