@@ -18,6 +18,7 @@
     line-height: 130%;
     border-radius: 0;
 }
+
 .big-blue-btn:hover {
     background: #02208f;
 }
@@ -30,6 +31,37 @@
 .big-blue-btn:focus {
     background: #021f54;
     color: white;
+}
+
+
+.big-grey-btn {
+    background: #bababa;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    width: 200px;
+    height: 100px;
+    word-wrap: break-word;
+    font-size: larger;
+    cursor: pointer;
+    white-space: initial;
+    line-height: 130%;
+    border-radius: 0;
+}
+
+.big-grey-btn:active {
+    vertical-align: top;
+    padding: 8px 13px 6px;
+}
+
+.big-grey-btn:focus {
+    background: #d1d1d1;
+    color: white;
+}
+
+.big-grey-btn:hover {
+    background: #d1d1d1;
 }
 
 

@@ -1,6 +1,7 @@
 package cs.ut.config;
 
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import javax.xml.bind.JAXBContext;
@@ -27,6 +28,8 @@ public class PageConfigurationProvider {
     }
 
     public void readPages() throws JAXBException {
+        configureLogger();
+
         log.debug("Started reading pages from configuration...");
         File file = new File(getClass().getClassLoader().getResource("configuration.xml").getFile());
         JAXBContext jaxbContext = JAXBContext.newInstance(PageConfigurationProvider.class);
@@ -34,6 +37,11 @@ public class PageConfigurationProvider {
         PageConfigurationProvider pagesProvider = (PageConfigurationProvider) unmarshaller.unmarshal(file);
         this.pages = pagesProvider.getPages();
         log.debug(String.format("Successfully read %s pages from configuration", pages.size()));
+    }
+
+    private void configureLogger() {
+        BasicConfigurator.configure();
+        Logger.getRootLogger().setAdditivity(false);
     }
 
     public Page getByPageName(final String name) {
