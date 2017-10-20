@@ -37,20 +37,15 @@ public class LandingPageController extends SelectorComposer<Component> {
 
             @Override
             public void onEvent(Event event) throws Exception {
-                setContent("uploadLog");
+                MainPageController.getInstance().setContent("uploadLog", getPage());
             }
         });
 
         existingLog.addEventListener(Events.ON_CLICK, new SerializableEventListener<Event>() {
             @Override
             public void onEvent(Event event) throws Exception {
-                setContent("existingLog");
+                MainPageController.getInstance().setContent("existingLog", getPage());
             }
         });
-    }
-
-    private void setContent(String destination) {
-        Include include = (Include) Selectors.iterable(getPage(), "#contentInclude").iterator().next();
-        include.setSrc(pageProvider.getByPageName(destination).getUri());
     }
 }

@@ -9,6 +9,7 @@ import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.Label;
@@ -17,6 +18,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class UploadLogController extends SelectorComposer<Component> {
     private static final Logger log = Logger.getLogger(UploadLogController.class);
@@ -85,6 +88,9 @@ public class UploadLogController extends SelectorComposer<Component> {
                 } catch (IOException e) {
                     log.debug(e);
                 }
+
+                Clients.showNotification(Labels.getLabel("upload.success", new Object[] {media.getName()}), "info", getSelf(), "bottom_right", -1);
+                MainPageController.getInstance().setContent("landing", getPage());
             };
 
             serialization.run();
