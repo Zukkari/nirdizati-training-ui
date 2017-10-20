@@ -5,6 +5,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+/**
+ * Page bean used to store information about pages and redirect uris in the application
+ */
+
 @XmlType(propOrder = {"id", "uri"})
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Page {

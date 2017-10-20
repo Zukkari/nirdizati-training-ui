@@ -18,8 +18,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Timer;
-import java.util.TimerTask;
+
+/**
+ * Controller that responds for the log uploading page.
+ */
 
 public class UploadLogController extends SelectorComposer<Component> {
     private static final Logger log = Logger.getLogger(UploadLogController.class);
@@ -44,6 +46,11 @@ public class UploadLogController extends SelectorComposer<Component> {
     }
 
 
+    /**
+     * Method that analyzes uploaded file. Checks that the file has required extension.
+     *
+     * @param event upload event where media should be retrieved from
+     */
     @Listen("onUpload = #chooseFile")
     public void analyzeFile(UploadEvent event) {
         log.debug("Upload event. Analyzing file.");
@@ -68,6 +75,10 @@ public class UploadLogController extends SelectorComposer<Component> {
     }
 
 
+    /**
+     * Log serialization method. Starts a thread that serializes the log using the path configured in configuration.xml
+     * Sends notification when process is completed successfully and then redirects the user.
+     */
     @Listen("onClick = #uploadLog")
     public void processLog() {
         if (media != null) {
@@ -89,7 +100,7 @@ public class UploadLogController extends SelectorComposer<Component> {
                     log.debug(e);
                 }
 
-                Clients.showNotification(Labels.getLabel("upload.success", new Object[] {media.getName()}), "info", getSelf(), "bottom_right", -1);
+                Clients.showNotification(Labels.getLabel("upload.success", new Object[]{media.getName()}), "info", getSelf(), "bottom_right", -1);
                 MainPageController.getInstance().setContent("landing", getPage());
             };
 
@@ -101,10 +112,21 @@ public class UploadLogController extends SelectorComposer<Component> {
         }
     }
 
+    /**
+     * Saves media object reference so it could be serialized after user saves the log.
+     *
+     * @param media that should be saved for serialization.
+     */
     private void saveMediaObject(Media media) {
         this.media = media;
     }
 
+    /**
+     * Retrieves file extension of the file name.
+     *
+     * @param name where file extension should be extracted from.
+     * @return file extension or empty string if file extension denoting character could not be found.
+     */
     private String getFileExtension(String name) {
         int lastIndex = name.lastIndexOf('.');
         if (lastIndex == -1) {

@@ -4,6 +4,9 @@ package cs.ut.config;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 
+/**
+ * Service class that provider Page objects
+ */
 public class PageConfigurationProvider {
     private List<Page> pages;
 
@@ -16,6 +19,11 @@ public class PageConfigurationProvider {
         this.pages = pages;
     }
 
+    /**
+     * Finds required Page object by name if it exists, throws NullPointer exception if it could not be found
+     * @param name page identified that is defined in configuration.xml
+     * @return Page object that contains id and uri that was configured in configuration.xml
+     */
     public Page getByPageName(final String name) {
         return pages.stream().filter(it -> it.getId().equals(name)).findFirst().get();
     }

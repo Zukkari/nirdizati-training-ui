@@ -7,11 +7,12 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zk.ui.select.SelectorComposer;
-import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Include;
 
+/**
+ *  Controller that responds for landing page and controls found on that page
+ */
 
 public class LandingPageController extends SelectorComposer<Component> {
 
@@ -32,6 +33,10 @@ public class LandingPageController extends SelectorComposer<Component> {
         wireButtons();
     }
 
+    /**
+     * Sets up listeners for wired buttons.
+     * In this case it buttons set content of the page based on uri-s defined in configuration.xml
+     */
     private void wireButtons() {
         uploadLog.addEventListener(Events.ON_CLICK, new SerializableEventListener<Event>() {
 

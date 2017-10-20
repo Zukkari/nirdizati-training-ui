@@ -26,6 +26,10 @@ public class MasterConfiguration {
         configureLogger();
     }
 
+    /**
+     * Instantiates master configuration or if it has already been instantiated then returns the object
+     * @return master configuration object that contains configurable values defined in configuration.xml
+     */
     public static MasterConfiguration getInstance() {
         if (master == null) {
             master = new MasterConfiguration();
@@ -38,6 +42,10 @@ public class MasterConfiguration {
         return master;
     }
 
+    /**
+     * Reads configuration.xml file and parses it into Java objects.
+     * @throws JAXBException if configuration is defined incorrectly
+     */
     private void readMasterConfig() throws JAXBException {
         log.debug("Reading master configuration");
         File file = new File(getClass().getClassLoader().getResource("configuration.xml").getFile());
@@ -59,6 +67,9 @@ public class MasterConfiguration {
         return userLogDirectory;
     }
 
+    /**
+     * Configures loigger and Enables appenders for Log4j
+     */
     private void configureLogger() {
         BasicConfigurator.configure();
     }
