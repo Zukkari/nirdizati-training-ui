@@ -5,13 +5,12 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.select.SelectorComposer;
+import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.Label;
 
 import java.io.File;
@@ -24,84 +23,76 @@ public class UploadLogController extends SelectorComposer<Component> {
     private static final String SUPPORTED_FORMAT = ".XES";
 
     @Wire
-    Label fileName;
+    private Label fileName;
 
     @Wire
-    Button chooseFile;
+    Fileupload chooseFile;
 
     @Wire
-    Button uploadLog;
+    private Button uploadLog;
 
-    Media media;
+    private transient Media media;
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
 
-        configureButtons();
+        uploadLog.setVisible(false);
     }
 
-    private void configureButtons() {
-        uploadLog.setVisible(false);
 
-        chooseFile.addEventListener(Events.ON_UPLOAD, new SerializableEventListener<Event>() {
-            @Override
-            public void onEvent(Event event) throws Exception {
-                if (event instanceof UploadEvent) {
-                    log.debug("Upload event. Analyzing file.");
-                    Media uploaded = ((UploadEvent) event).getMedia();
-                    if (uploaded == null) {
-                        return;
-                    }
+    @Listen("onUpload = #chooseFile")
+    public void analyzeFile(UploadEvent event) {
+        log.debug("Upload event. Analyzing file.");
+        Media uploaded = event.getMedia();
+        if (uploaded == null) {
+            return;
+        }
 
-                    if (SUPPORTED_FORMAT.equalsIgnoreCase(getFileExtension(uploaded.getName()))) {
-                        log.debug("Log is in .XES format");
-                        fileName.setSclass("");
-                        fileName.setValue(uploaded.getName());
-                        saveMediaObject(uploaded);
-                        uploadLog.setVisible(true);
-                    } else {
-                        log.debug("Log is not in .XES format");
-                        log.debug("Showing error message");
-                        fileName.setSclass("error-label");
-                        fileName.setValue(Labels.getLabel("upload.wrong.format", new Object[]{uploaded.getName(), getFileExtension(uploaded.getName())}));
-                        uploadLog.setVisible(false);
-                    }
+        if (SUPPORTED_FORMAT.equalsIgnoreCase(getFileExtension(uploaded.getName()))) {
+            log.debug("Log is in .XES format");
+            fileName.setSclass("");
+            fileName.setValue(uploaded.getName());
+            saveMediaObject(uploaded);
+            uploadLog.setVisible(true);
+        } else {
+            log.debug("Log is not in .XES format");
+            log.debug("Showing error message");
+            fileName.setSclass("error-label");
+            fileName.setValue(Labels.getLabel("upload.wrong.format", new Object[]{uploaded.getName(), getFileExtension(uploaded.getName())}));
+            uploadLog.setVisible(false);
+        }
+    }
+
+
+    @Listen("onClick = #uploadLog")
+    public void processLog() {
+        if (media != null) {
+
+            Runnable serialization = () -> {
+                File file = new File(String.format("%s%s", MasterConfiguration.getInstance().getUserLogDirectory(), media.getName()));
+                log.debug(String.format("Writing file into : %s", file.getAbsolutePath()));
+
+                try (InputStream inputStream = media.getStreamData();
+                     FileOutputStream fos = new FileOutputStream(file)) {
+
+                    byte[] buffer = new byte[inputStream.available()];
+                    int read = inputStream.read(buffer);
+
+                    assert buffer.length == read : "Could not read all available bytes";
+
+                    fos.write(buffer);
+                } catch (IOException e) {
+                    log.debug(e);
                 }
-            }
-        });
+            };
 
-        uploadLog.addEventListener(Events.ON_CLICK, new SerializableEventListener<Event>() {
-            @Override
-            public void onEvent(Event event) throws Exception {
-                if (media != null) {
-
-                    Runnable serialization = () -> {
-                        File file = new File(String.format("%s%s", MasterConfiguration.getInstance().getUserLogDirectory(), media.getName()));
-                        log.debug(String.format("Writing file into : %s", file.getAbsolutePath()));
-
-                        try (InputStream inputStream = media.getStreamData();
-                             FileOutputStream fos = new FileOutputStream(file)) {
-
-                            byte[] buffer = new byte[inputStream.available()];
-                            int read = inputStream.read(buffer);
-
-                            assert buffer.length == read : "Could not read all available bytes";
-
-                            fos.write(buffer);
-                        } catch (IOException e) {
-                            log.debug(e);
-                        }
-                    };
-
-                    serialization.run();
-                    log.debug("Serialization thread stared");
-                } else {
-                    fileName.setSclass("error-label");
-                    fileName.setValue(Labels.getLabel("upload.nothing"));
-                }
-            }
-        });
+            serialization.run();
+            log.debug("Serialization thread stared");
+        } else {
+            fileName.setSclass("error-label");
+            fileName.setValue(Labels.getLabel("upload.nothing"));
+        }
     }
 
     private void saveMediaObject(Media media) {

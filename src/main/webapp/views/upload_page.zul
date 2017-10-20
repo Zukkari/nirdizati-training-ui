@@ -14,7 +14,7 @@
             <label>${labels.upload.convert_help_part3}</label>
         </hlayout>
     </vlayout>
-    <vlayout id="uploadLayout">
+    <vlayout>
         <button id="uploadLog" sclass="big-blue-btn" style="margin: 30px">${labels.upload.log}</button>
     </vlayout>
 </vbox>
