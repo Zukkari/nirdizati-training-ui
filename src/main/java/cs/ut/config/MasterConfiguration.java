@@ -68,7 +68,7 @@ public class MasterConfiguration {
     }
 
     /**
-     * Configures loigger and Enables appenders for Log4j
+     * Configures logger and Enables appenders for Log4j
      */
     private void configureLogger() {
         BasicConfigurator.configure();
