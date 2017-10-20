@@ -33,6 +33,10 @@
             <name>ZK Evaluation Repository</name>
             <url>http://mavensync.zkoss.org/eval</url>
         </repository>
+        <repository>
+            <id>ZK EE</id>
+            <url>https://maven.zkoss.org/repo/zk/ee</url>
+        </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -44,6 +48,11 @@
     <dependencies>
 
         <!-- ZK dependecies -->
+        <dependency>
+            <groupId>org.zkoss.zk</groupId>
+            <artifactId>zk</artifactId>
+            <version>${zk.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.zkoss.zk</groupId>
             <artifactId>zkbind</artifactId>
@@ -74,6 +83,12 @@
             <artifactId>zweb</artifactId>
             <version>${zk.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.zkoss.zk</groupId>
+            <artifactId>zuti</artifactId>
+            <version>${zk.version}</version>
+        </dependency>
+
 
         <!-- Commons dependecies -->
         <dependency>

@@ -9,5 +9,9 @@
 		<value>nirdizati-training-ui</value>
 	</preference>
 	-->
+
+	<system-config>
+		<max-upload-size>51000</max-upload-size>
+	</system-config>
 	
 </zk>

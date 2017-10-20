@@ -4,7 +4,7 @@
     </vlayout>
     <vlayout style="padding: 20px">
         <label id="fileName" value="" height="100%"/>
-        <button id="chooseFile" sclass="big-grey-btn" upload="true">${labels.upload.choose.file}</button>
+        <fileupload id="chooseFile" sclass="big-grey-btn" upload="true">${labels.upload.choose.file}</fileupload>
     </vlayout>
     <vlayout>
         <label sclass="start-caption">${labels.upload.log_support}</label>
@@ -14,7 +14,7 @@
             <label>${labels.upload.convert_help_part3}</label>
         </hlayout>
     </vlayout>
-    <vlayout>
+    <vlayout id="uploadLayout">
         <button id="uploadLog" sclass="big-blue-btn" style="margin: 30px">${labels.upload.log}</button>
     </vlayout>
 </vbox>
