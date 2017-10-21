@@ -33,7 +33,6 @@
     color: white;
 }
 
-
 .big-grey-btn {
     background: #bababa;
     border: none;
@@ -65,7 +64,6 @@
     background: #d1d1d1;
 }
 
-
 .start-caption {
     font-weight: bold;
     font-size: larger;
@@ -76,12 +74,12 @@
     color: red;
     padding: 10px;
     border-radius: 3px;
-    background-color: rgba(255,21,0,0.38);
+    background-color: rgba(255, 21, 0, 0.38);
 }
 
 .z-notification-info .z-notification-content {
-    background: rgba(10,255,31,0.38);
-    color: rgba(46,135,1,0.69);
+    background: rgba(10, 255, 31, 0.38);
+    color: rgba(46, 135, 1, 0.69);
     margin: 40px;
     text-align: center;
     border-radius: 1px;
@@ -90,4 +88,29 @@
 .z-notification-content {
     padding-right: 40px;
     font-size: medium;
+}
+
+.z-navitem-content {
+    text-align: center;
+    padding-right: 20px;
+    height: 70px;
+}
+
+.z-navitem-text {
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
+    color: #021f54;
+    font-size: large;
+    margin-right: 30px;
+}
+
+.z-navbar .z-navitem-selected .z-navitem-content:hover {
+    background: rgba(209, 209, 209, 0.69);
+}
+
+.z-navbar .z-navitem-selected .z-navitem-content {
+    background: rgba(238, 238, 238, 0.65);
+    border: none;
+    border-bottom: solid 7px #02208f;
 }

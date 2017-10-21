@@ -7,8 +7,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
+import java.util.List;
 
 @XmlRootElement(name = "configuration")
 public class MasterConfiguration {
@@ -21,6 +23,10 @@ public class MasterConfiguration {
 
     @XmlElement(name = "userLogDirectory")
     private String userLogDirectory;
+
+    @XmlElementWrapper(name = "headerConfiguration")
+    @XmlElement(name = "headerItem")
+    private List<HeaderItem> headerItems;
 
     private MasterConfiguration() {
         configureLogger();
@@ -55,6 +61,7 @@ public class MasterConfiguration {
         MasterConfiguration configuration = (MasterConfiguration) unmarshaller.unmarshal(file);
         pageConfigurationProvider = configuration.getPageConfigurationProvider();
         userLogDirectory = configuration.getUserLogDirectory();
+        headerItems = configuration.getHeaderItems();
 
         log.debug("Successfully read master configuration");
     }
@@ -65,6 +72,10 @@ public class MasterConfiguration {
 
     public String getUserLogDirectory() {
         return userLogDirectory;
+    }
+
+    public List<HeaderItem> getHeaderItems() {
+        return headerItems;
     }
 
     /**
