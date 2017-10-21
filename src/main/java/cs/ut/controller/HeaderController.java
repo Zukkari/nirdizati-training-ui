@@ -2,6 +2,7 @@ package cs.ut.controller;
 
 import cs.ut.config.HeaderItem;
 import cs.ut.config.MasterConfiguration;
+import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
@@ -21,6 +22,7 @@ import java.util.List;
  */
 
 public class HeaderController extends SelectorComposer<Component> {
+    private static final Logger log = Logger.getLogger(HeaderController.class);
 
     @Wire
     Navbar navbar;
@@ -37,6 +39,7 @@ public class HeaderController extends SelectorComposer<Component> {
      */
     private void composeHeader() {
         List<HeaderItem> items = MasterConfiguration.getInstance().getHeaderItems();
+        log.debug(String.format("Generating header based on %s items read from configuration", items.size()));
         items.sort(Comparator.comparing(HeaderItem::getPosition));
 
         items.forEach(it -> {
@@ -50,8 +53,8 @@ public class HeaderController extends SelectorComposer<Component> {
                 }
             });
 
+            log.debug(String.format("Nav item with label '%s' is enabled: %s", it.getLabel(), it.isEnabled()));
             navitem.setDisabled(!it.isEnabled());
-            navitem.setSclass("navbar-item");
 
             navbar.appendChild(navitem);
         });
