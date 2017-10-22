@@ -3,7 +3,6 @@ package cs.ut.controller;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
 import cs.ut.manager.LogManager;
-import cs.ut.provider.ModelConfigurationProvider;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;

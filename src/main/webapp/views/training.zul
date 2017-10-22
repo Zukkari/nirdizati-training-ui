@@ -1,20 +1,20 @@
 <vbox hflex="1" vflex="1" apply="cs.ut.controller.TrainingController" xmlns="http://www.zkoss.org/2005/zul">
-    <hbox hflex="1" sclass="grey-box">
-        <hbox hflex="1" align="center" pack="center">
-            <label value="${labels.training.selected_log}"/>
+    <hlayout hflex="1" sclass="grey-box">
+        <hlayout id="testbox" hflex="1" sclass="label-combo">
+            <label value="${labels.training.selected_log}" sclass="label-combo"/>
             <combobox id="clientLogs"/>
-        </hbox>
-        <hbox hflex="1" vflex="1" align="center">
+        </hlayout>
+        <hlayout hflex="1" sclass="label-combo">
             <label value="${labels.training.prediction_type}"/>
             <combobox id="predictionType"/>
-        </hbox>
-        <hbox align="center" pack="end">
-            <navbar>
-                <navitem id="basicMode" label="${labels.training.basic}"/>
-                <navitem id="advancedMode" label="${labels.training.advanced}"/>
+        </hlayout>
+        <hbox align="center" pack="end" vflex="1">
+            <navbar sclass="grey-box-navbar">
+                <navitem vflex="1" id="basicMode" label="${labels.training.basic}" sclass="grey-box-navbar"/>
+                <navitem vflex="1" id="advancedMode" label="${labels.training.advanced}" sclass="grey-box-navbar" />
             </navbar>
         </hbox>
-    </hbox>
+    </hlayout>
 
     <vbox vflex="1" hflex="1" id="optionsMenu"/>
 </vbox>
