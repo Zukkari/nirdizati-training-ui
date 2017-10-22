@@ -1,6 +1,7 @@
 package cs.ut.controller;
 
 import cs.ut.config.MasterConfiguration;
+import cs.ut.manager.LogManager;
 import org.apache.log4j.Logger;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
@@ -38,6 +39,8 @@ public class UploadLogController extends SelectorComposer<Component> {
 
     private transient Media media;
 
+    private LogManager manager;
+
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
@@ -59,7 +62,7 @@ public class UploadLogController extends SelectorComposer<Component> {
             return;
         }
 
-        if (SUPPORTED_FORMAT.equalsIgnoreCase(getFileExtension(uploaded.getName()))) {
+        if (SUPPORTED_FORMAT.equalsIgnoreCase(manager.getFileExtension(uploaded.getName()))) {
             log.debug("Log is in .XES format");
             fileName.setSclass("");
             fileName.setValue(uploaded.getName());
@@ -69,7 +72,8 @@ public class UploadLogController extends SelectorComposer<Component> {
             log.debug("Log is not in .XES format");
             log.debug("Showing error message");
             fileName.setSclass("error-label");
-            fileName.setValue(Labels.getLabel("upload.wrong.format", new Object[]{uploaded.getName(), getFileExtension(uploaded.getName())}));
+            fileName.setValue(Labels.getLabel("upload.wrong.format",
+                    new Object[]{uploaded.getName(), manager.getFileExtension(uploaded.getName())}));
             uploadLog.setVisible(false);
         }
     }
@@ -121,18 +125,5 @@ public class UploadLogController extends SelectorComposer<Component> {
         this.media = media;
     }
 
-    /**
-     * Retrieves file extension of the file name.
-     *
-     * @param name where file extension should be extracted from.
-     * @return file extension or empty string if file extension denoting character could not be found.
-     */
-    private String getFileExtension(String name) {
-        int lastIndex = name.lastIndexOf('.');
-        if (lastIndex == -1) {
-            return "";
-        } else {
-            return name.substring(lastIndex);
-        }
-    }
+
 }

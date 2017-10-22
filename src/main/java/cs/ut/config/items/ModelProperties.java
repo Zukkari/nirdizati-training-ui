@@ -1,7 +1,5 @@
 package cs.ut.config.items;
 
-import cs.ut.config.items.ModelParameter;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import java.util.List;

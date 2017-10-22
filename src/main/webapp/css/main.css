@@ -115,3 +115,7 @@
     border: none;
     border-bottom: solid 7px #02208f;
 }
+
+.mode-select {
+    background: red;
+}

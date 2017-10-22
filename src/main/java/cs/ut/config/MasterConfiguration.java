@@ -1,7 +1,7 @@
 package cs.ut.config;
 
-import cs.ut.config.items.ModelProperties;
 import cs.ut.config.items.HeaderItem;
+import cs.ut.config.items.ModelProperties;
 import cs.ut.provider.ModelConfigurationProvider;
 import cs.ut.provider.PageConfigurationProvider;
 import org.apache.log4j.BasicConfigurator;
@@ -86,13 +86,9 @@ public class MasterConfiguration {
                 modelProperties.getTypes().size(),
                 modelProperties.getParameters().size()));
 
-        setUpModelConfiguration();
+        modelConfigurationProvider = new ModelConfigurationProvider(modelProperties);
 
         log.debug("Successfully read master configuration");
-    }
-
-    private void setUpModelConfiguration() {
-        // TODO implement parameter classification based on properties
     }
 
     public PageConfigurationProvider getPageConfigurationProvider() {
@@ -109,6 +105,10 @@ public class MasterConfiguration {
 
     private ModelProperties getModelProperties() {
         return modelProperties;
+    }
+
+    public ModelConfigurationProvider getModelConfigurationProvider() {
+        return modelConfigurationProvider;
     }
 
     /**

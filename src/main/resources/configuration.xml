@@ -41,7 +41,7 @@
         <headerItem>
             <label>header.training</label>
             <redirect>training</redirect>
-            <enabled>false</enabled>
+            <enabled>true</enabled>
             <position>2</position>
         </headerItem>
         <headerItem>
@@ -57,6 +57,7 @@
             <type>encoding</type>
             <type>bucketing</type>
             <type>regression</type>
+            <type>predictiontype</type>
         </types>
         <modelparams>
             <modelparam>
@@ -123,6 +124,19 @@
                 <label>regr.decision_tree</label>
                 <parameter></parameter>
                 <type>regression</type>
+                <enabled>true</enabled>
+            </modelparam>
+
+            <modelparam>
+                <label>prediction.remaining_time</label>
+                <parameter></parameter>
+                <type>predictiontype</type>
+                <enabled>true</enabled>
+            </modelparam>
+            <modelparam>
+                <label>prediction.outcome</label>
+                <parameter></parameter>
+                <type>predictiontype</type>
                 <enabled>true</enabled>
             </modelparam>
         </modelparams>
