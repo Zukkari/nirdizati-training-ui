@@ -23,7 +23,7 @@ public class MasterConfiguration {
     private static MasterConfiguration master;
 
     @XmlElement(name = "pageConfig")
-    private PageConfigurationProvider pageConfigurationProviderProvider;
+    private PageConfigurationProvider pageConfigurationProvider;
 
     @XmlElement(name = "userLogDirectory")
     private String userLogDirectory;
@@ -72,8 +72,8 @@ public class MasterConfiguration {
         MasterConfiguration configuration = (MasterConfiguration) unmarshaller.unmarshal(file);
         log.debug("Finished reading configuration");
 
-        pageConfigurationProviderProvider = configuration.getPageConfigurationProviderProvider();
-        log.debug(String.format("Successfully retrieved %s page configurations", pageConfigurationProviderProvider.getPages().size()));
+        pageConfigurationProvider = configuration.getPageConfigurationProvider();
+        log.debug(String.format("Successfully retrieved %s page configurations", pageConfigurationProvider.getPages().size()));
 
         userLogDirectory = configuration.getUserLogDirectory();
         log.debug(String.format("Successfully read user log directory: '%s'", userLogDirectory));
@@ -95,8 +95,8 @@ public class MasterConfiguration {
         // TODO implement parameter classification based on properties
     }
 
-    public PageConfigurationProvider getPageConfigurationProviderProvider() {
-        return pageConfigurationProviderProvider;
+    public PageConfigurationProvider getPageConfigurationProvider() {
+        return pageConfigurationProvider;
     }
 
     public String getUserLogDirectory() {

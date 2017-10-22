@@ -37,6 +37,6 @@ public class MainPageController extends SelectorComposer<Component> {
      */
     void setContent(String destination, Page page) {
         Include include = (Include) Selectors.iterable(page, "#contentInclude").iterator().next();
-        include.setSrc(MasterConfiguration.getInstance().getPageConfigurationProviderProvider().getByPageName(destination).getUri());
+        include.setSrc(MasterConfiguration.getInstance().getPageConfigurationProvider().getByPageName(destination).getUri());
     }
 }

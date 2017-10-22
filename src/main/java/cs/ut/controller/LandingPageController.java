@@ -28,7 +28,7 @@ public class LandingPageController extends SelectorComposer<Component> {
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
 
-        pageProvider = MasterConfiguration.getInstance().getPageConfigurationProviderProvider();
+        pageProvider = MasterConfiguration.getInstance().getPageConfigurationProvider();
 
         wireButtons();
     }
