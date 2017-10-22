@@ -9,7 +9,7 @@
             <combobox id="predictionType"/>
         </hlayout>
         <hbox align="center" pack="end" vflex="1">
-            <navbar sclass="grey-box-navbar">
+            <navbar id="modeSwitch" sclass="grey-box-navbar">
                 <navitem vflex="1" id="basicMode" label="${labels.training.basic}" sclass="grey-box-navbar"/>
                 <navitem vflex="1" id="advancedMode" label="${labels.training.advanced}" sclass="grey-box-navbar" />
             </navbar>

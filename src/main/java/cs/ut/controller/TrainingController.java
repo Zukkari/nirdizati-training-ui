@@ -6,8 +6,15 @@ import cs.ut.manager.LogManager;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zk.ui.select.SelectorComposer;
+import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zkmax.zul.Nav;
+import org.zkoss.zkmax.zul.Navbar;
+import org.zkoss.zkmax.zul.Navitem;
 import org.zkoss.zul.*;
 
 import java.util.List;
@@ -25,7 +32,17 @@ public class TrainingController extends SelectorComposer<Component> {
     @Wire
     Vbox optionsMenu;
 
-    Map<String, List<ModelParameter>> properties = MasterConfiguration.getInstance().getModelConfigurationProvider().getProperties();
+    @Wire
+    Navbar modeSwitch;
+
+    @Wire
+    Navitem basicMode;
+
+    @Wire
+    Navitem advancedMode;
+
+    private transient Map<String, List<ModelParameter>> properties =
+            MasterConfiguration.getInstance().getModelConfigurationProvider().getProperties();
 
 
     @Override
@@ -35,26 +52,35 @@ public class TrainingController extends SelectorComposer<Component> {
 
         initClientLogs();
         initPredictions();
-        initOptionsMenu();
+
+        modeSwitch.setSelectedItem(basicMode);
     }
 
     private void initOptionsMenu() {
+        optionsMenu.getChildren().clear();
+        log.debug(properties);
         properties.forEach((key, value) -> {
             Hbox hbox = new Hbox();
+            hbox.setSclass("option-row");
 
             Label sectionName = new Label();
+            sectionName.setSclass("option-label");
             sectionName.setValue(Labels.getLabel(key));
             hbox.appendChild(sectionName);
 
+            Hbox valuesBox = new Hbox();
+            valuesBox.setSclass("option-values");
             value.forEach(option -> {
                 Checkbox checkbox = new Checkbox();
                 checkbox.setName(Labels.getLabel(option.getLabel()));
                 checkbox.setValue(option);
                 checkbox.setLabel(Labels.getLabel(option.getLabel()));
+                checkbox.setSclass("option-value");
 
-                hbox.appendChild(checkbox);
+                valuesBox.appendChild(checkbox);
             });
 
+            hbox.appendChild(valuesBox);
             optionsMenu.appendChild(hbox);
         });
     }
@@ -74,5 +100,17 @@ public class TrainingController extends SelectorComposer<Component> {
         log.debug(String.format("Got %s items for client log combobox", fileNames.size()));
 
         fileNames.forEach(clientLogs::appendItem);
+    }
+
+    @Listen("onClick = #advancedMode")
+    public void enabledAdvanced() {
+        log.debug("enabling advanced mode");
+        initOptionsMenu();
+    }
+
+    @Listen("onClick = #basicMode")
+    public void enableBasicMode() {
+        log.debug("enabling basic mode");
+        optionsMenu.getChildren().clear();
     }
 }

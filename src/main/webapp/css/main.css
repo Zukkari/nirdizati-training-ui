@@ -160,4 +160,37 @@
     border-bottom: solid 7px #02208f;
 }
 
+.option-row {
+    margin-top: 5%;
+    margin-bottom: 3%;
+    word-wrap: break-word;
+    white-space: normal;
+    margin-left: 5%;
+}
+
+.option-label {
+    text-align: center;
+    align-content: center;
+    font-weight: bold;
+    font-size: large;
+}
+
+.option-values {
+    margin-left: 50px;
+}
+
+.option-value {
+    margin-left: 100px;
+}
+
+.option-value input[type="checkbox"] {
+
+}
+
+.option-value .z-checkbox-content {
+    font-size: large;
+    margin-left: 5px;
+}
+
+
 
