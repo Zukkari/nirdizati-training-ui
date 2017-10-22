@@ -1,0 +1,18 @@
+<hlayout sclass="grey-box" apply="cs.ut.controller.TrainingController" xmlns="http://www.zkoss.org/2005/zul">
+    <hbox hflex="1" vflex="1" sclass="grey-box">
+        <hlayout>
+            <label value="${labels.training.selected_log}"/>
+            <combobox id="clientLogs"/>
+        </hlayout>
+        <hlayout>
+            <label value="${labels.training.prediction_type}"/>
+            <combobox id="predictionType"/>
+        </hlayout>
+        <hlayout>
+            <navbar>
+                <navitem id="basicMode" label="${labels.training.basic}"/>
+                <navitem id="advancedMode" label="${labels.training.advanced}"/>
+            </navbar>
+        </hlayout>
+    </hbox>
+</hlayout>

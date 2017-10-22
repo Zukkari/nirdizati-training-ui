@@ -1,5 +1,9 @@
 package cs.ut.config;
 
+import cs.ut.config.items.ModelProperties;
+import cs.ut.config.items.HeaderItem;
+import cs.ut.provider.ModelConfigurationProvider;
+import cs.ut.provider.PageConfigurationProvider;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
@@ -19,7 +23,7 @@ public class MasterConfiguration {
     private static MasterConfiguration master;
 
     @XmlElement(name = "pageConfig")
-    private PageConfigurationProvider pageConfigurationProvider;
+    private PageConfigurationProvider pageConfigurationProviderProvider;
 
     @XmlElement(name = "userLogDirectory")
     private String userLogDirectory;
@@ -28,12 +32,18 @@ public class MasterConfiguration {
     @XmlElement(name = "headerItem")
     private List<HeaderItem> headerItems;
 
+    @XmlElement(name = "modelConfig")
+    private ModelProperties modelProperties;
+
+    private ModelConfigurationProvider modelConfigurationProvider;
+
     private MasterConfiguration() {
         configureLogger();
     }
 
     /**
      * Instantiates master configuration or if it has already been instantiated then returns the object
+     *
      * @return master configuration object that contains configurable values defined in configuration.xml
      */
     public static MasterConfiguration getInstance() {
@@ -50,6 +60,7 @@ public class MasterConfiguration {
 
     /**
      * Reads configuration.xml file and parses it into Java objects.
+     *
      * @throws JAXBException if configuration is defined incorrectly
      */
     private void readMasterConfig() throws JAXBException {
@@ -59,15 +70,33 @@ public class MasterConfiguration {
         JAXBContext jaxbContext = JAXBContext.newInstance(MasterConfiguration.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         MasterConfiguration configuration = (MasterConfiguration) unmarshaller.unmarshal(file);
-        pageConfigurationProvider = configuration.getPageConfigurationProvider();
+        log.debug("Finished reading configuration");
+
+        pageConfigurationProviderProvider = configuration.getPageConfigurationProviderProvider();
+        log.debug(String.format("Successfully retrieved %s page configurations", pageConfigurationProviderProvider.getPages().size()));
+
         userLogDirectory = configuration.getUserLogDirectory();
+        log.debug(String.format("Successfully read user log directory: '%s'", userLogDirectory));
+
         headerItems = configuration.getHeaderItems();
+        log.debug(String.format("Successfully read %s header items", headerItems.size()));
+
+        modelProperties = configuration.getModelProperties();
+        log.debug(String.format("Successfully read %s types and %s model parameters",
+                modelProperties.getTypes().size(),
+                modelProperties.getParameters().size()));
+
+        setUpModelConfiguration();
 
         log.debug("Successfully read master configuration");
     }
 
-    public PageConfigurationProvider getPageConfigurationProvider() {
-        return pageConfigurationProvider;
+    private void setUpModelConfiguration() {
+        // TODO implement parameter classification based on properties
+    }
+
+    public PageConfigurationProvider getPageConfigurationProviderProvider() {
+        return pageConfigurationProviderProvider;
     }
 
     public String getUserLogDirectory() {
@@ -76,6 +105,10 @@ public class MasterConfiguration {
 
     public List<HeaderItem> getHeaderItems() {
         return headerItems;
+    }
+
+    private ModelProperties getModelProperties() {
+        return modelProperties;
     }
 
     /**

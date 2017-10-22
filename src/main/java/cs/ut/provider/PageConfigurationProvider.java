@@ -1,5 +1,7 @@
-package cs.ut.config;
+package cs.ut.provider;
 
+
+import cs.ut.config.items.Page;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.List;

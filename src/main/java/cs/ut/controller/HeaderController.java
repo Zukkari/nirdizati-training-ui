@@ -1,6 +1,6 @@
 package cs.ut.controller;
 
-import cs.ut.config.HeaderItem;
+import cs.ut.config.items.HeaderItem;
 import cs.ut.config.MasterConfiguration;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;

@@ -1,4 +1,4 @@
-package cs.ut.config;
+package cs.ut.config.items;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
