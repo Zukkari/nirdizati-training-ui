@@ -4,10 +4,7 @@ import cs.ut.config.items.ModelParameter;
 import cs.ut.config.items.ModelProperties;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ModelConfigurationProvider {
     private static final Logger log = Logger.getLogger(ModelConfigurationProvider.class);
@@ -15,7 +12,7 @@ public class ModelConfigurationProvider {
     private List<String> initalTypes;
     private List<ModelParameter> initialParameters;
 
-    private Map<String, List<ModelParameter>> properties = new HashMap<>();
+    private Map<String, List<ModelParameter>> properties = new LinkedHashMap<>();
 
     private ModelConfigurationProvider() {
     }
@@ -47,6 +44,6 @@ public class ModelConfigurationProvider {
     }
 
     public Map<String, List<ModelParameter>> getProperties() {
-        return new HashMap<>(properties);
+        return new LinkedHashMap<>(properties);
     }
 }
