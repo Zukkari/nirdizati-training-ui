@@ -7,6 +7,7 @@ import java.util.List;
 public class ModelProperties {
     private List<String> types;
     private List<ModelParameter> parameters;
+    private List<String> basicParams;
 
     @XmlElementWrapper(name = "types")
     @XmlElement(name = "type")
@@ -22,6 +23,16 @@ public class ModelProperties {
     @XmlElement(name = "modelparam")
     public List<ModelParameter> getParameters() {
         return parameters;
+    }
+
+    @XmlElementWrapper(name = "basicParams")
+    @XmlElement(name = "param")
+    public List<String> getBasicParams() {
+        return basicParams;
+    }
+
+    public void setBasicParams(List<String> basicParams) {
+        this.basicParams = basicParams;
     }
 
     public void setParameters(List<ModelParameter> parameters) {

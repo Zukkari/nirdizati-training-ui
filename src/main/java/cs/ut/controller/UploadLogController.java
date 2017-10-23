@@ -39,7 +39,7 @@ public class UploadLogController extends SelectorComposer<Component> {
 
     private transient Media media;
 
-    private LogManager manager;
+    private transient LogManager manager = LogManager.getInstance();
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {

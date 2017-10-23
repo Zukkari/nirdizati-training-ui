@@ -6,13 +6,9 @@ import cs.ut.manager.LogManager;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zkmax.zul.Nav;
 import org.zkoss.zkmax.zul.Navbar;
 import org.zkoss.zkmax.zul.Navitem;
 import org.zkoss.zul.*;
@@ -24,22 +20,22 @@ public class TrainingController extends SelectorComposer<Component> {
     private static final Logger log = Logger.getLogger(TrainingController.class);
 
     @Wire
-    Combobox clientLogs;
+    private Combobox clientLogs;
 
     @Wire
-    Combobox predictionType;
+    private Combobox predictionType;
 
     @Wire
-    Vbox optionsMenu;
+    private Vbox optionsMenu;
 
     @Wire
-    Navbar modeSwitch;
+    private Navbar modeSwitch;
 
     @Wire
-    Navitem basicMode;
+    private Navitem basicMode;
 
     @Wire
-    Navitem advancedMode;
+    private Navitem advancedMode;
 
     private transient Map<String, List<ModelParameter>> properties =
             MasterConfiguration.getInstance().getModelConfigurationProvider().getProperties();
@@ -72,9 +68,9 @@ public class TrainingController extends SelectorComposer<Component> {
             valuesBox.setSclass("option-values");
             value.forEach(option -> {
                 Checkbox checkbox = new Checkbox();
-                checkbox.setName(Labels.getLabel(option.getLabel()));
+                checkbox.setName(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
                 checkbox.setValue(option);
-                checkbox.setLabel(Labels.getLabel(option.getLabel()));
+                checkbox.setLabel(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
                 checkbox.setSclass("option-value");
 
                 valuesBox.appendChild(checkbox);
@@ -90,7 +86,7 @@ public class TrainingController extends SelectorComposer<Component> {
         log.debug(String.format("Received %s prediction types", params.size()));
 
         params.forEach(it -> predictionType.appendItem(
-                Labels.getLabel(it.getLabel())
+                Labels.getLabel(it.getType().concat(".").concat(it.getId()))
         ));
     }
 

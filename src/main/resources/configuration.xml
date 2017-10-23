@@ -59,82 +59,90 @@
             <type>regression</type>
             <type>predictiontype</type>
         </types>
+
+        <basicParams>
+            <param>frequency</param>
+            <param>single</param>
+            <param>random_forest</param>
+        </basicParams>
+
         <modelparams>
             <modelparam>
-                <label>encoding.last_state</label>
+                <id>last_state</id>
                 <parameter></parameter>
                 <type>encoding</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
-                <label>encoding.frequency</label>
+                <id>frequency</id>
                 <parameter></parameter>
                 <type>encoding</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
-                <label>encoding.combined</label>
+                <id>combined</id>
                 <parameter></parameter>
                 <type>encoding</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
-                <label>encoding.index_based</label>
+                <id>index_based</id>
                 <parameter></parameter>
                 <type>encoding</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
-                <label>bucketing.single</label>
+                <id>single</id>
                 <parameter></parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
-                <label>bucketing.state_based</label>
+                <id>state_based</id>
                 <parameter></parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
-                <label>bucketing.clustering</label>
+                <id>clustering</id>
                 <parameter></parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
-                <label>bucketing.prefix_lenght_based</label>
+                <id>prefix_lenght_based</id>
                 <parameter></parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
+
             <modelparam>
-                <label>regr.random_forest</label>
+                <id>random_forest</id>
                 <parameter></parameter>
                 <type>regression</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
-                <label>regr.gradient_boosting</label>
+                <id>gradient_boosting</id>
                 <parameter></parameter>
                 <type>regression</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
-                <label>regr.decision_tree</label>
+                <id>decision_tree</id>
                 <parameter></parameter>
                 <type>regression</type>
                 <enabled>true</enabled>
             </modelparam>
 
             <modelparam>
-                <label>prediction.remaining_time</label>
+                <id>remaining_time</id>
                 <parameter></parameter>
                 <type>predictiontype</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
-                <label>prediction.outcome</label>
+                <id>outcome</id>
                 <parameter></parameter>
                 <type>predictiontype</type>
                 <enabled>true</enabled>

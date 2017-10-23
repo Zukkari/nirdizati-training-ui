@@ -13,6 +13,7 @@ public class ModelConfigurationProvider {
     private List<ModelParameter> initialParameters;
 
     private Map<String, List<ModelParameter>> properties = new LinkedHashMap<>();
+    private Map<String, List<ModelParameter>> basicModel = new LinkedHashMap<>();
 
     private ModelConfigurationProvider() {
     }
@@ -22,13 +23,29 @@ public class ModelConfigurationProvider {
         this.initialParameters = parameters.getParameters();
 
         validateAndClassify();
+        prepareBasicModel(parameters.getBasicParams());
+    }
+
+    /**
+     * Prepares basic model for training based on configuration.
+     * Incorrectly defined values are ignored.
+     * @param basicParameters parameters defined in configuration
+     */
+    private void prepareBasicModel(List<String> basicParameters) {
+        basicParameters.forEach(it -> {
+            Optional<ModelParameter> parameter = initialParameters.stream().filter(param -> param.getId().equals(it)).findFirst();
+            parameter.ifPresent(param -> basicModel.get(param.getType()).add(param));
+        });
     }
 
     private void validateAndClassify() {
         assert initalTypes != null : "Expected valid inital types";
         assert initialParameters != null : "Expected valid initial parameters";
 
-        initalTypes.forEach(it -> properties.put(it, new ArrayList<>()));
+        initalTypes.forEach(it -> {
+            properties.put(it, new ArrayList<>());
+            basicModel.put(it, new ArrayList<>());
+        });
 
         initialParameters.forEach(it -> {
             if (initalTypes.contains(it.getType())) {

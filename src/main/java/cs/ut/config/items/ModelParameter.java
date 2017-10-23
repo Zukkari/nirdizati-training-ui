@@ -9,12 +9,12 @@ import javax.xml.bind.annotation.XmlType;
  * Bean class that represents model properties
  */
 
-@XmlType(propOrder = {"label", "parameter", "type", "enabled"})
+@XmlType(propOrder = {"id", "parameter", "type", "enabled"})
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ModelParameter {
 
-    @XmlElement(name = "label")
-    private String label;
+    @XmlElement(name = "id")
+    private String id;
 
     @XmlElement(name = "parameter")
     private String parameter;
@@ -25,12 +25,12 @@ public class ModelParameter {
     @XmlElement(name = "enabled")
     private boolean enabled;
 
-    public String getLabel() {
-        return label;
+    public String getId() {
+        return id;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getParameter() {
