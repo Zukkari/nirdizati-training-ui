@@ -46,6 +46,8 @@ public class TrainingController extends SelectorComposer<Component> {
         super.doAfterCompose(comp);
         log.debug("Initialized TrainingController");
 
+        initBasicMode();
+
         initClientLogs();
         initPredictions();
 
@@ -98,6 +100,33 @@ public class TrainingController extends SelectorComposer<Component> {
         fileNames.forEach(clientLogs::appendItem);
     }
 
+    private void initBasicMode() {
+        optionsMenu.getChildren().clear();
+        Map<String, List<ModelParameter>> parameters = MasterConfiguration.getInstance().getModelConfigurationProvider().getBasicModel();
+
+        parameters.forEach((key, value) -> {
+            Hbox container = new Hbox();
+            container.setSclass("option-row");
+
+            Label caption = new Label(Labels.getLabel(key));
+            caption.setSclass("option-label");
+            container.appendChild(caption);
+
+            Hbox valuesBox = new Hbox();
+            valuesBox.setSclass("option-values");
+            value.forEach(val -> {
+                Label label = new Label(Labels.getLabel(key.concat(".").concat(val.getId())));
+                label.setSclass("option-value");
+                valuesBox.appendChild(label);
+            });
+
+            container.appendChild(valuesBox);
+            optionsMenu.appendChild(container);
+        });
+
+        log.debug(parameters);
+    }
+
     @Listen("onClick = #advancedMode")
     public void enabledAdvanced() {
         log.debug("enabling advanced mode");
@@ -107,6 +136,6 @@ public class TrainingController extends SelectorComposer<Component> {
     @Listen("onClick = #basicMode")
     public void enableBasicMode() {
         log.debug("enabling basic mode");
-        optionsMenu.getChildren().clear();
+        initBasicMode();
     }
 }

@@ -63,4 +63,8 @@ public class ModelConfigurationProvider {
     public Map<String, List<ModelParameter>> getProperties() {
         return new LinkedHashMap<>(properties);
     }
+
+    public Map<String, List<ModelParameter>> getBasicModel() {
+        return basicModel;
+    }
 }
