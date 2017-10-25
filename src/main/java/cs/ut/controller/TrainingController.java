@@ -118,7 +118,11 @@ public class TrainingController extends SelectorComposer<Component> {
             item.setValue(file);
         });
 
-        clientLogs.setSelectedItem(clientLogs.getItemAtIndex(0));
+        if (!clientLogs.getItems().isEmpty()) {
+            clientLogs.setSelectedItem(clientLogs.getItemAtIndex(0));
+        } else {
+            clientLogs.setDisabled(true);
+        }
         clientLogs.setWidth("250px");
         clientLogs.setReadonly(true);
     }
@@ -168,7 +172,6 @@ public class TrainingController extends SelectorComposer<Component> {
     private boolean validateData() {
         boolean isOk = true;
 
-        LogManager manager = LogManager.getInstance();
         selectedFile = clientLogs.getSelectedItem().getValue();
 
         if (selectedFile == null) {
