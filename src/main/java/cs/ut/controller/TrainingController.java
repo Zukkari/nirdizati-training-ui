@@ -13,6 +13,8 @@ import org.zkoss.zkmax.zul.Navbar;
 import org.zkoss.zkmax.zul.Navitem;
 import org.zkoss.zul.*;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,8 +39,12 @@ public class TrainingController extends SelectorComposer<Component> {
     @Wire
     private Navitem advancedMode;
 
-
     private Rows gridRows;
+
+    private transient List<ModelParameter> parameters;
+
+    private transient File selectedFile;
+    private transient ModelParameter selectedPrediction;
 
     private transient Map<String, List<ModelParameter>> properties =
             MasterConfiguration.getInstance().getModelConfigurationProvider().getProperties();
@@ -90,24 +96,38 @@ public class TrainingController extends SelectorComposer<Component> {
         List<ModelParameter> params = properties.remove("predictiontype");
         log.debug(String.format("Received %s prediction types", params.size()));
 
-        params.forEach(it -> predictionType.appendItem(
-                Labels.getLabel(it.getType().concat(".").concat(it.getId()))
-        ));
+        parameters = new ArrayList<>();
+        parameters.addAll(params);
+
+        params.forEach(it -> {
+            Comboitem item = predictionType.appendItem(Labels.getLabel(it.getType().concat(".").concat(it.getId())));
+            item.setValue(it);
+        });
+
+        predictionType.setSelectedItem(predictionType.getItemAtIndex(0));
+        predictionType.setReadonly(true);
     }
 
     private void initClientLogs() {
         LogManager manager = LogManager.getInstance();
-        List<String> fileNames = manager.getAllAvailableLogs();
+        List<File> fileNames = manager.getAllAvailableLogs();
         log.debug(String.format("Got %s items for client log combobox", fileNames.size()));
 
-        fileNames.forEach(clientLogs::appendItem);
+        fileNames.forEach(file -> {
+            Comboitem item = clientLogs.appendItem(file.getName());
+            item.setValue(file);
+        });
+
+        clientLogs.setSelectedItem(clientLogs.getItemAtIndex(0));
+        clientLogs.setWidth("250px");
+        clientLogs.setReadonly(true);
     }
 
     private void initBasicMode() {
         optionsGrid.getRows().getChildren().clear();
-        Map<String, List<ModelParameter>> parameters = MasterConfiguration.getInstance().getModelConfigurationProvider().getBasicModel();
+        Map<String, List<ModelParameter>> basicParams = MasterConfiguration.getInstance().getModelConfigurationProvider().getBasicModel();
 
-        parameters.forEach((key, value) -> {
+        basicParams.forEach((key, value) -> {
             Row row = new Row();
             row.setSclass("option-row");
 
@@ -123,7 +143,7 @@ public class TrainingController extends SelectorComposer<Component> {
             gridRows.appendChild(row);
         });
 
-        log.debug(parameters);
+        log.debug(basicParams);
     }
 
     @Listen("onClick = #advancedMode")
@@ -136,5 +156,32 @@ public class TrainingController extends SelectorComposer<Component> {
     public void enableBasicMode() {
         log.debug("enabling basic mode");
         initBasicMode();
+    }
+
+    @Listen("onClick = #startTraining")
+    public void startTraining() {
+        if (validateData()) {
+            log.debug("Parameters are valid, calling script to construct the model");
+        }
+    }
+
+    private boolean validateData() {
+        boolean isOk = true;
+
+        LogManager manager = LogManager.getInstance();
+        selectedFile = clientLogs.getSelectedItem().getValue();
+
+        if (selectedFile == null) {
+            clientLogs.setErrorMessage(Labels.getLabel("training.file_not_found"));
+            isOk = false;
+        }
+
+        selectedPrediction = predictionType.getSelectedItem().getValue();
+        if (selectedPrediction == null) {
+            predictionType.setErrorMessage(Labels.getLabel("training.empty_prediciton"));
+            isOk = false;
+        }
+
+        return isOk;
     }
 }

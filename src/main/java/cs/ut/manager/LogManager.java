@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LogManager {
     private String logDirectory = MasterConfiguration.getInstance().getUserLogDirectory();
@@ -27,14 +28,14 @@ public class LogManager {
      * Returns all available file names contained in user log directory defined in configuration.xml
      * @return List of all available file names contained in user log directory
      */
-    public List<String> getAllAvailableLogs() {
-        List<String> logs = new ArrayList<>();
+    public List<File> getAllAvailableLogs() {
+        List<File> logs = new ArrayList<>();
 
         File folder = new File(logDirectory);
 
         File[] files = folder.listFiles();
         if (files != null) {
-            Arrays.stream(files).filter(it -> ".XES".equalsIgnoreCase(getFileExtension(it.getName()))).forEach(it -> logs.add(it.getName()));
+            logs.addAll(Arrays.stream(files).filter(it -> ".XES".equalsIgnoreCase(getFileExtension(it.getName()))).collect(Collectors.toList()));
         }
 
         return logs;

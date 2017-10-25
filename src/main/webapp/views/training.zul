@@ -2,11 +2,11 @@
     <hlayout hflex="1" sclass="grey-box">
         <hlayout id="testbox" hflex="1" sclass="label-combo">
             <label value="${labels.training.selected_log}" sclass="label-combo"/>
-            <combobox id="clientLogs"/>
+            <combobox id="clientLogs" constraint="no empty"/>
         </hlayout>
         <hlayout hflex="1" sclass="label-combo">
             <label value="${labels.training.prediction_type}"/>
-            <combobox id="predictionType"/>
+            <combobox id="predictionType" constraint="no empty"/>
         </hlayout>
         <hbox align="center" pack="end" vflex="1">
             <navbar id="modeSwitch" sclass="grey-box-navbar">
@@ -19,6 +19,6 @@
     <grid hflex="1" id="optionsGrid"/>
 
     <vbox hflex="1" vflex="1" align="center" pack="center">
-        <button sclass="big-blue-btn">${labels.training.start_training}</button>
+        <button id="startTraining" sclass="big-blue-btn">${labels.training.start_training}</button>
     </vbox>
 </vbox>
