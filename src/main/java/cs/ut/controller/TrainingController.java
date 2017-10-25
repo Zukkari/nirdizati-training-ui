@@ -26,7 +26,7 @@ public class TrainingController extends SelectorComposer<Component> {
     private Combobox predictionType;
 
     @Wire
-    private Vbox optionsMenu;
+    private Grid optionsGrid;
 
     @Wire
     private Navbar modeSwitch;
@@ -37,6 +37,9 @@ public class TrainingController extends SelectorComposer<Component> {
     @Wire
     private Navitem advancedMode;
 
+
+    private Rows gridRows;
+
     private transient Map<String, List<ModelParameter>> properties =
             MasterConfiguration.getInstance().getModelConfigurationProvider().getProperties();
 
@@ -45,6 +48,9 @@ public class TrainingController extends SelectorComposer<Component> {
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
         log.debug("Initialized TrainingController");
+
+        gridRows = new Rows();
+        optionsGrid.appendChild(gridRows);
 
         initBasicMode();
 
@@ -55,19 +61,17 @@ public class TrainingController extends SelectorComposer<Component> {
     }
 
     private void initOptionsMenu() {
-        optionsMenu.getChildren().clear();
+        optionsGrid.getRows().getChildren().clear();
         log.debug(properties);
         properties.forEach((key, value) -> {
-            Hbox hbox = new Hbox();
-            hbox.setSclass("option-row");
+            Row row = new Row();
+            row.setSclass("option-row");
 
             Label sectionName = new Label();
             sectionName.setSclass("option-label");
             sectionName.setValue(Labels.getLabel(key));
-            hbox.appendChild(sectionName);
+            row.appendChild(sectionName);
 
-            Hbox valuesBox = new Hbox();
-            valuesBox.setSclass("option-values");
             value.forEach(option -> {
                 Checkbox checkbox = new Checkbox();
                 checkbox.setName(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
@@ -75,11 +79,10 @@ public class TrainingController extends SelectorComposer<Component> {
                 checkbox.setLabel(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
                 checkbox.setSclass("option-value");
 
-                valuesBox.appendChild(checkbox);
+                row.appendChild(checkbox);
             });
 
-            hbox.appendChild(valuesBox);
-            optionsMenu.appendChild(hbox);
+            gridRows.appendChild(row);
         });
     }
 
@@ -101,27 +104,23 @@ public class TrainingController extends SelectorComposer<Component> {
     }
 
     private void initBasicMode() {
-        optionsMenu.getChildren().clear();
+        optionsGrid.getRows().getChildren().clear();
         Map<String, List<ModelParameter>> parameters = MasterConfiguration.getInstance().getModelConfigurationProvider().getBasicModel();
 
         parameters.forEach((key, value) -> {
-            Hbox container = new Hbox();
-            container.setSclass("option-row");
+            Row row = new Row();
+            row.setSclass("option-row");
 
             Label caption = new Label(Labels.getLabel(key));
             caption.setSclass("option-label");
-            container.appendChild(caption);
+            row.appendChild(caption);
 
-            Hbox valuesBox = new Hbox();
-            valuesBox.setSclass("option-values");
             value.forEach(val -> {
                 Label label = new Label(Labels.getLabel(key.concat(".").concat(val.getId())));
                 label.setSclass("option-value");
-                valuesBox.appendChild(label);
+                row.appendChild(label);
             });
-
-            container.appendChild(valuesBox);
-            optionsMenu.appendChild(container);
+            gridRows.appendChild(row);
         });
 
         log.debug(parameters);
