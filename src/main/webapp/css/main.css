@@ -198,4 +198,34 @@
 }
 
 
+.z-grid {
+    background-color: #ebebeb;
+    border: none;
+}
+.z-row-content {
+    margin-top: 30px;
+    color: black;
+}
+
+.z-row:hover > .z-row-inner, .z-row:hover > .z-cell, .z-row:hover > .z-label {
+    background:transparent !important;
+}
+
+.option-value:hover {
+    color:#02208f !important;
+}
+
+.option-label {
+    color: black !important;
+    padding-right: 20px;
+}
+
+.option-value {
+    color:black !important;
+    padding-left: 20px;
+}
+
+.option-label:hover {
+    color: #021f54 !important;
+}
 

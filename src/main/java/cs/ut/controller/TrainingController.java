@@ -132,21 +132,22 @@ public class TrainingController extends SelectorComposer<Component> {
         Map<String, List<ModelParameter>> basicParams = MasterConfiguration.getInstance().getModelConfigurationProvider().getBasicModel();
 
         basicParams.forEach((key, value) -> {
-            Row row = new Row();
-            row.setSclass("option-row");
+            if (!value.isEmpty()) {
+                Row row = new Row();
+                row.setSclass("option-row");
 
-            Label caption = new Label(Labels.getLabel(key));
-            caption.setSclass("option-label");
-            row.appendChild(caption);
+                Label caption = new Label(Labels.getLabel(key));
+                caption.setSclass("option-label");
+                row.appendChild(caption);
 
-            value.forEach(val -> {
-                Label label = new Label(Labels.getLabel(key.concat(".").concat(val.getId())));
-                label.setSclass("option-value");
-                row.appendChild(label);
-            });
-            gridRows.appendChild(row);
+                value.forEach(val -> {
+                    Label label = new Label(Labels.getLabel(key.concat(".").concat(val.getId())));
+                    label.setSclass("option-value");
+                    row.appendChild(label);
+                });
+                gridRows.appendChild(row);
+            }
         });
-
         log.debug(basicParams);
     }
 
