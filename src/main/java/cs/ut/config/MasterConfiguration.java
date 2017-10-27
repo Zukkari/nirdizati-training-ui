@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 
 @XmlRootElement(name = "configuration")
@@ -76,6 +77,14 @@ public class MasterConfiguration {
         log.debug(String.format("Successfully retrieved %s page configurations", pageConfigurationProvider.getPages().size()));
 
         userLogDirectory = configuration.getUserLogDirectory();
+        File directory = new File(userLogDirectory);
+        if (!directory.exists()){
+            log.debug("Directory does not exist, creating directory for user logs.");
+            if (directory.mkdir()) {
+                log.debug(String.format("Successfully created directory for log storage in <%s>", directory.getAbsolutePath()));
+            } else log.debug(String.format("Failed to create a directory for log storage in <%s>", directory.getAbsolutePath()));
+        }
+
         log.debug(String.format("Successfully read user log directory: '%s'", userLogDirectory));
 
         headerItems = configuration.getHeaderItems();
