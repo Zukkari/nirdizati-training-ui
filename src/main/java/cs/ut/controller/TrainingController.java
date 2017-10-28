@@ -179,7 +179,7 @@ public class TrainingController extends SelectorComposer<Component> {
         if (validateData()) {
             log.debug("Parameters are valid, calling script to construct the model");
             Runnable jobs = () -> {
-                JobManager.getInstance().setLogName(((File) clientLogs.getSelectedItem().getValue()).getName());
+                JobManager.getInstance().setLog(clientLogs.getSelectedItem().getValue());
                 Map<String, List<ModelParameter>> params =
                         basicMode.equals(modeSwitch.getSelectedItem()) ?
                         new HashMap<>(MasterConfiguration.getInstance().getModelConfigurationProvider().getBasicModel())
@@ -188,10 +188,8 @@ public class TrainingController extends SelectorComposer<Component> {
                 params.put(((ModelParameter) comboitem.getValue()).getType(), Collections.singletonList(comboitem.getValue()));
                 JobManager.getInstance()
                         .generateJobs(params);
-                JobManager.getInstance().runJobs();
             };
-
-            log.debug("Jobs started...");
+            log.debug("Jobs generated...");
             jobs.run();
 
         }

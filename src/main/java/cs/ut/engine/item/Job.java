@@ -2,6 +2,7 @@ package cs.ut.engine.item;
 
 import cs.ut.config.items.ModelParameter;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -11,7 +12,7 @@ public class Job {
     private ModelParameter learner;
     private ModelParameter outcome;
 
-    private String log;
+    private File log;
 
     private Date createTime;
     private Date startTime;
@@ -76,11 +77,11 @@ public class Job {
         return createTime;
     }
 
-    public String getLog() {
+    public File getLog() {
         return log;
     }
 
-    public void setLog(String log) {
+    public void setLog(File log) {
         this.log = log;
     }
 

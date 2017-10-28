@@ -2,6 +2,7 @@ package cs.ut.config;
 
 import cs.ut.config.items.HeaderItem;
 import cs.ut.config.items.ModelProperties;
+import cs.ut.engine.Worker;
 import cs.ut.provider.DirectoryPathProvider;
 import cs.ut.provider.ModelConfigurationProvider;
 import cs.ut.provider.PageConfigurationProvider;
@@ -96,6 +97,9 @@ public class MasterConfiguration {
         getDirectoryPathProvider().validatePathsExist();
 
         log.debug("Successfully read master configuration");
+
+        /* Start worker thread */
+        Worker.getInstance().start();
     }
 
     public PageConfigurationProvider getPageConfigurationProvider() {
