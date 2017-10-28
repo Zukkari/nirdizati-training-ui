@@ -84,7 +84,7 @@ public class JobManager {
         try {
             ProcessBuilder pb = new ProcessBuilder("python",
                     coreDir.concat("train.py"),
-                    coreDir.concat("BPIC15_4_one_trace.csv"),
+                    coreDir.concat("BPIC15_4.csv"),
                     "bpic15",
                     job.getBucketing().getParameter(),
                     job.getEncoding().getParameter(),
