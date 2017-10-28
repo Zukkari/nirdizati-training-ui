@@ -69,62 +69,62 @@
         <modelparams>
             <modelparam>
                 <id>last_state</id>
-                <parameter></parameter>
+                <parameter>laststate</parameter>
                 <type>encoding</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>frequency</id>
-                <parameter></parameter>
+                <parameter>agg</parameter>
                 <type>encoding</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>combined</id>
-                <parameter></parameter>
+                <parameter>combined</parameter>
                 <type>encoding</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>index_based</id>
-                <parameter></parameter>
+                <parameter>index</parameter>
                 <type>encoding</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>single</id>
-                <parameter></parameter>
+                <parameter>single</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>state_based</id>
-                <parameter></parameter>
+                <parameter>state</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>clustering</id>
-                <parameter></parameter>
+                <parameter>cluster</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>prefix_lenght_based</id>
-                <parameter></parameter>
+                <parameter>prefix</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
 
             <modelparam>
                 <id>random_forest</id>
-                <parameter></parameter>
+                <parameter>rf</parameter>
                 <type>regression</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>gradient_boosting</id>
-                <parameter></parameter>
+                <parameter>gbm</parameter>
                 <type>regression</type>
                 <enabled>true</enabled>
             </modelparam>
@@ -132,7 +132,7 @@
                 <id>decision_tree</id>
                 <parameter></parameter>
                 <type>regression</type>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
             </modelparam>
 
             <modelparam>

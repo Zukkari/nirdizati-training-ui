@@ -2,6 +2,7 @@ package cs.ut.controller;
 
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
+import cs.ut.engine.JobManager;
 import cs.ut.manager.LogManager;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -84,6 +85,7 @@ public class TrainingController extends SelectorComposer<Component> {
                 checkbox.setValue(option);
                 checkbox.setLabel(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
                 checkbox.setSclass("option-value");
+                checkbox.setDisabled(!option.isEnabled());
 
                 row.appendChild(checkbox);
             });
@@ -167,6 +169,17 @@ public class TrainingController extends SelectorComposer<Component> {
     public void startTraining() {
         if (validateData()) {
             log.debug("Parameters are valid, calling script to construct the model");
+            if (basicMode.equals(modeSwitch.getSelectedItem())) {
+                log.debug("Basic mode training initialized");
+
+                Runnable jobs = () ->
+                        JobManager.getInstance().setLogName(((File)clientLogs.getSelectedItem().getValue()).getName());
+                        JobManager.getInstance()
+                                .generateJobs(MasterConfiguration.getInstance().getModelConfigurationProvider().getBasicModel());
+
+                log.debug("Jobs started...");
+                jobs.run();
+            }
         }
     }
 
