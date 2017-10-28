@@ -3,6 +3,7 @@ package cs.ut.engine;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.engine.item.Job;
 import cs.ut.provider.DirectoryPathProvider;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -98,7 +99,14 @@ public class Worker extends Thread {
 
             log.debug("Script exited successfully");
             log.debug(String.format("Trying to move file to user model storage dir <%s>", userModelDir));
-            Files.move(Paths.get(coreDir.concat(job.toString())), Paths.get(userModelDir.concat(job.toString())), StandardCopyOption.REPLACE_EXISTING);
+
+            String noExtensionName = FilenameUtils.getBaseName(job.getLog().getName());
+            File dir = new File(userModelDir.concat(noExtensionName));
+            if (!dir.exists() && !dir.mkdir()) {
+                throw new RuntimeException(String.format("Cannot create folder for model with name <%s>", dir.getName()));
+            }
+
+            Files.move(Paths.get(coreDir.concat(job.toString())), Paths.get(userModelDir.concat(noExtensionName.concat("/")).concat(job.toString())), StandardCopyOption.REPLACE_EXISTING);
             log.debug("Successfully moved user model to user model storage directory");
 
             job.setResultPath(Paths.get(userModelDir.concat(job.toString())).toString());
