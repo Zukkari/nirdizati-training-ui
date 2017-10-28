@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 
 /**
  * Controller that responds for the log uploading page.
@@ -88,7 +89,10 @@ public class UploadLogController extends SelectorComposer<Component> {
         if (media != null) {
 
             Runnable serialization = () -> {
-                File file = new File(String.format("%s%s", MasterConfiguration.getInstance().getUserLogDirectory(), media.getName()));
+                File file = new File(String.format("%s/%s",
+                        Paths.get(MasterConfiguration.getInstance().getDirectoryPathProvider().getUserLogDirectory())
+                        , media.getName()));
+
                 log.debug(String.format("Writing file into : %s", file.getAbsolutePath()));
 
                 try (InputStream inputStream = media.getStreamData();

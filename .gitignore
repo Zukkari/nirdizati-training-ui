@@ -128,3 +128,7 @@ ENV/
 
 # Trained pickle models
 *.pkl
+
+# Nidrizati directories
+usermodels/**
+userlogs/**

@@ -2,10 +2,14 @@ package cs.ut.config;
 
 import cs.ut.config.items.HeaderItem;
 import cs.ut.config.items.ModelProperties;
+import cs.ut.provider.DirectoryPathProvider;
 import cs.ut.provider.ModelConfigurationProvider;
 import cs.ut.provider.PageConfigurationProvider;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -13,8 +17,11 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
-import java.nio.file.Files;
+import java.io.IOException;
 import java.util.List;
 
 @XmlRootElement(name = "configuration")
@@ -26,15 +33,14 @@ public class MasterConfiguration {
     @XmlElement(name = "pageConfig")
     private PageConfigurationProvider pageConfigurationProvider;
 
-    @XmlElement(name = "userLogDirectory")
-    private String userLogDirectory;
-
     @XmlElementWrapper(name = "headerConfiguration")
     @XmlElement(name = "headerItem")
     private List<HeaderItem> headerItems;
 
     @XmlElement(name = "modelConfig")
     private ModelProperties modelProperties;
+
+    private DirectoryPathProvider directoryPathProvider;
 
     private ModelConfigurationProvider modelConfigurationProvider;
 
@@ -76,16 +82,6 @@ public class MasterConfiguration {
         pageConfigurationProvider = configuration.getPageConfigurationProvider();
         log.debug(String.format("Successfully retrieved %s page configurations", pageConfigurationProvider.getPages().size()));
 
-        userLogDirectory = configuration.getUserLogDirectory();
-        File directory = new File(userLogDirectory);
-        if (!directory.exists()){
-            log.debug("Directory does not exist, creating directory for user logs.");
-            if (directory.mkdir()) {
-                log.debug(String.format("Successfully created directory for log storage in <%s>", directory.getAbsolutePath()));
-            } else log.debug(String.format("Failed to create a directory for log storage in <%s>", directory.getAbsolutePath()));
-        }
-
-        log.debug(String.format("Successfully read user log directory: '%s'", userLogDirectory));
 
         headerItems = configuration.getHeaderItems();
         log.debug(String.format("Successfully read %s header items", headerItems.size()));
@@ -97,15 +93,13 @@ public class MasterConfiguration {
 
         modelConfigurationProvider = new ModelConfigurationProvider(modelProperties);
 
+        getDirectoryPathProvider().validatePathsExist();
+
         log.debug("Successfully read master configuration");
     }
 
     public PageConfigurationProvider getPageConfigurationProvider() {
         return pageConfigurationProvider;
-    }
-
-    public String getUserLogDirectory() {
-        return userLogDirectory;
     }
 
     public List<HeaderItem> getHeaderItems() {
@@ -125,5 +119,35 @@ public class MasterConfiguration {
      */
     private void configureLogger() {
         BasicConfigurator.configure();
+    }
+
+    public DirectoryPathProvider getDirectoryPathProvider() {
+        if (directoryPathProvider == null) {
+            File file = new File(getClass().getClassLoader().getResource("configuration.xml").getFile());
+            JAXBContext jaxbContext = null;
+            Unmarshaller unmarshaller = null;
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+            dbf.setNamespaceAware(true);
+            DocumentBuilder db = null;
+            Document doc;
+            try {
+                db = dbf.newDocumentBuilder();
+                doc = db.parse(file);
+            } catch (ParserConfigurationException | IOException | SAXException e) {
+                throw new RuntimeException(e);
+            }
+
+            NodeList node = doc.getElementsByTagName("paths");
+
+            try {
+                jaxbContext = JAXBContext.newInstance(DirectoryPathProvider.class);
+                unmarshaller = jaxbContext.createUnmarshaller();
+                directoryPathProvider = unmarshaller.unmarshal(node.item(0), DirectoryPathProvider.class).getValue();
+            } catch (JAXBException e) {
+                throw new RuntimeException("Failed to read directories", e);
+            }
+        }
+        return directoryPathProvider;
     }
 }

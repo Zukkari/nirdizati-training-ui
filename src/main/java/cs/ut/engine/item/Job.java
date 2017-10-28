@@ -8,7 +8,8 @@ import java.util.Date;
 public class Job {
     private ModelParameter encoding;
     private ModelParameter bucketing;
-    private ModelParameter regression;
+    private ModelParameter learner;
+    private ModelParameter outcome;
 
     private String log;
 
@@ -39,12 +40,12 @@ public class Job {
         this.bucketing = bucketing;
     }
 
-    public ModelParameter getRegression() {
-        return regression;
+    public ModelParameter getLearner() {
+        return learner;
     }
 
-    public void setRegression(ModelParameter regression) {
-        this.regression = regression;
+    public void setLearner(ModelParameter learner) {
+        this.learner = learner;
     }
 
     public Date getStartTime() {
@@ -83,4 +84,25 @@ public class Job {
         this.log = log;
     }
 
+    public ModelParameter getOutcome() {
+        return outcome;
+    }
+
+    public void setOutcome(ModelParameter outcome) {
+        this.outcome = outcome;
+    }
+
+    @Override
+    public String toString() {
+        return outcome.getParameter()
+                .concat("_")
+                .concat(bucketing.getParameter())
+                .concat("_")
+                .concat(encoding.getParameter())
+                .concat("_")
+                .concat(learner.getParameter())
+                .concat("_")
+                .concat("bpic15")
+                .concat(".pkl");
+    }
 }

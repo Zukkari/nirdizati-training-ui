@@ -15,9 +15,7 @@ import org.zkoss.zkmax.zul.Navitem;
 import org.zkoss.zul.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TrainingController extends SelectorComposer<Component> {
     private static final Logger log = Logger.getLogger(TrainingController.class);
@@ -172,10 +170,15 @@ public class TrainingController extends SelectorComposer<Component> {
             if (basicMode.equals(modeSwitch.getSelectedItem())) {
                 log.debug("Basic mode training initialized");
 
-                Runnable jobs = () ->
-                        JobManager.getInstance().setLogName(((File)clientLogs.getSelectedItem().getValue()).getName());
-                        JobManager.getInstance()
-                                .generateJobs(MasterConfiguration.getInstance().getModelConfigurationProvider().getBasicModel());
+                Runnable jobs = () -> {
+                    JobManager.getInstance().setLogName(((File) clientLogs.getSelectedItem().getValue()).getName());
+                    Map<String, List<ModelParameter>> params = new HashMap<>(MasterConfiguration.getInstance().getModelConfigurationProvider().getBasicModel());
+                    Comboitem comboitem = predictionType.getSelectedItem();
+                    params.put(((ModelParameter)comboitem.getValue()).getType(), Collections.singletonList(comboitem.getValue()));
+                    JobManager.getInstance()
+                            .generateJobs(params);
+                    JobManager.getInstance().runJobs();
+                };
 
                 log.debug("Jobs started...");
                 jobs.run();
