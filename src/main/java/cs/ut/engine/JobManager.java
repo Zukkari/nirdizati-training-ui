@@ -56,13 +56,17 @@ public class JobManager {
         List<ModelParameter> learner = parameters.get("learner");
         List<ModelParameter> result = parameters.get("predictiontype");
 
-        Job job = new Job();
-        job.setEncoding(encodings.get(0));
-        job.setBucketing(bucketing.get(0));
-        job.setLearner(learner.get(0));
-        job.setOutcome(result.get(0));
+        encodings.forEach(encoding ->
+                bucketing.forEach(bucket ->
+                        learner.forEach(learn -> {
+                            Job job = new Job();
+                            job.setEncoding(encoding);
+                            job.setBucketing(bucket);
+                            job.setLearner(learn);
+                            job.setOutcome(result.get(0));
 
-        jobQueue.add(job);
+                            jobQueue.add(job);
+                        })));
     }
 
     public synchronized void runJobs() {
@@ -72,6 +76,7 @@ public class JobManager {
             executeJob(job);
             job.setCompleteTime(Calendar.getInstance().getTime());
         }
+        logName = null;
     }
 
 

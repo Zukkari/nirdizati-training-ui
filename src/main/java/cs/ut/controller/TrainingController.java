@@ -7,6 +7,9 @@ import cs.ut.manager.LogManager;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
@@ -40,10 +43,7 @@ public class TrainingController extends SelectorComposer<Component> {
 
     private Rows gridRows;
 
-    private transient List<ModelParameter> parameters;
-
-    private transient File selectedFile;
-    private transient ModelParameter selectedPrediction;
+    private transient Map<String, List<ModelParameter>> parameters = new HashMap<>();
 
     private transient Map<String, List<ModelParameter>> properties =
             MasterConfiguration.getInstance().getModelConfigurationProvider().getProperties();
@@ -68,6 +68,9 @@ public class TrainingController extends SelectorComposer<Component> {
     private void initOptionsMenu() {
         optionsGrid.getRows().getChildren().clear();
         log.debug(properties);
+
+        properties.keySet().forEach(key -> parameters.put(key, new ArrayList<>()));
+
         properties.forEach((key, value) -> {
             Row row = new Row();
             row.setSclass("option-row");
@@ -85,6 +88,17 @@ public class TrainingController extends SelectorComposer<Component> {
                 checkbox.setSclass("option-value");
                 checkbox.setDisabled(!option.isEnabled());
 
+                checkbox.addEventListener(Events.ON_CLICK, new SerializableEventListener<Event>() {
+                    @Override
+                    public void onEvent(Event event) throws Exception {
+                        if (checkbox.isChecked()) {
+                            parameters.get(((ModelParameter) checkbox.getValue()).getType()).add(checkbox.getValue());
+                        } else {
+                            parameters.get(((ModelParameter) checkbox.getValue()).getType()).remove(checkbox.getValue());
+                        }
+                    }
+                });
+
                 row.appendChild(checkbox);
             });
 
@@ -95,9 +109,6 @@ public class TrainingController extends SelectorComposer<Component> {
     private void initPredictions() {
         List<ModelParameter> params = properties.remove("predictiontype");
         log.debug(String.format("Received %s prediction types", params.size()));
-
-        parameters = new ArrayList<>();
-        parameters.addAll(params);
 
         params.forEach(it -> {
             Comboitem item = predictionType.appendItem(Labels.getLabel(it.getType().concat(".").concat(it.getId())));
@@ -167,36 +178,36 @@ public class TrainingController extends SelectorComposer<Component> {
     public void startTraining() {
         if (validateData()) {
             log.debug("Parameters are valid, calling script to construct the model");
-            if (basicMode.equals(modeSwitch.getSelectedItem())) {
-                log.debug("Basic mode training initialized");
+            Runnable jobs = () -> {
+                JobManager.getInstance().setLogName(((File) clientLogs.getSelectedItem().getValue()).getName());
+                Map<String, List<ModelParameter>> params =
+                        basicMode.equals(modeSwitch.getSelectedItem()) ?
+                        new HashMap<>(MasterConfiguration.getInstance().getModelConfigurationProvider().getBasicModel())
+                        : new HashMap<>(parameters);
+                Comboitem comboitem = predictionType.getSelectedItem();
+                params.put(((ModelParameter) comboitem.getValue()).getType(), Collections.singletonList(comboitem.getValue()));
+                JobManager.getInstance()
+                        .generateJobs(params);
+                JobManager.getInstance().runJobs();
+            };
 
-                Runnable jobs = () -> {
-                    JobManager.getInstance().setLogName(((File) clientLogs.getSelectedItem().getValue()).getName());
-                    Map<String, List<ModelParameter>> params = new HashMap<>(MasterConfiguration.getInstance().getModelConfigurationProvider().getBasicModel());
-                    Comboitem comboitem = predictionType.getSelectedItem();
-                    params.put(((ModelParameter)comboitem.getValue()).getType(), Collections.singletonList(comboitem.getValue()));
-                    JobManager.getInstance()
-                            .generateJobs(params);
-                    JobManager.getInstance().runJobs();
-                };
+            log.debug("Jobs started...");
+            jobs.run();
 
-                log.debug("Jobs started...");
-                jobs.run();
-            }
         }
     }
 
     private boolean validateData() {
         boolean isOk = true;
 
-        selectedFile = clientLogs.getSelectedItem().getValue();
+        File selectedFile = clientLogs.getSelectedItem().getValue();
 
         if (selectedFile == null) {
             clientLogs.setErrorMessage(Labels.getLabel("training.file_not_found"));
             isOk = false;
         }
 
-        selectedPrediction = predictionType.getSelectedItem().getValue();
+        ModelParameter selectedPrediction = predictionType.getSelectedItem().getValue();
         if (selectedPrediction == null) {
             predictionType.setErrorMessage(Labels.getLabel("training.empty_prediciton"));
             isOk = false;
