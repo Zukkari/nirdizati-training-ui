@@ -167,6 +167,7 @@ public class TrainingController extends SelectorComposer<Component> {
                     (SerializableEventListener<Event>) event -> parameters.put(combobox.getId(), Collections.singletonList(combobox.getSelectedItem().getValue())));
             combobox.setReadonly(true);
             combobox.setSelectedItem(combobox.getItemAtIndex(0));
+            parameters.put(combobox.getId(), Collections.singletonList(combobox.getSelectedItem().getValue()));
 
             row.appendChild(combobox);
             gridRows.appendChild(row);
