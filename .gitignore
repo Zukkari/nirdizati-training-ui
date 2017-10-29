@@ -132,3 +132,4 @@ ENV/
 # Nidrizati directories
 usermodels/**
 userlogs/**
+PredictiveMethods/core/training_params.json

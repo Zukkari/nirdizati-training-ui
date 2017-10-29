@@ -148,7 +148,7 @@
                 <enabled>true</enabled>
                 <estimators>300</estimators>
                 <maxfeatures>0.75</maxfeatures>
-                <gbmrate>0.0</gbmrate>
+                <gbmrate>1.0</gbmrate>
             </modelparam>
             <modelparam>
                 <id>decision_tree</id>

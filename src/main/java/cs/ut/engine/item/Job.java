@@ -19,6 +19,7 @@ public class Job {
     private Date completeTime;
 
     private String resultPath;
+    private String identifier = "bpic15";
 
     public Job() {
         createTime = Calendar.getInstance().getTime();
@@ -93,6 +94,14 @@ public class Job {
         this.outcome = outcome;
     }
 
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
     @Override
     public String toString() {
         return outcome.getParameter()
@@ -103,7 +112,7 @@ public class Job {
                 .concat("_")
                 .concat(learner.getParameter())
                 .concat("_")
-                .concat("bpic15")
+                .concat(identifier)
                 .concat(".pkl");
     }
 }
