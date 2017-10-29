@@ -54,6 +54,11 @@ public class JobManager {
                             log.debug(String.format("Scheduled job <%s>", job));
                             Worker.getInstance().scheduleJob(job);
                         })));
+
+        if (!Worker.getInstance().isAlive()) {
+            Worker.getInstance().start();
+        }
+
         logFile = null;
     }
 
