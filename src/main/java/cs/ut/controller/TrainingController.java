@@ -82,6 +82,8 @@ public class TrainingController extends SelectorComposer<Component> {
             row.appendChild(sectionName);
 
             value.forEach(option -> {
+                option = new ModelParameter(option);
+
                 Checkbox checkbox = new Checkbox();
                 checkbox.setName(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
                 checkbox.setValue(option);
@@ -129,6 +131,7 @@ public class TrainingController extends SelectorComposer<Component> {
             estimators.setConstraint(NO_EMPTY);
 
             estimators.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> option.setEstimators(estimators.getValue()));
+            estimators.addEventListener(Events.ON_ERROR, (SerializableEventListener<Event>) event -> estimators.setValue(0));
 
             cont.appendChild(estimators);
             container.appendChild(cont);
@@ -143,6 +146,7 @@ public class TrainingController extends SelectorComposer<Component> {
             doublebox.setConstraint(NO_EMPTY);
 
             doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> option.setMaxfeatures(doublebox.getValue()));
+            doublebox.addEventListener(Events.ON_ERROR, (SerializableEventListener<Event>) event -> doublebox.setValue(0.0));
 
             cont.appendChild(doublebox);
             container.appendChild(cont);
@@ -157,6 +161,7 @@ public class TrainingController extends SelectorComposer<Component> {
             doublebox.setConstraint(NO_EMPTY);
 
             doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> option.setGbmrate(doublebox.getValue()));
+            doublebox.addEventListener(Events.ON_ERROR, (SerializableEventListener<Event>) event -> doublebox.setValue(0.0));
 
             cont.appendChild(doublebox);
             container.appendChild(cont);
