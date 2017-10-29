@@ -2,10 +2,14 @@ package cs.ut.controller;
 
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
+import cs.ut.engine.JobManager;
 import cs.ut.manager.LogManager;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
@@ -14,12 +18,11 @@ import org.zkoss.zkmax.zul.Navitem;
 import org.zkoss.zul.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TrainingController extends SelectorComposer<Component> {
     private static final Logger log = Logger.getLogger(TrainingController.class);
+    private static final String NO_EMPTY = "no empty";
 
     @Wire
     private Combobox clientLogs;
@@ -41,10 +44,7 @@ public class TrainingController extends SelectorComposer<Component> {
 
     private Rows gridRows;
 
-    private transient List<ModelParameter> parameters;
-
-    private transient File selectedFile;
-    private transient ModelParameter selectedPrediction;
+    private transient Map<String, List<ModelParameter>> parameters = new HashMap<>();
 
     private transient Map<String, List<ModelParameter>> properties =
             MasterConfiguration.getInstance().getModelConfigurationProvider().getProperties();
@@ -66,9 +66,12 @@ public class TrainingController extends SelectorComposer<Component> {
         modeSwitch.setSelectedItem(basicMode);
     }
 
-    private void initOptionsMenu() {
+    private void initAdvancedMode() {
         optionsGrid.getRows().getChildren().clear();
         log.debug(properties);
+
+        properties.keySet().forEach(key -> parameters.put(key, new ArrayList<>()));
+
         properties.forEach((key, value) -> {
             Row row = new Row();
             row.setSclass("option-row");
@@ -79,25 +82,95 @@ public class TrainingController extends SelectorComposer<Component> {
             row.appendChild(sectionName);
 
             value.forEach(option -> {
+                option = new ModelParameter(option);
+
                 Checkbox checkbox = new Checkbox();
                 checkbox.setName(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
                 checkbox.setValue(option);
                 checkbox.setLabel(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
                 checkbox.setSclass("option-value");
+                checkbox.setDisabled(!option.isEnabled());
 
-                row.appendChild(checkbox);
+                checkbox.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) event -> {
+                    if (checkbox.isChecked()) {
+                        parameters.get(((ModelParameter) checkbox.getValue()).getType()).add(checkbox.getValue());
+                    } else {
+                        parameters.get(((ModelParameter) checkbox.getValue()).getType()).remove(checkbox.getValue());
+                    }
+                });
+
+                if ("learner".equals(option.getType())) {
+                    Vbox container = new Vbox();
+                    container.appendChild(checkbox);
+                    Grid optionHolder = new Grid();
+                    Rows rows = new Rows();
+                    optionHolder.appendChild(rows);
+                    container.appendChild(optionHolder);
+                    generateHyperparameterFields(rows, checkbox, option);
+                    row.appendChild(container);
+                } else {
+                    row.appendChild(checkbox);
+                }
             });
 
             gridRows.appendChild(row);
         });
     }
 
+    private void generateHyperparameterFields(Rows container, Checkbox checkbox, ModelParameter option) {
+        log.debug("Generating additional hyperparameter fields for learners");
+
+        container.setVisible(checkbox.isChecked());
+        checkbox.addEventListener(Events.ON_CLICK, e -> container.setVisible(checkbox.isChecked()));
+        if (option.getEstimators() != null) {
+            Row cont = new Row();
+            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_estimators"))));
+
+            Intbox estimators = new Intbox();
+            estimators.setValue(option.getEstimators());
+            estimators.setConstraint(NO_EMPTY);
+
+            estimators.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> option.setEstimators(estimators.getValue()));
+            estimators.addEventListener(Events.ON_ERROR, (SerializableEventListener<Event>) event -> estimators.setValue(0));
+
+            cont.appendChild(estimators);
+            container.appendChild(cont);
+        }
+
+        if (option.getMaxfeatures() != null) {
+            Row cont = new Row();
+            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_maxfeatures"))));
+
+            Doublebox doublebox = new Doublebox();
+            doublebox.setValue(option.getMaxfeatures());
+            doublebox.setConstraint(NO_EMPTY);
+
+            doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> option.setMaxfeatures(doublebox.getValue()));
+            doublebox.addEventListener(Events.ON_ERROR, (SerializableEventListener<Event>) event -> doublebox.setValue(0.0));
+
+            cont.appendChild(doublebox);
+            container.appendChild(cont);
+        }
+
+        if (option.getGbmrate() != null) {
+            Row cont = new Row();
+            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_gbmrate"))));
+
+            Doublebox doublebox = new Doublebox();
+            doublebox.setValue(option.getGbmrate());
+            doublebox.setConstraint(NO_EMPTY);
+
+            doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> option.setGbmrate(doublebox.getValue()));
+            doublebox.addEventListener(Events.ON_ERROR, (SerializableEventListener<Event>) event -> doublebox.setValue(0.0));
+
+            cont.appendChild(doublebox);
+            container.appendChild(cont);
+        }
+    }
+
     private void initPredictions() {
         List<ModelParameter> params = properties.remove("predictiontype");
         log.debug(String.format("Received %s prediction types", params.size()));
-
-        parameters = new ArrayList<>();
-        parameters.addAll(params);
 
         params.forEach(it -> {
             Comboitem item = predictionType.appendItem(Labels.getLabel(it.getType().concat(".").concat(it.getId())));
@@ -154,7 +227,7 @@ public class TrainingController extends SelectorComposer<Component> {
     @Listen("onClick = #advancedMode")
     public void enabledAdvanced() {
         log.debug("enabling advanced mode");
-        initOptionsMenu();
+        initAdvancedMode();
     }
 
     @Listen("onClick = #basicMode")
@@ -167,20 +240,34 @@ public class TrainingController extends SelectorComposer<Component> {
     public void startTraining() {
         if (validateData()) {
             log.debug("Parameters are valid, calling script to construct the model");
+            Runnable jobs = () -> {
+                JobManager.getInstance().setLog(clientLogs.getSelectedItem().getValue());
+                Map<String, List<ModelParameter>> params =
+                        basicMode.equals(modeSwitch.getSelectedItem()) ?
+                        new HashMap<>(MasterConfiguration.getInstance().getModelConfigurationProvider().getBasicModel())
+                        : new HashMap<>(parameters);
+                Comboitem comboitem = predictionType.getSelectedItem();
+                params.put(((ModelParameter) comboitem.getValue()).getType(), Collections.singletonList(comboitem.getValue()));
+                JobManager.getInstance()
+                        .generateJobs(params);
+            };
+            log.debug("Jobs generated...");
+            jobs.run();
+
         }
     }
 
     private boolean validateData() {
         boolean isOk = true;
 
-        selectedFile = clientLogs.getSelectedItem().getValue();
+        File selectedFile = clientLogs.getSelectedItem().getValue();
 
         if (selectedFile == null) {
             clientLogs.setErrorMessage(Labels.getLabel("training.file_not_found"));
             isOk = false;
         }
 
-        selectedPrediction = predictionType.getSelectedItem().getValue();
+        ModelParameter selectedPrediction = predictionType.getSelectedItem().getValue();
         if (selectedPrediction == null) {
             predictionType.setErrorMessage(Labels.getLabel("training.empty_prediciton"));
             isOk = false;

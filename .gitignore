@@ -128,3 +128,8 @@ ENV/
 
 # Trained pickle models
 *.pkl
+
+# Nidrizati directories
+usermodels/**
+userlogs/**
+PredictiveMethods/core/training_params.json

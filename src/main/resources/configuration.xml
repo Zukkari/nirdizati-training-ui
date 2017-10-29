@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <configuration>
+
+    <!-- Page configuration used for redirects -->
     <pageConfig>
         <page>
             <id>landing</id>
@@ -23,8 +25,18 @@
             <uri>/views/validation.zul</uri>
         </page>
     </pageConfig>
-    <userLogDirectory>../userlogs/</userLogDirectory>
 
+    <!-- Paths configuration used for log, model and script storage -->
+    <paths>
+        <!-- Directory for user log storage -->
+        <userLogDirectory>/home/zukkari/git/nirdizati-training-ui/userlogs/</userLogDirectory>
+        <!-- Directory for user model storage -->
+        <userModelDirectory>/home/zukkari/git/nirdizati-training-ui/usermodels/</userModelDirectory>
+        <!-- Directory where to look for prediction scripts -->
+        <scriptDirectory>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/</scriptDirectory>
+    </paths>
+
+    <!-- Header button configuration for header construction -->
     <headerConfiguration>
         <headerItem>
             <label>header.upload</label>
@@ -52,92 +64,102 @@
         </headerItem>
     </headerConfiguration>
 
+    <!-- Model training configurations -->
     <modelConfig>
+
+        <!-- Types that can be used for model construction -->
         <types>
             <type>encoding</type>
             <type>bucketing</type>
-            <type>regression</type>
+            <type>learner</type>
             <type>predictiontype</type>
         </types>
 
+        <!-- Configuration for basic modes based on id of modelparams-->
         <basicParams>
             <param>frequency</param>
             <param>single</param>
             <param>random_forest</param>
         </basicParams>
 
+        <!-- Model parameters that are represented in the menu -->
         <modelparams>
             <modelparam>
                 <id>last_state</id>
-                <parameter></parameter>
+                <parameter>laststate</parameter>
                 <type>encoding</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>frequency</id>
-                <parameter></parameter>
+                <parameter>agg</parameter>
                 <type>encoding</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>combined</id>
-                <parameter></parameter>
+                <parameter>combined</parameter>
                 <type>encoding</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>index_based</id>
-                <parameter></parameter>
+                <parameter>index</parameter>
                 <type>encoding</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>single</id>
-                <parameter></parameter>
+                <parameter>single</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>state_based</id>
-                <parameter></parameter>
+                <parameter>state</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>clustering</id>
-                <parameter></parameter>
+                <parameter>cluster</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>prefix_lenght_based</id>
-                <parameter></parameter>
+                <parameter>prefix</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
 
             <modelparam>
                 <id>random_forest</id>
-                <parameter></parameter>
-                <type>regression</type>
+                <parameter>rf</parameter>
+                <type>learner</type>
                 <enabled>true</enabled>
+                <estimators>300</estimators>
+                <maxfeatures>0.75</maxfeatures>
             </modelparam>
             <modelparam>
                 <id>gradient_boosting</id>
-                <parameter></parameter>
-                <type>regression</type>
+                <parameter>gbm</parameter>
+                <type>learner</type>
                 <enabled>true</enabled>
+                <estimators>300</estimators>
+                <maxfeatures>0.75</maxfeatures>
+                <gbmrate>1.0</gbmrate>
             </modelparam>
             <modelparam>
                 <id>decision_tree</id>
                 <parameter></parameter>
-                <type>regression</type>
-                <enabled>true</enabled>
+                <type>learner</type>
+                <enabled>false</enabled>
             </modelparam>
 
             <modelparam>
                 <id>remaining_time</id>
-                <parameter></parameter>
+                <parameter>remtime</parameter>
                 <type>predictiontype</type>
                 <enabled>true</enabled>
             </modelparam>
@@ -145,7 +167,7 @@
                 <id>outcome</id>
                 <parameter></parameter>
                 <type>predictiontype</type>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
             </modelparam>
         </modelparams>
     </modelConfig>
