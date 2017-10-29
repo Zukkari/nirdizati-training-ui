@@ -47,6 +47,7 @@ public class Worker extends Thread {
         while (true) {
             if (jobQueue.peek() != null) {
                 Job job = jobQueue.poll();
+                generateTrainingJson(job);
                 log.debug(String.format("Executing job <%s>", job));
                 job.setStartTime(Calendar.getInstance().getTime());
                 executeJob(job);
@@ -114,5 +115,9 @@ public class Worker extends Thread {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Failed to execute script call", e);
         }
+    }
+
+    private void generateTrainingJson(Job job) {
+
     }
 }
