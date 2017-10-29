@@ -138,12 +138,17 @@
                 <parameter>rf</parameter>
                 <type>learner</type>
                 <enabled>true</enabled>
+                <estimators>300</estimators>
+                <maxfeatures>0.75</maxfeatures>
             </modelparam>
             <modelparam>
                 <id>gradient_boosting</id>
                 <parameter>gbm</parameter>
                 <type>learner</type>
                 <enabled>true</enabled>
+                <estimators>300</estimators>
+                <maxfeatures>0.75</maxfeatures>
+                <gbmrate>0.0</gbmrate>
             </modelparam>
             <modelparam>
                 <id>decision_tree</id>

@@ -22,6 +22,7 @@ import java.util.*;
 
 public class TrainingController extends SelectorComposer<Component> {
     private static final Logger log = Logger.getLogger(TrainingController.class);
+    private static final String NO_EMPTY = "no empty";
 
     @Wire
     private Combobox clientLogs;
@@ -65,7 +66,7 @@ public class TrainingController extends SelectorComposer<Component> {
         modeSwitch.setSelectedItem(basicMode);
     }
 
-    private void initOptionsMenu() {
+    private void initAdvancedMode() {
         optionsGrid.getRows().getChildren().clear();
         log.debug(properties);
 
@@ -88,22 +89,78 @@ public class TrainingController extends SelectorComposer<Component> {
                 checkbox.setSclass("option-value");
                 checkbox.setDisabled(!option.isEnabled());
 
-                checkbox.addEventListener(Events.ON_CLICK, new SerializableEventListener<Event>() {
-                    @Override
-                    public void onEvent(Event event) throws Exception {
-                        if (checkbox.isChecked()) {
-                            parameters.get(((ModelParameter) checkbox.getValue()).getType()).add(checkbox.getValue());
-                        } else {
-                            parameters.get(((ModelParameter) checkbox.getValue()).getType()).remove(checkbox.getValue());
-                        }
+                checkbox.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) event -> {
+                    if (checkbox.isChecked()) {
+                        parameters.get(((ModelParameter) checkbox.getValue()).getType()).add(checkbox.getValue());
+                    } else {
+                        parameters.get(((ModelParameter) checkbox.getValue()).getType()).remove(checkbox.getValue());
                     }
                 });
 
-                row.appendChild(checkbox);
+                if ("learner".equals(option.getType())) {
+                    Vbox container = new Vbox();
+                    container.appendChild(checkbox);
+                    Grid optionHolder = new Grid();
+                    Rows rows = new Rows();
+                    optionHolder.appendChild(rows);
+                    container.appendChild(optionHolder);
+                    generateHyperparameterFields(rows, checkbox, option);
+                    row.appendChild(container);
+                } else {
+                    row.appendChild(checkbox);
+                }
             });
 
             gridRows.appendChild(row);
         });
+    }
+
+    private void generateHyperparameterFields(Rows container, Checkbox checkbox, ModelParameter option) {
+        log.debug("Generating additional hyperparameter fields for learners");
+
+        container.setVisible(checkbox.isChecked());
+        checkbox.addEventListener(Events.ON_CLICK, e -> container.setVisible(checkbox.isChecked()));
+        if (option.getEstimators() != null) {
+            Row cont = new Row();
+            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_estimators"))));
+
+            Intbox estimators = new Intbox();
+            estimators.setValue(option.getEstimators());
+            estimators.setConstraint(NO_EMPTY);
+
+            estimators.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> option.setEstimators(estimators.getValue()));
+
+            cont.appendChild(estimators);
+            container.appendChild(cont);
+        }
+
+        if (option.getMaxfeatures() != null) {
+            Row cont = new Row();
+            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_maxfeatures"))));
+
+            Doublebox doublebox = new Doublebox();
+            doublebox.setValue(option.getMaxfeatures());
+            doublebox.setConstraint(NO_EMPTY);
+
+            doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> option.setMaxfeatures(doublebox.getValue()));
+
+            cont.appendChild(doublebox);
+            container.appendChild(cont);
+        }
+
+        if (option.getGbmrate() != null) {
+            Row cont = new Row();
+            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_gbmrate"))));
+
+            Doublebox doublebox = new Doublebox();
+            doublebox.setValue(option.getGbmrate());
+            doublebox.setConstraint(NO_EMPTY);
+
+            doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> option.setGbmrate(doublebox.getValue()));
+
+            cont.appendChild(doublebox);
+            container.appendChild(cont);
+        }
     }
 
     private void initPredictions() {
@@ -165,7 +222,7 @@ public class TrainingController extends SelectorComposer<Component> {
     @Listen("onClick = #advancedMode")
     public void enabledAdvanced() {
         log.debug("enabling advanced mode");
-        initOptionsMenu();
+        initAdvancedMode();
     }
 
     @Listen("onClick = #basicMode")
