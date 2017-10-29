@@ -157,6 +157,8 @@ public class TrainingController extends SelectorComposer<Component> {
             Combobox combobox = new Combobox();
             combobox.setId(key);
             value.forEach(val -> {
+                val = new ModelParameter(val);
+
                 if (val.isEnabled()) {
                     Comboitem comboitem = combobox.appendItem(Labels.getLabel(key.concat(".").concat(val.getId())));
                     comboitem.setValue(val);
