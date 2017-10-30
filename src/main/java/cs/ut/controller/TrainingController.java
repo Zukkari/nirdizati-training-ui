@@ -7,12 +7,15 @@ import cs.ut.manager.LogManager;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zk.ui.select.SelectorComposer;
+import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkmax.zul.Navbar;
 import org.zkoss.zkmax.zul.Navitem;
 import org.zkoss.zul.*;
@@ -150,6 +153,7 @@ public class TrainingController extends SelectorComposer<Component> {
             row.setSclass("option-row");
 
             Label label = new Label(Labels.getLabel(key));
+            label.setId(key);
             label.setSclass("option-label");
 
             row.appendChild(label);
@@ -203,10 +207,17 @@ public class TrainingController extends SelectorComposer<Component> {
 
             Intbox estimators = new Intbox();
             estimators.setValue(option.getEstimators());
-            estimators.setConstraint(NO_EMPTY);
 
-            estimators.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> option.setEstimators(estimators.getValue()));
-            estimators.addEventListener(Events.ON_ERROR, (SerializableEventListener<Event>) event -> estimators.setValue(0));
+            estimators.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> {
+                Integer val = estimators.getValue();
+                if (val != null && val > 0) {
+                    option.setEstimators(val);
+                    estimators.clearErrorMessage();
+                } else {
+                    estimators.setValue(option.getEstimators());
+                    estimators.setErrorMessage(Labels.getLabel("training.validation.n_of_estimators"));
+                }
+            });
 
             cont.appendChild(estimators);
             rows.appendChild(cont);
@@ -218,10 +229,17 @@ public class TrainingController extends SelectorComposer<Component> {
 
             Doublebox doublebox = new Doublebox();
             doublebox.setValue(option.getMaxfeatures());
-            doublebox.setConstraint(NO_EMPTY);
 
-            doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> option.setMaxfeatures(doublebox.getValue()));
-            doublebox.addEventListener(Events.ON_ERROR, (SerializableEventListener<Event>) event -> doublebox.setValue(0.0));
+            doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> {
+                Double val = doublebox.getValue();
+                if (val != null && val > 0) {
+                    option.setMaxfeatures(val);
+                    doublebox.clearErrorMessage();
+                } else {
+                    doublebox.setValue(option.getMaxfeatures());
+                    doublebox.setErrorMessage(Labels.getLabel("training.validation.n_of_max_features"));
+                }
+            });
 
             cont.appendChild(doublebox);
             rows.appendChild(cont);
@@ -233,10 +251,17 @@ public class TrainingController extends SelectorComposer<Component> {
 
             Doublebox doublebox = new Doublebox();
             doublebox.setValue(option.getGbmrate());
-            doublebox.setConstraint(NO_EMPTY);
 
-            doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> option.setGbmrate(doublebox.getValue()));
-            doublebox.addEventListener(Events.ON_ERROR, (SerializableEventListener<Event>) event -> doublebox.setValue(0.0));
+            doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> {
+                Double val = doublebox.getValue();
+                if (val != null && val > 0) {
+                    option.setGbmrate(val);
+                    doublebox.clearErrorMessage();
+                } else {
+                    doublebox.setValue(option.getGbmrate());
+                    doublebox.setErrorMessage(Labels.getLabel("training.validation.gbm_learn_rate"));
+                }
+            });
 
             cont.appendChild(doublebox);
             rows.appendChild(cont);
@@ -277,21 +302,36 @@ public class TrainingController extends SelectorComposer<Component> {
     }
 
     private boolean validateData() {
-        boolean isOk = true;
+        final boolean[] isOk = {true};
 
         File selectedFile = clientLogs.getSelectedItem().getValue();
 
         if (selectedFile == null) {
             clientLogs.setErrorMessage(Labels.getLabel("training.file_not_found"));
-            isOk = false;
+            isOk[0] = false;
         }
 
         ModelParameter selectedPrediction = predictionType.getSelectedItem().getValue();
         if (selectedPrediction == null) {
             predictionType.setErrorMessage(Labels.getLabel("training.empty_prediciton"));
-            isOk = false;
+            isOk[0] = false;
         }
 
-        return isOk;
+        List<String> errorParams = new ArrayList<>();
+        parameters.forEach((key, val) -> {
+            if (val.isEmpty()) {
+                isOk[0] = false;
+                errorParams.add(Labels.getLabel(key));
+            }
+        });
+
+        if (!errorParams.isEmpty()) {
+            Clients.showNotification(
+                    Labels.getLabel("training.validation_failed",
+                            new Object[] {String.join(", ", errorParams)}),
+                    "error", getSelf(), "bottom_center" , -1);
+        }
+
+        return isOk[0];
     }
 }
