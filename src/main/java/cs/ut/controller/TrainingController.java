@@ -7,12 +7,15 @@ import cs.ut.manager.LogManager;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zk.ui.select.SelectorComposer;
+import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkmax.zul.Navbar;
 import org.zkoss.zkmax.zul.Navitem;
 import org.zkoss.zul.*;
@@ -43,6 +46,8 @@ public class TrainingController extends SelectorComposer<Component> {
     private Navitem advancedMode;
 
     private Rows gridRows;
+
+    private Row hyperParamRow = new Row();
 
     private transient Map<String, List<ModelParameter>> parameters = new HashMap<>();
 
@@ -99,73 +104,11 @@ public class TrainingController extends SelectorComposer<Component> {
                     }
                 });
 
-                if ("learner".equals(option.getType())) {
-                    Vbox container = new Vbox();
-                    container.appendChild(checkbox);
-                    Grid optionHolder = new Grid();
-                    Rows rows = new Rows();
-                    optionHolder.appendChild(rows);
-                    container.appendChild(optionHolder);
-                    generateHyperparameterFields(rows, checkbox, option);
-                    row.appendChild(container);
-                } else {
-                    row.appendChild(checkbox);
-                }
+                row.appendChild(checkbox);
             });
 
             gridRows.appendChild(row);
         });
-    }
-
-    private void generateHyperparameterFields(Rows container, Checkbox checkbox, ModelParameter option) {
-        log.debug("Generating additional hyperparameter fields for learners");
-
-        container.setVisible(checkbox.isChecked());
-        checkbox.addEventListener(Events.ON_CLICK, e -> container.setVisible(checkbox.isChecked()));
-        if (option.getEstimators() != null) {
-            Row cont = new Row();
-            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_estimators"))));
-
-            Intbox estimators = new Intbox();
-            estimators.setValue(option.getEstimators());
-            estimators.setConstraint(NO_EMPTY);
-
-            estimators.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> option.setEstimators(estimators.getValue()));
-            estimators.addEventListener(Events.ON_ERROR, (SerializableEventListener<Event>) event -> estimators.setValue(0));
-
-            cont.appendChild(estimators);
-            container.appendChild(cont);
-        }
-
-        if (option.getMaxfeatures() != null) {
-            Row cont = new Row();
-            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_maxfeatures"))));
-
-            Doublebox doublebox = new Doublebox();
-            doublebox.setValue(option.getMaxfeatures());
-            doublebox.setConstraint(NO_EMPTY);
-
-            doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> option.setMaxfeatures(doublebox.getValue()));
-            doublebox.addEventListener(Events.ON_ERROR, (SerializableEventListener<Event>) event -> doublebox.setValue(0.0));
-
-            cont.appendChild(doublebox);
-            container.appendChild(cont);
-        }
-
-        if (option.getGbmrate() != null) {
-            Row cont = new Row();
-            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_gbmrate"))));
-
-            Doublebox doublebox = new Doublebox();
-            doublebox.setValue(option.getGbmrate());
-            doublebox.setConstraint(NO_EMPTY);
-
-            doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> option.setGbmrate(doublebox.getValue()));
-            doublebox.addEventListener(Events.ON_ERROR, (SerializableEventListener<Event>) event -> doublebox.setValue(0.0));
-
-            cont.appendChild(doublebox);
-            container.appendChild(cont);
-        }
     }
 
     private void initPredictions() {
@@ -202,26 +145,129 @@ public class TrainingController extends SelectorComposer<Component> {
 
     private void initBasicMode() {
         optionsGrid.getRows().getChildren().clear();
-        Map<String, List<ModelParameter>> basicParams = MasterConfiguration.getInstance().getModelConfigurationProvider().getBasicModel();
 
-        basicParams.forEach((key, value) -> {
-            if (!value.isEmpty()) {
-                Row row = new Row();
-                row.setSclass("option-row");
+        properties.forEach((key, value ) -> {
+            if ("predictiontype".equals(key)) return;
 
-                Label caption = new Label(Labels.getLabel(key));
-                caption.setSclass("option-label");
-                row.appendChild(caption);
+            Row row = new Row();
+            row.setSclass("option-row");
 
-                value.forEach(val -> {
-                    Label label = new Label(Labels.getLabel(key.concat(".").concat(val.getId())));
-                    label.setSclass("option-value");
-                    row.appendChild(label);
-                });
-                gridRows.appendChild(row);
+            Label label = new Label(Labels.getLabel(key));
+            label.setId(key);
+            label.setSclass("option-label");
+
+            row.appendChild(label);
+
+            Combobox combobox = new Combobox();
+            combobox.setId(key);
+            value.forEach(val -> {
+                val = new ModelParameter(val);
+
+                if (val.isEnabled()) {
+                    Comboitem comboitem = combobox.appendItem(Labels.getLabel(key.concat(".").concat(val.getId())));
+                    comboitem.setValue(val);
+                }
+            });
+
+            combobox.addEventListener(Events.ON_CHANGE,
+                    (SerializableEventListener<Event>) event -> parameters.put(combobox.getId(), Collections.singletonList(combobox.getSelectedItem().getValue())));
+            combobox.setReadonly(true);
+            combobox.setSelectedItem(combobox.getItemAtIndex(0));
+            parameters.put(combobox.getId(), Collections.singletonList(combobox.getSelectedItem().getValue()));
+
+            row.appendChild(combobox);
+            gridRows.appendChild(row);
+
+            if ("learner".equals(key)) {
+                gridRows.appendChild(hyperParamRow);
+                combobox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) e -> generateHyperparambox(combobox.getSelectedItem().getValue()));
+                generateHyperparambox(combobox.getSelectedItem().getValue());
             }
         });
-        log.debug(basicParams);
+    }
+
+    private void generateHyperparambox(ModelParameter option) {
+        hyperParamRow.getChildren().clear();
+
+        hyperParamRow.appendChild(new Label());
+
+        Grid grid = new Grid();
+        grid.setVflex("min");
+        grid.setHflex("min");
+
+        Rows rows = new Rows();
+
+        grid.appendChild(rows);
+
+        log.debug("Generating additional hyperparameter fields for learners");
+
+        if (option.getEstimators() != null) {
+            Row cont = new Row();
+            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_estimators"))));
+
+            Intbox estimators = new Intbox();
+            estimators.setValue(option.getEstimators());
+
+            estimators.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> {
+                Integer val = estimators.getValue();
+                if (val != null && val > 0) {
+                    option.setEstimators(val);
+                    estimators.clearErrorMessage();
+                } else {
+                    estimators.setValue(option.getEstimators());
+                    estimators.setErrorMessage(Labels.getLabel("training.validation.n_of_estimators"));
+                }
+            });
+
+            cont.appendChild(estimators);
+            rows.appendChild(cont);
+        }
+
+        if (option.getMaxfeatures() != null) {
+            Row cont = new Row();
+            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_maxfeatures"))));
+
+            Doublebox doublebox = new Doublebox();
+            doublebox.setValue(option.getMaxfeatures());
+
+            doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> {
+                Double val = doublebox.getValue();
+                if (val != null && val > 0) {
+                    option.setMaxfeatures(val);
+                    doublebox.clearErrorMessage();
+                } else {
+                    doublebox.setValue(option.getMaxfeatures());
+                    doublebox.setErrorMessage(Labels.getLabel("training.validation.n_of_max_features"));
+                }
+            });
+
+            cont.appendChild(doublebox);
+            rows.appendChild(cont);
+        }
+
+        if (option.getGbmrate() != null) {
+            Row cont = new Row();
+            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_gbmrate"))));
+
+            Doublebox doublebox = new Doublebox();
+            doublebox.setValue(option.getGbmrate());
+
+            doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> {
+                Double val = doublebox.getValue();
+                if (val != null && val > 0) {
+                    option.setGbmrate(val);
+                    doublebox.clearErrorMessage();
+                } else {
+                    doublebox.setValue(option.getGbmrate());
+                    doublebox.setErrorMessage(Labels.getLabel("training.validation.gbm_learn_rate"));
+                }
+            });
+
+            cont.appendChild(doublebox);
+            rows.appendChild(cont);
+        }
+
+        hyperParamRow.appendChild(grid);
     }
 
     @Listen("onClick = #advancedMode")
@@ -242,37 +288,50 @@ public class TrainingController extends SelectorComposer<Component> {
             log.debug("Parameters are valid, calling script to construct the model");
             Runnable jobs = () -> {
                 JobManager.getInstance().setLog(clientLogs.getSelectedItem().getValue());
-                Map<String, List<ModelParameter>> params =
-                        basicMode.equals(modeSwitch.getSelectedItem()) ?
-                        new HashMap<>(MasterConfiguration.getInstance().getModelConfigurationProvider().getBasicModel())
-                        : new HashMap<>(parameters);
                 Comboitem comboitem = predictionType.getSelectedItem();
+
+                Map<String, List<ModelParameter>> params = new HashMap<>(parameters);
                 params.put(((ModelParameter) comboitem.getValue()).getType(), Collections.singletonList(comboitem.getValue()));
                 JobManager.getInstance()
                         .generateJobs(params);
             };
+
             log.debug("Jobs generated...");
             jobs.run();
-
         }
     }
 
     private boolean validateData() {
-        boolean isOk = true;
+        final boolean[] isOk = {true};
 
         File selectedFile = clientLogs.getSelectedItem().getValue();
 
         if (selectedFile == null) {
             clientLogs.setErrorMessage(Labels.getLabel("training.file_not_found"));
-            isOk = false;
+            isOk[0] = false;
         }
 
         ModelParameter selectedPrediction = predictionType.getSelectedItem().getValue();
         if (selectedPrediction == null) {
             predictionType.setErrorMessage(Labels.getLabel("training.empty_prediciton"));
-            isOk = false;
+            isOk[0] = false;
         }
 
-        return isOk;
+        List<String> errorParams = new ArrayList<>();
+        parameters.forEach((key, val) -> {
+            if (val.isEmpty()) {
+                isOk[0] = false;
+                errorParams.add(Labels.getLabel(key));
+            }
+        });
+
+        if (!errorParams.isEmpty()) {
+            Clients.showNotification(
+                    Labels.getLabel("training.validation_failed",
+                            new Object[] {String.join(", ", errorParams)}),
+                    "error", getSelf(), "bottom_center" , -1);
+        }
+
+        return isOk[0];
     }
 }

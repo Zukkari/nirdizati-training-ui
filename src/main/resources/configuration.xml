@@ -75,13 +75,6 @@
             <type>predictiontype</type>
         </types>
 
-        <!-- Configuration for basic modes based on id of modelparams-->
-        <basicParams>
-            <param>frequency</param>
-            <param>single</param>
-            <param>random_forest</param>
-        </basicParams>
-
         <!-- Model parameters that are represented in the menu -->
         <modelparams>
             <modelparam>
