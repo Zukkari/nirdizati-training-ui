@@ -34,6 +34,12 @@
         <userModelDirectory>/home/zukkari/git/nirdizati-training-ui/usermodels/</userModelDirectory>
         <!-- Directory where to look for prediction scripts -->
         <scriptDirectory>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/</scriptDirectory>
+        <!-- Directory for training parameters relative to script directory -->
+        <trainDirectory>training_params/</trainDirectory>
+        <!-- Directory for data set parameters relative to script directory-->
+        <datasetDirectory>dataset_params/</datasetDirectory>
+        <!-- Results where trained models are located relative to script directory -->
+        <resultsDirectory>results/</resultsDirectory>
     </paths>
 
     <!-- Header button configuration for header construction -->
@@ -158,7 +164,7 @@
             </modelparam>
             <modelparam>
                 <id>outcome</id>
-                <parameter></parameter>
+                <parameter>label</parameter>
                 <type>predictiontype</type>
                 <enabled>false</enabled>
             </modelparam>

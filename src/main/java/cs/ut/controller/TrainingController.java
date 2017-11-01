@@ -45,6 +45,10 @@ public class TrainingController extends SelectorComposer<Component> {
     @Wire
     private Navitem advancedMode;
 
+    @Wire
+    private Button startTraining;
+
+
     private Rows gridRows;
 
     private Row hyperParamRow = new Row();

@@ -16,6 +16,12 @@ public class DirectoryPathProvider {
     @XmlElement(name = "scriptDirectory")
     private String scriptDirectory;
 
+    @XmlElement(name = "datasetDirectory")
+    private String datasetDirectory;
+
+    @XmlElement(name = "trainDirectory")
+    private String trainDirectory;
+
     public String getUserLogDirectory() {
         return userLogDirectory;
     }
@@ -26,6 +32,14 @@ public class DirectoryPathProvider {
 
     public String getScriptDirectory() {
         return scriptDirectory;
+    }
+
+    public String getDatasetDirectory() {
+        return datasetDirectory;
+    }
+
+    public String getTrainDirectory() {
+        return trainDirectory;
     }
 
     public void validatePathsExist() {
