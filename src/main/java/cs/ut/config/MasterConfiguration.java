@@ -6,8 +6,7 @@ import cs.ut.engine.Worker;
 import cs.ut.provider.DirectoryPathProvider;
 import cs.ut.provider.ModelConfigurationProvider;
 import cs.ut.provider.PageConfigurationProvider;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
+import org.apache.log4j.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -142,7 +141,25 @@ public class MasterConfiguration {
      * Configures logger and Enables appenders for Log4j
      */
     private void configureLogger() {
-        BasicConfigurator.configure();
+        Logger.getRootLogger().removeAllAppenders();
+        Logger.getRootLogger().setAdditivity(false);
+
+        ConsoleAppender ca = new ConsoleAppender();
+        ca.setLayout(new PatternLayout("<%d{ISO8601}> <%p> <%C{1}.class:%L> <%m>%n"));
+        ca.setThreshold(Level.DEBUG);
+        ca.activateOptions();
+
+        Logger.getRootLogger().addAppender(ca);
+
+        FileAppender fileAppender = new FileAppender();
+        fileAppender.setLayout(new PatternLayout("<%d{ISO8601}> <%p> <%C{1}.class:%L> <%m>%n"));
+        fileAppender.setName("nirdizati_ui_log.log");
+        fileAppender.setFile("nirdizati_ui_log.log");
+        fileAppender.setThreshold(Level.DEBUG);
+        fileAppender.setAppend(true);
+        fileAppender.activateOptions();
+
+        Logger.getRootLogger().addAppender(fileAppender);
     }
 
     public DirectoryPathProvider getDirectoryPathProvider() {
