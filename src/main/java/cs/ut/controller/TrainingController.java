@@ -23,7 +23,6 @@ import java.util.*;
 
 public class TrainingController extends SelectorComposer<Component> {
     private static final Logger log = Logger.getLogger(TrainingController.class);
-    private static final String NO_EMPTY = "no empty";
 
     @Wire
     private Combobox clientLogs;
@@ -81,10 +80,8 @@ public class TrainingController extends SelectorComposer<Component> {
 
         properties.forEach((key, value) -> {
             Row row = new Row();
-            row.setSclass("option-row");
 
             Label sectionName = new Label();
-            sectionName.setSclass("option-label");
             sectionName.setValue(Labels.getLabel(key));
             row.appendChild(sectionName);
 
@@ -95,7 +92,6 @@ public class TrainingController extends SelectorComposer<Component> {
                 checkbox.setName(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
                 checkbox.setValue(option);
                 checkbox.setLabel(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
-                checkbox.setSclass("option-value");
                 checkbox.setDisabled(!option.isEnabled());
 
                 checkbox.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) event -> {
@@ -152,11 +148,9 @@ public class TrainingController extends SelectorComposer<Component> {
             if ("predictiontype".equals(key)) return;
 
             Row row = new Row();
-            row.setSclass("option-row");
 
             Label label = new Label(Labels.getLabel(key));
             label.setId(key);
-            label.setSclass("option-label");
 
             row.appendChild(label);
 

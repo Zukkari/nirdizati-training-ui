@@ -98,14 +98,10 @@ public class UploadLogController extends SelectorComposer<Component> {
 
                 log.debug(String.format("Writing file into : %s", file.getAbsolutePath()));
 
-                try (InputStream inputStream = media.getStreamData();
-                     FileOutputStream fos = new FileOutputStream(file)) {
+                String data = media.getStringData();
+                try (FileOutputStream fos = new FileOutputStream(file)) {
 
-                    byte[] buffer = new byte[inputStream.available()];
-                    int read = inputStream.read(buffer);
-
-                    assert buffer.length == read : "Could not read all available bytes";
-
+                    byte[] buffer = data.getBytes("UTF-8");
                     fos.write(buffer);
                 } catch (IOException e) {
                     log.debug(e);
