@@ -3,17 +3,19 @@ package cs.ut.engine;
 import cs.ut.config.items.ModelParameter;
 import cs.ut.engine.item.Job;
 import org.apache.log4j.Logger;
+import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.Session;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JobManager {
     private static final Logger log = Logger.getLogger(JobManager.class);
 
     private static JobManager jobManager;
     private List<Job> completedJobs = new ArrayList<>();
+
+    private Map<Session, Queue<Job>> jobQueue = new HashMap<>();
 
     private File logFile;
 
@@ -41,6 +43,10 @@ public class JobManager {
         List<ModelParameter> learner = parameters.get("learner");
         List<ModelParameter> result = parameters.get("predictiontype");
 
+
+        Session currentSession = Executions.getCurrent().getSession();
+
+        Queue<Job> list = jobQueue.get(currentSession) == null ? new LinkedList<>() : jobQueue.get(currentSession);
         encodings.forEach(encoding ->
                 bucketing.forEach(bucket ->
                         learner.forEach(learn -> {
@@ -52,12 +58,33 @@ public class JobManager {
                             job.setLog(logFile);
 
                             log.debug(String.format("Scheduled job <%s>", job));
-                            Worker.getInstance().scheduleJob(job);
+                            list.add(job);
                         })));
+
+        jobQueue.put(currentSession, list);
         logFile = null;
     }
 
     public List<Job> getCompletedJobs() {
         return completedJobs;
+    }
+
+    public void delployJobs() {
+        Worker worker = Worker.getInstance();
+
+        Queue<Job> currentJobs = jobQueue.get(Executions.getCurrent().getSession());
+        log.debug(String.format("Deploying <%s> jobs", currentJobs.size()));
+
+        while (currentJobs.peek() != null) {
+            worker.scheduleJob(currentJobs.poll());
+        }
+        log.debug("Successfully deployed all jobs to worker");
+    }
+
+    public void flushJobs() {
+        Session session = Executions.getCurrent().getSession();
+        log.debug(String.format("Clearing job queue for session <%s>", session));
+        jobQueue.get(session).clear();
+        log.debug(String.format("Cleared job queue for session <%s>", session));
     }
 }

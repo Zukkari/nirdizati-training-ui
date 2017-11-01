@@ -54,10 +54,14 @@ public class Worker extends Thread {
             if (jobQueue.peek() != null) {
                 Job job = jobQueue.poll();
                 try {
+                    log.debug(String.format("Started executing job <%s>", job));
                     generateTrainingJson(job);
+                    log.debug("Successfully generated json");
                     log.debug(String.format("Executing job <%s>", job));
                     job.setStartTime(Calendar.getInstance().getTime());
                     executeJob(job);
+                    job.setCompleteTime(Calendar.getInstance().getTime());
+                    log.debug(String.format("Finished executing job <%s>", job));
                 } catch (Exception e) {
                     log.debug(String.format("Failed to execute job <%s>", job), e);
                 }

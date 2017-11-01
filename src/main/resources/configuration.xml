@@ -76,6 +76,12 @@
         </headerItem>
     </headerConfiguration>
 
+    <!-- Columns that need to be specified by user when creating model -->
+    <userCols>
+        <col>case_id_col</col>
+        <col>activity_col</col>
+    </userCols>
+
     <!-- Model training configurations -->
     <modelConfig>
 

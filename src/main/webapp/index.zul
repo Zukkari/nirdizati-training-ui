@@ -1,3 +1,4 @@
+<?link rel="stylesheet" type="text/css" href="/css/misc.css" ?>
 <zk>
     <borderlayout vflex="1" hflex="1" apply="cs.ut.controller.MainPageController">
         <north hflex="1" vflex="1" border="none">
