@@ -87,4 +87,19 @@ public class JobManager {
         jobQueue.get(session).clear();
         log.debug(String.format("Cleared job queue for session <%s>", session));
     }
+
+    public File getCurrentFile() {
+        Session session = Executions.getCurrent().getSession();
+        log.debug(String.format("Getting current file for session <%s>", session));
+
+        Queue<Job> jobs = jobQueue.get(session);
+
+        if (!jobs.isEmpty()) {
+            Job job = jobs.peek();
+            if (job != null) {
+                return job.getLog();
+            }
+        }
+        throw new RuntimeException("Current execution has no jobs scheduled");
+    }
 }

@@ -1,5 +1,6 @@
 package cs.ut.controller;
 
+import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.manager.LogManager;
 import org.apache.commons.io.FilenameUtils;
@@ -107,7 +108,7 @@ public class UploadLogController extends SelectorComposer<Component> {
                     log.debug(e);
                 }
 
-                Clients.showNotification(Labels.getLabel("upload.success", new Object[]{media.getName()}), "info", getSelf(), "bottom_right", -1);
+                Clients.showNotification(Labels.getLabel("upload.success", new Object[]{HtmlEscapers.htmlEscaper().escape(media.getName())}), "info", getSelf(), "bottom_right", -1);
                 MainPageController.getInstance().setContent("landing", getPage());
             };
 

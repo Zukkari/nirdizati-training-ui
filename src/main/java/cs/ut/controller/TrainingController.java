@@ -1,5 +1,7 @@
 package cs.ut.controller;
 
+import com.google.common.escape.Escaper;
+import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
 import cs.ut.engine.JobManager;
@@ -7,6 +9,7 @@ import cs.ut.manager.LogManager;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.SerializableEventListener;
@@ -127,8 +130,10 @@ public class TrainingController extends SelectorComposer<Component> {
         List<File> fileNames = manager.getAllAvailableLogs();
         log.debug(String.format("Got %s items for client log combobox", fileNames.size()));
 
+        Escaper escaper = HtmlEscapers.htmlEscaper();
+
         fileNames.forEach(file -> {
-            Comboitem item = clientLogs.appendItem(file.getName());
+            Comboitem item = clientLogs.appendItem(escaper.escape(file.getName()));
             item.setValue(file);
         });
 
@@ -294,6 +299,11 @@ public class TrainingController extends SelectorComposer<Component> {
 
             log.debug("Jobs generated...");
             jobs.run();
+
+
+            Window window = (Window) Executions.createComponents(
+                    "/views/modals/params.zul", getSelf(), null);
+            if (getSelf().getChildren().contains(window)) window.doModal();
         }
     }
 

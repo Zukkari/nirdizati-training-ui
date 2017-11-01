@@ -45,6 +45,10 @@ public class MasterConfiguration {
     @XmlElement(name = "ext")
     private List<String> extensions;
 
+    @XmlElementWrapper(name = "userCols")
+    @XmlElement(name = "col")
+    private List<String> userCols;
+
     private DirectoryPathProvider directoryPathProvider;
 
     private ModelConfigurationProvider modelConfigurationProvider;
@@ -100,6 +104,8 @@ public class MasterConfiguration {
 
         extensions = configuration.getExtensions();
 
+        userCols = configuration.getUserCols();
+
         getDirectoryPathProvider().validatePathsExist();
 
         log.debug("Successfully read master configuration");
@@ -126,6 +132,10 @@ public class MasterConfiguration {
 
     public List<String> getExtensions() {
         return extensions;
+    }
+
+    public List<String> getUserCols() {
+        return userCols;
     }
 
     /**
