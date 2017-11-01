@@ -44,13 +44,19 @@ public class DirectoryPathProvider {
 
     public void validatePathsExist() {
         File file = new File(userLogDirectory);
-
-        if (!file.exists() && !file.mkdir()) {
-            throw new RuntimeException(String.format("Cannot write to directory <%s>", userLogDirectory));
-        }
+        createDirIfAbsent(file);
 
         file = new File(userModelDirectory);
+        createDirIfAbsent(file);
 
+        file = new File(datasetDirectory);
+        createDirIfAbsent(file);
+
+        file = new File(trainDirectory);
+        createDirIfAbsent(file);
+    }
+
+    private void createDirIfAbsent(File file) {
         if (!file.exists() && !file.mkdir()) {
             throw new RuntimeException(String.format("Cannot write to directory <%s>", userLogDirectory));
         }

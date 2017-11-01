@@ -26,6 +26,12 @@
         </page>
     </pageConfig>
 
+    <!-- extensions allowed for file upload -->
+    <extensions>
+        <ext>xes</ext>
+        <ext>csv</ext>
+    </extensions>
+
     <!-- Paths configuration used for log, model and script storage -->
     <paths>
         <!-- Directory for user log storage -->

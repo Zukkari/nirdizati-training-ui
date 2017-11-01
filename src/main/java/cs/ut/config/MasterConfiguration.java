@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name = "configuration")
@@ -40,6 +41,10 @@ public class MasterConfiguration {
 
     @XmlElement(name = "modelConfig")
     private ModelProperties modelProperties;
+
+    @XmlElementWrapper(name = "extensions")
+    @XmlElement(name = "ext")
+    private List<String> extensions;
 
     private DirectoryPathProvider directoryPathProvider;
 
@@ -94,6 +99,8 @@ public class MasterConfiguration {
 
         modelConfigurationProvider = new ModelConfigurationProvider(modelProperties);
 
+        extensions = configuration.getExtensions();
+
         getDirectoryPathProvider().validatePathsExist();
 
         log.debug("Successfully read master configuration");
@@ -116,6 +123,10 @@ public class MasterConfiguration {
 
     public ModelConfigurationProvider getModelConfigurationProvider() {
         return modelConfigurationProvider;
+    }
+
+    public List<String> getExtensions() {
+        return extensions;
     }
 
     /**

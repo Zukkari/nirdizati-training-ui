@@ -1,6 +1,7 @@
 package cs.ut.manager;
 
 import cs.ut.config.MasterConfiguration;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ public class LogManager {
     private String logDirectory = MasterConfiguration.getInstance().getDirectoryPathProvider().getUserLogDirectory();
 
     private static LogManager manager;
+
+    private List<String> allowedExtensions = MasterConfiguration.getInstance().getExtensions();
 
     private LogManager() {
     }
@@ -26,6 +29,7 @@ public class LogManager {
 
     /**
      * Returns all available file names contained in user log directory defined in configuration.xml
+     *
      * @return List of all available file names contained in user log directory
      */
     public List<File> getAllAvailableLogs() {
@@ -35,24 +39,9 @@ public class LogManager {
 
         File[] files = folder.listFiles();
         if (files != null) {
-            logs.addAll(Arrays.stream(files).filter(it -> ".XES".equalsIgnoreCase(getFileExtension(it.getName()))).collect(Collectors.toList()));
+            logs.addAll(Arrays.stream(files).filter(it -> allowedExtensions.contains(FilenameUtils.getExtension(it.getName()))).collect(Collectors.toList()));
         }
 
         return logs;
-    }
-
-    /**
-     * Retrieves file extension of the file name.
-     *
-     * @param name where file extension should be extracted from.
-     * @return file extension or empty string if file extension denoting character could not be found.
-     */
-    public String getFileExtension(String name) {
-        int lastIndex = name.lastIndexOf('.');
-        if (lastIndex == -1) {
-            return "";
-        } else {
-            return name.substring(lastIndex);
-        }
     }
 }

@@ -2,6 +2,8 @@ package cs.ut.controller;
 
 import cs.ut.config.MasterConfiguration;
 import cs.ut.manager.LogManager;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
@@ -20,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * Controller that responds for the log uploading page.
@@ -27,7 +30,6 @@ import java.nio.file.Paths;
 
 public class UploadLogController extends SelectorComposer<Component> {
     private static final Logger log = Logger.getLogger(UploadLogController.class);
-    private static final String SUPPORTED_FORMAT = ".XES";
 
     @Wire
     private Label fileName;
@@ -41,6 +43,8 @@ public class UploadLogController extends SelectorComposer<Component> {
     private transient Media media;
 
     private transient LogManager manager = LogManager.getInstance();
+
+    private List<String> allowedExtensions = MasterConfiguration.getInstance().getExtensions();
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
@@ -63,18 +67,18 @@ public class UploadLogController extends SelectorComposer<Component> {
             return;
         }
 
-        if (SUPPORTED_FORMAT.equalsIgnoreCase(manager.getFileExtension(uploaded.getName()))) {
-            log.debug("Log is in .XES format");
+        if (allowedExtensions.contains(FilenameUtils.getExtension(uploaded.getName()).toLowerCase())) {
+            log.debug("Log is in allowed format");
             fileName.setSclass("");
             fileName.setValue(uploaded.getName());
             saveMediaObject(uploaded);
             uploadLog.setVisible(true);
         } else {
-            log.debug("Log is not in .XES format");
+            log.debug("Log is not in allowed format");
             log.debug("Showing error message");
             fileName.setSclass("error-label");
             fileName.setValue(Labels.getLabel("upload.wrong.format",
-                    new Object[]{uploaded.getName(), manager.getFileExtension(uploaded.getName())}));
+                    new Object[]{uploaded.getName(), FilenameUtils.getExtension(uploaded.getName())}));
             uploadLog.setVisible(false);
         }
     }
