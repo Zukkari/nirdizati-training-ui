@@ -17,7 +17,7 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.*;
 
 import java.io.File;
-import java.util.List;
+import java.util.*;
 
 public class ParameterModalController extends SelectorComposer<Component> {
     private static final Logger log = Logger.getLogger(ParameterModalController.class);
@@ -36,6 +36,8 @@ public class ParameterModalController extends SelectorComposer<Component> {
 
     private List<String> cols = MasterConfiguration.getInstance().getUserCols();
 
+    List<Combobox> fields = new ArrayList<>();
+
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
@@ -44,6 +46,7 @@ public class ParameterModalController extends SelectorComposer<Component> {
         log.debug(String.format("Current log file : <%s>", file.getName()));
         List<String> fileColumns = CsvReader.readTableHeader(file);
         log.debug(String.format("Columns present in table: <%s>", fileColumns));
+        Collections.sort(fileColumns);
 
         Escaper escaper = HtmlEscapers.htmlEscaper();
 
@@ -66,6 +69,8 @@ public class ParameterModalController extends SelectorComposer<Component> {
             Row row = new Row();
             row.appendChild(new Label(Labels.getLabel("modals.param.".concat(it))));
             Combobox combobox = new Combobox();
+
+            combobox.setId(it);
             combobox.setReadonly(true);
             combobox.setConstraint("no empty");
 
@@ -78,6 +83,7 @@ public class ParameterModalController extends SelectorComposer<Component> {
                 combobox.setSelectedItem(combobox.getItemAtIndex(0));
             }
 
+            fields.add(combobox);
             row.appendChild(combobox);
             rows.appendChild(row);
         });
@@ -90,9 +96,20 @@ public class ParameterModalController extends SelectorComposer<Component> {
         });
 
         okBtn.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) e -> {
+            CsvReader reader = new CsvReader();
+            reader.generateDatasetParams(gatherValues());
             JobManager.getInstance().delployJobs();
         });
 
         log.debug("Showing modal");
+    }
+
+
+    private Map<String, List<String>> gatherValues() {
+        Map<String, List<String>> vals = new HashMap<>();
+
+        fields.forEach(it -> vals.put(it.getId(), Collections.singletonList(it.getSelectedItem().getValue())));
+
+        return vals;
     }
 }
