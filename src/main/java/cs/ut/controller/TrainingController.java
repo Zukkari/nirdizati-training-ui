@@ -1,7 +1,5 @@
 package cs.ut.controller;
 
-import com.google.common.escape.Escaper;
-import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
 import cs.ut.engine.JobManager;
@@ -14,6 +12,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zk.ui.select.SelectorComposer;
+import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
@@ -26,6 +25,7 @@ import java.util.*;
 
 public class TrainingController extends SelectorComposer<Component> {
     private static final Logger log = Logger.getLogger(TrainingController.class);
+    private static final String NO_EMPTY = "no empty";
 
     @Wire
     private Combobox clientLogs;
@@ -44,10 +44,6 @@ public class TrainingController extends SelectorComposer<Component> {
 
     @Wire
     private Navitem advancedMode;
-
-    @Wire
-    private Button startTraining;
-
 
     private Rows gridRows;
 
@@ -83,8 +79,10 @@ public class TrainingController extends SelectorComposer<Component> {
 
         properties.forEach((key, value) -> {
             Row row = new Row();
+            row.setSclass("option-row");
 
             Label sectionName = new Label();
+            sectionName.setSclass("option-label");
             sectionName.setValue(Labels.getLabel(key));
             row.appendChild(sectionName);
 
@@ -95,6 +93,7 @@ public class TrainingController extends SelectorComposer<Component> {
                 checkbox.setName(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
                 checkbox.setValue(option);
                 checkbox.setLabel(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
+                checkbox.setSclass("option-value");
                 checkbox.setDisabled(!option.isEnabled());
 
                 checkbox.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) event -> {
@@ -130,10 +129,8 @@ public class TrainingController extends SelectorComposer<Component> {
         List<File> fileNames = manager.getAllAvailableLogs();
         log.debug(String.format("Got %s items for client log combobox", fileNames.size()));
 
-        Escaper escaper = HtmlEscapers.htmlEscaper();
-
         fileNames.forEach(file -> {
-            Comboitem item = clientLogs.appendItem(escaper.escape(file.getName()));
+            Comboitem item = clientLogs.appendItem(file.getName());
             item.setValue(file);
         });
 
@@ -153,9 +150,11 @@ public class TrainingController extends SelectorComposer<Component> {
             if ("predictiontype".equals(key)) return;
 
             Row row = new Row();
+            row.setSclass("option-row");
 
             Label label = new Label(Labels.getLabel(key));
             label.setId(key);
+            label.setSclass("option-label");
 
             row.appendChild(label);
 
@@ -299,11 +298,6 @@ public class TrainingController extends SelectorComposer<Component> {
 
             log.debug("Jobs generated...");
             jobs.run();
-
-
-            Window window = (Window) Executions.createComponents(
-                    "/views/modals/params.zul", getSelf(), null);
-            if (getSelf().getChildren().contains(window)) window.doModal();
         }
     }
 

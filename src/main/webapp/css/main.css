@@ -70,14 +70,19 @@
     min-font-size: larger;
 }
 
+.error-label {
+    color: red;
+    padding: 10px;
+    border-radius: 3px;
+    background-color: rgba(255, 21, 0, 0.38);
+}
+
 .z-notification-info .z-notification-content {
     background: rgba(10, 255, 31, 0.38);
     color: rgba(46, 135, 1, 0.69);
+    margin: 40px;
     text-align: center;
     border-radius: 1px;
-    padding: 40px;
-    width: 100%;
-    margin-bottom: 50%;
 }
 
 .z-notification-error .z-notification-content {

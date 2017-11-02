@@ -1,9 +1,7 @@
 package cs.ut.controller;
 
-import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.manager.LogManager;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
@@ -22,7 +20,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.List;
 
 /**
  * Controller that responds for the log uploading page.
@@ -30,6 +27,7 @@ import java.util.List;
 
 public class UploadLogController extends SelectorComposer<Component> {
     private static final Logger log = Logger.getLogger(UploadLogController.class);
+    private static final String SUPPORTED_FORMAT = ".XES";
 
     @Wire
     private Label fileName;
@@ -43,8 +41,6 @@ public class UploadLogController extends SelectorComposer<Component> {
     private transient Media media;
 
     private transient LogManager manager = LogManager.getInstance();
-
-    private List<String> allowedExtensions = MasterConfiguration.getInstance().getExtensions();
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
@@ -67,18 +63,18 @@ public class UploadLogController extends SelectorComposer<Component> {
             return;
         }
 
-        if (allowedExtensions.contains(FilenameUtils.getExtension(uploaded.getName()).toLowerCase())) {
-            log.debug("Log is in allowed format");
+        if (SUPPORTED_FORMAT.equalsIgnoreCase(manager.getFileExtension(uploaded.getName()))) {
+            log.debug("Log is in .XES format");
             fileName.setSclass("");
             fileName.setValue(uploaded.getName());
             saveMediaObject(uploaded);
             uploadLog.setVisible(true);
         } else {
-            log.debug("Log is not in allowed format");
+            log.debug("Log is not in .XES format");
             log.debug("Showing error message");
             fileName.setSclass("error-label");
             fileName.setValue(Labels.getLabel("upload.wrong.format",
-                    new Object[]{uploaded.getName(), FilenameUtils.getExtension(uploaded.getName())}));
+                    new Object[]{uploaded.getName(), manager.getFileExtension(uploaded.getName())}));
             uploadLog.setVisible(false);
         }
     }
@@ -99,16 +95,20 @@ public class UploadLogController extends SelectorComposer<Component> {
 
                 log.debug(String.format("Writing file into : %s", file.getAbsolutePath()));
 
-                String data = media.getStringData();
-                try (FileOutputStream fos = new FileOutputStream(file)) {
+                try (InputStream inputStream = media.getStreamData();
+                     FileOutputStream fos = new FileOutputStream(file)) {
 
-                    byte[] buffer = data.getBytes("UTF-8");
+                    byte[] buffer = new byte[inputStream.available()];
+                    int read = inputStream.read(buffer);
+
+                    assert buffer.length == read : "Could not read all available bytes";
+
                     fos.write(buffer);
                 } catch (IOException e) {
                     log.debug(e);
                 }
 
-                Clients.showNotification(Labels.getLabel("upload.success", new Object[]{HtmlEscapers.htmlEscaper().escape(media.getName())}), "info", getSelf(), "bottom_right", -1);
+                Clients.showNotification(Labels.getLabel("upload.success", new Object[]{media.getName()}), "info", getSelf(), "bottom_right", -1);
                 MainPageController.getInstance().setContent("landing", getPage());
             };
 
