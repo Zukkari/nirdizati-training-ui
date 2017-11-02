@@ -16,6 +16,12 @@ public class DirectoryPathProvider {
     @XmlElement(name = "scriptDirectory")
     private String scriptDirectory;
 
+    @XmlElement(name = "datasetDirectory")
+    private String datasetDirectory;
+
+    @XmlElement(name = "trainDirectory")
+    private String trainDirectory;
+
     public String getUserLogDirectory() {
         return userLogDirectory;
     }
@@ -28,15 +34,29 @@ public class DirectoryPathProvider {
         return scriptDirectory;
     }
 
+    public String getDatasetDirectory() {
+        return datasetDirectory;
+    }
+
+    public String getTrainDirectory() {
+        return trainDirectory;
+    }
+
     public void validatePathsExist() {
         File file = new File(userLogDirectory);
-
-        if (!file.exists() && !file.mkdir()) {
-            throw new RuntimeException(String.format("Cannot write to directory <%s>", userLogDirectory));
-        }
+        createDirIfAbsent(file);
 
         file = new File(userModelDirectory);
+        createDirIfAbsent(file);
 
+        file = new File(datasetDirectory);
+        createDirIfAbsent(file);
+
+        file = new File(trainDirectory);
+        createDirIfAbsent(file);
+    }
+
+    private void createDirIfAbsent(File file) {
         if (!file.exists() && !file.mkdir()) {
             throw new RuntimeException(String.format("Cannot write to directory <%s>", userLogDirectory));
         }

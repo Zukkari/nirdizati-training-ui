@@ -26,6 +26,12 @@
         </page>
     </pageConfig>
 
+    <!-- extensions allowed for file upload -->
+    <extensions>
+        <ext>xes</ext>
+        <ext>csv</ext>
+    </extensions>
+
     <!-- Paths configuration used for log, model and script storage -->
     <paths>
         <!-- Directory for user log storage -->
@@ -34,6 +40,12 @@
         <userModelDirectory>/home/zukkari/git/nirdizati-training-ui/usermodels/</userModelDirectory>
         <!-- Directory where to look for prediction scripts -->
         <scriptDirectory>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/</scriptDirectory>
+        <!-- Directory for training parameters relative to script directory -->
+        <trainDirectory>training_params/</trainDirectory>
+        <!-- Directory for data set parameters relative to script directory-->
+        <datasetDirectory>dataset_params/</datasetDirectory>
+        <!-- Results where trained models are located relative to script directory -->
+        <resultsDirectory>results/</resultsDirectory>
     </paths>
 
     <!-- Header button configuration for header construction -->
@@ -63,6 +75,12 @@
             <position>3</position>
         </headerItem>
     </headerConfiguration>
+
+    <!-- Columns that need to be specified by user when creating model -->
+    <userCols>
+        <col>case_id_col</col>
+        <col>activity_col</col>
+    </userCols>
 
     <!-- Model training configurations -->
     <modelConfig>
@@ -158,7 +176,7 @@
             </modelparam>
             <modelparam>
                 <id>outcome</id>
-                <parameter></parameter>
+                <parameter>label</parameter>
                 <type>predictiontype</type>
                 <enabled>false</enabled>
             </modelparam>

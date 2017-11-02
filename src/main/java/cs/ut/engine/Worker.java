@@ -19,7 +19,6 @@ import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
 public class Worker extends Thread {
-    private static final String JSON_FILE_NAME = "training_params.json";
 
     private static final Logger log = Logger.getLogger(Worker.class);
     private static Worker worker;
@@ -27,10 +26,12 @@ public class Worker extends Thread {
     private String scriptDir;
     private String userModelDir;
     private String coreDir;
+    private String datasetDir;
+    private String trainingDir;
 
     private Queue<Job> jobQueue = new LinkedList<>();
 
-    private Worker(){
+    private Worker() {
     }
 
     public static Worker getInstance() {
@@ -41,6 +42,8 @@ public class Worker extends Thread {
             worker.scriptDir = pathProvider.getScriptDirectory();
             worker.userModelDir = pathProvider.getUserModelDirectory();
             worker.coreDir = worker.scriptDir.concat("core/");
+            worker.datasetDir = pathProvider.getDatasetDirectory();
+            worker.trainingDir = pathProvider.getTrainDirectory();
         }
         return worker;
     }
@@ -50,10 +53,18 @@ public class Worker extends Thread {
         while (true) {
             if (jobQueue.peek() != null) {
                 Job job = jobQueue.poll();
-                generateTrainingJson(job);
-                log.debug(String.format("Executing job <%s>", job));
-                job.setStartTime(Calendar.getInstance().getTime());
-                executeJob(job);
+                try {
+                    log.debug(String.format("Started executing job <%s>", job));
+                    generateTrainingJson(job);
+                    log.debug("Successfully generated json");
+                    log.debug(String.format("Executing job <%s>", job));
+                    job.setStartTime(Calendar.getInstance().getTime());
+                    executeJob(job);
+                    job.setCompleteTime(Calendar.getInstance().getTime());
+                    log.debug(String.format("Finished executing job <%s>", job));
+                } catch (Exception e) {
+                    log.debug(String.format("Failed to execute job <%s>", job), e);
+                }
                 job.setCompleteTime(Calendar.getInstance().getTime());
             } else {
                 try {
@@ -75,7 +86,6 @@ public class Worker extends Thread {
             ProcessBuilder pb = new ProcessBuilder("python",
                     coreDir.concat("train.py"),
                     coreDir.concat("BPIC15_4.csv"),
-                    job.getIdentifier(),
                     job.getBucketing().getParameter(),
                     job.getEncoding().getParameter(),
                     job.getLearner().getParameter());
@@ -131,19 +141,19 @@ public class Worker extends Thread {
         params.put("gbm_learning_rate", learner.getGbmrate() == null ? 0 : learner.getGbmrate());
         params.put("n_clusters", 1);
 
-        json.put(job.getIdentifier(),
+        json.put(job.getOutcome().getParameter(),
                 new JSONObject().put(job.getBucketing().getParameter().concat("_").concat(job.getEncoding().getParameter()),
                         new JSONObject().put(learner.getParameter(), params)));
 
         log.debug(String.format("Generated following json based on config %n <%s>", json.toString()));
 
-        writeJsonToDisk(json);
+        writeJsonToDisk(json, FilenameUtils.getBaseName(job.getLog().getName()), trainingDir);
     }
 
-    private void writeJsonToDisk(JSONObject json) {
+    private void writeJsonToDisk(JSONObject json, String filename, String path) {
         log.debug("Writing json to disk...");
 
-        File file = new File(coreDir.concat(JSON_FILE_NAME));
+        File file = new File(coreDir.concat(path.concat(filename.concat(".json"))));
 
         byte[] bytes;
         try {
@@ -151,6 +161,15 @@ public class Worker extends Thread {
         } catch (UnsupportedEncodingException e) {
             log.debug(String.format("Unsupported encoding %s", e));
             throw new RuntimeException(e);
+        }
+
+        if (!file.exists()) {
+            try {
+                Files.createFile(Paths.get(file.getAbsolutePath()));
+                log.debug(String.format("Created file <%s>", file.getName()));
+            } catch (IOException e) {
+                throw new RuntimeException(String.format("Failed creating file <%s>", file.getAbsolutePath()), e);
+            }
         }
 
         try (OutputStream os = new FileOutputStream(file)) {
