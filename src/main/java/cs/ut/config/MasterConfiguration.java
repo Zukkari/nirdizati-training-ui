@@ -6,7 +6,8 @@ import cs.ut.engine.Worker;
 import cs.ut.provider.DirectoryPathProvider;
 import cs.ut.provider.ModelConfigurationProvider;
 import cs.ut.provider.PageConfigurationProvider;
-import org.apache.log4j.*;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -39,14 +40,6 @@ public class MasterConfiguration {
 
     @XmlElement(name = "modelConfig")
     private ModelProperties modelProperties;
-
-    @XmlElementWrapper(name = "extensions")
-    @XmlElement(name = "ext")
-    private List<String> extensions;
-
-    @XmlElementWrapper(name = "userCols")
-    @XmlElement(name = "col")
-    private List<String> userCols;
 
     private DirectoryPathProvider directoryPathProvider;
 
@@ -101,10 +94,6 @@ public class MasterConfiguration {
 
         modelConfigurationProvider = new ModelConfigurationProvider(modelProperties);
 
-        extensions = configuration.getExtensions();
-
-        userCols = configuration.getUserCols();
-
         getDirectoryPathProvider().validatePathsExist();
 
         log.debug("Successfully read master configuration");
@@ -129,37 +118,11 @@ public class MasterConfiguration {
         return modelConfigurationProvider;
     }
 
-    public List<String> getExtensions() {
-        return extensions;
-    }
-
-    public List<String> getUserCols() {
-        return userCols;
-    }
-
     /**
      * Configures logger and Enables appenders for Log4j
      */
     private void configureLogger() {
-        Logger.getRootLogger().removeAllAppenders();
-        Logger.getRootLogger().setAdditivity(false);
-
-        ConsoleAppender ca = new ConsoleAppender();
-        ca.setLayout(new PatternLayout("<%d{ISO8601}> <%p> <%C{1}.class:%L> <%m>%n"));
-        ca.setThreshold(Level.DEBUG);
-        ca.activateOptions();
-
-        Logger.getRootLogger().addAppender(ca);
-
-        FileAppender fileAppender = new FileAppender();
-        fileAppender.setLayout(new PatternLayout("<%d{ISO8601}> <%p> <%C{1}.class:%L> <%m>%n"));
-        fileAppender.setName("nirdizati_ui_log.log");
-        fileAppender.setFile("nirdizati_ui_log.log");
-        fileAppender.setThreshold(Level.DEBUG);
-        fileAppender.setAppend(true);
-        fileAppender.activateOptions();
-
-        Logger.getRootLogger().addAppender(fileAppender);
+        BasicConfigurator.configure();
     }
 
     public DirectoryPathProvider getDirectoryPathProvider() {
