@@ -1,5 +1,7 @@
 package cs.ut.engine;
 
+import cs.ut.config.MasterConfiguration;
+import cs.ut.config.nodes.CSVConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -12,12 +14,16 @@ import java.util.*;
 public class CsvReader {
     private static final Logger log = Logger.getLogger(CsvReader.class);
 
-    private static String splitter = "[,;]";
+    private static final CSVConfiguration config = MasterConfiguration.getInstance().getCSVConfiguration();
+    private static String splitter = config.getSplitter();
 
+    private static final String CASE_ID_COL = "case_id_col";
+    private static final String ACTIVITY_COL = "activity_col";
     private static final String DYNAMIC_CAT_COLS = "dynamic_cat_cols";
     private static final String STATIC_CAT_COLS = "static_cat_cols";
     private static final String DYNAMIC_NUM_COLS = "dynamic_num_cols";
     private static final String STATIC_NUM_COLS = "static_num_cols";
+    private static final String TIMESTAMP_COL = "timestamp_col";
 
     public static List<String> readTableHeader(File f) {
         log.debug("Reading table header.");
@@ -38,11 +44,30 @@ public class CsvReader {
         return cols;
     }
 
+    public static Map<String, String> identifyUserColumns(List<String> cols) {
+        Map<String, String> result = new HashMap<>();
+
+
+        cols.forEach(col -> {
+            config.getCaseId().forEach(val -> {
+                if (val.equalsIgnoreCase(col)) result.put(CASE_ID_COL, col);
+            });
+
+            config.getActivityId().forEach(val -> {
+                if (val.equalsIgnoreCase(col)) result.put(ACTIVITY_COL, col);
+            });
+        });
+
+        return result;
+    }
+
     public void generateDatasetParams(Map<String, List<String>> userCols) {
         Long start = System.currentTimeMillis();
         Map<String, Set<String>> rows = parseCsv();
+        userCols.forEach((k, v) -> rows.remove(v.get(0)));
 
         Map<String, List<String>> categorisedColumns = classifyColumns(rows);
+        userCols.forEach(categorisedColumns::put);
 
         Long end = System.currentTimeMillis();
         log.debug(String.format("Finished generating dataset parameters in <%s> ms", Long.toString(end - start)));
@@ -56,6 +81,11 @@ public class CsvReader {
         classes.put(STATIC_NUM_COLS, new ArrayList<>());
 
         rows.forEach((k, v) -> {
+            if (v.contains("")) {
+                // remove empty columns so they do not affect categorization
+                v.remove("");
+            }
+
             if (v.size() == 1) {
                 //static
                 String val = v.iterator().next();

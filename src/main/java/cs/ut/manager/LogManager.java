@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class LogManager {
-    private String logDirectory = MasterConfiguration.getInstance().getDirectoryPathProvider().getUserLogDirectory();
+    private String logDirectory = MasterConfiguration.getInstance().getDirectoryPathConfiguration().getUserLogDirectory();
 
     private static LogManager manager;
 

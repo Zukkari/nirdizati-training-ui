@@ -1,4 +1,4 @@
-package cs.ut.provider;
+package cs.ut.config.nodes;
 
 
 import cs.ut.config.items.Page;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Service class that provider Page objects
  */
-public class PageConfigurationProvider {
+public class PageConfigurationConfiguration {
     private List<Page> pages;
 
     @XmlElement(name = "page")

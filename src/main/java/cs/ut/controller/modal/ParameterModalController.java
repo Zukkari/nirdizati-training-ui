@@ -34,9 +34,9 @@ public class ParameterModalController extends SelectorComposer<Component> {
     @Wire
     private Button okBtn;
 
-    private List<String> cols = MasterConfiguration.getInstance().getUserCols();
+    private List<String> cols = MasterConfiguration.getInstance().getCSVConfiguration().getUserCols();
 
-    List<Combobox> fields = new ArrayList<>();
+    private List<Combobox> fields = new ArrayList<>();
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
@@ -47,6 +47,8 @@ public class ParameterModalController extends SelectorComposer<Component> {
         List<String> fileColumns = CsvReader.readTableHeader(file);
         log.debug(String.format("Columns present in table: <%s>", fileColumns));
         Collections.sort(fileColumns);
+
+        Map<String, String> identifiedCols = CsvReader.identifyUserColumns(fileColumns);
 
         Escaper escaper = HtmlEscapers.htmlEscaper();
 
@@ -70,6 +72,8 @@ public class ParameterModalController extends SelectorComposer<Component> {
             row.appendChild(new Label(Labels.getLabel("modals.param.".concat(it))));
             Combobox combobox = new Combobox();
 
+            String identified = identifiedCols.get(it);
+
             combobox.setId(it);
             combobox.setReadonly(true);
             combobox.setConstraint("no empty");
@@ -77,9 +81,11 @@ public class ParameterModalController extends SelectorComposer<Component> {
             fileColumns.forEach(val -> {
                 Comboitem comboitem = combobox.appendItem(escaper.escape(val));
                 comboitem.setValue(val);
+
+                if (val.equals(identified)) combobox.setSelectedItem(comboitem);
             });
 
-            if (!combobox.getItems().isEmpty()) {
+            if (combobox.getSelectedItem() == null) {
                 combobox.setSelectedItem(combobox.getItemAtIndex(0));
             }
 

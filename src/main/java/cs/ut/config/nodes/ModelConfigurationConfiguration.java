@@ -1,4 +1,4 @@
-package cs.ut.provider;
+package cs.ut.config.nodes;
 
 import cs.ut.config.items.ModelParameter;
 import cs.ut.config.items.ModelProperties;
@@ -9,18 +9,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ModelConfigurationProvider {
-    private static final Logger log = Logger.getLogger(ModelConfigurationProvider.class);
+public class ModelConfigurationConfiguration {
+    private static final Logger log = Logger.getLogger(ModelConfigurationConfiguration.class);
 
     private List<String> initalTypes;
     private List<ModelParameter> initialParameters;
 
     private Map<String, List<ModelParameter>> properties = new LinkedHashMap<>();
 
-    private ModelConfigurationProvider() {
+    private ModelConfigurationConfiguration() {
     }
 
-    public ModelConfigurationProvider(ModelProperties parameters) {
+    public ModelConfigurationConfiguration(ModelProperties parameters) {
         this.initalTypes = parameters.getTypes();
         this.initialParameters = parameters.getParameters();
 
