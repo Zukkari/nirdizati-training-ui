@@ -2,6 +2,7 @@ package cs.ut.engine;
 
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.nodes.CSVConfiguration;
+import cs.ut.engine.item.Case;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -28,6 +29,8 @@ public class CsvReader {
     private static final String DYNAMIC_NUM_COLS = "dynamic_num_cols";
     private static final String STATIC_NUM_COLS = "static_num_cols";
     private static final String TIMESTAMP_COL = "timestamp_col";
+    private static final String LABEL_NUM_COLS = "label_num_cols";
+    private static final String LABEL_CAT_COLS = "label_cat_cols";
 
     public static List<String> readTableHeader(File f) {
         log.debug("Reading table header.");
@@ -67,16 +70,18 @@ public class CsvReader {
 
     public void generateDatasetParams(Map<String, List<String>> userCols) {
         Long start = System.currentTimeMillis();
-        Map<String, Set<String>> rows = parseCsv();
-        userCols.forEach((k, v) -> rows.remove(v.get(0)));
+        List<Case> cases = parseCsv(userCols.get(CASE_ID_COL).get(0));
 
-        String timestampCol = identifyTimeStampColumn(rows);
-        rows.remove(timestampCol);
+        String timestampCol = identifyTimeStampColumn(cases.get(0).getAttributes());
+        cases.forEach(c -> {
+            c.getAttributes().remove(timestampCol);
+            c.getAttributes().remove(userCols.get(CASE_ID_COL).get(0));
 
+            if (c.getAttributes().containsKey("remtime")) c.getAttributes().remove("remtime");
+            if (c.getAttributes().containsKey("label")) c.getAttributes().remove("label");
 
-        Map<String, List<String>> categorisedColumns = classifyColumns(rows);
-        userCols.forEach(categorisedColumns::put);
-        categorisedColumns.put(TIMESTAMP_COL, Collections.singletonList(timestampCol));
+            c.setClassifiedCols(classifyColumns(c.getAttributes()));
+        });
 
         Long end = System.currentTimeMillis();
         log.debug(String.format("Finished generating dataset parameters in <%s> ms", Long.toString(end - start)));
@@ -130,32 +135,46 @@ public class CsvReader {
                     //numeric
                     classes.get(STATIC_NUM_COLS).add(k);
                 } else {
-                    //categorical
-                    classes.get(STATIC_CAT_COLS).add(k);
+                    try {
+                        Double d = Double.parseDouble(val);
+                        log.debug(String.format("Successfully parsed double <%s>", d));
+                        classes.get(STATIC_NUM_COLS).add(k);
+                    } catch (NumberFormatException e) {
+                        log.debug(String.format("Value is not a double <%s>", val));
+                        //categorical
+                        classes.get(STATIC_CAT_COLS).add(k);
+                    }
                 }
             } else {
+
+                boolean found = false;
                 //dynamic
-                Iterator<String> iterator = v.iterator();
-                while (iterator.hasNext()) {
-                    if (!StringUtils.isNumeric(iterator.next())) {
+                for (String aV : v) {
+                    if (!StringUtils.isNumeric(aV)) {
                         //is not numeric column
                         classes.get(DYNAMIC_CAT_COLS).add(k);
+                        found = true;
                         break;
                     }
                 }
 
-                classes.get(DYNAMIC_NUM_COLS).add(k);
+                if (!found) {
+                    classes.get(DYNAMIC_NUM_COLS).add(k);
+                }
             }
         });
 
         return classes;
     }
 
-    private Map<String, Set<String>> parseCsv() {
+    private List<Case> parseCsv(String caseIdCol) {
         log.debug("Started parsing csv...");
         Long start = System.currentTimeMillis();
 
-        Map<String, Set<String>> result = new LinkedHashMap<>();
+        List<Case> cases = new ArrayList<>();
+
+        Integer caseIdColIndex = null;
+        String[] colHeads;
 
         String line;
         try (BufferedReader br = new BufferedReader(new FileReader(JobManager.getInstance().getCurrentFile()))) {
@@ -163,19 +182,19 @@ public class CsvReader {
             if (line == null || (line.isEmpty())) {
                 throw new RuntimeException("File is empty");
             } else {
-                String[] colHeads = line.split(splitter);
-                Arrays.stream(colHeads).forEach(head -> result.put(head, new HashSet<>()));
+                colHeads = line.split(splitter);
+                caseIdColIndex = Arrays.asList(colHeads).indexOf(caseIdCol);
             }
 
             line = br.readLine();
             if (line == null || line.isEmpty()) {
                 throw new RuntimeException("File must contain at least 2 rows");
             } else {
-                processRow(line, result);
+                processRow(line, cases, caseIdColIndex, colHeads);
             }
 
             while ((line = br.readLine()) != null) {
-                processRow(line, result);
+                processRow(line, cases, caseIdColIndex, colHeads);
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed reading csv", e);
@@ -183,19 +202,33 @@ public class CsvReader {
 
         Long end = System.currentTimeMillis();
         log.debug(String.format("Finished parsing csv in <%s> ms", Long.toString(end - start)));
-        return result;
+        return cases;
     }
 
-    private void processRow(String row, Map<String, Set<String>> map) {
+    private void processRow(String row, List<Case> cases, Integer caseIndex, String[] head) {
         String[] cols = row.split(splitter);
-        List<String> keys = new ArrayList<>(map.keySet());
 
-        if (cols.length != map.keySet().size()) {
-            throw new RuntimeException("Row has less/more columns that initial header");
+        Case c = findCaseById(cols[caseIndex], cases);
+
+        if (c == null) {
+            c = new Case();
+            c.setId(cols[caseIndex]);
+            prepareCase(head, c);
+            cases.add(c);
         }
+
+        List<String> keys = new ArrayList<>(c.getAttributes().keySet());
 
         for (int i = 0; i < cols.length; i++) {
-            map.get(keys.get(i)).add(cols[i]);
+            c.getAttributes().get(keys.get(i)).add(cols[i]);
         }
+    }
+
+    private void prepareCase(String[] columns, Case c) {
+        Arrays.stream(columns).forEach(head -> c.getAttributes().put(head, new HashSet<>()));
+    }
+
+    private Case findCaseById(String id, List<Case> cases) {
+        return cases.stream().filter(it -> id.equalsIgnoreCase(it.getId())).findFirst().orElse(null);
     }
 }
