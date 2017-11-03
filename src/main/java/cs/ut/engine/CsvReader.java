@@ -83,8 +83,16 @@ public class CsvReader {
             c.setClassifiedCols(classifyColumns(c.getAttributes()));
         });
 
+        Map<String, List<String>> classifiedColumnns = new HashMap<>();
+        classifiedColumnns.putAll(userCols);
+        classifiedColumnns.putAll(collectResultFromCases(cases));
+
         Long end = System.currentTimeMillis();
         log.debug(String.format("Finished generating dataset parameters in <%s> ms", Long.toString(end - start)));
+    }
+
+    private Map<String, List<String>> collectResultFromCases(List<Case> cases) {
+        return new HashMap<>();
     }
 
     private String identifyTimeStampColumn(Map<String, Set<String>> rows) {
