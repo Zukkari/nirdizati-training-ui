@@ -97,7 +97,8 @@
 
         <!-- Values that will be used for timestamp column identification -->
         <timestampFormat>
-            <format></format>
+            <format>yyyy-MM-dd hh:mm:ss</format>
+            <format>yyyy-mm-dd'T'hh:mm:ss</format>
         </timestampFormat>
 
         <!-- Regexp that is used for csv file splitting -->

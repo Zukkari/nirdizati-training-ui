@@ -9,7 +9,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CsvReader {
     private static final Logger log = Logger.getLogger(CsvReader.class);
@@ -66,11 +70,43 @@ public class CsvReader {
         Map<String, Set<String>> rows = parseCsv();
         userCols.forEach((k, v) -> rows.remove(v.get(0)));
 
+        String timestampCol = identifyTimeStampColumn(rows);
+        rows.remove(timestampCol);
+
+
         Map<String, List<String>> categorisedColumns = classifyColumns(rows);
         userCols.forEach(categorisedColumns::put);
+        categorisedColumns.put(TIMESTAMP_COL, Collections.singletonList(timestampCol));
 
         Long end = System.currentTimeMillis();
         log.debug(String.format("Finished generating dataset parameters in <%s> ms", Long.toString(end - start)));
+    }
+
+    private String identifyTimeStampColumn(Map<String, Set<String>> rows) {
+        final String[] colName = new String[1];
+
+        List<DateFormat> formats =
+                config.getTimestampFormat()
+                        .stream()
+                        .map(SimpleDateFormat::new)
+                        .collect(Collectors.toList());
+
+        rows.forEach((k, v) -> {
+            String potentialDate = v.iterator().next();
+
+            formats.forEach(format -> {
+                try {
+                    if (format.parse(potentialDate) != null) {
+                        //is a timestamp column
+                        colName[0] = k;
+                    }
+                } catch (ParseException e) {
+                    log.debug(String.format("Not a date column <%s>", k));
+                }
+            });
+        });
+
+        return colName[0];
     }
 
     private Map<String, List<String>> classifyColumns(Map<String, Set<String>> rows) {
