@@ -143,8 +143,8 @@
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
-                <id>single</id>
-                <parameter>single</parameter>
+                <id>zero</id>
+                <parameter>zero</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
@@ -186,9 +186,11 @@
             </modelparam>
             <modelparam>
                 <id>decision_tree</id>
-                <parameter></parameter>
+                <parameter>dt</parameter>
                 <type>learner</type>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
+                <estimators>300</estimators>
+                <maxfeatures>0.75</maxfeatures>
             </modelparam>
 
             <modelparam>
