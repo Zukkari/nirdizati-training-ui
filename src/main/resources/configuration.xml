@@ -163,9 +163,11 @@
             </modelparam>
             <modelparam>
                 <id>decision_tree</id>
-                <parameter></parameter>
+                <parameter>dt</parameter>
                 <type>learner</type>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
+                <estimators>300</estimators>
+                <maxfeatures>0.75</maxfeatures>
             </modelparam>
 
             <modelparam>
