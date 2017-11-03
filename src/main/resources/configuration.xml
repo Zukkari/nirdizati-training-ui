@@ -120,8 +120,8 @@
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
-                <id>single</id>
-                <parameter>single</parameter>
+                <id>zero</id>
+                <parameter>zero</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
