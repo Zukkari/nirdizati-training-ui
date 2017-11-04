@@ -1,7 +1,7 @@
 package cs.ut.controller;
 
 import cs.ut.config.MasterConfiguration;
-import cs.ut.config.nodes.PageConfigurationConfiguration;
+import cs.ut.config.nodes.PageConfiguration;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -22,13 +22,13 @@ public class LandingPageController extends SelectorComposer<Component> {
     @Wire
     Button existingLog;
 
-    private PageConfigurationConfiguration pageProvider;
+    private PageConfiguration pageProvider;
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
 
-        pageProvider = MasterConfiguration.getInstance().getPageConfigurationConfiguration();
+        pageProvider = MasterConfiguration.getInstance().getPageConfiguration();
 
         wireButtons();
     }

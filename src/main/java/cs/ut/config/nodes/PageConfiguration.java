@@ -4,12 +4,14 @@ package cs.ut.config.nodes;
 import cs.ut.config.items.Page;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
  * Service class that provider Page objects
  */
-public class PageConfigurationConfiguration {
+@XmlRootElement(name = "pageConfig")
+public class PageConfiguration {
     private List<Page> pages;
 
     @XmlElement(name = "page")

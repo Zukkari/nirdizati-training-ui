@@ -1,11 +1,12 @@
 package cs.ut.config;
 
 import cs.ut.config.items.HeaderItem;
+import cs.ut.config.items.ModelParameter;
 import cs.ut.config.items.ModelProperties;
 import cs.ut.config.nodes.CSVConfiguration;
 import cs.ut.config.nodes.DirectoryPathConfiguration;
-import cs.ut.config.nodes.ModelConfigurationConfiguration;
-import cs.ut.config.nodes.PageConfigurationConfiguration;
+import cs.ut.config.nodes.ModelConfiguration;
+import cs.ut.config.nodes.PageConfiguration;
 import cs.ut.engine.Worker;
 import cs.ut.exceptions.NirdizatiRuntimeException;
 import org.apache.log4j.*;
@@ -33,7 +34,7 @@ public class MasterConfiguration {
     private static MasterConfiguration master;
 
     @XmlElement(name = "pageConfig")
-    private PageConfigurationConfiguration pageConfigurationConfiguration;
+    private PageConfiguration pageConfiguration;
 
     @XmlElementWrapper(name = "headerConfiguration")
     @XmlElement(name = "headerItem")
@@ -52,7 +53,7 @@ public class MasterConfiguration {
 
     private DirectoryPathConfiguration directoryPathConfiguration;
 
-    private ModelConfigurationConfiguration modelConfigurationConfiguration;
+    private ModelConfiguration modelConfiguration;
 
     private CSVConfiguration csvConfiguration;
 
@@ -91,22 +92,9 @@ public class MasterConfiguration {
         MasterConfiguration configuration = (MasterConfiguration) unmarshaller.unmarshal(file);
         log.debug("Finished reading configuration");
 
-        pageConfigurationConfiguration = configuration.getPageConfigurationConfiguration();
-        log.debug(String.format("Successfully retrieved %s page configurations", pageConfigurationConfiguration.getPages().size()));
-
-
         headerItems = configuration.getHeaderItems();
         log.debug(String.format("Successfully read %s header items", headerItems.size()));
-
-        modelProperties = configuration.getModelProperties();
-        log.debug(String.format("Successfully read %s types and %s model parameters",
-                modelProperties.getTypes().size(),
-                modelProperties.getParameters().size()));
-
-        modelConfigurationConfiguration = new ModelConfigurationConfiguration(modelProperties);
-
         extensions = configuration.getExtensions();
-
         userCols = configuration.getUserCols();
 
         getDirectoryPathConfiguration().validatePathsExist();
@@ -117,20 +105,16 @@ public class MasterConfiguration {
         Worker.getInstance().start();
     }
 
-    public PageConfigurationConfiguration getPageConfigurationConfiguration() {
-        return pageConfigurationConfiguration;
-    }
-
     public List<HeaderItem> getHeaderItems() {
         return headerItems;
     }
 
-    private ModelProperties getModelProperties() {
-        return modelProperties;
-    }
-
-    public ModelConfigurationConfiguration getModelConfigurationConfiguration() {
-        return modelConfigurationConfiguration;
+    public ModelConfiguration getModelConfiguration() {
+        if (modelProperties == null) {
+            modelProperties = readClass(ModelProperties.class, "modelConfig");
+            modelConfiguration = new ModelConfiguration(modelProperties);
+        }
+        return modelConfiguration;
     }
 
     public List<String> getExtensions() {
@@ -180,6 +164,13 @@ public class MasterConfiguration {
         return csvConfiguration;
     }
 
+    public PageConfiguration getPageConfiguration() {
+        if (pageConfiguration == null) {
+            pageConfiguration = readClass(PageConfiguration.class, "pageConfig");
+        }
+        log.debug(String.format("Successfully retrieved %s page configurations", pageConfiguration.getPages().size()));
+        return pageConfiguration;
+    }
 
     private <T> T readClass(Class<T> clazz, String nodeName) {
         File file = new File(getClass().getClassLoader().getResource("configuration.xml").getFile());
