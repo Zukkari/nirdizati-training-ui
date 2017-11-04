@@ -80,6 +80,7 @@ public class CsvReader {
         cases.forEach(c -> {
             c.getAttributes().remove(timestampCol);
             c.getAttributes().remove(userCols.get(CASE_ID_COL).get(0));
+            c.getAttributes().remove(userCols.get(ACTIVITY_COL).get(0));
 
             if (c.getAttributes().containsKey("remtime")) c.getAttributes().remove("remtime");
             if (c.getAttributes().containsKey("label")) c.getAttributes().remove("label");
@@ -111,6 +112,9 @@ public class CsvReader {
 
             postProcessCase(resultColumns, c, alreadyClassifiedColumns);
         });
+
+        resultColumns.putAll(userCols);
+        resultColumns.get(DYNAMIC.concat(CAT_COLS)).add(userCols.get(ACTIVITY_COL).get(0));
 
         Long end = System.currentTimeMillis();
         log.debug(String.format("Finished generating dataset parameters in <%s> ms", Long.toString(end - start)));
