@@ -1,7 +1,6 @@
 package cs.ut.config;
 
 import cs.ut.config.items.HeaderItem;
-import cs.ut.config.items.ModelParameter;
 import cs.ut.config.items.ModelProperties;
 import cs.ut.config.nodes.CSVConfiguration;
 import cs.ut.config.nodes.DirectoryPathConfiguration;
