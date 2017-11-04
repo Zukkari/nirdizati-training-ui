@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.nodes.CSVConfiguration;
 import cs.ut.engine.item.Case;
-import cs.ut.engine.item.Job;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -77,7 +76,7 @@ public class CsvReader {
         return result;
     }
 
-    public void generateDatasetParams(Map<String, List<String>> userCols) {
+    public Map<String, List<String>> generateDatasetParams(Map<String, List<String>> userCols) {
         Long start = System.currentTimeMillis();
         List<Case> cases = parseCsv(userCols.get(CASE_ID_COL).get(0));
 
@@ -125,11 +124,10 @@ public class CsvReader {
         resultColumns.put(LABEL_NUM_COLS, Collections.singletonList(JobManager.getInstance().getPredictionType().getParameter()));
         resultColumns.put(LABEL_CAT_COLS, Collections.emptyList());
 
-        JobManager.getInstance().applyJSON(generateJson(resultColumns));
-        JobManager.getInstance().delployJobs();
-
         Long end = System.currentTimeMillis();
         log.debug(String.format("Finished generating dataset parameters in <%s> ms", Long.toString(end - start)));
+
+        return resultColumns;
     }
 
     private void postProcessCase(Map<String, List<String>> resultColumns, Case c, Set<String> alreadyClassifiedColumns) {
@@ -301,7 +299,7 @@ public class CsvReader {
         return cases.stream().filter(it -> id.equalsIgnoreCase(it.getId())).findFirst().orElse(null);
     }
 
-    private JSONObject generateJson(Map<String, List<String>> map) {
+    public JSONObject generateJson(Map<String, List<String>> map) {
         JSONObject jsonObject = new JSONObject();
 
         map.forEach((k, v) -> {
@@ -313,5 +311,14 @@ public class CsvReader {
         });
 
         return jsonObject;
+    }
+
+    public List<String> getColumnList() {
+        return Lists.newArrayList(
+                DYNAMIC.concat(NUM_COL),
+                DYNAMIC.concat(CAT_COLS),
+                STATIC.concat(NUM_COL),
+                STATIC.concat(CAT_COLS)
+        );
     }
 }
