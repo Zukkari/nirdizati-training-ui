@@ -1,6 +1,7 @@
 package cs.ut.engine.item;
 
 import cs.ut.config.items.ModelParameter;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.Calendar;
@@ -19,6 +20,8 @@ public class Job {
     private Date completeTime;
 
     private String resultPath;
+
+    private JSONObject datasetJson;
 
     public Job() {
         createTime = Calendar.getInstance().getTime();
@@ -91,6 +94,14 @@ public class Job {
 
     public void setOutcome(ModelParameter outcome) {
         this.outcome = outcome;
+    }
+
+    public void setDatasetJson(JSONObject datasetJson) {
+        this.datasetJson = datasetJson;
+    }
+
+    public JSONObject getDatasetJson() {
+        return datasetJson;
     }
 
     @Override

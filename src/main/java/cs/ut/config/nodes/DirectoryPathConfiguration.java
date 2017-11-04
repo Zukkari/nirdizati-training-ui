@@ -1,5 +1,7 @@
 package cs.ut.config.nodes;
 
+import cs.ut.exceptions.NirdizatiRuntimeException;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
@@ -58,7 +60,7 @@ public class DirectoryPathConfiguration {
 
     private void createDirIfAbsent(File file) {
         if (!file.exists() && !file.mkdir()) {
-            throw new RuntimeException(String.format("Cannot write to directory <%s>", userLogDirectory));
+            throw new NirdizatiRuntimeException(String.format("Cannot write to directory <%s>", userLogDirectory));
         }
     }
 }

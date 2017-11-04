@@ -2,7 +2,9 @@ package cs.ut.engine;
 
 import cs.ut.config.items.ModelParameter;
 import cs.ut.engine.item.Job;
+import cs.ut.exceptions.NirdizatiRuntimeException;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Session;
 
@@ -35,7 +37,7 @@ public class JobManager {
 
     public void generateJobs(Map<String, List<ModelParameter>> parameters) {
         if (logFile == null) {
-            throw new RuntimeException("Log file is null");
+            throw new NirdizatiRuntimeException("Log file is null");
         }
 
         List<ModelParameter> encodings = parameters.get("encoding");
@@ -100,6 +102,22 @@ public class JobManager {
                 return job.getLog();
             }
         }
-        throw new RuntimeException("Current execution has no jobs scheduled");
+        throw new NirdizatiRuntimeException("Current execution has no jobs scheduled");
+    }
+
+    public ModelParameter getPredictionType() {
+        Session session = Executions.getCurrent().getSession();
+
+        Queue<Job> jobs = jobQueue.get(session);
+
+        if (!jobs.isEmpty()) {
+            return jobs.peek().getOutcome();
+        }
+        throw new NirdizatiRuntimeException("Current execution has no jobs scheduled");
+    }
+
+    public void applyJSON(JSONObject json) {
+        Queue<Job> job = jobQueue.get(Executions.getCurrent().getSession());
+        job.forEach(j -> j.setDatasetJson(json));
     }
 }

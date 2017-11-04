@@ -9,18 +9,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ModelConfigurationConfiguration {
-    private static final Logger log = Logger.getLogger(ModelConfigurationConfiguration.class);
+public class ModelConfiguration {
+    private static final Logger log = Logger.getLogger(ModelConfiguration.class);
 
     private List<String> initalTypes;
     private List<ModelParameter> initialParameters;
 
     private Map<String, List<ModelParameter>> properties = new LinkedHashMap<>();
 
-    private ModelConfigurationConfiguration() {
+    private ModelConfiguration() {
     }
 
-    public ModelConfigurationConfiguration(ModelProperties parameters) {
+    public ModelConfiguration(ModelProperties parameters) {
         this.initalTypes = parameters.getTypes();
         this.initialParameters = parameters.getParameters();
 

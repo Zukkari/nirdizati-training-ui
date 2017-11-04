@@ -1,5 +1,6 @@
 package cs.ut.controller.modal;
 
+import com.google.common.collect.Lists;
 import com.google.common.escape.Escaper;
 import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
@@ -34,9 +35,17 @@ public class ParameterModalController extends SelectorComposer<Component> {
     @Wire
     private Button okBtn;
 
+    private Rows rows;
+
     private List<String> cols = MasterConfiguration.getInstance().getCSVConfiguration().getUserCols();
 
     private List<Combobox> fields = new ArrayList<>();
+
+    private SerializableEventListener<Event> okBtnListener;
+
+    private transient CsvReader csvReader = new CsvReader();
+
+    private Map<String, List<String>> identifiedColumns;
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
@@ -52,7 +61,7 @@ public class ParameterModalController extends SelectorComposer<Component> {
 
         Escaper escaper = HtmlEscapers.htmlEscaper();
 
-        Rows rows = new Rows();
+        rows = new Rows();
 
         if (fileColumns.isEmpty()) {
             Clients.showNotification(Labels.getLabel(
@@ -101,21 +110,87 @@ public class ParameterModalController extends SelectorComposer<Component> {
             modal.detach();
         });
 
-        okBtn.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) e -> {
-            CsvReader reader = new CsvReader();
-            reader.generateDatasetParams(gatherValues());
-            JobManager.getInstance().delployJobs();
-        });
+        okBtnListener = e -> {
+            okBtn.setDisabled(true);
+            updateContent(csvReader.generateDatasetParams(gatherValues()));
+        };
+
+        okBtn.addEventListener(Events.ON_CLICK, okBtnListener);
 
         log.debug("Showing modal");
+    }
+
+    private void updateContent(Map<String, List<String>> parameters) {
+        okBtn.setDisabled(false);
+        identifiedColumns = parameters;
+        fields = new ArrayList<>();
+
+        modal.setTitle(Labels.getLabel("modals.confirm_columns"));
+
+        okBtn.removeEventListener(Events.ON_CLICK, okBtnListener);
+        okBtnListener = e -> {
+            Map<String, List<String>> acceptedParameters = gatherAcceptedValues();
+            acceptedParameters.forEach((k, v) -> identifiedColumns.put(k, v));
+            JobManager.getInstance().applyJSON(csvReader.generateJson(identifiedColumns));
+            JobManager.getInstance().delployJobs();
+            modal.detach();
+        };
+        okBtn.addEventListener(Events.ON_CLICK, okBtnListener);
+
+        rows = new Rows();
+        paramGrid.getChildren().clear();
+        paramGrid.appendChild(rows);
+        paramGrid.setMold("paging");
+        paramGrid.setPageSize(10);
+
+        Escaper escaper = HtmlEscapers.htmlEscaper();
+        List<String> changeableVals = csvReader.getColumnList();
+        changeableVals.sort(String::compareToIgnoreCase);
+
+        changeableVals.forEach(key -> {
+            List<String> columns = identifiedColumns.get(key);
+            columns.sort(String::compareToIgnoreCase);
+
+            columns.forEach(col -> {
+                Row row = new Row();
+                row.appendChild(new Label(escaper.escape(col)));
+
+                Combobox combobox = new Combobox();
+                combobox.setReadonly(true);
+                combobox.setId(col);
+                combobox.setConstraint("no empty");
+
+                changeableVals.forEach(item -> {
+                    Comboitem comboitem = combobox.appendItem(Labels.getLabel("params.".concat(item)));
+                    comboitem.setValue(item);
+                    if (item.equalsIgnoreCase(key)) combobox.setSelectedItem(comboitem);
+                });
+
+                row.appendChild(combobox);
+                rows.appendChild(row);
+                fields.add(combobox);
+            });
+        });
+    }
+
+    private Map<String, List<String>> gatherAcceptedValues() {
+        Map<String, List<String>> vals = new HashMap<>();
+
+        fields.forEach(field -> {
+            if (!vals.containsKey(field.getSelectedItem().getValue())) {
+               vals.put(field.getSelectedItem().getValue(), Lists.newArrayList(field.getId()));
+            } else {
+                vals.get(field.getSelectedItem().getValue()).add(field.getId());
+            }
+        });
+
+        return vals;
     }
 
 
     private Map<String, List<String>> gatherValues() {
         Map<String, List<String>> vals = new HashMap<>();
-
         fields.forEach(it -> vals.put(it.getId(), Collections.singletonList(it.getSelectedItem().getValue())));
-
         return vals;
     }
 }

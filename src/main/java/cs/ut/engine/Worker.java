@@ -2,8 +2,9 @@ package cs.ut.engine;
 
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
-import cs.ut.engine.item.Job;
 import cs.ut.config.nodes.DirectoryPathConfiguration;
+import cs.ut.engine.item.Job;
+import cs.ut.exceptions.NirdizatiRuntimeException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -55,6 +56,13 @@ public class Worker extends Thread {
                 Job job = jobQueue.poll();
                 try {
                     log.debug(String.format("Started executing job <%s>", job));
+
+                    if (job.getDatasetJson() != null) {
+                        log.debug("Writing dataset json to disk...");
+                        writeJsonToDisk(job.getDatasetJson(), FilenameUtils.getBaseName(job.getLog().getName()), datasetDir);
+                        log.debug(String.format("Successfully wrote dataset json to disk: <%s>", job.getDatasetJson().toString()));
+                    }
+
                     generateTrainingJson(job);
                     log.debug("Successfully generated json");
                     log.debug(String.format("Executing job <%s>", job));
@@ -84,11 +92,12 @@ public class Worker extends Thread {
     private void executeJob(Job job) {
         try {
             ProcessBuilder pb = new ProcessBuilder("python",
-                    coreDir.concat("train.py"),
-                    coreDir.concat("BPIC15_4.csv"),
+                    "train.py",
+                    job.getLog().getAbsolutePath(),
                     job.getBucketing().getParameter(),
                     job.getEncoding().getParameter(),
-                    job.getLearner().getParameter());
+                    job.getLearner().getParameter(),
+                    job.getOutcome().getParameter());
 
             pb.directory(new File(coreDir));
             pb.inheritIO();
@@ -99,7 +108,7 @@ public class Worker extends Thread {
             log.debug(pb.command());
             if (!process.waitFor(180, TimeUnit.SECONDS)) {
                 process.destroy();
-                throw new RuntimeException("Timed out while trying to create predictor");
+                throw new NirdizatiRuntimeException("Timed out while trying to create predictor");
             }
 
             log.debug("Script finished running...");
@@ -108,7 +117,7 @@ public class Worker extends Thread {
             log.debug(file);
 
             if (!file.exists()) {
-                throw new RuntimeException("Process failed to finish");
+                throw new NirdizatiRuntimeException("Process failed to finish");
             }
 
             log.debug("Script exited successfully");
@@ -117,7 +126,7 @@ public class Worker extends Thread {
             String noExtensionName = FilenameUtils.getBaseName(job.getLog().getName());
             File dir = new File(userModelDir.concat(noExtensionName));
             if (!dir.exists() && !dir.mkdir()) {
-                throw new RuntimeException(String.format("Cannot create folder for model with name <%s>", dir.getName()));
+                throw new NirdizatiRuntimeException(String.format("Cannot create folder for model with name <%s>", dir.getName()));
             }
 
             Files.move(Paths.get(coreDir.concat(job.toString())), Paths.get(userModelDir.concat(noExtensionName.concat("/")).concat(job.toString())), StandardCopyOption.REPLACE_EXISTING);
@@ -126,7 +135,7 @@ public class Worker extends Thread {
             job.setResultPath(Paths.get(userModelDir.concat(job.toString())).toString());
             JobManager.getInstance().getCompletedJobs().add(job);
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException("Failed to execute script call", e);
+            throw new NirdizatiRuntimeException("Failed to execute script call", e);
         }
     }
 
@@ -160,7 +169,7 @@ public class Worker extends Thread {
             bytes = json.toString().getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
             log.debug(String.format("Unsupported encoding %s", e));
-            throw new RuntimeException(e);
+            throw new NirdizatiRuntimeException(e);
         }
 
         if (!file.exists()) {
@@ -168,7 +177,7 @@ public class Worker extends Thread {
                 Files.createFile(Paths.get(file.getAbsolutePath()));
                 log.debug(String.format("Created file <%s>", file.getName()));
             } catch (IOException e) {
-                throw new RuntimeException(String.format("Failed creating file <%s>", file.getAbsolutePath()), e);
+                throw new NirdizatiRuntimeException(String.format("Failed creating file <%s>", file.getAbsolutePath()), e);
             }
         }
 
@@ -177,7 +186,7 @@ public class Worker extends Thread {
             os.close();
             log.debug(String.format("Successfully written json to disk... <%s> bytes written", bytes.length));
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Failed writing json file to disk <%s>", file.getName()), e);
+            throw new NirdizatiRuntimeException(String.format("Failed writing json file to disk <%s>", file.getName()), e);
         }
     }
 }
