@@ -27,6 +27,13 @@ public class CSVConfiguration {
     @XmlElement(name = "splitter")
     private String splitter;
 
+    @XmlElementWrapper(name = "emptyValues")
+    @XmlElement(name = "id")
+    private List<String> emptyValues;
+
+    @XmlElement(name = "threshold")
+    private Integer threshold;
+
     public List<String> getUserCols() {
         return userCols;
     }
@@ -45,5 +52,13 @@ public class CSVConfiguration {
 
     public String getSplitter() {
         return splitter;
+    }
+
+    public List<String> getEmptyValues() {
+        return emptyValues;
+    }
+
+    public Integer getThreshold() {
+        return threshold;
     }
 }

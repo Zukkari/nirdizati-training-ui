@@ -1,9 +1,9 @@
 package cs.ut.engine;
 
+import com.google.common.collect.Lists;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.nodes.CSVConfiguration;
 import cs.ut.engine.item.Case;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -21,16 +21,19 @@ public class CsvReader {
 
     private static final CSVConfiguration config = MasterConfiguration.getInstance().getCSVConfiguration();
     private static String splitter = config.getSplitter();
+    private static List<String> emptyValues = config.getEmptyValues();
+    private static Integer threshold = config.getThreshold();
 
     private static final String CASE_ID_COL = "case_id_col";
-    private static final String ACTIVITY_COL = "activity_col";
-    private static final String DYNAMIC_CAT_COLS = "dynamic_cat_cols";
-    private static final String STATIC_CAT_COLS = "static_cat_cols";
-    private static final String DYNAMIC_NUM_COLS = "dynamic_num_cols";
-    private static final String STATIC_NUM_COLS = "static_num_cols";
+    private static final String ACTIVITY_COL = "activity_col";;
     private static final String TIMESTAMP_COL = "timestamp_col";
     private static final String LABEL_NUM_COLS = "label_num_cols";
     private static final String LABEL_CAT_COLS = "label_cat_cols";
+
+    private static final String STATIC = "static";
+    private static final String DYNAMIC = "dynamic";
+    private static final String NUM_COL = "_num_cols";
+    private static final String CAT_COLS = "_cat_cols";
 
     public static List<String> readTableHeader(File f) {
         log.debug("Reading table header.");
@@ -72,6 +75,7 @@ public class CsvReader {
         Long start = System.currentTimeMillis();
         List<Case> cases = parseCsv(userCols.get(CASE_ID_COL).get(0));
 
+        Map<String, Set<String>> colVals = new HashMap<>();
         String timestampCol = identifyTimeStampColumn(cases.get(0).getAttributes());
         cases.forEach(c -> {
             c.getAttributes().remove(timestampCol);
@@ -80,19 +84,96 @@ public class CsvReader {
             if (c.getAttributes().containsKey("remtime")) c.getAttributes().remove("remtime");
             if (c.getAttributes().containsKey("label")) c.getAttributes().remove("label");
 
-            c.setClassifiedCols(classifyColumns(c.getAttributes()));
+            classifyColumns(c);
+
+            c.getAttributes().forEach((k, v)-> {
+                if (colVals.containsKey(k)) colVals.get(k).addAll(v);
+                else colVals.put(k, v);
+            });
         });
 
-        Map<String, List<String>> classifiedColumnns = new HashMap<>();
-        classifiedColumnns.putAll(userCols);
-        classifiedColumnns.putAll(collectResultFromCases(cases));
+        Set<String> alreadyClassifiedColumns = new HashSet<>();
+        Map<String, List<String>> resultColumns = new HashMap<>();
+        resultColumns.put(DYNAMIC.concat(CAT_COLS), new ArrayList<>());
+        resultColumns.put(DYNAMIC.concat(NUM_COL), new ArrayList<>());
+        resultColumns.put(STATIC.concat(NUM_COL), new ArrayList<>());
+        resultColumns.put(STATIC.concat(CAT_COLS), new ArrayList<>());
+
+        cases.forEach(c -> {
+            Map<String, List<String>> map = c.getClassifiedColumns();
+            map.put(DYNAMIC.concat(CAT_COLS), new ArrayList<>());
+            map.put(DYNAMIC.concat(NUM_COL), new ArrayList<>());
+            map.put(STATIC.concat(NUM_COL), new ArrayList<>());
+            map.put(STATIC.concat(CAT_COLS), new ArrayList<>());
+
+            c.getDynamicCols().forEach(col -> insertIntoMap(map, DYNAMIC, col, colVals.get(col)));
+            c.getStaticCols().forEach(col -> insertIntoMap(map, STATIC, col, colVals.get(col)));
+
+            postProcessCase(resultColumns, c, alreadyClassifiedColumns);
+        });
 
         Long end = System.currentTimeMillis();
         log.debug(String.format("Finished generating dataset parameters in <%s> ms", Long.toString(end - start)));
     }
 
-    private Map<String, List<String>> collectResultFromCases(List<Case> cases) {
-        return new HashMap<>();
+    private void postProcessCase(Map<String, List<String>> resultColumns, Case c, Set<String> alreadyClassifiedColumns) {
+        Map<String, List<String>> caseCols = c.getClassifiedColumns();
+
+        caseCols.get(STATIC.concat(NUM_COL))
+                .forEach(it ->
+                        categorizeColumn(it, STATIC.concat(NUM_COL), resultColumns, alreadyClassifiedColumns, new ArrayList<>()));
+
+        caseCols.get(STATIC.concat(CAT_COLS))
+                .forEach(it ->
+                        categorizeColumn(it, STATIC.concat(CAT_COLS), resultColumns, alreadyClassifiedColumns, Collections.singletonList(STATIC.concat(NUM_COL))));
+
+        caseCols.get(DYNAMIC.concat(NUM_COL))
+                .forEach(it ->
+                        categorizeColumn(it, DYNAMIC.concat(NUM_COL), resultColumns, alreadyClassifiedColumns, Collections.singletonList(STATIC.concat(NUM_COL))));
+
+        caseCols.get(DYNAMIC.concat(CAT_COLS))
+                .forEach(it ->
+                        categorizeColumn(it, DYNAMIC.concat(CAT_COLS), resultColumns, alreadyClassifiedColumns, Lists.newArrayList(
+                                STATIC.concat(NUM_COL), STATIC.concat(CAT_COLS), DYNAMIC.concat(NUM_COL)
+                        )));
+    }
+
+    private void categorizeColumn(String column, String key, Map<String, List<String>> results, Set<String> alreadyDone, List<String> lookThrough) {
+        if (!alreadyDone.contains(column)) {
+            alreadyDone.add(column);
+            results.get(key).add(column);
+        } else {
+            lookThrough.forEach(col -> {
+                if (results.get(col).contains(column)) {
+                    results.get(col).remove(column);
+                    results.get(key).add(column);
+                }
+            });
+        }
+    }
+
+    private void insertIntoMap(Map<String, List<String>> map, String cat, String col, Set<String> values) {
+        boolean isNumeric = true;
+
+        for (String value : values) {
+            Double d;
+            try {
+                d = Double.parseDouble(value);
+            } catch (NumberFormatException e) {
+                d = null;
+            }
+
+            if (d == null) {
+                isNumeric = false;
+                break;
+            }
+        }
+
+        if (values.size() < threshold || !isNumeric) {
+            map.get(cat.concat(CAT_COLS)).add(col);
+        } else {
+            map.get(cat.concat(NUM_COL)).add(col);
+        }
     }
 
     private String identifyTimeStampColumn(Map<String, Set<String>> rows) {
@@ -122,57 +203,18 @@ public class CsvReader {
         return colName[0];
     }
 
-    private Map<String, List<String>> classifyColumns(Map<String, Set<String>> rows) {
-        Map<String, List<String>> classes = new HashMap<>();
-        classes.put(DYNAMIC_CAT_COLS, new ArrayList<>());
-        classes.put(STATIC_CAT_COLS, new ArrayList<>());
-        classes.put(DYNAMIC_NUM_COLS, new ArrayList<>());
-        classes.put(STATIC_NUM_COLS, new ArrayList<>());
-
-        rows.forEach((k, v) -> {
-            if (v.contains("")) {
-                // remove empty columns so they do not affect categorization
-                v.remove("");
-            }
+    private void classifyColumns(Case c) {
+        c.getAttributes().forEach((k, v) -> {
+            emptyValues.forEach(it -> {
+                if (v.contains(it)) v.remove(it);
+            });
 
             if (v.size() == 1) {
-                //static
-                String val = v.iterator().next();
-
-                if (StringUtils.isNumeric(val)) {
-                    //numeric
-                    classes.get(STATIC_NUM_COLS).add(k);
-                } else {
-                    try {
-                        Double d = Double.parseDouble(val);
-                        log.debug(String.format("Successfully parsed double <%s>", d));
-                        classes.get(STATIC_NUM_COLS).add(k);
-                    } catch (NumberFormatException e) {
-                        log.debug(String.format("Value is not a double <%s>", val));
-                        //categorical
-                        classes.get(STATIC_CAT_COLS).add(k);
-                    }
-                }
+               c.getStaticCols().add(k);
             } else {
-
-                boolean found = false;
-                //dynamic
-                for (String aV : v) {
-                    if (!StringUtils.isNumeric(aV)) {
-                        //is not numeric column
-                        classes.get(DYNAMIC_CAT_COLS).add(k);
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found) {
-                    classes.get(DYNAMIC_NUM_COLS).add(k);
-                }
+               c.getDynamicCols().add(k);
             }
         });
-
-        return classes;
     }
 
     private List<Case> parseCsv(String caseIdCol) {

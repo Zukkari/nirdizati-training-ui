@@ -103,6 +103,16 @@
 
         <!-- Regexp that is used for csv file splitting -->
         <splitter>[,;]</splitter>
+
+        <!-- Values that are used to clean columns for categori<ation -->
+        <emptyValues>
+            <id></id>
+            <id>EMPTY</id>
+            <id>empty</id>
+        </emptyValues>
+
+        <!-- Threshold that decides whether value is categorical or numerical -->
+        <threshold>7</threshold>
     </csvConfig>
 
     <!-- Model training configurations -->
