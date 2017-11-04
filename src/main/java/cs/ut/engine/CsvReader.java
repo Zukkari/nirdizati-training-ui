@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.nodes.CSVConfiguration;
 import cs.ut.engine.item.Case;
+import cs.ut.exceptions.NirdizatiRuntimeException;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -48,7 +49,7 @@ public class CsvReader {
         try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             line = br.readLine();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new NirdizatiRuntimeException(e);
         }
 
         if (!line.isEmpty()) {
@@ -245,7 +246,7 @@ public class CsvReader {
         try (BufferedReader br = new BufferedReader(new FileReader(JobManager.getInstance().getCurrentFile()))) {
             line = br.readLine();
             if (line == null || (line.isEmpty())) {
-                throw new RuntimeException("File is empty");
+                throw new NirdizatiRuntimeException("File is empty");
             } else {
                 colHeads = line.split(splitter);
                 caseIdColIndex = Arrays.asList(colHeads).indexOf(caseIdCol);
@@ -253,7 +254,7 @@ public class CsvReader {
 
             line = br.readLine();
             if (line == null || line.isEmpty()) {
-                throw new RuntimeException("File must contain at least 2 rows");
+                throw new NirdizatiRuntimeException("File must contain at least 2 rows");
             } else {
                 rowCount++;
                 processRow(line, cases, caseIdColIndex, colHeads);
@@ -264,7 +265,7 @@ public class CsvReader {
                 processRow(line, cases, caseIdColIndex, colHeads);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failed reading csv", e);
+            throw new NirdizatiRuntimeException("Failed reading csv", e);
         }
 
         Long end = System.currentTimeMillis();

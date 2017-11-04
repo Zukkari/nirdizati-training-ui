@@ -7,6 +7,7 @@ import cs.ut.config.nodes.DirectoryPathConfiguration;
 import cs.ut.config.nodes.ModelConfigurationConfiguration;
 import cs.ut.config.nodes.PageConfigurationConfiguration;
 import cs.ut.engine.Worker;
+import cs.ut.exceptions.NirdizatiRuntimeException;
 import org.apache.log4j.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -70,7 +71,7 @@ public class MasterConfiguration {
             try {
                 master.readMasterConfig();
             } catch (JAXBException e) {
-                throw new RuntimeException("Failed to read master configuration", e);
+                throw new NirdizatiRuntimeException("Failed to read master configuration", e);
             }
         }
         return master;
@@ -193,7 +194,7 @@ public class MasterConfiguration {
             db = dbf.newDocumentBuilder();
             doc = db.parse(file);
         } catch (ParserConfigurationException | IOException | SAXException e) {
-            throw new RuntimeException(e);
+            throw new NirdizatiRuntimeException(e);
         }
 
         NodeList node = doc.getElementsByTagName(nodeName);
@@ -203,7 +204,7 @@ public class MasterConfiguration {
             unmarshaller = jaxbContext.createUnmarshaller();
             return unmarshaller.unmarshal(node.item(0), clazz).getValue();
         } catch (JAXBException e) {
-            throw new RuntimeException("Failed to read directories", e);
+            throw new NirdizatiRuntimeException("Failed to read directories", e);
         }
     }
 }
