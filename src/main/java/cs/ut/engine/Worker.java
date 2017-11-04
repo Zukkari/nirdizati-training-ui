@@ -55,6 +55,13 @@ public class Worker extends Thread {
                 Job job = jobQueue.poll();
                 try {
                     log.debug(String.format("Started executing job <%s>", job));
+
+                    if (job.getDatasetJson() != null) {
+                        log.debug("Writing dataset json to disk...");
+                        writeJsonToDisk(job.getDatasetJson(), FilenameUtils.getBaseName(job.getLog().getName()), datasetDir);
+                        log.debug(String.format("Successfully wrote dataset json to disk: <%s>", job.getDatasetJson().toString()));
+                    }
+
                     generateTrainingJson(job);
                     log.debug("Successfully generated json");
                     log.debug(String.format("Executing job <%s>", job));
@@ -88,7 +95,8 @@ public class Worker extends Thread {
                     coreDir.concat("BPIC15_4.csv"),
                     job.getBucketing().getParameter(),
                     job.getEncoding().getParameter(),
-                    job.getLearner().getParameter());
+                    job.getLearner().getParameter(),
+                    job.getOutcome().getParameter());
 
             pb.directory(new File(coreDir));
             pb.inheritIO();

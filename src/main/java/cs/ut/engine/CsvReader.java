@@ -4,7 +4,9 @@ import com.google.common.collect.Lists;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.nodes.CSVConfiguration;
 import cs.ut.engine.item.Case;
+import cs.ut.engine.item.Job;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,7 +29,7 @@ public class CsvReader {
     private static Integer confThreshold = config.getThreshold();
 
     private static final String CASE_ID_COL = "case_id_col";
-    private static final String ACTIVITY_COL = "activity_col";;
+    private static final String ACTIVITY_COL = "activity_col";
     private static final String TIMESTAMP_COL = "timestamp_col";
     private static final String LABEL_NUM_COLS = "label_num_cols";
     private static final String LABEL_CAT_COLS = "label_cat_cols";
@@ -64,11 +66,11 @@ public class CsvReader {
 
         cols.forEach(col -> {
             config.getCaseId().forEach(val -> {
-                if (val.equalsIgnoreCase(col)) result.put(CASE_ID_COL, col);
+                if (val.matches(col.toLowerCase())) result.put(CASE_ID_COL, col);
             });
 
             config.getActivityId().forEach(val -> {
-                if (val.equalsIgnoreCase(col)) result.put(ACTIVITY_COL, col);
+                if (val.matches(col.toLowerCase())) result.put(ACTIVITY_COL, col);
             });
         });
 
@@ -91,7 +93,7 @@ public class CsvReader {
 
             classifyColumns(c);
 
-            c.getAttributes().forEach((k, v)-> {
+            c.getAttributes().forEach((k, v) -> {
                 if (colVals.containsKey(k)) colVals.get(k).addAll(v);
                 else colVals.put(k, v);
             });
@@ -119,6 +121,12 @@ public class CsvReader {
 
         resultColumns.putAll(userCols);
         resultColumns.get(DYNAMIC.concat(CAT_COLS)).add(userCols.get(ACTIVITY_COL).get(0));
+        resultColumns.put(TIMESTAMP_COL, Collections.singletonList(timestampCol));
+        resultColumns.put(LABEL_NUM_COLS, Collections.singletonList(JobManager.getInstance().getPredictionType().getParameter()));
+        resultColumns.put(LABEL_CAT_COLS, Collections.emptyList());
+
+        JobManager.getInstance().applyJSON(generateJson(resultColumns));
+        JobManager.getInstance().delployJobs();
 
         Long end = System.currentTimeMillis();
         log.debug(String.format("Finished generating dataset parameters in <%s> ms", Long.toString(end - start)));
@@ -177,7 +185,7 @@ public class CsvReader {
             }
         }
 
-        double threshold = max(confThreshold, 0.001*rowCount);
+        double threshold = max(confThreshold, 0.001 * rowCount);
         if (values.size() < threshold || !isNumeric) {
             map.get(cat.concat(CAT_COLS)).add(col);
         } else {
@@ -219,9 +227,9 @@ public class CsvReader {
             });
 
             if (v.size() == 1) {
-               c.getStaticCols().add(k);
+                c.getStaticCols().add(k);
             } else {
-               c.getDynamicCols().add(k);
+                c.getDynamicCols().add(k);
             }
         });
     }
@@ -291,5 +299,19 @@ public class CsvReader {
 
     private Case findCaseById(String id, List<Case> cases) {
         return cases.stream().filter(it -> id.equalsIgnoreCase(it.getId())).findFirst().orElse(null);
+    }
+
+    private JSONObject generateJson(Map<String, List<String>> map) {
+        JSONObject jsonObject = new JSONObject();
+
+        map.forEach((k, v) -> {
+            if (v.size() == 1) {
+                jsonObject.put(k, v.get(0));
+            } else {
+                jsonObject.put(k, v);
+            }
+        });
+
+        return jsonObject;
     }
 }

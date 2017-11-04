@@ -105,6 +105,7 @@ public class ParameterModalController extends SelectorComposer<Component> {
             CsvReader reader = new CsvReader();
             reader.generateDatasetParams(gatherValues());
             JobManager.getInstance().delployJobs();
+            modal.detach();
         });
 
         log.debug("Showing modal");
@@ -113,9 +114,7 @@ public class ParameterModalController extends SelectorComposer<Component> {
 
     private Map<String, List<String>> gatherValues() {
         Map<String, List<String>> vals = new HashMap<>();
-
         fields.forEach(it -> vals.put(it.getId(), Collections.singletonList(it.getSelectedItem().getValue())));
-
         return vals;
     }
 }

@@ -3,6 +3,7 @@ package cs.ut.engine;
 import cs.ut.config.items.ModelParameter;
 import cs.ut.engine.item.Job;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Session;
 
@@ -101,5 +102,21 @@ public class JobManager {
             }
         }
         throw new RuntimeException("Current execution has no jobs scheduled");
+    }
+
+    public ModelParameter getPredictionType() {
+        Session session = Executions.getCurrent().getSession();
+
+        Queue<Job> jobs = jobQueue.get(session);
+
+        if (!jobs.isEmpty()) {
+            return jobs.peek().getOutcome();
+        }
+        throw new RuntimeException("Current execution has no jobs scheduled");
+    }
+
+    public void applyJSON(JSONObject json) {
+        Queue<Job> job = jobQueue.get(Executions.getCurrent().getSession());
+        job.forEach(j -> j.setDatasetJson(json));
     }
 }
