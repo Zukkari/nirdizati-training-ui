@@ -20,7 +20,6 @@ import org.zkoss.zul.Label;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -94,7 +93,7 @@ public class UploadLogController extends SelectorComposer<Component> {
 
             Runnable serialization = () -> {
                 File file = new File(String.format("%s/%s",
-                        Paths.get(MasterConfiguration.getInstance().getDirectoryPathProvider().getUserLogDirectory())
+                        Paths.get(MasterConfiguration.getInstance().getDirectoryPathConfiguration().getUserLogDirectory())
                         , media.getName()));
 
                 log.debug(String.format("Writing file into : %s", file.getAbsolutePath()));

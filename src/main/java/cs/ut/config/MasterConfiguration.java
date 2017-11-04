@@ -2,10 +2,11 @@ package cs.ut.config;
 
 import cs.ut.config.items.HeaderItem;
 import cs.ut.config.items.ModelProperties;
+import cs.ut.config.nodes.CSVConfiguration;
+import cs.ut.config.nodes.DirectoryPathConfiguration;
+import cs.ut.config.nodes.ModelConfigurationConfiguration;
+import cs.ut.config.nodes.PageConfigurationConfiguration;
 import cs.ut.engine.Worker;
-import cs.ut.provider.DirectoryPathProvider;
-import cs.ut.provider.ModelConfigurationProvider;
-import cs.ut.provider.PageConfigurationProvider;
 import org.apache.log4j.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -31,7 +32,7 @@ public class MasterConfiguration {
     private static MasterConfiguration master;
 
     @XmlElement(name = "pageConfig")
-    private PageConfigurationProvider pageConfigurationProvider;
+    private PageConfigurationConfiguration pageConfigurationConfiguration;
 
     @XmlElementWrapper(name = "headerConfiguration")
     @XmlElement(name = "headerItem")
@@ -48,9 +49,11 @@ public class MasterConfiguration {
     @XmlElement(name = "col")
     private List<String> userCols;
 
-    private DirectoryPathProvider directoryPathProvider;
+    private DirectoryPathConfiguration directoryPathConfiguration;
 
-    private ModelConfigurationProvider modelConfigurationProvider;
+    private ModelConfigurationConfiguration modelConfigurationConfiguration;
+
+    private CSVConfiguration csvConfiguration;
 
     private MasterConfiguration() {
         configureLogger();
@@ -87,8 +90,8 @@ public class MasterConfiguration {
         MasterConfiguration configuration = (MasterConfiguration) unmarshaller.unmarshal(file);
         log.debug("Finished reading configuration");
 
-        pageConfigurationProvider = configuration.getPageConfigurationProvider();
-        log.debug(String.format("Successfully retrieved %s page configurations", pageConfigurationProvider.getPages().size()));
+        pageConfigurationConfiguration = configuration.getPageConfigurationConfiguration();
+        log.debug(String.format("Successfully retrieved %s page configurations", pageConfigurationConfiguration.getPages().size()));
 
 
         headerItems = configuration.getHeaderItems();
@@ -99,13 +102,13 @@ public class MasterConfiguration {
                 modelProperties.getTypes().size(),
                 modelProperties.getParameters().size()));
 
-        modelConfigurationProvider = new ModelConfigurationProvider(modelProperties);
+        modelConfigurationConfiguration = new ModelConfigurationConfiguration(modelProperties);
 
         extensions = configuration.getExtensions();
 
         userCols = configuration.getUserCols();
 
-        getDirectoryPathProvider().validatePathsExist();
+        getDirectoryPathConfiguration().validatePathsExist();
 
         log.debug("Successfully read master configuration");
 
@@ -113,8 +116,8 @@ public class MasterConfiguration {
         Worker.getInstance().start();
     }
 
-    public PageConfigurationProvider getPageConfigurationProvider() {
-        return pageConfigurationProvider;
+    public PageConfigurationConfiguration getPageConfigurationConfiguration() {
+        return pageConfigurationConfiguration;
     }
 
     public List<HeaderItem> getHeaderItems() {
@@ -125,8 +128,8 @@ public class MasterConfiguration {
         return modelProperties;
     }
 
-    public ModelConfigurationProvider getModelConfigurationProvider() {
-        return modelConfigurationProvider;
+    public ModelConfigurationConfiguration getModelConfigurationConfiguration() {
+        return modelConfigurationConfiguration;
     }
 
     public List<String> getExtensions() {
@@ -162,33 +165,45 @@ public class MasterConfiguration {
         Logger.getRootLogger().addAppender(fileAppender);
     }
 
-    public DirectoryPathProvider getDirectoryPathProvider() {
-        if (directoryPathProvider == null) {
-            File file = new File(getClass().getClassLoader().getResource("configuration.xml").getFile());
-            JAXBContext jaxbContext = null;
-            Unmarshaller unmarshaller = null;
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-
-            dbf.setNamespaceAware(true);
-            DocumentBuilder db = null;
-            Document doc;
-            try {
-                db = dbf.newDocumentBuilder();
-                doc = db.parse(file);
-            } catch (ParserConfigurationException | IOException | SAXException e) {
-                throw new RuntimeException(e);
-            }
-
-            NodeList node = doc.getElementsByTagName("paths");
-
-            try {
-                jaxbContext = JAXBContext.newInstance(DirectoryPathProvider.class);
-                unmarshaller = jaxbContext.createUnmarshaller();
-                directoryPathProvider = unmarshaller.unmarshal(node.item(0), DirectoryPathProvider.class).getValue();
-            } catch (JAXBException e) {
-                throw new RuntimeException("Failed to read directories", e);
-            }
+    public DirectoryPathConfiguration getDirectoryPathConfiguration() {
+        if (directoryPathConfiguration == null) {
+            directoryPathConfiguration = readClass(DirectoryPathConfiguration.class, "paths");
         }
-        return directoryPathProvider;
+        return directoryPathConfiguration;
+    }
+
+    public CSVConfiguration getCSVConfiguration() {
+        if (csvConfiguration == null) {
+            csvConfiguration = readClass(CSVConfiguration.class, "csvConfig");
+        }
+        return csvConfiguration;
+    }
+
+
+    private <T> T readClass(Class<T> clazz, String nodeName) {
+        File file = new File(getClass().getClassLoader().getResource("configuration.xml").getFile());
+        JAXBContext jaxbContext = null;
+        Unmarshaller unmarshaller = null;
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+        dbf.setNamespaceAware(true);
+        DocumentBuilder db = null;
+        Document doc;
+        try {
+            db = dbf.newDocumentBuilder();
+            doc = db.parse(file);
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            throw new RuntimeException(e);
+        }
+
+        NodeList node = doc.getElementsByTagName(nodeName);
+
+        try {
+            jaxbContext = JAXBContext.newInstance(clazz);
+            unmarshaller = jaxbContext.createUnmarshaller();
+            return unmarshaller.unmarshal(node.item(0), clazz).getValue();
+        } catch (JAXBException e) {
+            throw new RuntimeException("Failed to read directories", e);
+        }
     }
 }

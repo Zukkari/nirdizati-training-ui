@@ -56,7 +56,7 @@ public class TrainingController extends SelectorComposer<Component> {
     private transient Map<String, List<ModelParameter>> parameters = new HashMap<>();
 
     private transient Map<String, List<ModelParameter>> properties =
-            MasterConfiguration.getInstance().getModelConfigurationProvider().getProperties();
+            MasterConfiguration.getInstance().getModelConfigurationConfiguration().getProperties();
 
 
     @Override

@@ -1,11 +1,11 @@
-package cs.ut.provider;
+package cs.ut.config.nodes;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
 
 @XmlRootElement(name = "paths")
-public class DirectoryPathProvider {
+public class DirectoryPathConfiguration {
 
     @XmlElement(name = "userLogDirectory")
     private String userLogDirectory;

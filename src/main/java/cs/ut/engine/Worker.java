@@ -3,7 +3,7 @@ package cs.ut.engine;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
 import cs.ut.engine.item.Job;
-import cs.ut.provider.DirectoryPathProvider;
+import cs.ut.config.nodes.DirectoryPathConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -38,7 +38,7 @@ public class Worker extends Thread {
         if (worker == null) {
             worker = new Worker();
 
-            DirectoryPathProvider pathProvider = MasterConfiguration.getInstance().getDirectoryPathProvider();
+            DirectoryPathConfiguration pathProvider = MasterConfiguration.getInstance().getDirectoryPathConfiguration();
             worker.scriptDir = pathProvider.getScriptDirectory();
             worker.userModelDir = pathProvider.getUserModelDirectory();
             worker.coreDir = worker.scriptDir.concat("core/");

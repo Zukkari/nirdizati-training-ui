@@ -76,11 +76,44 @@
         </headerItem>
     </headerConfiguration>
 
-    <!-- Columns that need to be specified by user when creating model -->
-    <userCols>
-        <col>case_id_col</col>
-        <col>activity_col</col>
-    </userCols>
+    <csvConfig>
+        <!-- Columns that need to be specified by user when creating model -->
+        <userCols>
+            <col>case_id_col</col>
+            <col>activity_col</col>
+        </userCols>
+
+        <!-- Values that will be used to search for case id column -->
+        <caseId>
+            <id>caseid</id>
+            <id>case_id</id>
+            <id>case id</id>
+        </caseId>
+
+        <!-- Values that will be used to search for activity column -->
+        <activityId>
+            <id>activity</id>
+        </activityId>
+
+        <!-- Values that will be used for timestamp column identification -->
+        <timestampFormat>
+            <format>yyyy-MM-dd hh:mm:ss</format>
+            <format>yyyy-mm-dd'T'hh:mm:ss</format>
+        </timestampFormat>
+
+        <!-- Regexp that is used for csv file splitting -->
+        <splitter>[,;]</splitter>
+
+        <!-- Values that are used to clean columns for categori<ation -->
+        <emptyValues>
+            <id></id>
+            <id>EMPTY</id>
+            <id>empty</id>
+        </emptyValues>
+
+        <!-- Threshold that decides whether value is categorical or numerical -->
+        <threshold>10</threshold>
+    </csvConfig>
 
     <!-- Model training configurations -->
     <modelConfig>
