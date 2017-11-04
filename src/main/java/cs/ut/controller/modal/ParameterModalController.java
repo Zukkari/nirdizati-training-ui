@@ -145,9 +145,11 @@ public class ParameterModalController extends SelectorComposer<Component> {
 
         Escaper escaper = HtmlEscapers.htmlEscaper();
         List<String> changeableVals = csvReader.getColumnList();
+        changeableVals.sort(String::compareToIgnoreCase);
 
         changeableVals.forEach(key -> {
             List<String> columns = identifiedColumns.get(key);
+            columns.sort(String::compareToIgnoreCase);
 
             columns.forEach(col -> {
                 Row row = new Row();
