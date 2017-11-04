@@ -28,6 +28,7 @@ public class Worker extends Thread {
     private String coreDir;
     private String datasetDir;
     private String trainingDir;
+    private String userLogDir;
 
     private Queue<Job> jobQueue = new LinkedList<>();
 
@@ -44,6 +45,7 @@ public class Worker extends Thread {
             worker.coreDir = worker.scriptDir.concat("core/");
             worker.datasetDir = pathProvider.getDatasetDirectory();
             worker.trainingDir = pathProvider.getTrainDirectory();
+            worker.userLogDir = pathProvider.getUserLogDirectory();
         }
         return worker;
     }
@@ -91,8 +93,8 @@ public class Worker extends Thread {
     private void executeJob(Job job) {
         try {
             ProcessBuilder pb = new ProcessBuilder("python",
-                    coreDir.concat("train.py"),
-                    coreDir.concat("BPIC15_4.csv"),
+                    "train.py",
+                    job.getLog().getAbsolutePath(),
                     job.getBucketing().getParameter(),
                     job.getEncoding().getParameter(),
                     job.getLearner().getParameter(),
