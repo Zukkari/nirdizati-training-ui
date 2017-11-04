@@ -112,7 +112,7 @@
         </emptyValues>
 
         <!-- Threshold that decides whether value is categorical or numerical -->
-        <threshold>7</threshold>
+        <threshold>10</threshold>
     </csvConfig>
 
     <!-- Model training configurations -->

@@ -16,13 +16,15 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.lang.StrictMath.max;
+
 public class CsvReader {
     private static final Logger log = Logger.getLogger(CsvReader.class);
 
     private static final CSVConfiguration config = MasterConfiguration.getInstance().getCSVConfiguration();
     private static String splitter = config.getSplitter();
     private static List<String> emptyValues = config.getEmptyValues();
-    private static Integer threshold = config.getThreshold();
+    private static Integer confThreshold = config.getThreshold();
 
     private static final String CASE_ID_COL = "case_id_col";
     private static final String ACTIVITY_COL = "activity_col";;
@@ -34,6 +36,8 @@ public class CsvReader {
     private static final String DYNAMIC = "dynamic";
     private static final String NUM_COL = "_num_cols";
     private static final String CAT_COLS = "_cat_cols";
+
+    private Integer rowCount = 0;
 
     public static List<String> readTableHeader(File f) {
         log.debug("Reading table header.");
@@ -173,6 +177,7 @@ public class CsvReader {
             }
         }
 
+        double threshold = max(confThreshold, 0.001*rowCount);
         if (values.size() < threshold || !isNumeric) {
             map.get(cat.concat(CAT_COLS)).add(col);
         } else {
@@ -244,10 +249,12 @@ public class CsvReader {
             if (line == null || line.isEmpty()) {
                 throw new RuntimeException("File must contain at least 2 rows");
             } else {
+                rowCount++;
                 processRow(line, cases, caseIdColIndex, colHeads);
             }
 
             while ((line = br.readLine()) != null) {
+                rowCount++;
                 processRow(line, cases, caseIdColIndex, colHeads);
             }
         } catch (IOException e) {
