@@ -1,6 +1,8 @@
 package cs.ut.engine.item;
 
 import cs.ut.config.items.ModelParameter;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -106,7 +108,7 @@ public class Job {
 
     @Override
     public String toString() {
-        return outcome.getParameter()
+        return FilenameUtils.getBaseName(log.getName())
                 .concat("_")
                 .concat(bucketing.getParameter())
                 .concat("_")
@@ -114,6 +116,7 @@ public class Job {
                 .concat("_")
                 .concat(learner.getParameter())
                 .concat("_")
+                .concat(outcome.getParameter())
                 .concat(".pkl");
     }
 }
