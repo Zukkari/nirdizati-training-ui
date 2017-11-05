@@ -35,7 +35,7 @@
     <!-- Paths configuration used for log, model and script storage -->
     <paths>
         <!-- Directory for user log storage -->
-        <userLogDirectory>/home/zukkari/git/nirdizati-training-ui/userlogs/</userLogDirectory>
+        <userLogDirectory>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/logdata/</userLogDirectory>
         <!-- Directory for user model storage -->
         <userModelDirectory>/home/zukkari/git/nirdizati-training-ui/usermodels/</userModelDirectory>
         <!-- Directory where to look for prediction scripts -->
@@ -45,7 +45,7 @@
         <!-- Directory for data set parameters relative to script directory-->
         <datasetDirectory>dataset_params/</datasetDirectory>
         <!-- Results where trained models are located relative to script directory -->
-        <resultsDirectory>results/</resultsDirectory>
+        <pklDirectory>pkl/</pklDirectory>
     </paths>
 
     <!-- Header button configuration for header construction -->
@@ -93,6 +93,9 @@
         <!-- Values that will be used to search for activity column -->
         <activityId>
             <id>activity</id>
+            <id>activity_name</id>
+            <id>activity_id</id>
+            <id>event_name</id>
         </activityId>
 
         <!-- Values that will be used for timestamp column identification -->

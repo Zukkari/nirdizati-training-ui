@@ -1,10 +1,10 @@
 package cs.ut.engine;
 
 import cs.ut.config.items.ModelParameter;
-import cs.ut.engine.item.Job;
 import cs.ut.exceptions.NirdizatiRuntimeException;
+import cs.ut.jobs.Job;
+import cs.ut.jobs.SimulationJob;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Session;
 
@@ -52,12 +52,12 @@ public class JobManager {
         encodings.forEach(encoding ->
                 bucketing.forEach(bucket ->
                         learner.forEach(learn -> {
-                            Job job = new Job();
+                            SimulationJob job = new SimulationJob();
                             job.setEncoding(encoding);
                             job.setBucketing(bucket);
                             job.setLearner(learn);
                             job.setOutcome(result.get(0));
-                            job.setLog(logFile);
+                            job.setLogFile(logFile);
 
                             log.debug(String.format("Scheduled job <%s>", job));
                             list.add(job);
@@ -97,9 +97,9 @@ public class JobManager {
         Queue<Job> jobs = jobQueue.get(session);
 
         if (!jobs.isEmpty()) {
-            Job job = jobs.peek();
+            SimulationJob job = (SimulationJob) jobs.peek();
             if (job != null) {
-                return job.getLog();
+                return job.getLogFile();
             }
         }
         throw new NirdizatiRuntimeException("Current execution has no jobs scheduled");
@@ -111,13 +111,8 @@ public class JobManager {
         Queue<Job> jobs = jobQueue.get(session);
 
         if (!jobs.isEmpty()) {
-            return jobs.peek().getOutcome();
+            return ((SimulationJob) jobs.peek()).getOutcome();
         }
         throw new NirdizatiRuntimeException("Current execution has no jobs scheduled");
-    }
-
-    public void applyJSON(JSONObject json) {
-        Queue<Job> job = jobQueue.get(Executions.getCurrent().getSession());
-        job.forEach(j -> j.setDatasetJson(json));
     }
 }
