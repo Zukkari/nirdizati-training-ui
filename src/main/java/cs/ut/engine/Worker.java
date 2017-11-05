@@ -1,25 +1,15 @@
 package cs.ut.engine;
 
-import cs.ut.config.MasterConfiguration;
-import cs.ut.config.items.ModelParameter;
-import cs.ut.config.nodes.DirectoryPathConfiguration;
+import cs.ut.controller.MainPageController;
 import cs.ut.jobs.Job;
-import cs.ut.jobs.SimulationJob;
-import cs.ut.exceptions.NirdizatiRuntimeException;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.util.Clients;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Calendar;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.TimeUnit;
 
 public class Worker extends Thread {
 
@@ -32,7 +22,7 @@ public class Worker extends Thread {
     }
 
     public static Worker getInstance() {
-        if (worker == null) {
+        if (worker == null || !worker.isAlive()) {
             worker = new Worker();
         }
         return worker;
@@ -69,6 +59,16 @@ public class Worker extends Thread {
                 }
 
                 job.setCompleteTime(Calendar.getInstance().getTime());
+
+                if (job.isNotificationRequired()) {
+                    Executions.schedule(job.getClient(),
+                            e -> Clients.showNotification(
+                                    job.getNotificationMessage(), "info"
+                                    , MainPageController.getInstance().getComp()
+                                    , "bottom_right"
+                                    , -1),
+                            new Event("jobStatus", null, "complete"));
+                }
             } else {
                 try {
                     Thread.sleep(2000);

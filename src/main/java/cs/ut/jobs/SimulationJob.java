@@ -1,5 +1,6 @@
 package cs.ut.jobs;
 
+import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
 import cs.ut.engine.FileWriter;
@@ -8,6 +9,7 @@ import cs.ut.exceptions.NirdizatiRuntimeException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+import org.zkoss.util.resource.Labels;
 
 import java.io.File;
 import java.io.IOException;
@@ -151,5 +153,15 @@ public class SimulationJob extends Job {
 
     public void setLogFile(File logFile) {
         this.logFile = logFile;
+    }
+
+    @Override
+    public boolean isNotificationRequired() {
+        return true;
+    }
+
+    @Override
+    public String getNotificationMessage() {
+        return Labels.getLabel("job.completed.simulation", new Object[]{logFile.getName()});
     }
 }

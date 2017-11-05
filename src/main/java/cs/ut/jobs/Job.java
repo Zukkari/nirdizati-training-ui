@@ -2,6 +2,7 @@ package cs.ut.jobs;
 
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.nodes.DirectoryPathConfiguration;
+import org.zkoss.zk.ui.Desktop;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -17,6 +18,8 @@ public abstract class Job {
     protected String datasetDir;
     protected String trainingDir;
     protected String pklDir;
+
+    private Desktop client;
 
     public Job() {
         this.createTime = Calendar.getInstance().getTime();
@@ -58,5 +61,21 @@ public abstract class Job {
 
     public void setCompleteTime(Date completeTime) {
         this.completeTime = completeTime;
+    }
+
+    public boolean isNotificationRequired() {
+        return false;
+    }
+
+    public Desktop getClient() {
+        return client;
+    }
+
+    public void setClient(Desktop client) {
+        this.client = client;
+    }
+
+    public String getNotificationMessage() {
+        return "";
     }
 }

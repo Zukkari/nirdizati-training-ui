@@ -1,12 +1,15 @@
 package cs.ut.engine;
 
+import com.google.common.html.HtmlEscapers;
 import cs.ut.config.items.ModelParameter;
 import cs.ut.exceptions.NirdizatiRuntimeException;
 import cs.ut.jobs.Job;
 import cs.ut.jobs.SimulationJob;
 import org.apache.log4j.Logger;
+import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Session;
+import org.zkoss.zk.ui.util.Clients;
 
 import java.io.File;
 import java.util.*;
@@ -47,6 +50,7 @@ public class JobManager {
 
 
         Session currentSession = Executions.getCurrent().getSession();
+        Executions.getCurrent().getDesktop().enableServerPush(true);
 
         Queue<Job> list = jobQueue.get(currentSession) == null ? new LinkedList<>() : jobQueue.get(currentSession);
         encodings.forEach(encoding ->
@@ -58,6 +62,7 @@ public class JobManager {
                             job.setLearner(learn);
                             job.setOutcome(result.get(0));
                             job.setLogFile(logFile);
+                            job.setClient(Executions.getCurrent().getDesktop());
 
                             log.debug(String.format("Scheduled job <%s>", job));
                             list.add(job);
