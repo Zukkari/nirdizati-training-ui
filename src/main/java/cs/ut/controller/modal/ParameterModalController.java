@@ -6,9 +6,12 @@ import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.engine.CsvReader;
 import cs.ut.engine.JobManager;
+import cs.ut.engine.Worker;
+import cs.ut.jobs.DataSetGenerationJob;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.SerializableEventListener;
@@ -94,7 +97,9 @@ public class ParameterModalController extends SelectorComposer<Component> {
                 if (val.equals(identified)) combobox.setSelectedItem(comboitem);
             });
 
-            if (combobox.getSelectedItem() == null) {
+            try {
+                combobox.getSelectedItem();
+            } catch (WrongValueException e) {
                 combobox.setSelectedItem(combobox.getItemAtIndex(0));
             }
 
@@ -131,7 +136,7 @@ public class ParameterModalController extends SelectorComposer<Component> {
         okBtnListener = e -> {
             Map<String, List<String>> acceptedParameters = gatherAcceptedValues();
             acceptedParameters.forEach((k, v) -> identifiedColumns.put(k, v));
-            JobManager.getInstance().applyJSON(csvReader.generateJson(identifiedColumns));
+            Worker.getInstance().scheduleJob(new DataSetGenerationJob(identifiedColumns, JobManager.getInstance().getCurrentFile()));
             JobManager.getInstance().delployJobs();
             modal.detach();
         };

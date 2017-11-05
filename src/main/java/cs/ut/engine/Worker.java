@@ -1,34 +1,20 @@
 package cs.ut.engine;
 
-import cs.ut.config.MasterConfiguration;
-import cs.ut.config.items.ModelParameter;
-import cs.ut.config.nodes.DirectoryPathConfiguration;
-import cs.ut.engine.item.Job;
-import cs.ut.exceptions.NirdizatiRuntimeException;
-import org.apache.commons.io.FilenameUtils;
+import cs.ut.controller.MainPageController;
+import cs.ut.jobs.Job;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
+import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.util.Clients;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Calendar;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.TimeUnit;
 
 public class Worker extends Thread {
 
     private static final Logger log = Logger.getLogger(Worker.class);
     private static Worker worker;
-
-    private String scriptDir;
-    private String userModelDir;
-    private String coreDir;
-    private String datasetDir;
-    private String trainingDir;
 
     private Queue<Job> jobQueue = new LinkedList<>();
 
@@ -36,15 +22,8 @@ public class Worker extends Thread {
     }
 
     public static Worker getInstance() {
-        if (worker == null) {
+        if (worker == null || !worker.isAlive()) {
             worker = new Worker();
-
-            DirectoryPathConfiguration pathProvider = MasterConfiguration.getInstance().getDirectoryPathConfiguration();
-            worker.scriptDir = pathProvider.getScriptDirectory();
-            worker.userModelDir = pathProvider.getUserModelDirectory();
-            worker.coreDir = worker.scriptDir.concat("core/");
-            worker.datasetDir = pathProvider.getDatasetDirectory();
-            worker.trainingDir = pathProvider.getTrainDirectory();
         }
         return worker;
     }
@@ -54,26 +33,42 @@ public class Worker extends Thread {
         while (true) {
             if (jobQueue.peek() != null) {
                 Job job = jobQueue.poll();
+                job.setStartTime(Calendar.getInstance().getTime());
+
                 try {
-                    log.debug(String.format("Started executing job <%s>", job));
-
-                    if (job.getDatasetJson() != null) {
-                        log.debug("Writing dataset json to disk...");
-                        writeJsonToDisk(job.getDatasetJson(), FilenameUtils.getBaseName(job.getLog().getName()), datasetDir);
-                        log.debug(String.format("Successfully wrote dataset json to disk: <%s>", job.getDatasetJson().toString()));
-                    }
-
-                    generateTrainingJson(job);
-                    log.debug("Successfully generated json");
-                    log.debug(String.format("Executing job <%s>", job));
-                    job.setStartTime(Calendar.getInstance().getTime());
-                    executeJob(job);
-                    job.setCompleteTime(Calendar.getInstance().getTime());
-                    log.debug(String.format("Finished executing job <%s>", job));
+                    log.debug(String.format("<%s> started job preprocess", job));
+                    job.preProcess();
                 } catch (Exception e) {
-                    log.debug(String.format("Failed to execute job <%s>", job), e);
+                    log.debug(String.format("<%s> failed in preprocess stage with exception, aborting job", job), e);
+                    break;
                 }
+
+                try {
+                    log.debug(String.format("<%s> started job execution", job));
+                    job.execute();
+                } catch (Exception e) {
+                    log.debug(String.format("<%s> failed in execute stage with exception, aborting job", job), e);
+                    break;
+                }
+
+                try {
+                    log.debug(String.format("<%s> started job post execute", job));
+                    job.postExecute();
+                } catch (Exception e) {
+                    log.debug(String.format("<%s> failed in post execute stage with exception", job), e);
+                }
+
                 job.setCompleteTime(Calendar.getInstance().getTime());
+
+                if (job.isNotificationRequired()) {
+                    Executions.schedule(job.getClient(),
+                            e -> Clients.showNotification(
+                                    job.getNotificationMessage(), "info"
+                                    , MainPageController.getInstance().getComp()
+                                    , "bottom_center"
+                                    , -1),
+                            new Event("jobStatus", null, "complete"));
+                }
             } else {
                 try {
                     Thread.sleep(2000);
@@ -86,107 +81,5 @@ public class Worker extends Thread {
 
     public void scheduleJob(Job job) {
         jobQueue.add(job);
-    }
-
-
-    private void executeJob(Job job) {
-        try {
-            ProcessBuilder pb = new ProcessBuilder("python",
-                    "train.py",
-                    job.getLog().getAbsolutePath(),
-                    job.getBucketing().getParameter(),
-                    job.getEncoding().getParameter(),
-                    job.getLearner().getParameter(),
-                    job.getOutcome().getParameter());
-
-            pb.directory(new File(coreDir));
-            pb.inheritIO();
-            Map<String, String> env = pb.environment();
-            env.put("PYTHONPATH", scriptDir);
-
-            Process process = pb.start();
-            log.debug(pb.command());
-            if (!process.waitFor(180, TimeUnit.SECONDS)) {
-                process.destroy();
-                throw new NirdizatiRuntimeException("Timed out while trying to create predictor");
-            }
-
-            log.debug("Script finished running...");
-
-            File file = new File(coreDir.concat(job.toString()));
-            log.debug(file);
-
-            if (!file.exists()) {
-                throw new NirdizatiRuntimeException("Process failed to finish");
-            }
-
-            log.debug("Script exited successfully");
-            log.debug(String.format("Trying to move file to user model storage dir <%s>", userModelDir));
-
-            String noExtensionName = FilenameUtils.getBaseName(job.getLog().getName());
-            File dir = new File(userModelDir.concat(noExtensionName));
-            if (!dir.exists() && !dir.mkdir()) {
-                throw new NirdizatiRuntimeException(String.format("Cannot create folder for model with name <%s>", dir.getName()));
-            }
-
-            Files.move(Paths.get(coreDir.concat(job.toString())), Paths.get(userModelDir.concat(noExtensionName.concat("/")).concat(job.toString())), StandardCopyOption.REPLACE_EXISTING);
-            log.debug("Successfully moved user model to user model storage directory");
-
-            job.setResultPath(Paths.get(userModelDir.concat(job.toString())).toString());
-            JobManager.getInstance().getCompletedJobs().add(job);
-        } catch (IOException | InterruptedException e) {
-            throw new NirdizatiRuntimeException("Failed to execute script call", e);
-        }
-    }
-
-    private void generateTrainingJson(Job job) {
-        JSONObject json = new JSONObject();
-
-        ModelParameter learner = job.getLearner();
-
-        JSONObject params = new JSONObject();
-        params.put("max_features", learner.getMaxfeatures() == null ? 0.0 : learner.getMaxfeatures());
-        params.put("n_estimators", learner.getEstimators() == null ? 0 : learner.getEstimators());
-        params.put("gbm_learning_rate", learner.getGbmrate() == null ? 0 : learner.getGbmrate());
-        params.put("n_clusters", 1);
-
-        json.put(job.getOutcome().getParameter(),
-                new JSONObject().put(job.getBucketing().getParameter().concat("_").concat(job.getEncoding().getParameter()),
-                        new JSONObject().put(learner.getParameter(), params)));
-
-        log.debug(String.format("Generated following json based on config %n <%s>", json.toString()));
-
-        writeJsonToDisk(json, FilenameUtils.getBaseName(job.getLog().getName()), trainingDir);
-    }
-
-    private void writeJsonToDisk(JSONObject json, String filename, String path) {
-        log.debug("Writing json to disk...");
-
-        File file = new File(coreDir.concat(path.concat(filename.concat(".json"))));
-
-        byte[] bytes;
-        try {
-            bytes = json.toString().getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            log.debug(String.format("Unsupported encoding %s", e));
-            throw new NirdizatiRuntimeException(e);
-        }
-
-        if (!file.exists()) {
-            try {
-                Files.createFile(Paths.get(file.getAbsolutePath()));
-                log.debug(String.format("Created file <%s>", file.getName()));
-            } catch (IOException e) {
-                throw new NirdizatiRuntimeException(String.format("Failed creating file <%s>", file.getAbsolutePath()), e);
-            }
-        }
-
-        try (OutputStream os = new FileOutputStream(file)) {
-            os.write(bytes);
-            os.close();
-            log.debug(String.format("Successfully written json to disk... <%s> bytes written", bytes.length));
-        } catch (IOException e) {
-            throw new NirdizatiRuntimeException(String.format("Failed writing json file to disk <%s>", file.getName()), e);
-        }
     }
 }

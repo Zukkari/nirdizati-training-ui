@@ -24,6 +24,9 @@ public class DirectoryPathConfiguration {
     @XmlElement(name = "trainDirectory")
     private String trainDirectory;
 
+    @XmlElement(name = "pklDirectory")
+    private String pklDirectory;
+
     public String getUserLogDirectory() {
         return userLogDirectory;
     }
@@ -42,6 +45,10 @@ public class DirectoryPathConfiguration {
 
     public String getTrainDirectory() {
         return trainDirectory;
+    }
+
+    public String getPklDirectory() {
+        return pklDirectory;
     }
 
     public void validatePathsExist() {

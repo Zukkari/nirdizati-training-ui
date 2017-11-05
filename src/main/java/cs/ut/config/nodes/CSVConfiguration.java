@@ -34,6 +34,9 @@ public class CSVConfiguration {
     @XmlElement(name = "threshold")
     private Integer threshold;
 
+    @XmlElement(name = "sampleSize")
+    private Integer sampleSize;
+
     public List<String> getUserCols() {
         return userCols;
     }
@@ -60,5 +63,9 @@ public class CSVConfiguration {
 
     public Integer getThreshold() {
         return threshold;
+    }
+
+    public Integer getSampleSize() {
+        return sampleSize;
     }
 }

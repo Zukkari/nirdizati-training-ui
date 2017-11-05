@@ -27,12 +27,13 @@ public class CsvReader {
     private static String splitter = config.getSplitter();
     private static List<String> emptyValues = config.getEmptyValues();
     private static Integer confThreshold = config.getThreshold();
+    private static Integer sampleSize = config.getSampleSize();
 
-    private static final String CASE_ID_COL = "case_id_col";
-    private static final String ACTIVITY_COL = "activity_col";
-    private static final String TIMESTAMP_COL = "timestamp_col";
-    private static final String LABEL_NUM_COLS = "label_num_cols";
-    private static final String LABEL_CAT_COLS = "label_cat_cols";
+    public static final String CASE_ID_COL = "case_id_col";
+    public static final String ACTIVITY_COL = "activity_col";
+    public static final String TIMESTAMP_COL = "timestamp_col";
+    public static final String LABEL_NUM_COLS = "label_num_cols";
+    public static final String LABEL_CAT_COLS = "label_cat_cols";
 
     private static final String STATIC = "static";
     private static final String DYNAMIC = "dynamic";
@@ -260,7 +261,7 @@ public class CsvReader {
                 processRow(line, cases, caseIdColIndex, colHeads);
             }
 
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null && cases.size() <= sampleSize) {
                 rowCount++;
                 processRow(line, cases, caseIdColIndex, colHeads);
             }
@@ -298,20 +299,6 @@ public class CsvReader {
 
     private Case findCaseById(String id, List<Case> cases) {
         return cases.stream().filter(it -> id.equalsIgnoreCase(it.getId())).findFirst().orElse(null);
-    }
-
-    public JSONObject generateJson(Map<String, List<String>> map) {
-        JSONObject jsonObject = new JSONObject();
-
-        map.forEach((k, v) -> {
-            if (v.size() == 1) {
-                jsonObject.put(k, v.get(0));
-            } else {
-                jsonObject.put(k, v);
-            }
-        });
-
-        return jsonObject;
     }
 
     public List<String> getColumnList() {
