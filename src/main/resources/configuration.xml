@@ -116,6 +116,9 @@
 
         <!-- Threshold that decides whether value is categorical or numerical -->
         <threshold>10</threshold>
+
+        <!-- Sample size, how many cases should be used for categorization -->
+        <sampleSize>100</sampleSize>
     </csvConfig>
 
     <!-- Model training configurations -->

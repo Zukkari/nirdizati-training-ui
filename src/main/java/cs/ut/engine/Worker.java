@@ -65,7 +65,7 @@ public class Worker extends Thread {
                             e -> Clients.showNotification(
                                     job.getNotificationMessage(), "info"
                                     , MainPageController.getInstance().getComp()
-                                    , "bottom_right"
+                                    , "bottom_center"
                                     , -1),
                             new Event("jobStatus", null, "complete"));
                 }

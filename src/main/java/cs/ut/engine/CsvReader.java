@@ -27,6 +27,7 @@ public class CsvReader {
     private static String splitter = config.getSplitter();
     private static List<String> emptyValues = config.getEmptyValues();
     private static Integer confThreshold = config.getThreshold();
+    private static Integer sampleSize = config.getSampleSize();
 
     public static final String CASE_ID_COL = "case_id_col";
     public static final String ACTIVITY_COL = "activity_col";
@@ -260,7 +261,7 @@ public class CsvReader {
                 processRow(line, cases, caseIdColIndex, colHeads);
             }
 
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null && cases.size() <= sampleSize) {
                 rowCount++;
                 processRow(line, cases, caseIdColIndex, colHeads);
             }
