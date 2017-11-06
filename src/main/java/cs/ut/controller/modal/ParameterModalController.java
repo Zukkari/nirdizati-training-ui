@@ -4,26 +4,30 @@ import com.google.common.collect.Lists;
 import com.google.common.escape.Escaper;
 import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
+import cs.ut.controller.MainPageController;
 import cs.ut.engine.CsvReader;
 import cs.ut.engine.JobManager;
 import cs.ut.engine.Worker;
 import cs.ut.jobs.DataSetGenerationJob;
 import org.apache.log4j.Logger;
+import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.SerializableEventListener;
-import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zk.ui.util.GenericAutowireComposer;
 import org.zkoss.zul.*;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
-public class ParameterModalController extends SelectorComposer<Component> {
+public class ParameterModalController extends GenericAutowireComposer<Component> {
     private static final Logger log = Logger.getLogger(ParameterModalController.class);
 
     @Wire
@@ -46,17 +50,22 @@ public class ParameterModalController extends SelectorComposer<Component> {
 
     private SerializableEventListener<Event> okBtnListener;
 
-    private transient CsvReader csvReader = new CsvReader();
-
     private Map<String, List<String>> identifiedColumns;
 
-    @Override
+    private File file;
+
+    private transient CsvReader csvReader;
+
+    @AfterCompose
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
 
-        File file = JobManager.Manager.getCurrentFile();
+        this.file = (File) arg.get("file");
+        csvReader = new CsvReader(file);
+
+        log.debug(String.format("Modal received file <%s>", file));
         log.debug(String.format("Current log file : <%s>", file.getName()));
-        List<String> fileColumns = CsvReader.readTableHeader(file);
+        List<String> fileColumns = csvReader.readTableHeader();
         log.debug(String.format("Columns present in table: <%s>", fileColumns));
         Collections.sort(fileColumns);
 
@@ -70,7 +79,7 @@ public class ParameterModalController extends SelectorComposer<Component> {
             Clients.showNotification(Labels.getLabel(
                     "modals.unknown_separator",
                     new Object[]{escaper.escape(file.getName())}),
-                    "error", getSelf(),
+                    "error", getPage().getFirstRoot(),
                     "bottom_center",
                     -1);
 
@@ -111,7 +120,7 @@ public class ParameterModalController extends SelectorComposer<Component> {
         paramGrid.appendChild(rows);
 
         cancelBtn.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) e -> {
-            JobManager.Manager.flushJobs();
+            Files.delete(Paths.get(file.getAbsolutePath()));
             modal.detach();
         });
 
@@ -136,10 +145,12 @@ public class ParameterModalController extends SelectorComposer<Component> {
         okBtnListener = e -> {
             Map<String, List<String>> acceptedParameters = gatherAcceptedValues();
             acceptedParameters.forEach((k, v) -> identifiedColumns.put(k, v));
-            Worker.getInstance().scheduleJob(new DataSetGenerationJob(identifiedColumns, JobManager.Manager.getCurrentFile()));
-            JobManager.Manager.deployJobs();
+            Worker.getInstance().scheduleJob(new DataSetGenerationJob(identifiedColumns, file));
+            Clients.showNotification(Labels.getLabel("upload.success", new Object[]{HtmlEscapers.htmlEscaper().escape(file.getName())}), "info", getPage().getFirstRoot(), "bottom_right", -1);
+            MainPageController.getInstance().setContent("landing", getPage());
             modal.detach();
         };
+
         okBtn.addEventListener(Events.ON_CLICK, okBtnListener);
 
         rows = new Rows();

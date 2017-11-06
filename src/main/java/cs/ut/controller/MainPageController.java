@@ -39,7 +39,7 @@ public class MainPageController extends SelectorComposer<Component> {
      * @param destination - id of the page to which the content should be changed (defined in configuration.xml)
      * @param page        - caller page where Include element should be looked for.
      */
-    void setContent(String destination, Page page) {
+    public void setContent(String destination, Page page) {
         Include include = (Include) Selectors.iterable(page, "#contentInclude").iterator().next();
         include.setSrc(MasterConfiguration.getInstance().getPageConfiguration().getByPageName(destination).getUri());
     }

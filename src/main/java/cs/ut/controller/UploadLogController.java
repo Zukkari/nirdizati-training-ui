@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
@@ -16,12 +17,15 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Window;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controller that responds for the log uploading page.
@@ -107,8 +111,11 @@ public class UploadLogController extends SelectorComposer<Component> {
                     log.debug(e);
                 }
 
-                Clients.showNotification(Labels.getLabel("upload.success", new Object[]{HtmlEscapers.htmlEscaper().escape(media.getName())}), "info", getSelf(), "bottom_right", -1);
-                MainPageController.getInstance().setContent("landing", getPage());
+                Map args = new HashMap<>();
+                args.put("file", file);
+                Window window = (Window) Executions.createComponents(
+                        "/views/modals/params.zul", getSelf(), args);
+                if (getSelf().getChildren().contains(window)) window.doModal();
             };
 
             serialization.run();

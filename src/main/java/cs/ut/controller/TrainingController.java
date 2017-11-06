@@ -294,15 +294,11 @@ public class TrainingController extends SelectorComposer<Component> {
                 Map<String, List<ModelParameter>> params = new HashMap<>(parameters);
                 params.put(((ModelParameter) comboitem.getValue()).getType(), Collections.singletonList(comboitem.getValue()));
                 JobManager.Manager.generateJobs(params);
+                JobManager.Manager.deployJobs();
             };
 
             log.debug("Jobs generated...");
             jobs.run();
-
-
-            Window window = (Window) Executions.createComponents(
-                    "/views/modals/params.zul", getSelf(), null);
-            if (getSelf().getChildren().contains(window)) window.doModal();
         }
     }
 
