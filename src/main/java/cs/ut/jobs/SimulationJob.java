@@ -162,6 +162,6 @@ public class SimulationJob extends Job {
 
     @Override
     public String getNotificationMessage() {
-        return Labels.getLabel("job.completed.simulation", new Object[]{logFile.getName()});
+        return Labels.getLabel("job.completed.simulation", new Object[]{this.toString()});
     }
 }
