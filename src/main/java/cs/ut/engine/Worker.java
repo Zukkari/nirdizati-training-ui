@@ -60,7 +60,7 @@ public class Worker extends Thread {
 
                 job.setCompleteTime(Calendar.getInstance().getTime());
 
-                if (job.isNotificationRequired()) {
+                if (job.isNotificationRequired() && job.getClient() != null) {
                     Executions.schedule(job.getClient(),
                             e -> Clients.showNotification(
                                     job.getNotificationMessage(), "info"

@@ -123,7 +123,7 @@ public class CsvReader {
         resultColumns.putAll(userCols);
         resultColumns.get(DYNAMIC.concat(CAT_COLS)).add(userCols.get(ACTIVITY_COL).get(0));
         resultColumns.put(TIMESTAMP_COL, Collections.singletonList(timestampCol));
-        resultColumns.put(LABEL_NUM_COLS, Collections.singletonList(JobManager.getInstance().getPredictionType().getParameter()));
+        resultColumns.put(LABEL_NUM_COLS, Collections.singletonList(JobManager.Manager.getPredictionType().getParameter()));
         resultColumns.put(LABEL_CAT_COLS, Collections.emptyList());
 
         Long end = System.currentTimeMillis();
@@ -244,7 +244,7 @@ public class CsvReader {
         String[] colHeads;
 
         String line;
-        try (BufferedReader br = new BufferedReader(new FileReader(JobManager.getInstance().getCurrentFile()))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(JobManager.Manager.getCurrentFile()))) {
             line = br.readLine();
             if (line == null || (line.isEmpty())) {
                 throw new NirdizatiRuntimeException("File is empty");

@@ -288,13 +288,12 @@ public class TrainingController extends SelectorComposer<Component> {
         if (validateData()) {
             log.debug("Parameters are valid, calling script to construct the model");
             Runnable jobs = () -> {
-                JobManager.getInstance().setLog(clientLogs.getSelectedItem().getValue());
+                JobManager.Manager.setLogFile(clientLogs.getSelectedItem().getValue());
                 Comboitem comboitem = predictionType.getSelectedItem();
 
                 Map<String, List<ModelParameter>> params = new HashMap<>(parameters);
                 params.put(((ModelParameter) comboitem.getValue()).getType(), Collections.singletonList(comboitem.getValue()));
-                JobManager.getInstance()
-                        .generateJobs(params);
+                JobManager.Manager.generateJobs(params);
             };
 
             log.debug("Jobs generated...");

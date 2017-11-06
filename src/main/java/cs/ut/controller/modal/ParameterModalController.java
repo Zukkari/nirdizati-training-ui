@@ -54,7 +54,7 @@ public class ParameterModalController extends SelectorComposer<Component> {
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
 
-        File file = JobManager.getInstance().getCurrentFile();
+        File file = JobManager.Manager.getCurrentFile();
         log.debug(String.format("Current log file : <%s>", file.getName()));
         List<String> fileColumns = CsvReader.readTableHeader(file);
         log.debug(String.format("Columns present in table: <%s>", fileColumns));
@@ -74,7 +74,7 @@ public class ParameterModalController extends SelectorComposer<Component> {
                     "bottom_center",
                     -1);
 
-            JobManager.getInstance().flushJobs();
+            JobManager.Manager.flushJobs();
             modal.detach();
             return;
         }
@@ -111,7 +111,7 @@ public class ParameterModalController extends SelectorComposer<Component> {
         paramGrid.appendChild(rows);
 
         cancelBtn.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) e -> {
-            JobManager.getInstance().flushJobs();
+            JobManager.Manager.flushJobs();
             modal.detach();
         });
 
@@ -136,8 +136,8 @@ public class ParameterModalController extends SelectorComposer<Component> {
         okBtnListener = e -> {
             Map<String, List<String>> acceptedParameters = gatherAcceptedValues();
             acceptedParameters.forEach((k, v) -> identifiedColumns.put(k, v));
-            Worker.getInstance().scheduleJob(new DataSetGenerationJob(identifiedColumns, JobManager.getInstance().getCurrentFile()));
-            JobManager.getInstance().delployJobs();
+            Worker.getInstance().scheduleJob(new DataSetGenerationJob(identifiedColumns, JobManager.Manager.getCurrentFile()));
+            JobManager.Manager.deployJobs();
             modal.detach();
         };
         okBtn.addEventListener(Events.ON_CLICK, okBtnListener);
@@ -183,7 +183,7 @@ public class ParameterModalController extends SelectorComposer<Component> {
 
         fields.forEach(field -> {
             if (!vals.containsKey(field.getSelectedItem().getValue())) {
-               vals.put(field.getSelectedItem().getValue(), Lists.newArrayList(field.getId()));
+                vals.put(field.getSelectedItem().getValue(), Lists.newArrayList(field.getId()));
             } else {
                 vals.get(field.getSelectedItem().getValue()).add(field.getId());
             }
