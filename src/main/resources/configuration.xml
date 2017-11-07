@@ -100,7 +100,7 @@
 
         <!-- Values that will be used for timestamp column identification -->
         <timestampFormat>
-            <format>yyyy-MM-dd hh:mm:ss</format>
+            <format>\d{4}-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}</format>
             <format>yyyy-mm-dd'T'hh:mm:ss</format>
         </timestampFormat>
 

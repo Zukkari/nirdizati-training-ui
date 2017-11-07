@@ -69,7 +69,7 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
         log.debug(String.format("Columns present in table: <%s>", fileColumns));
         Collections.sort(fileColumns);
 
-        Map<String, String> identifiedCols = CsvReader.identifyUserColumns(fileColumns);
+        Map<String, String> identifiedCols = csvReader.identifyUserColumns(fileColumns);
 
         Escaper escaper = HtmlEscapers.htmlEscaper();
 
