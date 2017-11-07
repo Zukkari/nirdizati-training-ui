@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <configuration>
+
+    <!-- Page configuration used for redirects -->
     <pageConfig>
         <page>
             <id>landing</id>
@@ -23,8 +25,30 @@
             <uri>/views/validation.zul</uri>
         </page>
     </pageConfig>
-    <userLogDirectory>../userlogs/</userLogDirectory>
 
+    <!-- extensions allowed for file upload -->
+    <extensions>
+        <ext>xes</ext>
+        <ext>csv</ext>
+    </extensions>
+
+    <!-- Paths configuration used for log, model and script storage -->
+    <paths>
+        <!-- Directory for user log storage -->
+        <userLogDirectory>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/logdata/</userLogDirectory>
+        <!-- Directory for user model storage -->
+        <userModelDirectory>/home/zukkari/git/nirdizati-training-ui/usermodels/</userModelDirectory>
+        <!-- Directory where to look for prediction scripts -->
+        <scriptDirectory>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/</scriptDirectory>
+        <!-- Directory for training parameters relative to script directory -->
+        <trainDirectory>training_params/</trainDirectory>
+        <!-- Directory for data set parameters relative to script directory-->
+        <datasetDirectory>dataset_params/</datasetDirectory>
+        <!-- Results where trained models are located relative to script directory -->
+        <pklDirectory>pkl/</pklDirectory>
+    </paths>
+
+    <!-- Header button configuration for header construction -->
     <headerConfiguration>
         <headerItem>
             <label>header.upload</label>
@@ -52,100 +76,150 @@
         </headerItem>
     </headerConfiguration>
 
+    <csvConfig>
+        <!-- Columns that need to be specified by user when creating model -->
+        <userCols>
+            <col>case_id_col</col>
+            <col>activity_col</col>
+        </userCols>
+
+        <!-- Values that will be used to search for case id column -->
+        <caseId>
+            <id>caseid</id>
+            <id>case_id</id>
+            <id>case id</id>
+        </caseId>
+
+        <!-- Values that will be used to search for activity column -->
+        <activityId>
+            <id>activity</id>
+            <id>activity_name</id>
+            <id>activity_id</id>
+            <id>event_name</id>
+        </activityId>
+
+        <!-- Values that will be used for timestamp column identification -->
+        <timestampFormat>
+            <format>yyyy-MM-dd hh:mm:ss</format>
+            <format>yyyy-mm-dd'T'hh:mm:ss</format>
+        </timestampFormat>
+
+        <!-- Regexp that is used for csv file splitting -->
+        <splitter>[,;]</splitter>
+
+        <!-- Values that are used to clean columns for categori<ation -->
+        <emptyValues>
+            <id></id>
+            <id>EMPTY</id>
+            <id>empty</id>
+        </emptyValues>
+
+        <!-- Threshold that decides whether value is categorical or numerical -->
+        <threshold>10</threshold>
+
+        <!-- Sample size, how many cases should be used for categorization -->
+        <sampleSize>100</sampleSize>
+    </csvConfig>
+
+    <!-- Model training configurations -->
     <modelConfig>
+
+        <!-- Types that can be used for model construction -->
         <types>
             <type>encoding</type>
             <type>bucketing</type>
-            <type>regression</type>
+            <type>learner</type>
             <type>predictiontype</type>
         </types>
 
-        <basicParams>
-            <param>frequency</param>
-            <param>single</param>
-            <param>random_forest</param>
-        </basicParams>
-
+        <!-- Model parameters that are represented in the menu -->
         <modelparams>
             <modelparam>
                 <id>last_state</id>
-                <parameter></parameter>
+                <parameter>laststate</parameter>
                 <type>encoding</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>frequency</id>
-                <parameter></parameter>
+                <parameter>agg</parameter>
                 <type>encoding</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>combined</id>
-                <parameter></parameter>
+                <parameter>combined</parameter>
                 <type>encoding</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>index_based</id>
-                <parameter></parameter>
+                <parameter>index</parameter>
                 <type>encoding</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
-                <id>single</id>
-                <parameter></parameter>
+                <id>zero</id>
+                <parameter>zero</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>state_based</id>
-                <parameter></parameter>
+                <parameter>state</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>clustering</id>
-                <parameter></parameter>
+                <parameter>cluster</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>prefix_lenght_based</id>
-                <parameter></parameter>
+                <parameter>prefix</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
             </modelparam>
 
             <modelparam>
                 <id>random_forest</id>
-                <parameter></parameter>
-                <type>regression</type>
+                <parameter>rf</parameter>
+                <type>learner</type>
                 <enabled>true</enabled>
+                <estimators>300</estimators>
+                <maxfeatures>0.75</maxfeatures>
             </modelparam>
             <modelparam>
                 <id>gradient_boosting</id>
-                <parameter></parameter>
-                <type>regression</type>
+                <parameter>gbm</parameter>
+                <type>learner</type>
                 <enabled>true</enabled>
+                <estimators>300</estimators>
+                <maxfeatures>0.75</maxfeatures>
+                <gbmrate>1.0</gbmrate>
             </modelparam>
             <modelparam>
                 <id>decision_tree</id>
-                <parameter></parameter>
-                <type>regression</type>
+                <parameter>dt</parameter>
+                <type>learner</type>
                 <enabled>true</enabled>
+                <estimators>300</estimators>
+                <maxfeatures>0.75</maxfeatures>
             </modelparam>
 
             <modelparam>
                 <id>remaining_time</id>
-                <parameter></parameter>
+                <parameter>remtime</parameter>
                 <type>predictiontype</type>
                 <enabled>true</enabled>
             </modelparam>
             <modelparam>
                 <id>outcome</id>
-                <parameter></parameter>
+                <parameter>label</parameter>
                 <type>predictiontype</type>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
             </modelparam>
         </modelparams>
     </modelConfig>
