@@ -1,0 +1,13 @@
+.z-loading {
+    top: 50% !important;
+    left: 45% !important;
+    align-content: center;
+    vertical-align: middle;
+}
+
+.error-label {
+    color: red;
+    padding: 10px;
+    border-radius: 3px;
+    background-color: rgba(255, 21, 0, 0.38);
+}

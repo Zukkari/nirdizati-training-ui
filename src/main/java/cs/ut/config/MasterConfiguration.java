@@ -2,10 +2,16 @@ package cs.ut.config;
 
 import cs.ut.config.items.HeaderItem;
 import cs.ut.config.items.ModelProperties;
-import cs.ut.provider.ModelConfigurationProvider;
-import cs.ut.provider.PageConfigurationProvider;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
+import cs.ut.config.nodes.CSVConfiguration;
+import cs.ut.config.nodes.DirectoryPathConfiguration;
+import cs.ut.config.nodes.ModelConfiguration;
+import cs.ut.config.nodes.PageConfiguration;
+import cs.ut.engine.Worker;
+import cs.ut.exceptions.NirdizatiRuntimeException;
+import org.apache.log4j.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -13,8 +19,11 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
-import java.nio.file.Files;
+import java.io.IOException;
 import java.util.List;
 
 @XmlRootElement(name = "configuration")
@@ -24,10 +33,7 @@ public class MasterConfiguration {
     private static MasterConfiguration master;
 
     @XmlElement(name = "pageConfig")
-    private PageConfigurationProvider pageConfigurationProvider;
-
-    @XmlElement(name = "userLogDirectory")
-    private String userLogDirectory;
+    private PageConfiguration pageConfiguration;
 
     @XmlElementWrapper(name = "headerConfiguration")
     @XmlElement(name = "headerItem")
@@ -36,7 +42,19 @@ public class MasterConfiguration {
     @XmlElement(name = "modelConfig")
     private ModelProperties modelProperties;
 
-    private ModelConfigurationProvider modelConfigurationProvider;
+    @XmlElementWrapper(name = "extensions")
+    @XmlElement(name = "ext")
+    private List<String> extensions;
+
+    @XmlElementWrapper(name = "userCols")
+    @XmlElement(name = "col")
+    private List<String> userCols;
+
+    private DirectoryPathConfiguration directoryPathConfiguration;
+
+    private ModelConfiguration modelConfiguration;
+
+    private CSVConfiguration csvConfiguration;
 
     private MasterConfiguration() {
         configureLogger();
@@ -53,7 +71,7 @@ public class MasterConfiguration {
             try {
                 master.readMasterConfig();
             } catch (JAXBException e) {
-                throw new RuntimeException("Failed to read master configuration", e);
+                throw new NirdizatiRuntimeException("Failed to read master configuration", e);
             }
         }
         return master;
@@ -73,57 +91,110 @@ public class MasterConfiguration {
         MasterConfiguration configuration = (MasterConfiguration) unmarshaller.unmarshal(file);
         log.debug("Finished reading configuration");
 
-        pageConfigurationProvider = configuration.getPageConfigurationProvider();
-        log.debug(String.format("Successfully retrieved %s page configurations", pageConfigurationProvider.getPages().size()));
-
-        userLogDirectory = configuration.getUserLogDirectory();
-        File directory = new File(userLogDirectory);
-        if (!directory.exists()){
-            log.debug("Directory does not exist, creating directory for user logs.");
-            if (directory.mkdir()) {
-                log.debug(String.format("Successfully created directory for log storage in <%s>", directory.getAbsolutePath()));
-            } else log.debug(String.format("Failed to create a directory for log storage in <%s>", directory.getAbsolutePath()));
-        }
-
-        log.debug(String.format("Successfully read user log directory: '%s'", userLogDirectory));
-
         headerItems = configuration.getHeaderItems();
         log.debug(String.format("Successfully read %s header items", headerItems.size()));
+        extensions = configuration.getExtensions();
+        userCols = configuration.getUserCols();
 
-        modelProperties = configuration.getModelProperties();
-        log.debug(String.format("Successfully read %s types and %s model parameters",
-                modelProperties.getTypes().size(),
-                modelProperties.getParameters().size()));
-
-        modelConfigurationProvider = new ModelConfigurationProvider(modelProperties);
+        getDirectoryPathConfiguration().validatePathsExist();
 
         log.debug("Successfully read master configuration");
-    }
 
-    public PageConfigurationProvider getPageConfigurationProvider() {
-        return pageConfigurationProvider;
-    }
-
-    public String getUserLogDirectory() {
-        return userLogDirectory;
+        /* Start worker thread */
+        Worker.getInstance().start();
     }
 
     public List<HeaderItem> getHeaderItems() {
         return headerItems;
     }
 
-    private ModelProperties getModelProperties() {
-        return modelProperties;
+    public ModelConfiguration getModelConfiguration() {
+        if (modelProperties == null) {
+            modelProperties = readClass(ModelProperties.class, "modelConfig");
+            modelConfiguration = new ModelConfiguration(modelProperties);
+        }
+        return modelConfiguration;
     }
 
-    public ModelConfigurationProvider getModelConfigurationProvider() {
-        return modelConfigurationProvider;
+    public List<String> getExtensions() {
+        return extensions;
+    }
+
+    public List<String> getUserCols() {
+        return userCols;
     }
 
     /**
      * Configures logger and Enables appenders for Log4j
      */
     private void configureLogger() {
-        BasicConfigurator.configure();
+        Logger.getRootLogger().removeAllAppenders();
+        Logger.getRootLogger().setAdditivity(false);
+
+        ConsoleAppender ca = new ConsoleAppender();
+        ca.setLayout(new PatternLayout("<%d{ISO8601}> <%p> <%C{1}.class:%L> <%m>%n"));
+        ca.setThreshold(Level.DEBUG);
+        ca.activateOptions();
+
+        Logger.getRootLogger().addAppender(ca);
+
+        FileAppender fileAppender = new FileAppender();
+        fileAppender.setLayout(new PatternLayout("<%d{ISO8601}> <%p> <%C{1}.class:%L> <%m>%n"));
+        fileAppender.setName("nirdizati_ui_log.log");
+        fileAppender.setFile("nirdizati_ui_log.log");
+        fileAppender.setThreshold(Level.DEBUG);
+        fileAppender.setAppend(true);
+        fileAppender.activateOptions();
+
+        Logger.getRootLogger().addAppender(fileAppender);
+    }
+
+    public DirectoryPathConfiguration getDirectoryPathConfiguration() {
+        if (directoryPathConfiguration == null) {
+            directoryPathConfiguration = readClass(DirectoryPathConfiguration.class, "paths");
+        }
+        return directoryPathConfiguration;
+    }
+
+    public CSVConfiguration getCSVConfiguration() {
+        if (csvConfiguration == null) {
+            csvConfiguration = readClass(CSVConfiguration.class, "csvConfig");
+        }
+        return csvConfiguration;
+    }
+
+    public PageConfiguration getPageConfiguration() {
+        if (pageConfiguration == null) {
+            pageConfiguration = readClass(PageConfiguration.class, "pageConfig");
+        }
+        log.debug(String.format("Successfully retrieved %s page configurations", pageConfiguration.getPages().size()));
+        return pageConfiguration;
+    }
+
+    private <T> T readClass(Class<T> clazz, String nodeName) {
+        File file = new File(getClass().getClassLoader().getResource("configuration.xml").getFile());
+        JAXBContext jaxbContext = null;
+        Unmarshaller unmarshaller = null;
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+        dbf.setNamespaceAware(true);
+        DocumentBuilder db = null;
+        Document doc;
+        try {
+            db = dbf.newDocumentBuilder();
+            doc = db.parse(file);
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            throw new NirdizatiRuntimeException(e);
+        }
+
+        NodeList node = doc.getElementsByTagName(nodeName);
+
+        try {
+            jaxbContext = JAXBContext.newInstance(clazz);
+            unmarshaller = jaxbContext.createUnmarshaller();
+            return unmarshaller.unmarshal(node.item(0), clazz).getValue();
+        } catch (JAXBException e) {
+            throw new NirdizatiRuntimeException("Failed to read directories", e);
+        }
     }
 }
