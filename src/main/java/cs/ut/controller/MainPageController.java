@@ -2,10 +2,10 @@ package cs.ut.controller;
 
 import cs.ut.config.MasterConfiguration;
 import org.apache.log4j.Logger;
-import org.zkoss.zk.ui.*;
+import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.Selectors;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Include;
 
 /**

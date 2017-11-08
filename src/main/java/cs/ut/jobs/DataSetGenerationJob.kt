@@ -19,7 +19,6 @@ class DataSetGenerationJob(val parameters: MutableMap<String, List<String>>, val
         json.put(CsvReader.CASE_ID_COL, parameters.remove(CsvReader.CASE_ID_COL)!![0])
         json.put(CsvReader.TIMESTAMP_COL, parameters.remove(CsvReader.TIMESTAMP_COL)!![0])
         json.put(CsvReader.ACTIVITY_COL, parameters.remove(CsvReader.ACTIVITY_COL)!![0])
-        json.put(CsvReader.LABEL_NUM_COLS, parameters.remove(CsvReader.LABEL_NUM_COLS))
 
         parameters.forEach { k, v -> json.put(k, v) }
     }
