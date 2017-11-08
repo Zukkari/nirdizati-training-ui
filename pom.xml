@@ -136,12 +136,6 @@
             <version>${kotlin.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>kotlinx-coroutines-android</artifactId>
-            <version>0.20-alpha-9</version>
-            <type>pom</type>
-        </dependency>
 
 
     </dependencies>
