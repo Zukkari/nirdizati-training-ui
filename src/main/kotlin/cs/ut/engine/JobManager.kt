@@ -1,10 +1,9 @@
-package engine
+package cs.ut.engine
 
 import cs.ut.config.items.ModelParameter
-import cs.ut.engine.Worker
 import cs.ut.exceptions.NirdizatiRuntimeException
-import jobs.Job
-import jobs.SimulationJob
+import cs.ut.jobs.Job
+import cs.ut.jobs.SimulationJob
 import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.Session

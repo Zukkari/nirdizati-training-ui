@@ -1,8 +1,8 @@
-package engine
+package cs.ut.jobs
 
 import cs.ut.config.MasterConfiguration
+import cs.ut.engine.item.Case
 import cs.ut.exceptions.NirdizatiRuntimeException
-import engine.item.Case
 import org.apache.log4j.Logger
 import java.io.BufferedReader
 import java.io.File
