@@ -56,6 +56,8 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
 
     private transient CsvReader csvReader;
 
+    private static final String ignoreColumn = "params.ignore";
+
     @AfterCompose
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
@@ -182,6 +184,9 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
                     if (item.equalsIgnoreCase(key)) combobox.setSelectedItem(comboitem);
                 });
 
+                Comboitem comboitem = combobox.appendItem(Labels.getLabel(ignoreColumn));
+                comboitem.setValue(ignoreColumn);
+
                 row.appendChild(combobox);
                 rows.appendChild(row);
                 fields.add(combobox);
@@ -193,10 +198,18 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
         Map<String, List<String>> vals = new HashMap<>();
 
         fields.forEach(field -> {
-            if (!vals.containsKey(field.getSelectedItem().getValue())) {
-                vals.put(field.getSelectedItem().getValue(), Lists.newArrayList(field.getId()));
-            } else {
-                vals.get(field.getSelectedItem().getValue()).add(field.getId());
+            if (!ignoreColumn.equalsIgnoreCase(field.getSelectedItem().getValue())) {
+                if (!vals.containsKey(field.getSelectedItem().getValue())) {
+                    vals.put(field.getSelectedItem().getValue(), Lists.newArrayList(field.getId()));
+                } else {
+                    vals.get(field.getSelectedItem().getValue()).add(field.getId());
+                }
+            }
+        });
+
+        csvReader.getColumnList().forEach(col -> {
+            if (!vals.containsKey(col)) {
+                vals.put(col, new ArrayList<>());
             }
         });
 

@@ -257,5 +257,5 @@ class CsvReader(private val f: File) {
         return cases.firstOrNull { colName.toLowerCase() == it.id.toLowerCase() }
     }
 
-    fun getColumnList(): List<String> = listOf(STATIC + NUM_COL, STATIC + CAT_COLS, DYNAMIC + NUM_COL, DYNAMIC + CAT_COLS)
+    fun getColumnList(): MutableList<String> = mutableListOf(STATIC + NUM_COL, STATIC + CAT_COLS, DYNAMIC + NUM_COL, DYNAMIC + CAT_COLS)
 }
