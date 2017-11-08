@@ -94,7 +94,7 @@ public class TrainingController extends SelectorComposer<Component> {
                 checkbox.setName(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
                 checkbox.setValue(option);
                 checkbox.setLabel(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
-                checkbox.setDisabled(!option.isEnabled());
+                checkbox.setDisabled(!option.getEnabled());
 
                 checkbox.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) event -> {
                     if (checkbox.isChecked()) {
@@ -163,7 +163,7 @@ public class TrainingController extends SelectorComposer<Component> {
             value.forEach(val -> {
                 val = new ModelParameter(val);
 
-                if (val.isEnabled()) {
+                if (val.getEnabled()) {
                     Comboitem comboitem = combobox.appendItem(Labels.getLabel(key.concat(".").concat(val.getId())));
                     comboitem.setValue(val);
                 }
@@ -200,72 +200,6 @@ public class TrainingController extends SelectorComposer<Component> {
         grid.appendChild(rows);
 
         log.debug("Generating additional hyperparameter fields for learners");
-
-        if (option.getEstimators() != null) {
-            Row cont = new Row();
-            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_estimators"))));
-
-            Intbox estimators = new Intbox();
-            estimators.setValue(option.getEstimators());
-
-            estimators.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> {
-                Integer val = estimators.getValue();
-                if (val != null && val > 0) {
-                    option.setEstimators(val);
-                    estimators.clearErrorMessage();
-                } else {
-                    estimators.setValue(option.getEstimators());
-                    estimators.setErrorMessage(Labels.getLabel("training.validation.n_of_estimators"));
-                }
-            });
-
-            cont.appendChild(estimators);
-            rows.appendChild(cont);
-        }
-
-        if (option.getMaxfeatures() != null) {
-            Row cont = new Row();
-            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_maxfeatures"))));
-
-            Doublebox doublebox = new Doublebox();
-            doublebox.setValue(option.getMaxfeatures());
-
-            doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> {
-                Double val = doublebox.getValue();
-                if (val != null && val > 0) {
-                    option.setMaxfeatures(val);
-                    doublebox.clearErrorMessage();
-                } else {
-                    doublebox.setValue(option.getMaxfeatures());
-                    doublebox.setErrorMessage(Labels.getLabel("training.validation.n_of_max_features"));
-                }
-            });
-
-            cont.appendChild(doublebox);
-            rows.appendChild(cont);
-        }
-
-        if (option.getGbmrate() != null) {
-            Row cont = new Row();
-            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_gbmrate"))));
-
-            Doublebox doublebox = new Doublebox();
-            doublebox.setValue(option.getGbmrate());
-
-            doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> {
-                Double val = doublebox.getValue();
-                if (val != null && val > 0) {
-                    option.setGbmrate(val);
-                    doublebox.clearErrorMessage();
-                } else {
-                    doublebox.setValue(option.getGbmrate());
-                    doublebox.setErrorMessage(Labels.getLabel("training.validation.gbm_learn_rate"));
-                }
-            });
-
-            cont.appendChild(doublebox);
-            rows.appendChild(cont);
-        }
 
         hyperParamRow.appendChild(grid);
     }

@@ -132,6 +132,12 @@
             <type>predictiontype</type>
         </types>
 
+        <basicParams>
+            <param>zero</param>
+            <param>agg</param>
+            <param>xgb</param>
+        </basicParams>
+
         <!-- Model parameters that are represented in the menu -->
         <modelparams>
             <modelparam>
@@ -188,36 +194,44 @@
                 <parameter>rf</parameter>
                 <type>learner</type>
                 <enabled>true</enabled>
-                <estimators>300</estimators>
-                <maxfeatures>0.5</maxfeatures>
+                <properties>
+                    <property id="n_estimators">300</property>
+                    <property id="max_features">0.5</property>
+                </properties>
             </modelparam>
             <modelparam>
                 <id>gradient_boosting</id>
                 <parameter>gbm</parameter>
                 <type>learner</type>
                 <enabled>true</enabled>
-                <estimators>300</estimators>
-                <maxfeatures>0.5</maxfeatures>
-                <gbmrate>0.1</gbmrate>
+                <properties>
+                    <property id="n_estimators">300</property>
+                    <property id="max_features">0.5</property>
+                    <property id="gbmrate">0.1</property>
+                </properties>
             </modelparam>
             <modelparam>
                 <id>decision_tree</id>
                 <parameter>dt</parameter>
                 <type>learner</type>
                 <enabled>true</enabled>
-                <estimators>300</estimators>
-                <maxdepth>5</maxdepth>
+                <properties>
+                    <property id="n_estimators">300</property>
+                    <property id="max_depth">5</property>
+                </properties>
             </modelparam>
             <modelparam>
                 <id>xgboost</id>
                 <parameter>xgb</parameter>
                 <type>learner</type>
                 <enabled>true</enabled>
-                <estimators>300</estimators>
-                <learningrate>0.03</learningrate>
-                <subsamplerow>0.7</subsamplerow>
-                <subsamplecol>0.7</subsamplecol>
-                <maxdepth>5</maxdepth>
+                <properties>
+                    <property id="n_estimators">300</property>
+                    <property id="learning_rate">0.03</property>
+                    <property id="rowsample_bytree">0.7</property>
+                    <property id="colsample_bytree">0.7</property>
+                    <property id="max_depth">5</property>
+                </properties>
             </modelparam>
 
             <modelparam>
@@ -230,7 +244,7 @@
                 <id>outcome</id>
                 <parameter>label</parameter>
                 <type>predictiontype</type>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
             </modelparam>
         </modelparams>
     </modelConfig>

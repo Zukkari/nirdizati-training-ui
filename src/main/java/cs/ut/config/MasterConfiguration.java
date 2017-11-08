@@ -109,7 +109,7 @@ public class MasterConfiguration {
     }
 
     public ModelConfiguration getModelConfiguration() {
-        if (modelProperties == null) {
+        if (modelConfiguration == null) {
             modelProperties = readClass(ModelProperties.class, "modelConfig");
             modelConfiguration = new ModelConfiguration(modelProperties);
         }
@@ -196,5 +196,9 @@ public class MasterConfiguration {
         } catch (JAXBException e) {
             throw new NirdizatiRuntimeException("Failed to read directories", e);
         }
+    }
+
+    public static void main(String[] args) {
+        MasterConfiguration.getInstance().getModelConfiguration();
     }
 }
