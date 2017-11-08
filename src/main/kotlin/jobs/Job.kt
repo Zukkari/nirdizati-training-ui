@@ -1,4 +1,4 @@
-package cs.ut.jobs
+package jobs
 
 import cs.ut.config.MasterConfiguration
 import org.zkoss.zk.ui.Desktop

@@ -1,7 +1,7 @@
 package cs.ut.engine;
 
 import cs.ut.controller.MainPageController;
-import cs.ut.jobs.Job;
+import jobs.Job;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;

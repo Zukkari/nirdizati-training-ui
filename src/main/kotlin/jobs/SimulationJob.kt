@@ -1,8 +1,8 @@
-package cs.ut.jobs
+package jobs
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
-import cs.ut.engine.FileWriter
+import engine.FileWriter
 import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
 import org.json.JSONObject
