@@ -7,7 +7,6 @@ import cs.ut.config.MasterConfiguration;
 import cs.ut.controller.MainPageController;
 import cs.ut.engine.CsvReader;
 import cs.ut.engine.JobManager;
-import cs.ut.engine.Worker;
 import cs.ut.jobs.DataSetGenerationJob;
 import org.apache.log4j.Logger;
 import org.zkoss.bind.annotation.AfterCompose;
