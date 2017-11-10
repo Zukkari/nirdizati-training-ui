@@ -58,21 +58,24 @@ class CsvReader(private val f: File) {
         BufferedReader(FileReader(f)).use { return it.readLine().split(splitter) }
     }
 
-    fun identifyUserColumns(cols: List<String>): Map<String, String> {
-        val result = HashMap<String, String>()
+    tailrec fun identifyUserColumns(cols: List<String>, result: MutableMap<String, String>) {
+        if (cols.isNotEmpty()) {
+            val head = cols.first()
 
-        cols.forEach {
-            caseId.forEach { col ->
-                val elem = cols.firstOrNull { it.toLowerCase() == col.toLowerCase() }
-                elem?.let { result[CASE_ID_COL] = elem }
-            }
+            identifyColumn(head, caseId.toMutableList(), CASE_ID_COL, result)
+            identifyColumn(head, activityId.toMutableList(), ACTIVITY_COL, result)
+            identifyUserColumns(cols.drop(1), result)
+        }
+    }
 
-            activityId.forEach { col ->
-                val elem = cols.firstOrNull { it.toLowerCase() == col.toLowerCase() }
-                elem?.let { result[ACTIVITY_COL] = elem }
+    tailrec private fun identifyColumn(col: String, ids: MutableList<String>, type: String, result: MutableMap<String, String>) {
+        if (ids.isNotEmpty()) {
+            if (col.toLowerCase() == ids.first().toLowerCase()) {
+                result[type] = col
+            } else {
+                identifyColumn(col, ids.drop(1).toMutableList(), type, result)
             }
         }
-        return result
     }
 
     fun generateDatasetParams(userCols: Map<String, MutableList<String>>): Map<String, List<String>> {
