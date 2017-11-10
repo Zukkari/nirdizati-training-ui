@@ -6,6 +6,7 @@ import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
 import cs.ut.engine.JobManager;
 import cs.ut.manager.LogManager;
+import cs.ut.ui.NirdizatiGrid;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -57,7 +58,6 @@ public class TrainingController extends SelectorComposer<Component> {
     private transient Map<String, List<ModelParameter>> properties =
             MasterConfiguration.getInstance().getModelConfiguration().getProperties();
 
-
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
@@ -96,15 +96,28 @@ public class TrainingController extends SelectorComposer<Component> {
                 checkbox.setLabel(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
                 checkbox.setDisabled(!option.getEnabled());
 
+                final NirdizatiGrid grid = new NirdizatiGrid();
                 checkbox.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) event -> {
                     if (checkbox.isChecked()) {
                         parameters.get(((ModelParameter) checkbox.getValue()).getType()).add(checkbox.getValue());
+                        grid.setVisible(true);
                     } else {
                         parameters.get(((ModelParameter) checkbox.getValue()).getType()).remove(checkbox.getValue());
+                        grid.setVisible(false);
                     }
                 });
 
-                row.appendChild(checkbox);
+                if ("learner".equalsIgnoreCase(option.getType())) {
+                    grid.setVisible(false);
+                    grid.generate(option.getProperties());
+
+                    Vbox vbox = new Vbox();
+                    vbox.appendChild(checkbox);
+                    vbox.appendChild(grid);
+                    row.appendChild(vbox);
+                } else {
+                    row.appendChild(checkbox);
+                }
             });
 
             gridRows.appendChild(row);
@@ -157,12 +170,11 @@ public class TrainingController extends SelectorComposer<Component> {
             label.setId(key);
 
             row.appendChild(label);
-
             Combobox combobox = new Combobox();
+
             combobox.setId(key);
             value.forEach(val -> {
                 val = new ModelParameter(val);
-
                 if (val.getEnabled()) {
                     Comboitem comboitem = combobox.appendItem(Labels.getLabel(key.concat(".").concat(val.getId())));
                     comboitem.setValue(val);
@@ -191,13 +203,10 @@ public class TrainingController extends SelectorComposer<Component> {
 
         hyperParamRow.appendChild(new Label());
 
-        Grid grid = new Grid();
+        NirdizatiGrid grid = new NirdizatiGrid();
         grid.setVflex("min");
         grid.setHflex("min");
-
-        Rows rows = new Rows();
-
-        grid.appendChild(rows);
+        grid.generate(option.getProperties());
 
         log.debug("Generating additional hyperparameter fields for learners");
 

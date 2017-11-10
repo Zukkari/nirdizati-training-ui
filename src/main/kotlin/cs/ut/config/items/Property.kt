@@ -10,10 +10,10 @@ data class Property(
         var id: String,
 
         @XmlAttribute(name = "type")
-        var type: Class<out Any>,
+        var type: String,
 
         @XmlValue
         var property: String) {
 
-        constructor() : this("", Any::class.java,"")
+        constructor() : this("", "","")
 }

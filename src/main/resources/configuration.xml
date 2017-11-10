@@ -195,8 +195,8 @@
                 <type>learner</type>
                 <enabled>true</enabled>
                 <properties>
-                    <property id="n_estimators" type="Int">300</property>
-                    <property id="max_features" type="Double">0.5</property>
+                    <property id="n_estimators" type="org.zkoss.zul.Intbox">300</property>
+                    <property id="max_features" type="org.zkoss.zul.Doublebox">0.5</property>
                 </properties>
             </modelparam>
             <modelparam>
@@ -205,9 +205,9 @@
                 <type>learner</type>
                 <enabled>true</enabled>
                 <properties>
-                    <property id="n_estimators" type="Int">300</property>
-                    <property id="max_features" type="Double">0.5</property>
-                    <property id="gbmrate" type="Double">0.1</property>
+                    <property id="n_estimators" type="org.zkoss.zul.Intbox">300</property>
+                    <property id="max_features" type="org.zkoss.zul.Doublebox">0.5</property>
+                    <property id="gbmrate" type="org.zkoss.zul.Doublebox">0.1</property>
                 </properties>
             </modelparam>
             <modelparam>
@@ -216,8 +216,8 @@
                 <type>learner</type>
                 <enabled>true</enabled>
                 <properties>
-                    <property id="n_estimators" type="Int">300</property>
-                    <property id="max_depth" type="Double">5</property>
+                    <property id="n_estimators" type="org.zkoss.zul.Intbox">300</property>
+                    <property id="max_depth" type="org.zkoss.zul.Doublebox">5</property>
                 </properties>
             </modelparam>
             <modelparam>
@@ -226,11 +226,11 @@
                 <type>learner</type>
                 <enabled>true</enabled>
                 <properties>
-                    <property id="n_estimators" type="Int">300</property>
-                    <property id="learning_rate" type="Double">0.03</property>
-                    <property id="rowsample_bytree" type="Double">0.7</property>
-                    <property id="colsample_bytree" type="Double">0.7</property>
-                    <property id="max_depth" type="Int">5</property>
+                    <property id="n_estimators" type="org.zkoss.zul.Intbox">300</property>
+                    <property id="learning_rate" type="org.zkoss.zul.Doublebox">0.03</property>
+                    <property id="subsample" type="org.zkoss.zul.Doublebox">0.7</property>
+                    <property id="colsample_bytree" type="org.zkoss.zul.Doublebox">0.7</property>
+                    <property id="max_depth" type="org.zkoss.zul.Intbox">5</property>
                 </properties>
             </modelparam>
 
