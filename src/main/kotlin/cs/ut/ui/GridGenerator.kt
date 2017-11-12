@@ -37,7 +37,7 @@ class NirdizatiGrid : Grid() {
         }
     }
 
-    fun validate() : Boolean {
+    fun validate(): Boolean {
         val invalid = mutableListOf<Component>()
         validateFields(fields, invalid)
         return invalid.isEmpty()
@@ -79,5 +79,24 @@ class NirdizatiGrid : Grid() {
         obj.id = prop.id
 
         return obj
+    }
+
+    fun gatherValues(): Map<String, Number> {
+        val valueMap = mutableMapOf<String, Number>()
+        gatherValueFromFields(valueMap, fields)
+        return valueMap
+    }
+
+    tailrec private fun gatherValueFromFields(valueMap: MutableMap<String, Number>, fields: MutableList<Component>) {
+        if (fields.isNotEmpty()) {
+            val field = fields.first()
+
+            when (field) {
+                is Intbox -> valueMap[field.id] = field.value
+                is Doublebox -> valueMap[field.id] = field.value
+            }
+
+            gatherValueFromFields(valueMap, fields.tail())
+        }
     }
 }
