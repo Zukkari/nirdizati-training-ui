@@ -58,8 +58,10 @@ public class TrainingController extends SelectorComposer<Component> {
 
     private transient Map<String, List<ModelParameter>> properties =
             MasterConfiguration.getInstance().getModelConfiguration().getProperties();
+    private transient List<ModelParameter> basicParametes = MasterConfiguration.getInstance().getModelConfiguration().getBasicParameters();
 
     private List<NirdizatiGrid> hyperParameters = new ArrayList<>();
+
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
@@ -183,13 +185,13 @@ public class TrainingController extends SelectorComposer<Component> {
                 if (val.getEnabled()) {
                     Comboitem comboitem = combobox.appendItem(Labels.getLabel(key.concat(".").concat(val.getId())));
                     comboitem.setValue(val);
+                    if (basicParametes.contains(val)) combobox.setSelectedItem(comboitem);
                 }
             });
 
             combobox.addEventListener(Events.ON_CHANGE,
                     (SerializableEventListener<Event>) event -> parameters.put(combobox.getId(), Collections.singletonList(combobox.getSelectedItem().getValue())));
             combobox.setReadonly(true);
-            combobox.setSelectedItem(combobox.getItemAtIndex(0));
             parameters.put(combobox.getId(), Collections.singletonList(combobox.getSelectedItem().getValue()));
 
             row.appendChild(combobox);
