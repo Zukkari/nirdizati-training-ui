@@ -37,6 +37,31 @@ class NirdizatiGrid : Grid() {
         }
     }
 
+    fun validate() : Boolean {
+        val invalid = mutableListOf<Component>()
+        validateFields(fields, invalid)
+        return invalid.isEmpty()
+    }
+
+    tailrec private fun validateFields(fields: MutableList<Component>, invalid: MutableList<Component>) {
+        if (fields.isNotEmpty()) {
+            val comp = fields.first()
+
+            when (comp) {
+                is Intbox -> if (comp.value == null || comp.value <= 0) {
+                    comp.errorMessage = Labels.getLabel("training.validation.greater_than_zero")
+                    invalid.add(comp)
+                }
+                is Doublebox -> if (comp.value == null || comp.value <= 0.0) {
+                    comp.errorMessage = Labels.getLabel("training.validation.greater_than_zero")
+                    invalid.add(comp)
+                }
+            }
+
+            validateFields(fields.tail(), invalid)
+        }
+    }
+
 
     private fun <T> MutableList<T>.tail(): MutableList<T> = drop(1).toMutableList()
 
