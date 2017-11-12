@@ -4,6 +4,7 @@ import com.google.common.escape.Escaper;
 import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
+import cs.ut.config.items.Property;
 import cs.ut.engine.JobManager;
 import cs.ut.manager.LogManager;
 import cs.ut.ui.NirdizatiGrid;
@@ -58,6 +59,8 @@ public class TrainingController extends SelectorComposer<Component> {
     private transient Map<String, List<ModelParameter>> properties =
             MasterConfiguration.getInstance().getModelConfiguration().getProperties();
 
+    private List<NirdizatiGrid> hyperParameters = new ArrayList<>();
+
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
@@ -100,9 +103,11 @@ public class TrainingController extends SelectorComposer<Component> {
                 checkbox.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) event -> {
                     if (checkbox.isChecked()) {
                         parameters.get(((ModelParameter) checkbox.getValue()).getType()).add(checkbox.getValue());
+                        hyperParameters.add(grid);
                         grid.setVisible(true);
                     } else {
                         parameters.get(((ModelParameter) checkbox.getValue()).getType()).remove(checkbox.getValue());
+                        hyperParameters.remove(grid);
                         grid.setVisible(false);
                     }
                 });
@@ -161,7 +166,7 @@ public class TrainingController extends SelectorComposer<Component> {
     private void initBasicMode() {
         optionsGrid.getRows().getChildren().clear();
 
-        properties.forEach((key, value ) -> {
+        properties.forEach((key, value) -> {
             if ("predictiontype".equals(key)) return;
 
             Row row = new Row();
@@ -200,13 +205,16 @@ public class TrainingController extends SelectorComposer<Component> {
 
     private void generateHyperparambox(ModelParameter option) {
         hyperParamRow.getChildren().clear();
-
         hyperParamRow.appendChild(new Label());
 
         NirdizatiGrid grid = new NirdizatiGrid();
         grid.setVflex("min");
         grid.setHflex("min");
         grid.generate(option.getProperties());
+        grid.setId(option.getId());
+
+        hyperParameters.clear();
+        hyperParameters.add(grid);
 
         log.debug("Generating additional hyperparameter fields for learners");
 
@@ -233,7 +241,27 @@ public class TrainingController extends SelectorComposer<Component> {
                 JobManager.Manager.setLogFile(clientLogs.getSelectedItem().getValue());
                 Comboitem comboitem = predictionType.getSelectedItem();
 
-                Map<String, List<ModelParameter>> params = new HashMap<>(parameters);
+                Map<String, List<ModelParameter>> params = new HashMap<>();
+                parameters.forEach((k, v) -> {
+                    List<ModelParameter> modelParameters = new ArrayList<>();
+                    v.forEach(param -> modelParameters.add(new ModelParameter(param)));
+                    params.put(k, v);
+                });
+
+                hyperParameters.forEach(grid ->
+                        params.get("learner").forEach(learner -> {
+                            if (learner.getId().equals(grid.getId())) {
+                                Map<String, Number> gridParams = grid.gatherValues();
+                                learner.getProperties().clear();
+                                gridParams.forEach((k, v) -> {
+                                    Property prop = new Property();
+                                    prop.setId(k);
+                                    prop.setProperty(String.valueOf(v));
+                                    learner.getProperties().add(prop);
+                                });
+                            }
+                        }));
+
                 params.put(((ModelParameter) comboitem.getValue()).getType(), Collections.singletonList(comboitem.getValue()));
                 JobManager.Manager.generateJobs(params);
                 JobManager.Manager.deployJobs();
@@ -271,8 +299,12 @@ public class TrainingController extends SelectorComposer<Component> {
         if (!errorParams.isEmpty()) {
             Clients.showNotification(
                     Labels.getLabel("training.validation_failed",
-                            new Object[] {String.join(", ", errorParams)}),
-                    "error", getSelf(), "bottom_center" , -1);
+                            new Object[]{String.join(", ", errorParams)}),
+                    "error", getSelf(), "bottom_center", -1);
+        }
+
+        for (NirdizatiGrid grid : hyperParameters) {
+            if (!grid.validate()) isOk[0] = false;
         }
 
         return isOk[0];

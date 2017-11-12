@@ -16,4 +16,6 @@ data class Property(
         var property: String) {
 
         constructor() : this("", "","")
+
+        constructor(property: Property) : this(property.id, property.type, property.property)
 }

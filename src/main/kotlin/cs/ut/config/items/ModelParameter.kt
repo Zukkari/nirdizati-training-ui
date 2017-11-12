@@ -22,6 +22,15 @@ data class ModelParameter(
 
     constructor() : this("", "", "", false, mutableListOf())
 
+    init {
+        val props = properties
+
+        val copied = mutableListOf<Property>()
+        props.forEach { copied.add(Property(it)) }
+
+        properties = copied
+    }
+
     fun getPropety(property: String): Property? {
         return properties.firstOrNull { it.id == property}
     }

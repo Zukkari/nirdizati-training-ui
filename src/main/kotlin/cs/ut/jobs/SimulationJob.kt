@@ -33,10 +33,7 @@ class SimulationJob(private val encoding: ModelParameter,
         val json = JSONObject()
 
         val params = JSONObject()
-        params.put("max_features", learner.getPropety("max_features"))
-        params.put("n_estimators", learner.getPropety("n_estimators"))
-        learner.getPropety("gb_learning_rate")?.let { params.put("gbm_learning_rate", learner.getPropety("gbm_learning_rate")) }
-        params.put("n_clusters", 1)
+        learner.properties.forEach { (k, _, v) -> params.put(k, convertToNumber(v)) }
 
         json.put(outcome.parameter,
                 JSONObject().put(bucketing.parameter + "_" + encoding.parameter,
@@ -121,5 +118,13 @@ class SimulationJob(private val encoding: ModelParameter,
                 "_" +
                 outcome.parameter +
                 ".pkl"
+    }
+
+    private fun convertToNumber(value: String): Number {
+        try {
+            return value.toInt()
+        } catch (e: NumberFormatException) {
+            return value.toDouble()
+        }
     }
 }

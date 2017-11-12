@@ -40,7 +40,7 @@ public class Worker extends Thread {
                     job.preProcess();
                 } catch (Exception e) {
                     log.debug(String.format("<%s> failed in preprocess stage with exception, aborting job", job), e);
-                    break;
+                    continue;
                 }
 
                 try {
@@ -48,7 +48,7 @@ public class Worker extends Thread {
                     job.execute();
                 } catch (Exception e) {
                     log.debug(String.format("<%s> failed in execute stage with exception, aborting job", job), e);
-                    break;
+                    continue;
                 }
 
                 try {
