@@ -24,9 +24,11 @@ import org.zkoss.zul.*;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TrainingController extends SelectorComposer<Component> {
     private static final Logger log = Logger.getLogger(TrainingController.class);
+    private static final String LEARNER = "learner";
 
     @Wire
     private Combobox clientLogs;
@@ -61,7 +63,7 @@ public class TrainingController extends SelectorComposer<Component> {
     private transient List<ModelParameter> basicParametes = MasterConfiguration.getInstance().getModelConfiguration().getBasicParameters();
 
     private List<NirdizatiGrid> hyperParameters = new ArrayList<>();
-
+    private List<NirdizatiGrid> combinationGrids = new ArrayList<>();
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
@@ -95,35 +97,56 @@ public class TrainingController extends SelectorComposer<Component> {
             value.forEach(option -> {
                 option = new ModelParameter(option);
 
+                Vbox container = new Vbox();
+
                 Checkbox checkbox = new Checkbox();
                 checkbox.setName(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
                 checkbox.setValue(option);
                 checkbox.setLabel(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
                 checkbox.setDisabled(!option.getEnabled());
+                container.appendChild(checkbox);
 
+                ModelParameter param = option;
                 final NirdizatiGrid grid = new NirdizatiGrid();
+
                 checkbox.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) event -> {
                     if (checkbox.isChecked()) {
                         parameters.get(((ModelParameter) checkbox.getValue()).getType()).add(checkbox.getValue());
                         hyperParameters.add(grid);
                         grid.setVisible(true);
+
+                        List<Property> props = param.getProperties();
+                        if (!LEARNER.equalsIgnoreCase(param.getType()) && !props.isEmpty()) {
+                            props.forEach(prop -> {
+                                grid.getRows().appendChild(grid.generateGridRow(prop));
+                                grid.setVflex("min");
+                                grid.setHflex("min");
+                            });
+                            container.appendChild(grid);
+                            combinationGrids.add(grid);
+                        }
                     } else {
                         parameters.get(((ModelParameter) checkbox.getValue()).getType()).remove(checkbox.getValue());
                         hyperParameters.remove(grid);
                         grid.setVisible(false);
+                        container.removeChild(grid);
+                        grid.getRows().getChildren().clear();
+
+                        if (combinationGrids.contains(grid)) {
+                            combinationGrids.remove(grid);
+                        }
                     }
                 });
 
-                if ("learner".equalsIgnoreCase(option.getType())) {
+                if (LEARNER.equalsIgnoreCase(option.getType())) {
                     grid.setVisible(false);
                     grid.generate(option.getProperties());
-
                     Vbox vbox = new Vbox();
-                    vbox.appendChild(checkbox);
+                    vbox.appendChild(container);
                     vbox.appendChild(grid);
                     row.appendChild(vbox);
                 } else {
-                    row.appendChild(checkbox);
+                    row.appendChild(container);
                 }
             });
 
@@ -186,6 +209,28 @@ public class TrainingController extends SelectorComposer<Component> {
                     Comboitem comboitem = combobox.appendItem(Labels.getLabel(key.concat(".").concat(val.getId())));
                     comboitem.setValue(val);
                     if (basicParametes.contains(val)) combobox.setSelectedItem(comboitem);
+
+                    List<Property> props = val.getProperties();
+                    if (!props.isEmpty()) {
+                        List<Row> propertyRow = new ArrayList<>();
+                        combobox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> {
+                            if (combobox.getSelectedItem().equals(comboitem)) {
+                                props.forEach(property ->
+                                        hyperParameters.forEach(grid -> {
+                                            Row additional = grid.generateGridRow(property);
+                                            propertyRow.add(additional);
+                                            grid.getRows().appendChild(additional);
+                                            grid.getRows().setVflex("min");
+                                        })
+                                );
+                            } else {
+                                propertyRow.forEach(prop -> hyperParameters.forEach(grid -> {
+                                    grid.getRows().removeChild(prop);
+                                    grid.getRows().setVflex("min");
+                                }));
+                            }
+                        });
+                    }
                 }
             });
 
@@ -197,7 +242,7 @@ public class TrainingController extends SelectorComposer<Component> {
             row.appendChild(combobox);
             gridRows.appendChild(row);
 
-            if ("learner".equals(key)) {
+            if (LEARNER.equals(key)) {
                 gridRows.appendChild(hyperParamRow);
                 combobox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) e -> generateHyperparambox(combobox.getSelectedItem().getValue()));
                 generateHyperparambox(combobox.getSelectedItem().getValue());
@@ -251,7 +296,7 @@ public class TrainingController extends SelectorComposer<Component> {
                 });
 
                 hyperParameters.forEach(grid ->
-                        params.get("learner").forEach(learner -> {
+                        params.get(LEARNER).forEach(learner -> {
                             if (learner.getId().equals(grid.getId())) {
                                 Map<String, Number> gridParams = grid.gatherValues();
                                 learner.getProperties().clear();
@@ -264,6 +309,21 @@ public class TrainingController extends SelectorComposer<Component> {
                             }
                         }));
 
+                List<Map<String, Number>> listOfPropertyMaps = combinationGrids
+                        .stream()
+                        .map(NirdizatiGrid::gatherValues).collect(Collectors.toList());
+
+                List<Property> additionalProps = new ArrayList<>();
+                for (Map<String, Number> map : listOfPropertyMaps) {
+                    for (Map.Entry entry : map.entrySet()) {
+                        Property property = new Property();
+                        property.setId((String) entry.getKey());
+                        property.setProperty(String.valueOf(entry.getValue()));
+                        additionalProps.add(property);
+                    }
+                }
+
+                params.get(LEARNER).forEach(learner -> learner.getProperties().addAll(additionalProps));
                 params.put(((ModelParameter) comboitem.getValue()).getType(), Collections.singletonList(comboitem.getValue()));
                 JobManager.Manager.generateJobs(params);
                 JobManager.Manager.deployJobs();

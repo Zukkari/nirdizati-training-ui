@@ -12,6 +12,10 @@ class NirdizatiGrid : Grid() {
     private val log = Logger.getLogger(NirdizatiGrid::class.java)
     private val fields = mutableListOf<Component>()
 
+    init {
+        appendChild(Rows())
+    }
+
     fun generate(data: List<Property>) {
         log.debug("Row generation start with ${data.size} properties")
         val start = System.currentTimeMillis()
@@ -81,7 +85,14 @@ class NirdizatiGrid : Grid() {
         return obj
     }
 
-    fun gatherValues(): Map<String, Number> {
+    fun generateGridRow(prop: Property): Row {
+        val row = Row()
+        row.appendChild(Label(Labels.getLabel("property." + prop.id)))
+        row.appendChild(generateControl(prop))
+        return row
+    }
+
+    fun gatherValues(): MutableMap<String, Number> {
         val valueMap = mutableMapOf<String, Number>()
         gatherValueFromFields(valueMap, fields)
         return valueMap

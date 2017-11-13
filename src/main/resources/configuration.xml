@@ -181,6 +181,9 @@
                 <parameter>cluster</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
+                <properties>
+                    <property id="n_clusters" type="org.zkoss.zul.Intbox">1</property>
+                </properties>
             </modelparam>
             <modelparam>
                 <id>prefix_lenght_based</id>
