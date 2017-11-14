@@ -135,3 +135,10 @@ userlogs/**
 PredictiveMethods/core/training_params/*
 /PredictiveMethods/core/dataset_params/
 .settings/
+/PredictiveMethods/results/
+dataset_params/
+src/main/kotlin/cs/ut/config/nodes/
+/PredictiveMethods/pkl/
+/PredictiveMethods/logdata/
+/PredictiveMethods/core/optimal_params/
+/PredictiveMethods/core/training_params/
