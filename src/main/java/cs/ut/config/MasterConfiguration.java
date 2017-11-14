@@ -8,6 +8,7 @@ import cs.ut.config.nodes.ModelConfiguration;
 import cs.ut.config.nodes.PageConfiguration;
 import cs.ut.engine.Worker;
 import cs.ut.exceptions.NirdizatiRuntimeException;
+import cs.ut.util.JsonReaderKt;
 import org.apache.log4j.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -97,6 +98,8 @@ public class MasterConfiguration {
         userCols = configuration.getUserCols();
 
         getDirectoryPathConfiguration().validatePathsExist();
+
+        JsonReaderKt.readHyperParameterJson();
 
         log.debug("Successfully read master configuration");
 

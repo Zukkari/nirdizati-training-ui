@@ -50,6 +50,9 @@ public class ModelConfiguration {
         return new LinkedHashMap<>(properties);
     }
 
+    public List<ModelParameter> getInitialParameters() {
+        return this.initialParameters;
+    }
 
     public List<ModelParameter> getBasicParameters() {
         List<ModelParameter> params = new ArrayList<>();

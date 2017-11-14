@@ -1,4 +1,4 @@
-package cs.ut.jobs
+package cs.ut.util
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.engine.item.Case

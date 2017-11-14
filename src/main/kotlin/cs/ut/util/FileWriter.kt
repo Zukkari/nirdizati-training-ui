@@ -1,4 +1,4 @@
-package cs.ut.engine
+package cs.ut.util
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.exceptions.NirdizatiRuntimeException

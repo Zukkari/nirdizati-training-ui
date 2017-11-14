@@ -46,6 +46,8 @@
         <datasetDirectory>dataset_params/</datasetDirectory>
         <!-- Results where trained models are located relative to script directory -->
         <pklDirectory>pkl/</pklDirectory>
+        <!-- Optimized hyperparameter directory location relative to script directory -->
+        <ohpdir>core/optimal_params/</ohpdir>
     </paths>
 
     <!-- Header button configuration for header construction -->
