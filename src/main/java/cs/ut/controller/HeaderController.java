@@ -53,8 +53,8 @@ public class HeaderController extends SelectorComposer<Component> {
                 }
             });
 
-            log.debug(String.format("Nav item with label '%s' is enabled: %s", it.getLabel(), it.isEnabled()));
-            navitem.setDisabled(!it.isEnabled());
+            log.debug(String.format("Nav item with label '%s' is enabled: %s", it.getLabel(), it.getEnabled()));
+            navitem.setDisabled(!it.getEnabled());
 
             navbar.appendChild(navitem);
         });

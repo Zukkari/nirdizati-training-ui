@@ -7,7 +7,7 @@ import cs.ut.config.MasterConfiguration;
 import cs.ut.controller.MainPageController;
 import cs.ut.engine.JobManager;
 import cs.ut.engine.Worker;
-import cs.ut.jobs.CsvReader;
+import cs.ut.util.CsvReader;
 import cs.ut.jobs.DataSetGenerationJob;
 import org.apache.log4j.Logger;
 import org.zkoss.bind.annotation.AfterCompose;
@@ -71,7 +71,8 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
         log.debug(String.format("Columns present in table: <%s>", fileColumns));
         Collections.sort(fileColumns);
 
-        Map<String, String> identifiedCols = csvReader.identifyUserColumns(fileColumns);
+        Map<String, String> identifiedCols = new HashMap<>();
+        csvReader.identifyUserColumns(fileColumns, identifiedCols);
 
         Escaper escaper = HtmlEscapers.htmlEscaper();
 

@@ -1,6 +1,7 @@
 package cs.ut.config;
 
 import cs.ut.config.items.HeaderItem;
+import cs.ut.config.items.ModelParameter;
 import cs.ut.config.items.ModelProperties;
 import cs.ut.config.nodes.CSVConfiguration;
 import cs.ut.config.nodes.DirectoryPathConfiguration;
@@ -8,7 +9,12 @@ import cs.ut.config.nodes.ModelConfiguration;
 import cs.ut.config.nodes.PageConfiguration;
 import cs.ut.engine.Worker;
 import cs.ut.exceptions.NirdizatiRuntimeException;
-import org.apache.log4j.*;
+import cs.ut.util.JsonReaderKt;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -25,6 +31,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @XmlRootElement(name = "configuration")
 public class MasterConfiguration {
@@ -109,7 +116,7 @@ public class MasterConfiguration {
     }
 
     public ModelConfiguration getModelConfiguration() {
-        if (modelProperties == null) {
+        if (modelConfiguration == null) {
             modelProperties = readClass(ModelProperties.class, "modelConfig");
             modelConfiguration = new ModelConfiguration(modelProperties);
         }
@@ -122,6 +129,10 @@ public class MasterConfiguration {
 
     public List<String> getUserCols() {
         return userCols;
+    }
+
+    public Map<String, List<ModelParameter>> getOptimizedParams() {
+        return JsonReaderKt.readHyperParameterJson();
     }
 
     /**

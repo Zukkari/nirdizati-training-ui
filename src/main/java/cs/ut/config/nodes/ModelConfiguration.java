@@ -2,12 +2,11 @@ package cs.ut.config.nodes;
 
 import cs.ut.config.items.ModelParameter;
 import cs.ut.config.items.ModelProperties;
+import cs.ut.config.items.Property;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ModelConfiguration {
     private static final Logger log = Logger.getLogger(ModelConfiguration.class);
@@ -17,12 +16,15 @@ public class ModelConfiguration {
 
     private Map<String, List<ModelParameter>> properties = new LinkedHashMap<>();
 
+    private List<String> basicParameters = new ArrayList<>();
+
     private ModelConfiguration() {
     }
 
     public ModelConfiguration(ModelProperties parameters) {
         this.initalTypes = parameters.getTypes();
         this.initialParameters = parameters.getParameters();
+        this.basicParameters = parameters.getBasicParams();
 
         validateAndClassify();
     }
@@ -48,5 +50,29 @@ public class ModelConfiguration {
 
     public Map<String, List<ModelParameter>> getProperties() {
         return new LinkedHashMap<>(properties);
+    }
+
+    public List<ModelParameter> getInitialParameters() {
+        return this.initialParameters;
+    }
+
+    public List<ModelParameter> getBasicParameters() {
+        List<ModelParameter> params = new ArrayList<>();
+
+        basicParameters.forEach(param -> {
+            Optional<ModelParameter> result = properties
+                    .values().stream().flatMap(Collection::stream).filter(it -> param.equals(it.getParameter())).findFirst();
+            result.ifPresent(params::add);
+        });
+
+        return params;
+    }
+
+    public List<Property> getAllProperties() {
+        return initialParameters
+                .stream()
+                .map(ModelParameter::getProperties)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 }

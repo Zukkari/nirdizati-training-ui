@@ -49,7 +49,7 @@ public class LandingPageController extends SelectorComposer<Component> {
         existingLog.addEventListener(Events.ON_CLICK, new SerializableEventListener<Event>() {
             @Override
             public void onEvent(Event event) throws Exception {
-                MainPageController.getInstance().setContent("existingLog", getPage());
+                MainPageController.getInstance().setContent("training", getPage());
             }
         });
     }

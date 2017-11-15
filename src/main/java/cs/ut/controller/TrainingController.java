@@ -4,8 +4,11 @@ import com.google.common.escape.Escaper;
 import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
+import cs.ut.config.items.Property;
 import cs.ut.engine.JobManager;
 import cs.ut.manager.LogManager;
+import cs.ut.ui.NirdizatiGrid;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -18,13 +21,28 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkmax.zul.Navbar;
 import org.zkoss.zkmax.zul.Navitem;
-import org.zkoss.zul.*;
+import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Rows;
+import org.zkoss.zul.Vbox;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class TrainingController extends SelectorComposer<Component> {
     private static final Logger log = Logger.getLogger(TrainingController.class);
+    private static final String LEARNER = "learner";
 
     @Wire
     private Combobox clientLogs;
@@ -56,7 +74,10 @@ public class TrainingController extends SelectorComposer<Component> {
 
     private transient Map<String, List<ModelParameter>> properties =
             MasterConfiguration.getInstance().getModelConfiguration().getProperties();
+    private transient List<ModelParameter> basicParametes = MasterConfiguration.getInstance().getModelConfiguration().getBasicParameters();
 
+    private List<NirdizatiGrid> hyperParameters = new ArrayList<>();
+    private List<NirdizatiGrid> combinationGrids = new ArrayList<>();
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
@@ -66,10 +87,10 @@ public class TrainingController extends SelectorComposer<Component> {
         gridRows = new Rows();
         optionsGrid.appendChild(gridRows);
 
-        initBasicMode();
-
         initClientLogs();
         initPredictions();
+
+        initBasicMode();
 
         modeSwitch.setSelectedItem(basicMode);
     }
@@ -90,21 +111,57 @@ public class TrainingController extends SelectorComposer<Component> {
             value.forEach(option -> {
                 option = new ModelParameter(option);
 
+                Vbox container = new Vbox();
+
                 Checkbox checkbox = new Checkbox();
                 checkbox.setName(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
                 checkbox.setValue(option);
                 checkbox.setLabel(Labels.getLabel(option.getType().concat(".").concat(option.getId())));
-                checkbox.setDisabled(!option.isEnabled());
+                checkbox.setDisabled(!option.getEnabled());
+                container.appendChild(checkbox);
+
+                ModelParameter param = option;
+                final NirdizatiGrid grid = new NirdizatiGrid();
 
                 checkbox.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) event -> {
                     if (checkbox.isChecked()) {
                         parameters.get(((ModelParameter) checkbox.getValue()).getType()).add(checkbox.getValue());
+                        hyperParameters.add(grid);
+                        grid.setVisible(true);
+
+                        List<Property> props = param.getProperties();
+                        if (!LEARNER.equalsIgnoreCase(param.getType()) && !props.isEmpty()) {
+                            props.forEach(prop -> {
+                                grid.getRows().appendChild(grid.generateGridRow(prop));
+                                grid.setVflex("min");
+                                grid.setHflex("min");
+                            });
+                            container.appendChild(grid);
+                            combinationGrids.add(grid);
+                        }
                     } else {
                         parameters.get(((ModelParameter) checkbox.getValue()).getType()).remove(checkbox.getValue());
+                        hyperParameters.remove(grid);
+                        grid.setVisible(false);
+                        container.removeChild(grid);
+                        grid.getRows().getChildren().clear();
+
+                        if (combinationGrids.contains(grid)) {
+                            combinationGrids.remove(grid);
+                        }
                     }
                 });
 
-                row.appendChild(checkbox);
+                if (LEARNER.equalsIgnoreCase(option.getType())) {
+                    grid.setVisible(false);
+                    grid.generate(option.getProperties());
+                    Vbox vbox = new Vbox();
+                    vbox.appendChild(container);
+                    vbox.appendChild(grid);
+                    row.appendChild(vbox);
+                } else {
+                    row.appendChild(container);
+                }
             });
 
             gridRows.appendChild(row);
@@ -143,12 +200,25 @@ public class TrainingController extends SelectorComposer<Component> {
         }
         clientLogs.setWidth("250px");
         clientLogs.setReadonly(true);
+
+        clientLogs.addEventListener(Events.ON_CHANGE, e -> initBasicMode());
     }
 
     private void initBasicMode() {
         optionsGrid.getRows().getChildren().clear();
 
-        properties.forEach((key, value ) -> {
+        String logName = FilenameUtils.getBaseName(((File) clientLogs.getSelectedItem().getValue()).getName());
+
+        Map<String, List<ModelParameter>> optimizedParameters = MasterConfiguration.getInstance().getOptimizedParams();
+        List<ModelParameter> optimized = null;
+        if (optimizedParameters.keySet().contains(logName)) {
+            // we have optimized parameters for this log
+            optimized = optimizedParameters.get(logName);
+            Clients.showNotification(Labels.getLabel("training.found_optimized_params", new Object[] {logName}));
+        }
+
+        final List<ModelParameter> lambdaOptimized = optimized;
+        properties.forEach((key, value) -> {
             if ("predictiontype".equals(key)) return;
 
             Row row = new Row();
@@ -157,28 +227,54 @@ public class TrainingController extends SelectorComposer<Component> {
             label.setId(key);
 
             row.appendChild(label);
-
             Combobox combobox = new Combobox();
+
             combobox.setId(key);
             value.forEach(val -> {
-                val = new ModelParameter(val);
+                ModelParameter optimal = lambdaOptimized == null ? null : findMatch(val, lambdaOptimized);
+                val = optimal == null ? new ModelParameter(val) : new ModelParameter(optimal);
 
-                if (val.isEnabled()) {
+                if (val.getEnabled()) {
                     Comboitem comboitem = combobox.appendItem(Labels.getLabel(key.concat(".").concat(val.getId())));
                     comboitem.setValue(val);
+
+                    if (optimal != null ||
+                            (combobox.getSelectedItem() == null && basicParametes.contains(val)))
+                        combobox.setSelectedItem(comboitem);
+
+                    List<Property> props = val.getProperties();
+                    if (!props.isEmpty()) {
+                        List<Row> propertyRow = new ArrayList<>();
+                        combobox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> {
+                            if (combobox.getSelectedItem().equals(comboitem)) {
+                                props.forEach(property ->
+                                        hyperParameters.forEach(grid -> {
+                                            Row additional = grid.generateGridRow(property);
+                                            propertyRow.add(additional);
+                                            grid.getRows().appendChild(additional);
+                                            grid.getRows().setVflex("min");
+                                        })
+                                );
+                            } else {
+                                propertyRow.forEach(prop -> hyperParameters.forEach(grid -> {
+                                    grid.getRows().removeChild(prop);
+                                    grid.getRows().setVflex("min");
+                                }));
+                            }
+                        });
+                    }
                 }
             });
 
             combobox.addEventListener(Events.ON_CHANGE,
                     (SerializableEventListener<Event>) event -> parameters.put(combobox.getId(), Collections.singletonList(combobox.getSelectedItem().getValue())));
             combobox.setReadonly(true);
-            combobox.setSelectedItem(combobox.getItemAtIndex(0));
             parameters.put(combobox.getId(), Collections.singletonList(combobox.getSelectedItem().getValue()));
 
             row.appendChild(combobox);
             gridRows.appendChild(row);
 
-            if ("learner".equals(key)) {
+            if (LEARNER.equals(key)) {
                 gridRows.appendChild(hyperParamRow);
                 combobox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) e -> generateHyperparambox(combobox.getSelectedItem().getValue()));
                 generateHyperparambox(combobox.getSelectedItem().getValue());
@@ -186,86 +282,25 @@ public class TrainingController extends SelectorComposer<Component> {
         });
     }
 
+    private ModelParameter findMatch(ModelParameter parameter, List<ModelParameter> optimized) {
+        Optional<ModelParameter> optional = optimized.stream().filter(it -> it.getId().equalsIgnoreCase(parameter.getId())).findFirst();
+        return optional.orElse(null);
+    }
+
     private void generateHyperparambox(ModelParameter option) {
         hyperParamRow.getChildren().clear();
-
         hyperParamRow.appendChild(new Label());
 
-        Grid grid = new Grid();
+        NirdizatiGrid grid = new NirdizatiGrid();
         grid.setVflex("min");
         grid.setHflex("min");
+        grid.generate(option.getProperties());
+        grid.setId(option.getId());
 
-        Rows rows = new Rows();
-
-        grid.appendChild(rows);
+        hyperParameters.clear();
+        hyperParameters.add(grid);
 
         log.debug("Generating additional hyperparameter fields for learners");
-
-        if (option.getEstimators() != null) {
-            Row cont = new Row();
-            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_estimators"))));
-
-            Intbox estimators = new Intbox();
-            estimators.setValue(option.getEstimators());
-
-            estimators.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> {
-                Integer val = estimators.getValue();
-                if (val != null && val > 0) {
-                    option.setEstimators(val);
-                    estimators.clearErrorMessage();
-                } else {
-                    estimators.setValue(option.getEstimators());
-                    estimators.setErrorMessage(Labels.getLabel("training.validation.n_of_estimators"));
-                }
-            });
-
-            cont.appendChild(estimators);
-            rows.appendChild(cont);
-        }
-
-        if (option.getMaxfeatures() != null) {
-            Row cont = new Row();
-            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_maxfeatures"))));
-
-            Doublebox doublebox = new Doublebox();
-            doublebox.setValue(option.getMaxfeatures());
-
-            doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> {
-                Double val = doublebox.getValue();
-                if (val != null && val > 0) {
-                    option.setMaxfeatures(val);
-                    doublebox.clearErrorMessage();
-                } else {
-                    doublebox.setValue(option.getMaxfeatures());
-                    doublebox.setErrorMessage(Labels.getLabel("training.validation.n_of_max_features"));
-                }
-            });
-
-            cont.appendChild(doublebox);
-            rows.appendChild(cont);
-        }
-
-        if (option.getGbmrate() != null) {
-            Row cont = new Row();
-            cont.appendChild(new Label(Labels.getLabel(option.getType().concat(".").concat("option_gbmrate"))));
-
-            Doublebox doublebox = new Doublebox();
-            doublebox.setValue(option.getGbmrate());
-
-            doublebox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> {
-                Double val = doublebox.getValue();
-                if (val != null && val > 0) {
-                    option.setGbmrate(val);
-                    doublebox.clearErrorMessage();
-                } else {
-                    doublebox.setValue(option.getGbmrate());
-                    doublebox.setErrorMessage(Labels.getLabel("training.validation.gbm_learn_rate"));
-                }
-            });
-
-            cont.appendChild(doublebox);
-            rows.appendChild(cont);
-        }
 
         hyperParamRow.appendChild(grid);
     }
@@ -290,7 +325,42 @@ public class TrainingController extends SelectorComposer<Component> {
                 JobManager.Manager.setLogFile(clientLogs.getSelectedItem().getValue());
                 Comboitem comboitem = predictionType.getSelectedItem();
 
-                Map<String, List<ModelParameter>> params = new HashMap<>(parameters);
+                Map<String, List<ModelParameter>> params = new HashMap<>();
+                parameters.forEach((k, v) -> {
+                    List<ModelParameter> modelParameters = new ArrayList<>();
+                    v.forEach(param -> modelParameters.add(new ModelParameter(param)));
+                    params.put(k, v);
+                });
+
+                hyperParameters.forEach(grid ->
+                        params.get(LEARNER).forEach(learner -> {
+                            if (learner.getId().equals(grid.getId())) {
+                                Map<String, Number> gridParams = grid.gatherValues();
+                                learner.getProperties().clear();
+                                gridParams.forEach((k, v) -> {
+                                    Property prop = new Property();
+                                    prop.setId(k);
+                                    prop.setProperty(String.valueOf(v));
+                                    learner.getProperties().add(prop);
+                                });
+                            }
+                        }));
+
+                List<Map<String, Number>> listOfPropertyMaps = combinationGrids
+                        .stream()
+                        .map(NirdizatiGrid::gatherValues).collect(Collectors.toList());
+
+                List<Property> additionalProps = new ArrayList<>();
+                for (Map<String, Number> map : listOfPropertyMaps) {
+                    for (Map.Entry entry : map.entrySet()) {
+                        Property property = new Property();
+                        property.setId((String) entry.getKey());
+                        property.setProperty(String.valueOf(entry.getValue()));
+                        additionalProps.add(property);
+                    }
+                }
+
+                params.get(LEARNER).forEach(learner -> learner.getProperties().addAll(additionalProps));
                 params.put(((ModelParameter) comboitem.getValue()).getType(), Collections.singletonList(comboitem.getValue()));
                 JobManager.Manager.generateJobs(params);
                 JobManager.Manager.deployJobs();
@@ -328,8 +398,12 @@ public class TrainingController extends SelectorComposer<Component> {
         if (!errorParams.isEmpty()) {
             Clients.showNotification(
                     Labels.getLabel("training.validation_failed",
-                            new Object[] {String.join(", ", errorParams)}),
-                    "error", getSelf(), "bottom_center" , -1);
+                            new Object[]{String.join(", ", errorParams)}),
+                    "error", getSelf(), "bottom_center", -1);
+        }
+
+        for (NirdizatiGrid grid : hyperParameters) {
+            if (!grid.validate()) isOk[0] = false;
         }
 
         return isOk[0];
