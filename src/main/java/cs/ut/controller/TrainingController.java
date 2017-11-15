@@ -8,6 +8,7 @@ import cs.ut.config.items.Property;
 import cs.ut.engine.JobManager;
 import cs.ut.manager.LogManager;
 import cs.ut.ui.NirdizatiGrid;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -20,10 +21,23 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkmax.zul.Navbar;
 import org.zkoss.zkmax.zul.Navitem;
-import org.zkoss.zul.*;
+import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Rows;
+import org.zkoss.zul.Vbox;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class TrainingController extends SelectorComposer<Component> {
@@ -73,10 +87,10 @@ public class TrainingController extends SelectorComposer<Component> {
         gridRows = new Rows();
         optionsGrid.appendChild(gridRows);
 
-        initBasicMode();
-
         initClientLogs();
         initPredictions();
+
+        initBasicMode();
 
         modeSwitch.setSelectedItem(basicMode);
     }
@@ -186,11 +200,24 @@ public class TrainingController extends SelectorComposer<Component> {
         }
         clientLogs.setWidth("250px");
         clientLogs.setReadonly(true);
+
+        clientLogs.addEventListener(Events.ON_CHANGE, e -> initBasicMode());
     }
 
     private void initBasicMode() {
         optionsGrid.getRows().getChildren().clear();
 
+        String logName = FilenameUtils.getBaseName(((File) clientLogs.getSelectedItem().getValue()).getName());
+
+        Map<String, List<ModelParameter>> optimizedParameters = MasterConfiguration.getInstance().getOptimizedParams();
+        List<ModelParameter> optimized = null;
+        if (optimizedParameters.keySet().contains(logName)) {
+            // we have optimized parameters for this log
+            optimized = optimizedParameters.get(logName);
+            Clients.showNotification(Labels.getLabel("training.found_optimized_params", new Object[] {logName}));
+        }
+
+        final List<ModelParameter> lambdaOptimized = optimized;
         properties.forEach((key, value) -> {
             if ("predictiontype".equals(key)) return;
 
@@ -204,11 +231,16 @@ public class TrainingController extends SelectorComposer<Component> {
 
             combobox.setId(key);
             value.forEach(val -> {
-                val = new ModelParameter(val);
+                ModelParameter optimal = lambdaOptimized == null ? null : findMatch(val, lambdaOptimized);
+                val = optimal == null ? new ModelParameter(val) : new ModelParameter(optimal);
+
                 if (val.getEnabled()) {
                     Comboitem comboitem = combobox.appendItem(Labels.getLabel(key.concat(".").concat(val.getId())));
                     comboitem.setValue(val);
-                    if (basicParametes.contains(val)) combobox.setSelectedItem(comboitem);
+
+                    if (optimal != null ||
+                            (combobox.getSelectedItem() == null && basicParametes.contains(val)))
+                        combobox.setSelectedItem(comboitem);
 
                     List<Property> props = val.getProperties();
                     if (!props.isEmpty()) {
@@ -248,6 +280,11 @@ public class TrainingController extends SelectorComposer<Component> {
                 generateHyperparambox(combobox.getSelectedItem().getValue());
             }
         });
+    }
+
+    private ModelParameter findMatch(ModelParameter parameter, List<ModelParameter> optimized) {
+        Optional<ModelParameter> optional = optimized.stream().filter(it -> it.getId().equalsIgnoreCase(parameter.getId())).findFirst();
+        return optional.orElse(null);
     }
 
     private void generateHyperparambox(ModelParameter option) {

@@ -4,6 +4,7 @@ import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
 import cs.ut.config.items.Property
 import cs.ut.exceptions.NirdizatiRuntimeException
+import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.File
@@ -12,7 +13,18 @@ import java.io.IOException
 
 fun readHyperParameterJson(): Map<String, List<ModelParameter>> {
     val files = readFilesFromDir()
-    return parseJsonFiles(files)
+    val modelsParams = parseJsonFiles(files)
+    mapTypes(modelsParams)
+    return modelsParams
+}
+
+private fun mapTypes(modelsParams: Map<String, List<ModelParameter>>) {
+    val allProperties = MasterConfiguration.getInstance().modelConfiguration.allProperties
+
+    modelsParams.values.flatMap { it }.flatMap { it.properties }.forEach { prop ->
+        val withType = allProperties.first { it.id == prop.id }
+        prop.type = withType.type
+    }
 }
 
 private fun readFilesFromDir(): List<File> {
@@ -27,7 +39,7 @@ private fun readFilesFromDir(): List<File> {
 private fun parseJsonFiles(files: List<File>): Map<String, List<ModelParameter>> {
     val map = mutableMapOf<String, List<ModelParameter>>()
     val jsons = readJsonFiles(files)
-    parseJson(jsons, map)
+    parseJson(jsons.toMutableMap(), map)
     return map
 }
 
@@ -45,7 +57,7 @@ tailrec private fun readJson(files: List<File>, jsons: MutableMap<String, String
             BufferedReader(FileReader(file)).use {
                 it.lines().forEach { sb.append(it) }
             }
-            jsons[file.name] = sb.toString()
+            jsons[FilenameUtils.getBaseName(file.name)] = sb.toString()
         } catch (e: IOException) {
             throw NirdizatiRuntimeException("Could not read file $file")
         }
@@ -54,10 +66,11 @@ tailrec private fun readJson(files: List<File>, jsons: MutableMap<String, String
 }
 
 
-tailrec private fun parseJson(jsons: Map<String, String>, map: MutableMap<String, List<ModelParameter>>) {
+tailrec private fun parseJson(jsons: MutableMap<String, String>, map: MutableMap<String, List<ModelParameter>>) {
     if (jsons.isNotEmpty()) {
-        val entry = jsons.entries.first()
-        val json = JSONObject(entry.value)
+        val key = jsons.keys.first()
+        val entry = jsons.remove(key)
+        val json = JSONObject(entry)
 
         val params = mutableListOf<String>()
 
@@ -81,10 +94,10 @@ tailrec private fun parseJson(jsons: Map<String, String>, map: MutableMap<String
         val modelProperties = getModelParams(params)
         modelProperties.first { it.type == "learner" }.properties = properties
 
-        map[entry.key] = modelProperties
-    }
+        map[key] = modelProperties
 
-    parseJson(jsons, map)
+        parseJson(jsons, map)
+    }
 }
 
 private fun getModelParams(paramNames: List<String>): List<ModelParameter> {

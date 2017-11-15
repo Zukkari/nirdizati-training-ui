@@ -2,9 +2,11 @@ package cs.ut.config.nodes;
 
 import cs.ut.config.items.ModelParameter;
 import cs.ut.config.items.ModelProperties;
+import cs.ut.config.items.Property;
 import org.apache.log4j.Logger;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ModelConfiguration {
     private static final Logger log = Logger.getLogger(ModelConfiguration.class);
@@ -64,5 +66,13 @@ public class ModelConfiguration {
         });
 
         return params;
+    }
+
+    public List<Property> getAllProperties() {
+        return initialParameters
+                .stream()
+                .map(ModelParameter::getProperties)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 }
