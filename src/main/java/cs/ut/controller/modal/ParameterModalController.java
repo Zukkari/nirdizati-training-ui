@@ -7,6 +7,9 @@ import cs.ut.config.MasterConfiguration;
 import cs.ut.controller.MainPageController;
 import cs.ut.engine.JobManager;
 import cs.ut.engine.Worker;
+import cs.ut.ui.ColumnRowValueProvider;
+import cs.ut.ui.GridValueProvider;
+import cs.ut.ui.NirdizatiGrid;
 import cs.ut.util.CsvReader;
 import cs.ut.jobs.DataSetGenerationJob;
 import org.apache.log4j.Logger;
@@ -34,7 +37,9 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
     private Window modal;
 
     @Wire
-    private Grid paramGrid;
+    private Hlayout gridSlot;
+
+    private NirdizatiGrid<String> grid;
 
     @Wire
     private Button cancelBtn;
@@ -76,7 +81,8 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
 
         Escaper escaper = HtmlEscapers.htmlEscaper();
 
-        rows = new Rows();
+        GridValueProvider<String, Row> provider = new ColumnRowValueProvider(fileColumns, identifiedCols);
+        grid = new NirdizatiGrid<>(provider);
 
         if (fileColumns.isEmpty()) {
             Clients.showNotification(Labels.getLabel(
@@ -91,36 +97,7 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
             return;
         }
 
-        cols.forEach(it -> {
-            Row row = new Row();
-            row.appendChild(new Label(Labels.getLabel("modals.param.".concat(it))));
-            Combobox combobox = new Combobox();
-
-            String identified = identifiedCols.get(it);
-
-            combobox.setId(it);
-            combobox.setReadonly(true);
-            combobox.setConstraint("no empty");
-
-            fileColumns.forEach(val -> {
-                Comboitem comboitem = combobox.appendItem(escaper.escape(val));
-                comboitem.setValue(val);
-
-                if (val.equals(identified)) combobox.setSelectedItem(comboitem);
-            });
-
-            try {
-                combobox.getSelectedItem();
-            } catch (WrongValueException e) {
-                combobox.setSelectedItem(combobox.getItemAtIndex(0));
-            }
-
-            fields.add(combobox);
-            row.appendChild(combobox);
-            rows.appendChild(row);
-        });
-
-        paramGrid.appendChild(rows);
+        grid.generate(cols);
 
         cancelBtn.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) e -> {
             Files.delete(Paths.get(file.getAbsolutePath()));
@@ -129,11 +106,12 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
 
         okBtnListener = e -> {
             okBtn.setDisabled(true);
-            updateContent(csvReader.generateDatasetParams(gatherValues()));
+            updateContent(csvReader.generateDatasetParams(grid.gatherValues()));
         };
 
         okBtn.addEventListener(Events.ON_CLICK, okBtnListener);
 
+        gridSlot.appendChild(grid);
         log.debug("Showing modal");
     }
 
@@ -157,10 +135,10 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
         okBtn.addEventListener(Events.ON_CLICK, okBtnListener);
 
         rows = new Rows();
-        paramGrid.getChildren().clear();
-        paramGrid.appendChild(rows);
-        paramGrid.setMold("paging");
-        paramGrid.setPageSize(10);
+        grid.getChildren().clear();
+        grid.appendChild(rows);
+        grid.setMold("paging");
+        grid.setPageSize(10);
 
         Escaper escaper = HtmlEscapers.htmlEscaper();
         List<String> changeableVals = csvReader.getColumnList();
@@ -214,13 +192,6 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
             }
         });
 
-        return vals;
-    }
-
-
-    private Map<String, List<String>> gatherValues() {
-        Map<String, List<String>> vals = new HashMap<>();
-        fields.forEach(it -> vals.put(it.getId(), Collections.singletonList(it.getSelectedItem().getValue())));
         return vals;
     }
 }

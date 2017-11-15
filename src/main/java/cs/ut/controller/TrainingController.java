@@ -8,6 +8,7 @@ import cs.ut.config.items.Property;
 import cs.ut.engine.JobManager;
 import cs.ut.manager.LogManager;
 import cs.ut.ui.NirdizatiGrid;
+import cs.ut.ui.PropertyValueProvider;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -121,7 +122,9 @@ public class TrainingController extends SelectorComposer<Component> {
                 container.appendChild(checkbox);
 
                 ModelParameter param = option;
-                final NirdizatiGrid grid = new NirdizatiGrid();
+
+                final PropertyValueProvider propertyValueProvider = new PropertyValueProvider();
+                final NirdizatiGrid<Property> grid = new NirdizatiGrid<>(propertyValueProvider);
 
                 checkbox.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) event -> {
                     if (checkbox.isChecked()) {
@@ -132,7 +135,7 @@ public class TrainingController extends SelectorComposer<Component> {
                         List<Property> props = param.getProperties();
                         if (!LEARNER.equalsIgnoreCase(param.getType()) && !props.isEmpty()) {
                             props.forEach(prop -> {
-                                grid.getRows().appendChild(grid.generateGridRow(prop));
+                                grid.getRows().appendChild(propertyValueProvider.provide(prop));
                                 grid.setVflex("min");
                                 grid.setHflex("min");
                             });
@@ -212,7 +215,7 @@ public class TrainingController extends SelectorComposer<Component> {
         Map<String, List<ModelParameter>> optimizedParameters = MasterConfiguration.getInstance().getOptimizedParams();
         List<ModelParameter> optimized = null;
         if (optimizedParameters.keySet().contains(logName)) {
-            // we have optimized parameters for this log
+            log.debug(String.format("Found optimized parameters for log <%s>", logName));
             optimized = optimizedParameters.get(logName);
             Clients.showNotification(Labels.getLabel("training.found_optimized_params", new Object[] {logName}));
         }
@@ -249,7 +252,7 @@ public class TrainingController extends SelectorComposer<Component> {
                             if (combobox.getSelectedItem().equals(comboitem)) {
                                 props.forEach(property ->
                                         hyperParameters.forEach(grid -> {
-                                            Row additional = grid.generateGridRow(property);
+                                            Row additional = (Row) grid.getProvider().provide(property);
                                             propertyRow.add(additional);
                                             grid.getRows().appendChild(additional);
                                             grid.getRows().setVflex("min");
@@ -291,7 +294,7 @@ public class TrainingController extends SelectorComposer<Component> {
         hyperParamRow.getChildren().clear();
         hyperParamRow.appendChild(new Label());
 
-        NirdizatiGrid grid = new NirdizatiGrid();
+        NirdizatiGrid<Property> grid = new NirdizatiGrid<>(new PropertyValueProvider());
         grid.setVflex("min");
         grid.setHflex("min");
         grid.generate(option.getProperties());
@@ -346,12 +349,12 @@ public class TrainingController extends SelectorComposer<Component> {
                             }
                         }));
 
-                List<Map<String, Number>> listOfPropertyMaps = combinationGrids
+                List<Map<String, Object>> listOfPropertyMaps = combinationGrids
                         .stream()
-                        .map(NirdizatiGrid::gatherValues).collect(Collectors.toList());
+                        .map(NirdizatiGrid<Property>::gatherValues).collect(Collectors.toList());
 
                 List<Property> additionalProps = new ArrayList<>();
-                for (Map<String, Number> map : listOfPropertyMaps) {
+                for (Map<String, Object> map : listOfPropertyMaps) {
                     for (Map.Entry entry : map.entrySet()) {
                         Property property = new Property();
                         property.setId((String) entry.getKey());

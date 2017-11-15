@@ -78,17 +78,17 @@ class CsvReader(private val f: File) {
         }
     }
 
-    fun generateDatasetParams(userCols: Map<String, MutableList<String>>): Map<String, List<String>> {
+    fun generateDatasetParams(userCols: MutableMap<String, Any>): MutableMap<String, MutableList<String>> {
         val start = System.currentTimeMillis()
-        val cases = parseCsv(userCols[CASE_ID_COL]!![0])
+        val cases = parseCsv(userCols[CASE_ID_COL] as String)
 
         val colValues = HashMap<String, MutableSet<String>>()
         val timestampCol = identifyTimestampColumn(cases.first().attributes) ?: throw NirdizatiRuntimeException("No date column found")
 
         cases.forEach {
             it.attributes.remove(timestampCol)
-            it.attributes.remove(userCols[CASE_ID_COL]!!.first())
-            it.attributes.remove(userCols[ACTIVITY_COL]!!.first())
+            it.attributes.remove(userCols[CASE_ID_COL])
+            it.attributes.remove(userCols[ACTIVITY_COL])
 
             if (it.attributes.keys.contains(REMTIME)) {
                 it.attributes.remove(REMTIME)
@@ -123,8 +123,8 @@ class CsvReader(private val f: File) {
             postProcessCase(resultCols, it, alreadyClassified)
         }
 
-        resultCols.putAll(userCols)
-        resultCols[DYNAMIC + CAT_COLS]!!.add(userCols[ACTIVITY_COL]!!.first())
+        userCols.forEach { k, v -> resultCols[k] = Collections.singletonList(v as String) }
+        resultCols[DYNAMIC + CAT_COLS]!!.add(userCols[ACTIVITY_COL] as String)
         resultCols[TIMESTAMP_COL] = mutableListOf(timestampCol)
 
         val end = System.currentTimeMillis()

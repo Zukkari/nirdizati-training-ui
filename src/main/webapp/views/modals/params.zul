@@ -4,7 +4,7 @@
     position="center, center"
     draggable="false">
 
-    <grid id="paramGrid" vflex="1" hflex="min"/>
+    <hlayout id="gridSlot"/>
 
     <hlayout>
         <button id="cancelBtn" hflex="1" label="${labels.modals.cancel}"/>
