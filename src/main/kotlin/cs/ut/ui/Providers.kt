@@ -3,6 +3,7 @@ package cs.ut.ui
 import cs.ut.config.items.ModelParameter
 import cs.ut.config.items.Property
 import cs.ut.exceptions.NirdizatiRuntimeException
+import cs.ut.jobs.Job
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.WrongValueException
@@ -84,5 +85,12 @@ class ColumnRowValueProvider(private val valueList: List<String>,private val ide
 
         return row
     }
+}
 
+class JobValueProvider : GridValueProvider<Job, Row> {
+    override var fields: MutableList<Component> = mutableListOf()
+
+    override fun provide(data: Job): Row {
+        TODO()
+    }
 }

@@ -8,6 +8,7 @@ abstract class Job(val client: Desktop? = null) {
     protected var createTime: Date = Date()
     abstract var startTime: Date
     abstract var completeTime: Date
+    abstract var status: JobStatus
 
     val pathProvider = MasterConfiguration.getInstance().directoryPathConfiguration
     protected val scriptDir = pathProvider.scriptDirectory
@@ -26,4 +27,12 @@ abstract class Job(val client: Desktop? = null) {
     open fun isNotificationRequired() = false
 
     open fun getNotificationMessage() = ""
+}
+
+
+enum class JobStatus {
+    PENDING,
+    RUNNING,
+    COMPLETED,
+    FAILED
 }

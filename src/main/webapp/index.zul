@@ -3,6 +3,7 @@
     <borderlayout vflex="1" hflex="1" apply="cs.ut.controller.MainPageController">
         <north hflex="1" vflex="1" border="none">
             <include src="/views/components/header.zul"/>
+            <hlayout id="tracker" vflex="1" hflex="min" apply="cs.ut.controller.JobTrackerController"/>
         </north>
         <center hflex="1" vflex="1" border="none">
             <include id="contentInclude" src="/views/landing.zul"/>
