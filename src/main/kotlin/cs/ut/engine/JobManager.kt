@@ -5,6 +5,7 @@ import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
 import org.apache.log4j.Logger
+import org.zkoss.zk.ui.Desktop
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.Session
 import java.io.File
@@ -32,14 +33,15 @@ class JobManager {
             val result = parameters["predictiontype"]!![0]
 
             val currentSession = Executions.getCurrent().session
-            Executions.getCurrent().desktop.enableServerPush(true)
+            val desktop = Executions.getCurrent().desktop
+            desktop.enableServerPush(true)
 
             val jobs = jobQueue[currentSession] ?: LinkedList()
 
             encodings.forEach { encoding ->
                 bucketing.forEach { bucketing ->
                     learner.forEach { learner ->
-                        val job = SimulationJob(encoding, bucketing, learner, result, logFile!!, Executions.getCurrent().desktop)
+                        val job = SimulationJob(encoding, bucketing, learner, result, logFile!!, desktop)
                         log.debug("Scheduled job $job")
                         jobs.add(job)
                     }
@@ -88,6 +90,10 @@ class JobManager {
             jobs?.let { return (jobs.peek() as SimulationJob).outcome }
 
             throw NirdizatiRuntimeException("Current execution has no jobs scheduled")
+        }
+
+        fun notifyOfJobStatusChange(job: Job) {
+            TODO()
         }
     }
 }

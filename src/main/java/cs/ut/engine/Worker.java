@@ -2,7 +2,9 @@ package cs.ut.engine;
 
 import cs.ut.controller.MainPageController;
 import cs.ut.jobs.Job;
+import cs.ut.jobs.JobStatus;
 import org.apache.log4j.Logger;
+import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
@@ -35,32 +37,49 @@ public class Worker extends Thread {
                 Job job = jobQueue.poll();
                 job.setStartTime(Calendar.getInstance().getTime());
 
+
                 try {
                     log.debug(String.format("<%s> started job preprocess", job));
+                    job.setStatus(JobStatus.PREPARING);
+                    JobManager.Manager.notifyOfJobStatusChange(job);
                     job.preProcess();
                 } catch (Exception e) {
                     log.debug(String.format("<%s> failed in preprocess stage with exception, aborting job", job), e);
+                    job.setStatus(JobStatus.FAILED);
+                    JobManager.Manager.notifyOfJobStatusChange(job);
                     continue;
                 }
 
                 try {
+                    job.setStatus(JobStatus.RUNNING);
+                    JobManager.Manager.notifyOfJobStatusChange(job);
+
                     log.debug(String.format("<%s> started job execution", job));
                     job.execute();
                 } catch (Exception e) {
                     log.debug(String.format("<%s> failed in execute stage with exception, aborting job", job), e);
+                    job.setStatus(JobStatus.FAILED);
+                    JobManager.Manager.notifyOfJobStatusChange(job);
                     continue;
                 }
 
                 try {
+                    job.setStatus(JobStatus.FINISHING);
+                    JobManager.Manager.notifyOfJobStatusChange(job);
+
                     log.debug(String.format("<%s> started job post execute", job));
                     job.postExecute();
                 } catch (Exception e) {
                     log.debug(String.format("<%s> failed in post execute stage with exception", job), e);
+                    job.setStatus(JobStatus.FAILED);
+                    JobManager.Manager.notifyOfJobStatusChange(job);
                 }
 
                 job.setCompleteTime(Calendar.getInstance().getTime());
+                job.setStatus(JobStatus.COMPLETED);
+                JobManager.Manager.notifyOfJobStatusChange(job);
 
-                if (job.isNotificationRequired() && job.getClient() != null) {
+                if (job.isNotificationRequired()) {
                     Executions.schedule(job.getClient(),
                             e -> Clients.showNotification(
                                     job.getNotificationMessage(), "info"

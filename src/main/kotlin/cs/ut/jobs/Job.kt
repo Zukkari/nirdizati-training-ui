@@ -4,11 +4,11 @@ import cs.ut.config.MasterConfiguration
 import org.zkoss.zk.ui.Desktop
 import java.util.*
 
-abstract class Job(val client: Desktop? = null) {
+abstract class Job(val client: Desktop) {
     protected var createTime: Date = Date()
     abstract var startTime: Date
     abstract var completeTime: Date
-    abstract var status: JobStatus
+    var status: JobStatus = JobStatus.PENDING
 
     val pathProvider = MasterConfiguration.getInstance().directoryPathConfiguration
     protected val scriptDir = pathProvider.scriptDirectory
@@ -32,7 +32,9 @@ abstract class Job(val client: Desktop? = null) {
 
 enum class JobStatus {
     PENDING,
+    PREPARING,
     RUNNING,
+    FINISHING,
     COMPLETED,
     FAILED
 }
