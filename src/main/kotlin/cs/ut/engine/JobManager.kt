@@ -93,6 +93,7 @@ class JobManager {
         }
 
         fun notifyOfJobStatusChange(job: Job) {
+            job.client.components
             TODO()
         }
     }

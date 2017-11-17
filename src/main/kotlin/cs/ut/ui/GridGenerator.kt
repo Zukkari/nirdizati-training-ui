@@ -30,6 +30,15 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, out Row>) : Grid(), Id
         log.debug("Row generation finished in ${end - start} ms")
     }
 
+    fun setColumns(properties: Map<String, String>) {
+        appendChild(Columns())
+        properties.entries.forEach {
+            val column = Column(it.key)
+            column.width = it.value
+            columns.appendChild(column)
+        }
+    }
+
     tailrec private fun generateRows(data: MutableList<T>, rows: Rows) {
         if (data.isNotEmpty()) {
             val row = provider.provide(data.first())

@@ -11,3 +11,12 @@
     border-radius: 3px;
     background-color: rgba(255, 21, 0, 0.38);
 }
+
+.tracker_grid {
+    margin-left: 200%;
+}
+
+.tracker_grid .z-column-content {
+    font-size: 9px;
+    padding: 4px;
+}

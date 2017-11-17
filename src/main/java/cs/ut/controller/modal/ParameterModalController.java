@@ -126,7 +126,7 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
         okBtnListener = e -> {
             Map<String, List<String>> acceptedParameters = gatherAcceptedValues();
             acceptedParameters.forEach((k, v) -> identifiedColumns.put(k, v));
-            Worker.getInstance().scheduleJob(new DataSetGenerationJob(identifiedColumns, file));
+            Worker.getInstance().scheduleJob(new DataSetGenerationJob(identifiedColumns, file, execution.getDesktop()));
             Clients.showNotification(Labels.getLabel("upload.success", new Object[]{HtmlEscapers.htmlEscaper().escape(file.getName())}), "info", getPage().getFirstRoot(), "bottom_right", -1);
             MainPageController.getInstance().setContent("landing", getPage());
             modal.detach();
