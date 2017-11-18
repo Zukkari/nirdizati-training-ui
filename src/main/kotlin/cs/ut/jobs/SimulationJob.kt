@@ -47,46 +47,43 @@ class SimulationJob(private val encoding: ModelParameter,
                 MasterConfiguration.getInstance().directoryPathConfiguration.trainDirectory)
     }
 
-    override fun execute() {
-        try {
-            val pb = ProcessBuilder(
-                    "python",
-                    "train.py",
-                    logFile.name,
-                    bucketing.parameter,
-                    encoding.parameter,
-                    learner.parameter,
-                    outcome.parameter
-            )
+    override fun execute() = try {
+        val pb = ProcessBuilder(
+                "python",
+                "train.py",
+                logFile.name,
+                bucketing.parameter,
+                encoding.parameter,
+                learner.parameter,
+                outcome.parameter
+        )
 
-            pb.directory(File(coreDir))
-            pb.inheritIO()
+        pb.directory(File(coreDir))
+        pb.inheritIO()
 
-            val env = pb.environment()
-            env.put("PYTHONPATH", scriptDir)
+        val env = pb.environment()
 
-            val process = pb.start()
-            log.debug("Script call: ${pb.command()}")
-            if (!process.waitFor(180, TimeUnit.SECONDS)) {
-                process.destroy()
-                log.debug("Timed out while executing script")
-            }
-
-            log.debug("Script finished running...")
-
-            val file = File(scriptDir + pklDir + this.toString())
-            log.debug(file)
-
-            if (!file.exists()) {
-                throw NirdizatiRuntimeException("Script failed to write model to disk, job failed")
-            } else {
-                log.debug("Script exited successfully")
-            }
-        } catch (e: IOException) {
-            throw NirdizatiRuntimeException("Script execution failed", e)
-        } catch (e: InterruptedException) {
-            throw NirdizatiRuntimeException("Script execution failed", e)
+        val process = pb.start()
+        log.debug("Script call: ${pb.command()}")
+        if (!process.waitFor(180, TimeUnit.SECONDS)) {
+            process.destroy()
+            log.debug("Timed out while executing script")
         }
+
+        log.debug("Script finished running...")
+
+        val file = File(scriptDir + pklDir + this.toString())
+        log.debug(file)
+
+        if (!file.exists()) {
+            throw NirdizatiRuntimeException("Script failed to write model to disk, job failed")
+        } else {
+            log.debug("Script exited successfully")
+        }
+    } catch (e: IOException) {
+        throw NirdizatiRuntimeException("Script execution failed", e)
+    } catch (e: InterruptedException) {
+        throw NirdizatiRuntimeException("Script execution failed", e)
     }
 
     override fun postExecute() {
