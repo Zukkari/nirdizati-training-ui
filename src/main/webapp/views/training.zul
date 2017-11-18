@@ -6,9 +6,10 @@
             <column hflex="min"/>
             <column hflex="2"/>
             <column vflex="1" hflex="min"/>
+            <column hflex="min"/>
         </columns>
         <rows>
-            <row hflex="1">
+            <row hflex="min">
                 <label value="${labels.training.selected_log}" sclass="label-combo"/>
                 <combobox id="clientLogs" constraint="no empty"/>
 
@@ -17,10 +18,8 @@
                 <combobox id="predictionType" constraint="no empty"/>
 
 
-                <navbar id="modeSwitch" sclass="grey-box-navbar">
-                    <navitem vflex="1" id="basicMode" label="${labels.training.basic}" sclass="grey-box-navbar"/>
-                    <navitem vflex="1" id="advancedMode" label="${labels.training.advanced}" sclass="grey-box-navbar"/>
-                </navbar>
+                <label value="${labels.training.advanced}"/>
+                <checkbox id="advancedMode" zclass="toggle" sclass="switch toggle-round-flat"/>
             </row>
         </rows>
     </grid>

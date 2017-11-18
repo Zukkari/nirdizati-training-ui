@@ -1,5 +1,4 @@
 <hbox hflex="1" vflex="1" apply="cs.ut.controller.HeaderController" align="start">
     <image id="headerLogo" src="/images/logo.png"/>
     <navbar hflex="min" vflex="1" id="navbar" orient="horizontal" style="margin-left:20px"/>
-    <hbox pack="end" id="tracker" vflex="1" hflex="max" apply="cs.ut.controller.JobTrackerController"/>
 </hbox>

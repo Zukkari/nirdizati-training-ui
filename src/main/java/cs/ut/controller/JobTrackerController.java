@@ -16,19 +16,25 @@ public class JobTrackerController extends SelectorComposer<Component> {
     @Wire
     private Hbox tracker;
 
+    public static final String GRID_ID = "tracker_grid";
+
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
 
         NirdizatiGrid<Job> jobGrid = new NirdizatiGrid<>(new JobValueProvider());
+        jobGrid.setId(GRID_ID);
 
         Map<String, String> properties = new HashMap<>();
-        properties.put(Labels.getLabel("tracker.job_name"), "140%");
-        properties.put(Labels.getLabel("tracker.job_status"), "100%");
+        properties.put(Labels.getLabel("tracker.job_name"), "240%");
+        properties.put(Labels.getLabel("tracker.job_status"), "140%");
 
         jobGrid.setColumns(properties);
-        jobGrid.setSclass("tracker_grid");
+        jobGrid.setSclass(GRID_ID);
         jobGrid.setHflex("min");
+
+        jobGrid.setVflex("1");
+        jobGrid.getRows().setVflex("1");
 
         tracker.appendChild(jobGrid);
     }

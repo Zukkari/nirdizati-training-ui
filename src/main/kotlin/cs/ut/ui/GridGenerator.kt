@@ -6,19 +6,23 @@ import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.IdSpace
 import org.zkoss.zul.*
 
+
+class FieldComponent(val label: Label, val control: Component)
+
 class NirdizatiGrid<T>(val provider: GridValueProvider<T, out Row>) : Grid(), IdSpace {
     private val log = Logger.getLogger(NirdizatiGrid::class.java)
-    private val fields = mutableListOf<Component>()
+    private val fields = mutableListOf<FieldComponent>()
 
     init {
         provider.fields = fields
         appendChild(Rows())
     }
 
-    fun generate(data: List<T>) {
+    fun generate(data: List<T>, clear: Boolean = true) {
         log.debug("Row generation start with ${data.size} properties")
         val start = System.currentTimeMillis()
-        rows.getChildren<Component>().clear()
+
+        if (clear) rows.getChildren<Component>().clear()
 
         generateRows(data.toMutableList(), rows)
 
@@ -53,9 +57,9 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, out Row>) : Grid(), Id
         return invalid.isEmpty()
     }
 
-    tailrec private fun validateFields(fields: MutableList<Component>, invalid: MutableList<Component>) {
+    tailrec private fun validateFields(fields: MutableList<FieldComponent>, invalid: MutableList<Component>) {
         if (fields.isNotEmpty()) {
-            val comp = fields.first()
+            val comp = fields.first().control
 
             when (comp) {
                 is Intbox -> if (comp.value == null || comp.value <= 0) {
@@ -81,9 +85,9 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, out Row>) : Grid(), Id
         return valueMap
     }
 
-    tailrec private fun gatherValueFromFields(valueMap: MutableMap<String, Any>, fields: MutableList<Component>) {
+    tailrec private fun gatherValueFromFields(valueMap: MutableMap<String, Any>, fields: MutableList<FieldComponent>) {
         if (fields.isNotEmpty()) {
-            val field = fields.first()
+            val field = fields.first().control
 
             when (field) {
                 is Intbox -> valueMap[field.id] = field.value

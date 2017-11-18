@@ -97,7 +97,7 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
             return;
         }
 
-        grid.generate(cols);
+        grid.generate(cols, true);
 
         cancelBtn.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) e -> {
             Files.delete(Paths.get(file.getAbsolutePath()));

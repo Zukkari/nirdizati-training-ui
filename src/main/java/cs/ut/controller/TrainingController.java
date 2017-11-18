@@ -55,13 +55,7 @@ public class TrainingController extends SelectorComposer<Component> {
     private Grid optionsGrid;
 
     @Wire
-    private Navbar modeSwitch;
-
-    @Wire
-    private Navitem basicMode;
-
-    @Wire
-    private Navitem advancedMode;
+    private Checkbox advancedMode;
 
     @Wire
     private Button startTraining;
@@ -92,8 +86,6 @@ public class TrainingController extends SelectorComposer<Component> {
         initPredictions();
 
         initBasicMode();
-
-        modeSwitch.setSelectedItem(basicMode);
     }
 
     private void initAdvancedMode() {
@@ -147,7 +139,6 @@ public class TrainingController extends SelectorComposer<Component> {
                         hyperParameters.remove(grid);
                         grid.setVisible(false);
                         container.removeChild(grid);
-                        grid.getRows().getChildren().clear();
 
                         if (combinationGrids.contains(grid)) {
                             combinationGrids.remove(grid);
@@ -157,7 +148,7 @@ public class TrainingController extends SelectorComposer<Component> {
 
                 if (LEARNER.equalsIgnoreCase(option.getType())) {
                     grid.setVisible(false);
-                    grid.generate(option.getProperties());
+                    grid.generate(option.getProperties(), true);
                     Vbox vbox = new Vbox();
                     vbox.appendChild(container);
                     vbox.appendChild(grid);
@@ -297,7 +288,7 @@ public class TrainingController extends SelectorComposer<Component> {
         NirdizatiGrid<Property> grid = new NirdizatiGrid<>(new PropertyValueProvider());
         grid.setVflex("min");
         grid.setHflex("min");
-        grid.generate(option.getProperties());
+        grid.generate(option.getProperties(), true);
         grid.setId(option.getId());
 
         hyperParameters.clear();
@@ -308,16 +299,15 @@ public class TrainingController extends SelectorComposer<Component> {
         hyperParamRow.appendChild(grid);
     }
 
-    @Listen("onClick = #advancedMode")
+    @Listen("onCheck = #advancedMode")
     public void enabledAdvanced() {
-        log.debug("enabling advanced mode");
-        initAdvancedMode();
-    }
-
-    @Listen("onClick = #basicMode")
-    public void enableBasicMode() {
-        log.debug("enabling basic mode");
-        initBasicMode();
+        if (advancedMode.isChecked()) {
+            log.debug("enabling advanced mode");
+            initAdvancedMode();
+        } else {
+            log.debug("enabling basic mode");
+            initBasicMode();
+        }
     }
 
     @Listen("onClick = #startTraining")

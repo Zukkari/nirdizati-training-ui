@@ -1,13 +1,18 @@
 package cs.ut.engine
 
 import cs.ut.config.items.ModelParameter
+import cs.ut.controller.JobTrackerController
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
+import cs.ut.ui.NirdizatiGrid
 import org.apache.log4j.Logger
-import org.zkoss.zk.ui.Desktop
+import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.Session
+import org.zkoss.zk.ui.event.Event
+import org.zkoss.zul.Label
+import org.zkoss.zul.Row
 import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
@@ -61,6 +66,9 @@ class JobManager {
             val currentJobs = jobQueue[Executions.getCurrent().session]!!
             log.debug("Deploying ${currentJobs.size} jobs")
 
+            val grid = Executions.getCurrent().desktop.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
+            grid.generate(currentJobs.toList().reversed(), false)
+
             while (currentJobs.peek() != null) {
                 worker.scheduleJob(currentJobs.poll())
             }
@@ -73,28 +81,28 @@ class JobManager {
             log.debug("Cleared all jobs for session ${Executions.getCurrent().session}")
         }
 
-        fun getCurrentFile(): File {
-            log.debug("Getting current log file for current session")
-
-            val jobs = jobQueue[Executions.getCurrent().session]
-
-            jobs?.let { return (jobs.peek() as SimulationJob).logFile }
-
-            throw NirdizatiRuntimeException("Current execution has no jobs scheduled")
-        }
-
-        fun getPredictionType(): ModelParameter {
-            log.debug("Getting current prediction type for current session")
-
-            val jobs = jobQueue[Executions.getCurrent().session]
-            jobs?.let { return (jobs.peek() as SimulationJob).outcome }
-
-            throw NirdizatiRuntimeException("Current execution has no jobs scheduled")
-        }
-
         fun notifyOfJobStatusChange(job: Job) {
-            job.client.components
-            TODO()
+            val grid: NirdizatiGrid<Job> = job.client.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
+            updateJobStatus(job, grid.rows.getChildren(), grid)
+        }
+
+        tailrec private fun updateJobStatus(job: Job, rows: List<Row>, grid: NirdizatiGrid<Job>) {
+            if (rows.isNotEmpty()) {
+                val row = rows.first()
+
+                if (job == row.getValue()) {
+                    val statusLabel = row.getChildren<Component>()[1] as Label
+
+                    Executions.schedule(job.client,
+                            { _ ->
+                                statusLabel.value = job.status.name
+                                grid.hflex = "min"
+                            },
+                            Event("job_status", null, "update"))
+                } else {
+                    updateJobStatus(job, rows.drop(1), grid)
+                }
+            }
         }
     }
 }

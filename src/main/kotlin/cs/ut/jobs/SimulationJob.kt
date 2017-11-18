@@ -2,6 +2,7 @@ package cs.ut.jobs
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
+import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.util.FileWriter
 import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
@@ -77,14 +78,14 @@ class SimulationJob(private val encoding: ModelParameter,
             log.debug(file)
 
             if (!file.exists()) {
-                log.debug("Script did not write model to disk, job failed")
+                throw NirdizatiRuntimeException("Script failed to write model to disk, job failed")
             } else {
                 log.debug("Script exited successfully")
             }
         } catch (e: IOException) {
-            log.debug("Failed to execute script call", e)
+            throw NirdizatiRuntimeException("Script execution failed", e)
         } catch (e: InterruptedException) {
-            log.debug("Thread has been interrupted", e)
+            throw NirdizatiRuntimeException("Script execution failed", e)
         }
     }
 
@@ -100,7 +101,7 @@ class SimulationJob(private val encoding: ModelParameter,
             Files.move(Paths.get(scriptDir + pklDir + this.toString()),
                     Paths.get(userModelDir + noExtensionName + "/" + this.toString()), StandardCopyOption.REPLACE_EXISTING)
         } catch (e: IOException) {
-            log.debug(e)
+            throw NirdizatiRuntimeException("Script execution failed", e)
         }
     }
 
