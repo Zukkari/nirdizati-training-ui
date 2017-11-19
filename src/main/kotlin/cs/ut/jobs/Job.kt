@@ -5,7 +5,7 @@ import org.zkoss.zk.ui.Desktop
 import java.util.*
 
 abstract class Job(val client: Desktop) {
-    protected var createTime: Date = Date()
+    var createTime: Date = Date()
     abstract var startTime: Date
     abstract var completeTime: Date
     var status: JobStatus = JobStatus.PENDING

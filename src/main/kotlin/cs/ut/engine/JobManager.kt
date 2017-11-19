@@ -26,7 +26,7 @@ class JobManager {
 
         var logFile: File? = null
 
-        fun generateJobs(parameters: Map<String, List<ModelParameter>>) = {
+        fun generateJobs(parameters: Map<String, List<ModelParameter>>) {
             logFile ?: throw NirdizatiRuntimeException("Log file is null")
 
             log.debug("Started generating jobs...")

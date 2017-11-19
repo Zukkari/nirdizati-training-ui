@@ -5,11 +5,15 @@ import cs.ut.config.items.Property
 import cs.ut.controller.JobTrackerController
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.Job
+import cs.ut.jobs.JobStatus
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
+import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.WrongValueException
+import org.zkoss.zk.ui.event.Events
 import org.zkoss.zul.*
 import org.zkoss.zul.impl.InputElement
+import java.io.File
 
 interface GridValueProvider<T, Row> {
     var fields: MutableList<FieldComponent>
@@ -108,8 +112,70 @@ class JobValueProvider : GridValueProvider<Job, Row> {
         row.setValue(data)
         row.sclass = JobTrackerController.GRID_ID
 
+        row.addEventListener(Events.ON_CLICK, { _ ->
+            val args = mapOf<String, Any>("data" to data)
+            val window: Window = Executions.createComponents(
+                    "/views/modals/job_info.zul",
+                    data.client.components.first { it.id == "contentInclude" },
+                    args
+            ) as Window
+            window.doModal()
+        })
+
         fields.add(FieldComponent(label, status))
 
         return row
+    }
+}
+
+class AttributeToLabelsProvider : GridValueProvider<Any, Row> {
+    override var fields: MutableList<FieldComponent> = mutableListOf()
+
+    override fun provide(data: Any): Row {
+        val row = Row()
+
+        when (data) {
+            is Map<*, *> -> {
+                val entry = data.entries.first()
+                val label = Label(Labels.getLabel("attribute." + entry.key as String))
+
+                val entryVal = entry.value
+                val value = when (entryVal) {
+                    is File -> Label(entryVal.name)
+                    else -> Label(entryVal.toString())
+                }
+
+                fields.add(FieldComponent(label, value))
+                row.appendChild(label)
+                row.appendChild(value)
+
+                return row
+            }
+
+            is ModelParameter -> {
+                val label = Label(Labels.getLabel(data.type))
+                val value = Label(Labels.getLabel(data.type + "." + data.id))
+
+                fields.add(FieldComponent(label, value))
+
+                row.appendChild(label)
+                row.appendChild(value)
+
+                return row
+            }
+
+            is JobStatus -> {
+                val label = Label(Labels.getLabel("attribute.job_status"))
+                val value = Label(data.name)
+
+                fields.add(FieldComponent(label, value))
+                row.appendChild(label)
+                row.appendChild(value)
+
+                return row
+            }
+
+            else -> throw NirdizatiRuntimeException("Unsupported parameter: $data")
+        }
     }
 }
