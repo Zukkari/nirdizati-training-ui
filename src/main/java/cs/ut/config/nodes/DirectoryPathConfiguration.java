@@ -70,6 +70,18 @@ public class DirectoryPathConfiguration {
 
         file = new File(trainDirectory);
         createDirIfAbsent(file);
+
+        file = new File(scriptDirectory.concat("core/").concat(datasetDirectory));
+        createDirIfAbsent(file);
+
+        file = new File(scriptDirectory.concat("core/").concat(trainDirectory));
+        createDirIfAbsent(file);
+
+        file = new File(scriptDirectory.concat(pklDirectory));
+        createDirIfAbsent(file);
+
+        file = new File(scriptDirectory.concat("core/").concat(ohpdir));
+        createDirIfAbsent(file);
     }
 
     private void createDirIfAbsent(File file) {
