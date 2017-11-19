@@ -62,8 +62,6 @@ class SimulationJob(val encoding: ModelParameter,
             pb.directory(File(coreDir))
             pb.inheritIO()
 
-            val env = pb.environment()
-
             val process = pb.start()
             log.debug("Script call: ${pb.command()}")
             if (!process.waitFor(180, TimeUnit.SECONDS)) {
