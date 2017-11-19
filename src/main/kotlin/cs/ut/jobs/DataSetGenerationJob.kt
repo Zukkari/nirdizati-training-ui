@@ -1,10 +1,10 @@
 package cs.ut.jobs
 
-import cs.ut.util.FileWriter
 import cs.ut.exceptions.NirdizatiRuntimeException
+import cs.ut.util.CsvReader
+import cs.ut.util.FileWriter
 import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
-import cs.ut.util.CsvReader
 import org.zkoss.zk.ui.Desktop
 import java.io.File
 import java.util.*
