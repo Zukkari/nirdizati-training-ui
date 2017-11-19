@@ -103,7 +103,11 @@ public class MasterConfiguration {
         extensions = configuration.getExtensions();
         userCols = configuration.getUserCols();
 
-        getDirectoryPathConfiguration().validatePathsExist();
+        try {
+            getDirectoryPathConfiguration().validatePathsExist();
+        } catch (Exception e) {
+            log.debug("Validating paths failed...");
+        }
 
         log.debug("Successfully read master configuration");
 

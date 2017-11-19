@@ -48,7 +48,7 @@ public class JobInformationModalController extends GenericAutowireComposer<Compo
 
         List<?> listOfProperties = Lists.newArrayList(
                 ImmutableMap.of("create_time", job.getCreateTime()),
-                ImmutableMap.of("start_time", job.getStartTime()),
+                ImmutableMap.of("start_time", job.getStatus().equals(JobStatus.PENDING) ? "" : job.getStartTime()),
                 ImmutableMap.of("complete_time", job.getStatus().equals(JobStatus.COMPLETED) ? job.getCompleteTime() : ""),
                 job.getStatus(),
                 job.getEncoding(),
