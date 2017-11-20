@@ -9,6 +9,9 @@ import java.io.File;
 @XmlRootElement(name = "paths")
 public class DirectoryPathConfiguration {
 
+    @XmlElement(name = "python")
+    private String python;
+
     @XmlElement(name = "userLogDirectory")
     private String userLogDirectory;
 
@@ -56,6 +59,10 @@ public class DirectoryPathConfiguration {
 
     public String getOhpdir() {
         return ohpdir;
+    }
+
+    public String getPython() {
+        return python;
     }
 
     public void validatePathsExist() {

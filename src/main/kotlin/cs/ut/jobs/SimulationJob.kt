@@ -50,7 +50,7 @@ class SimulationJob(val encoding: ModelParameter,
     override fun execute() {
         try {
             val pb = ProcessBuilder(
-                    "/home/zukkari/anaconda3/bin/python",
+                    MasterConfiguration.getInstance().directoryPathConfiguration.python,
                     "train.py",
                     logFile.name,
                     bucketing.parameter,
