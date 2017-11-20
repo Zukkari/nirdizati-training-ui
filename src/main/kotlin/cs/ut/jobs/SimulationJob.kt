@@ -50,7 +50,7 @@ class SimulationJob(val encoding: ModelParameter,
     override fun execute() {
         try {
             val pb = ProcessBuilder(
-                    "python",
+                    "/home/zukkari/anaconda3/bin/python",
                     "train.py",
                     logFile.name,
                     bucketing.parameter,
@@ -65,8 +65,8 @@ class SimulationJob(val encoding: ModelParameter,
             val env = pb.environment()
             env.put("PYTHONPATH", scriptDir)
 
-            val process = pb.start()
             log.debug("Script call: ${pb.command()}")
+            val process = pb.start()
             if (!process.waitFor(180, TimeUnit.SECONDS)) {
                 process.destroy()
                 log.debug("Timed out while executing script")

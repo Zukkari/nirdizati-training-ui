@@ -13,6 +13,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.SerializableEventListener;
@@ -123,11 +124,10 @@ public class TrainingController extends SelectorComposer<Component> {
                         grid.setVisible(true);
 
                         List<Property> props = param.getProperties();
-                        if (!LEARNER.equalsIgnoreCase(param.getType()) && !props.isEmpty()) {
+                        if (!props.isEmpty()) {
                             props.forEach(prop -> {
                                 grid.getRows().appendChild(propertyValueProvider.provide(prop));
-                                grid.setVflex("min");
-                                grid.setHflex("min");
+                                grid.getRows().setVflex("min");
                             });
                             container.appendChild(grid);
                             combinationGrids.add(grid);
@@ -230,31 +230,36 @@ public class TrainingController extends SelectorComposer<Component> {
                     Comboitem comboitem = combobox.appendItem(Labels.getLabel(key.concat(".").concat(val.getId())));
                     comboitem.setValue(val);
 
-                    if (optimal != null ||
-                            (combobox.getSelectedItem() == null && basicParametes.contains(val)))
-                        combobox.setSelectedItem(comboitem);
-
                     List<Property> props = val.getProperties();
-                    if (!props.isEmpty()) {
+                    if (!LEARNER.equalsIgnoreCase(val.getType()) && !props.isEmpty()) {
                         List<Row> propertyRow = new ArrayList<>();
-                        combobox.addEventListener(Events.ON_CHANGE, (SerializableEventListener<Event>) event -> {
+                        combobox.addEventListener(Events.ON_SELECT, (SerializableEventListener<Event>) event -> {
                             if (combobox.getSelectedItem().equals(comboitem)) {
                                 props.forEach(property ->
                                         hyperParameters.forEach(grid -> {
                                             Row additional = (Row) grid.getProvider().provide(property);
                                             propertyRow.add(additional);
-                                            grid.getRows().appendChild(additional);
-                                            grid.getRows().setVflex("min");
+                                            try {
+                                                grid.getRows().appendChild(additional);
+                                            } catch (UiException e) {
+                                            }
+                                            grid.getRows().setVflex("1");
                                         })
                                 );
                             } else {
                                 propertyRow.forEach(prop -> hyperParameters.forEach(grid -> {
                                     grid.getRows().removeChild(prop);
-                                    grid.getRows().setVflex("min");
+                                    grid.getRows().setVflex("1");
+                                    optionsGrid.getRows().setVflex("min");
                                 }));
+                                propertyRow.clear();
                             }
+                            optionsGrid.getRows().setVflex("min");
                         });
                     }
+                    if (optimal != null ||
+                            (combobox.getSelectedItem() == null && basicParametes.contains(val)))
+                        combobox.setSelectedItem(comboitem);
                 }
             });
 

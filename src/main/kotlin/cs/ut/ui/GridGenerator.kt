@@ -9,7 +9,7 @@ import org.zkoss.zul.*
 
 class FieldComponent(val label: Label, val control: Component)
 
-class NirdizatiGrid<T>(val provider: GridValueProvider<T, out Row>) : Grid(), IdSpace {
+class NirdizatiGrid<T>(val provider: GridValueProvider<T, out Row>) : Grid() {
     private val log = Logger.getLogger(NirdizatiGrid::class.java)
     private val fields = mutableListOf<FieldComponent>()
 
