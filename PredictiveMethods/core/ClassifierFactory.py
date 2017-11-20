@@ -2,8 +2,7 @@ from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.tree import DecisionTreeClassifier
-from xgboost.sklearn import XGBClassifier
-from xgboost.sklearn import XGBRegressor
+import xgboost as xgb
 
 from ClassifierWrapper import ClassifierWrapper
 
@@ -42,13 +41,13 @@ def get_classifier(method, mode, max_features=None, n_estimators=None, learning_
 
     elif method == "xgb" and mode == "regr":
         return ClassifierWrapper(
-            cls=XGBRegressor(n_estimators=n_estimators, learning_rate=learning_rate, subsample=subsample,
+            cls=xgb.XGBRegressor(n_estimators=n_estimators, learning_rate=learning_rate, subsample=subsample,
                                      max_depth=max_depth, colsample_bytree=colsample_bytree, random_state=random_state),
             min_cases_for_training=min_cases_for_training, mode=mode)
 
     elif method == "xgb" and mode == "class":
         return ClassifierWrapper(
-            cls=XGBClassifier(n_estimators=n_estimators, learning_rate=learning_rate, subsample=subsample,
+            cls=xgb.XGBClassifier(n_estimators=n_estimators, learning_rate=learning_rate, subsample=subsample,
                                      max_depth=max_depth, colsample_bytree=colsample_bytree, random_state=random_state),
             min_cases_for_training=min_cases_for_training, mode=mode)
 
