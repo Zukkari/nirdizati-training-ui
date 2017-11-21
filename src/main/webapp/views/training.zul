@@ -24,12 +24,8 @@
         </rows>
     </grid>
 
-    <grid oddRowSclass="none" hflex="1" id="optionsGrid">
-        <columns>
-            <column hflex="min"/>
-            <column hflex="max"/>
-        </columns>
-    </grid>
+    <hlayout id="gridContainer"/>
+
     <vbox hflex="1" vflex="1" align="center" pack="center">
         <button id="startTraining" sclass="big-blue-btn">${labels.training.start_training}</button>
     </vbox>

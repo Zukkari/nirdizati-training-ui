@@ -3,15 +3,14 @@ package cs.ut.ui
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
-import org.zkoss.zk.ui.IdSpace
 import org.zkoss.zul.*
 
 
 class FieldComponent(val label: Label, val control: Component)
 
-class NirdizatiGrid<T>(val provider: GridValueProvider<T, out Row>) : Grid() {
+class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
     private val log = Logger.getLogger(NirdizatiGrid::class.java)
-    private val fields = mutableListOf<FieldComponent>()
+    val fields = mutableListOf<FieldComponent>()
 
     init {
         provider.fields = fields
