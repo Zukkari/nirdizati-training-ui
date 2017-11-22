@@ -4,15 +4,18 @@ import com.google.common.escape.Escaper;
 import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
-import cs.ut.engine.JobManager;
+import cs.ut.config.items.Property;
 import cs.ut.manager.LogManager;
+import cs.ut.ui.FieldComponent;
 import cs.ut.ui.NirdizatiGrid;
 import cs.ut.ui.providers.GeneratorArgument;
 import cs.ut.ui.providers.ModelParamToCombo;
+import cs.ut.ui.providers.PropertyValueProvider;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
@@ -21,8 +24,10 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Hlayout;
+import org.zkoss.zul.Vlayout;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,14 +52,21 @@ public class TrainingController extends SelectorComposer<Component> {
     private Button startTraining;
 
     @Wire
-    private Hlayout gridContainer;
+    private Vlayout gridContainer;
 
-    private Map<String, List<ModelParameter>> parameters = MasterConfiguration.getInstance().getModelConfiguration().getProperties();
+    private NirdizatiGrid<Property> parameterGrid;
+
+    private transient Map<String, List<ModelParameter>> parameters = MasterConfiguration.getInstance().getModelConfiguration().getProperties();
+
+    private transient List<Property> hyperParameters = new ArrayList<>();
+    private transient List<Component> valueProviders = new ArrayList<>();
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
         log.debug("Initialized TrainingController");
+        parameterGrid = new NirdizatiGrid<>(new PropertyValueProvider());
+        parameterGrid.setVisible(false);
 
         initClientLogs();
         initPredictions();
@@ -72,8 +84,33 @@ public class TrainingController extends SelectorComposer<Component> {
                         .map(it -> new GeneratorArgument(it.getKey(), it.getValue()))
                         .collect(Collectors.toList()), true);
 
-        gridContainer.appendChild(grid);
+        valueProviders.addAll(grid.getFields().stream().map(FieldComponent::getControl).collect(Collectors.toList()));
+        valueProviders.forEach(this::generateListener);
 
+        gridContainer.appendChild(grid);
+        gridContainer.appendChild(parameterGrid);
+    }
+
+    private void generateListener(Component control) {
+        control.addEventListener(Events.ON_SELECT, e -> {
+            log.debug(String.format("Combobox %s control changed, regenerating parameter grid.", control));
+            log.debug(String.format("Old hyperparemeters are: %s", hyperParameters));
+            hyperParameters.clear();
+            hyperParameters.addAll(((ModelParameter) ((Comboitem)((SelectEvent) e).getSelectedItems().iterator().next()).getValue()).getProperties());
+            List<Component> components = valueProviders.stream().filter(it -> !it.equals(control)).collect(Collectors.toList());
+
+            for (Component component : components) {
+                Combobox combobox = (Combobox) component;
+                List<Property> properties = ((ModelParameter)combobox.getSelectedItem().getValue()).getProperties();
+                hyperParameters.addAll(properties);
+            }
+            log.debug(String.format("New hyperparameters: %s", hyperParameters));
+            parameterGrid.generate(hyperParameters, true);
+
+            if (!hyperParameters.isEmpty()) {
+                parameterGrid.setVisible(true);
+            }
+        });
     }
 
     private void initPredictions() {

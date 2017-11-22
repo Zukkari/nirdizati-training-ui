@@ -25,10 +25,6 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
 
         generateRows(data.toMutableList(), rows)
 
-        rows.vflex = "min"
-
-        vflex = "min"
-        hflex = "min"
         val end = System.currentTimeMillis()
         log.debug("Row generation finished in ${end - start} ms")
     }
@@ -41,6 +37,8 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
             columns.appendChild(column)
         }
     }
+
+    fun getComponentByName(name: String) = fields.first { it.label.id == name }
 
     tailrec private fun generateRows(data: MutableList<T>, rows: Rows) {
         if (data.isNotEmpty()) {

@@ -17,8 +17,10 @@ class ModelParamToCombo : GridValueProvider<GeneratorArgument, Row> {
         val row = Row()
 
         val label = Label(Labels.getLabel(data.id))
+        label.id = data.id
 
         val comboBox = Combobox()
+        comboBox.id = data.id
         comboBox.isReadonly = true
         comboBox.setConstraint("no empty")
 
