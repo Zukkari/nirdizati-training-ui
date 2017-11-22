@@ -1,5 +1,5 @@
 <window id="modal" title="${labels.modals.window_title}"
-    apply="cs.ut.controller.modal.ParameterModalController"
+    apply="cs.ut.controllers.modal.ParameterModalController"
     closable="false"
     position="center, center"
     draggable="false">

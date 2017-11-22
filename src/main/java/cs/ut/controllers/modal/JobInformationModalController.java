@@ -1,4 +1,4 @@
-package cs.ut.controller.modal;
+package cs.ut.controllers.modal;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;

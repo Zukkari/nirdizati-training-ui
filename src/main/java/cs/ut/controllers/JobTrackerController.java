@@ -1,4 +1,4 @@
-package cs.ut.controller;
+package cs.ut.controllers;
 
 import cs.ut.jobs.Job;
 import cs.ut.ui.NirdizatiGrid;

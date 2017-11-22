@@ -1,6 +1,6 @@
 package cs.ut.ui.providers
 
-import cs.ut.controller.JobTrackerController
+import cs.ut.controllers.JobTrackerController
 import cs.ut.jobs.Job
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider

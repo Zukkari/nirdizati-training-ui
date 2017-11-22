@@ -1,6 +1,6 @@
 package cs.ut.engine;
 
-import cs.ut.controller.MainPageController;
+import cs.ut.controllers.MainPageController;
 import cs.ut.jobs.Job;
 import cs.ut.jobs.JobStatus;
 import org.apache.log4j.Logger;

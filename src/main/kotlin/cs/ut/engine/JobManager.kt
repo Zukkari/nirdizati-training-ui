@@ -1,7 +1,7 @@
 package cs.ut.engine
 
 import cs.ut.config.items.ModelParameter
-import cs.ut.controller.JobTrackerController
+import cs.ut.controllers.JobTrackerController
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob

@@ -1,10 +1,10 @@
-package cs.ut.controller.modal;
+package cs.ut.controllers.modal;
 
 import com.google.common.collect.Lists;
 import com.google.common.escape.Escaper;
 import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
-import cs.ut.controller.MainPageController;
+import cs.ut.controllers.MainPageController;
 import cs.ut.engine.JobManager;
 import cs.ut.engine.Worker;
 import cs.ut.jobs.DataSetGenerationJob;

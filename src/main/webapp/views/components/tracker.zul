@@ -1,1 +1,1 @@
-<hbox pack="end" id="tracker" vflex="1" hflex="max" apply="cs.ut.controller.JobTrackerController"/>
+<hbox pack="end" id="tracker" vflex="1" hflex="max" apply="cs.ut.controllers.JobTrackerController"/>
