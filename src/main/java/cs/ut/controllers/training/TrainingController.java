@@ -125,26 +125,9 @@ public class TrainingController extends SelectorComposer<Component> {
 
             Map<String, List<ModelParameter>> jobParameters = new HashMap<>();
             jobParameters.put(PREDICTION, Lists.newArrayList((ModelParameter) comboitem.getValue()));
+            jobParameters.putAll(gridController.gatherValues());
 
-            if (!advancedMode.isChecked()) {
-                Component grid = gridContainer.getChildren().get(0);
-                if (grid instanceof NirdizatiGrid) {
-                    NirdizatiGrid g = (NirdizatiGrid) grid;
-                    Map<String, Object> vals = g.gatherValues();
-
-                    for (Map.Entry<String, Object> param : vals.entrySet()) {
-                        String key = param.getKey();
-                        ModelParameter val = new ModelParameter((ModelParameter) param.getValue());
-
-                        if (LEARNER.equals(val.getType())) {
-
-                        }
-                        jobParameters.put(key, Lists.newArrayList(val));
-                    }
-                }
-                JobManager.Manager.generateJobs(jobParameters);
-            }
-
+            JobManager.Manager.generateJobs(jobParameters);
             JobManager.Manager.deployJobs();
         };
 
