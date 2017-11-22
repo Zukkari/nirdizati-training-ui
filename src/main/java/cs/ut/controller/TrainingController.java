@@ -1,10 +1,12 @@
 package cs.ut.controller;
 
+import com.google.common.collect.Lists;
 import com.google.common.escape.Escaper;
 import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
 import cs.ut.config.items.Property;
+import cs.ut.engine.JobManager;
 import cs.ut.manager.LogManager;
 import cs.ut.ui.FieldComponent;
 import cs.ut.ui.NirdizatiGrid;
@@ -23,11 +25,12 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
-import org.zkoss.zul.Hlayout;
 import org.zkoss.zul.Vlayout;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -67,6 +70,7 @@ public class TrainingController extends SelectorComposer<Component> {
         log.debug("Initialized TrainingController");
         parameterGrid = new NirdizatiGrid<>(new PropertyValueProvider());
         parameterGrid.setVisible(false);
+        parameterGrid.setHflex("min");
 
         initClientLogs();
         initPredictions();
@@ -76,6 +80,7 @@ public class TrainingController extends SelectorComposer<Component> {
     private void initBasicMode() {
         gridContainer.getChildren().clear();
         NirdizatiGrid<GeneratorArgument> grid = new NirdizatiGrid<>(new ModelParamToCombo());
+        grid.setHflex("min");
 
         grid.generate(
                 parameters
@@ -96,12 +101,12 @@ public class TrainingController extends SelectorComposer<Component> {
             log.debug(String.format("Combobox %s control changed, regenerating parameter grid.", control));
             log.debug(String.format("Old hyperparemeters are: %s", hyperParameters));
             hyperParameters.clear();
-            hyperParameters.addAll(((ModelParameter) ((Comboitem)((SelectEvent) e).getSelectedItems().iterator().next()).getValue()).getProperties());
+            hyperParameters.addAll(((ModelParameter) ((Comboitem) ((SelectEvent) e).getSelectedItems().iterator().next()).getValue()).getProperties());
             List<Component> components = valueProviders.stream().filter(it -> !it.equals(control)).collect(Collectors.toList());
 
             for (Component component : components) {
                 Combobox combobox = (Combobox) component;
-                List<Property> properties = ((ModelParameter)combobox.getSelectedItem().getValue()).getProperties();
+                List<Property> properties = ((ModelParameter) combobox.getSelectedItem().getValue()).getProperties();
                 hyperParameters.addAll(properties);
             }
             log.debug(String.format("New hyperparameters: %s", hyperParameters));
@@ -160,21 +165,63 @@ public class TrainingController extends SelectorComposer<Component> {
         }
     }
 
-//    @Listen("onClick = #startTraining")
-//    public void startTraining() {
-//        if (validateData()) {
-//            log.debug("Parameters are valid, calling script to construct the model");
-//            Runnable jobs = () -> {
-//                JobManager.Manager.setLogFile(clientLogs.getSelectedItem().getValue());
-//                Comboitem comboitem = predictionType.getSelectedItem();
-//
-//
-//                JobManager.Manager.generateJobs();
-//                JobManager.Manager.deployJobs();
-//            };
-//
-//            log.debug("Jobs generated...");
-//            jobs.run();
-//        }
-//    }
+    @Listen("onClick = #startTraining")
+    public void startTraining() {
+        if (validateData()) {
+            return;
+        }
+        log.debug("Parameters are valid, calling script to construct the model");
+        Runnable jobs = () -> {
+            JobManager.Manager.setLogFile(clientLogs.getSelectedItem().getValue());
+            Comboitem comboitem = predictionType.getSelectedItem();
+
+            Map<String, List<ModelParameter>> jobParameters = new HashMap<>();
+            jobParameters.put(PREDICTION, Lists.newArrayList((ModelParameter)comboitem.getValue()));
+
+            if (!advancedMode.isChecked()) {
+                Component grid = gridContainer.getChildren().get(0);
+                if (grid instanceof NirdizatiGrid) {
+                    NirdizatiGrid g = (NirdizatiGrid) grid;
+                    Map<String, Object> vals = g.gatherValues();
+
+                    for (Map.Entry<String, Object> param : vals.entrySet()) {
+                        String key = param.getKey();
+                        ModelParameter val = new ModelParameter((ModelParameter) param.getValue());
+
+                        if (LEARNER.equals(val.getType())) {
+                                /* Set hyperparams */
+                            List<Property> properties = parameterGrid.gatherValues()
+                                    .entrySet()
+                                    .stream()
+                                    .map(it -> new Property(it.getKey(), "", it.getValue().toString()))
+                                    .collect(Collectors.toList());
+                            val.getProperties().clear();
+                            val.setProperties(properties);
+                        }
+                        jobParameters.put(key, Lists.newArrayList(val));
+                    }
+                }
+                JobManager.Manager.generateJobs(jobParameters);
+            }
+
+            JobManager.Manager.deployJobs();
+        };
+
+        log.debug("Jobs generated...");
+        jobs.run();
+    }
+
+    private boolean validateData() {
+        if (advancedMode.isChecked()) {
+            return true;
+        } else {
+            boolean valid = true;
+            for (Component comp : gridContainer.getChildren()) {
+                if (comp instanceof NirdizatiGrid && ((NirdizatiGrid) comp).validate()) {
+                    valid = false;
+                }
+            }
+            return valid;
+        }
+    }
 }

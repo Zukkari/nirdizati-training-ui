@@ -93,6 +93,7 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
 
         GridValueProvider<String, Row> provider = new ColumnRowValueProvider(fileColumns, identifiedCols);
         grid = new NirdizatiGrid<>(provider);
+        grid.setHflex("min");
 
         if (fileColumns.isEmpty()) {
             Clients.showNotification(Labels.getLabel(

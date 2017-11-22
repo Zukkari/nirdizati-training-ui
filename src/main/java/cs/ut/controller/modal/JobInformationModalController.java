@@ -45,6 +45,7 @@ public class JobInformationModalController extends GenericAutowireComposer<Compo
 
         this.job = (SimulationJob) arg.get("data");
         this.gridImpl = new NirdizatiGrid<>(new AttributeToLabelsProvider());
+        gridImpl.setHflex("min");
 
         List<?> listOfProperties = Lists.newArrayList(
                 ImmutableMap.of("create_time", job.getCreateTime()),
