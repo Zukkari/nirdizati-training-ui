@@ -10,6 +10,7 @@ import org.zkoss.zk.ui.util.Clients;
 
 import java.util.Calendar;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.Queue;
 
 public class Worker extends Thread {
@@ -58,7 +59,11 @@ public class Worker extends Thread {
                 } catch (Exception e) {
                     log.debug(String.format("<%s> failed in execute stage with exception, aborting job", job), e);
                     job.setStatus(JobStatus.FAILED);
-                    JobManager.Manager.notifyOfJobStatusChange(job);
+                    try {
+                        JobManager.Manager.notifyOfJobStatusChange(job);
+                    } catch (NoSuchElementException ex) {
+                        log.debug("No client to notify of status change", e);
+                    }
                     continue;
                 }
 
