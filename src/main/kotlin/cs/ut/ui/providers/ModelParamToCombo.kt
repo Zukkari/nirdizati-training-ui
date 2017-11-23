@@ -3,6 +3,7 @@ package cs.ut.ui.providers
 import cs.ut.config.items.ModelParameter
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
+import cs.ut.util.COMP_ID
 import org.zkoss.util.resource.Labels
 import org.zkoss.zul.Combobox
 import org.zkoss.zul.Label
@@ -17,10 +18,9 @@ class ModelParamToCombo : GridValueProvider<GeneratorArgument, Row> {
         val row = Row()
 
         val label = Label(Labels.getLabel(data.id))
-        label.id = data.id
+        label.setAttribute(COMP_ID, data.id)
 
         val comboBox = Combobox()
-        comboBox.id = data.id
         comboBox.isReadonly = true
         comboBox.setConstraint("no empty")
 

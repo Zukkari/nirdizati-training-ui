@@ -2,6 +2,7 @@ package cs.ut.ui.providers
 
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
+import cs.ut.util.COMP_ID
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.WrongValueException
 import org.zkoss.zul.Combobox
@@ -15,11 +16,10 @@ class ColumnRowValueProvider(private val valueList: List<String>, private val id
         val row = Row()
 
         val label = Label(Labels.getLabel("modals.param." + data))
+        label.setAttribute(COMP_ID, data)
         val combobox = Combobox()
 
         val identified = identifiedCols.get(data)
-
-        combobox.id = data
         combobox.isReadonly = true
         combobox.setConstraint("no empty")
 

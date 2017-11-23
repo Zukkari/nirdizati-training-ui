@@ -1,6 +1,7 @@
 package cs.ut.ui
 
 import cs.ut.config.items.ModelParameter
+import cs.ut.util.COMP_ID
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -69,7 +70,6 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
                     invalid.add(comp)
                 }
             }
-
             validateFields(fields.tail(), invalid)
         }
     }
@@ -86,18 +86,19 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
     tailrec private fun gatherValueFromFields(valueMap: MutableMap<String, Any>, fields: MutableList<FieldComponent>) {
         if (fields.isNotEmpty()) {
             val field = fields.first().control
+            val id = fields.first().label.getAttribute(COMP_ID) as String
 
             when (field) {
-                is Intbox -> valueMap[field.id] = field.value
-                is Doublebox -> valueMap[field.id] = field.value
-                is Combobox -> valueMap[field.id] = field.selectedItem.getValue()
+                is Intbox -> valueMap[id] = field.value
+                is Doublebox -> valueMap[id] = field.value
+                is Combobox -> valueMap[id] = field.selectedItem.getValue()
                 is Checkbox -> {
                     if (field.isChecked) {
-                        if (valueMap.containsKey(field.id)) {
-                            (valueMap[field.id] as MutableList<ModelParameter>).add(field.getValue())
+                        if (valueMap.containsKey(id)) {
+                            (valueMap[id] as MutableList<ModelParameter>).add(field.getValue())
                         } else {
-                            valueMap[field.id] = mutableListOf<ModelParameter>()
-                            val params = valueMap[field.id]
+                            valueMap[id] = mutableListOf<ModelParameter>()
+                            val params = valueMap[id]
                             when (params) {
                                 is MutableList<*> -> (params as MutableList<ModelParameter>).add(field.getValue())
                             }

@@ -4,6 +4,7 @@ import cs.ut.config.items.Property
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
+import cs.ut.util.COMP_ID
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zul.Doublebox
@@ -19,6 +20,7 @@ class PropertyValueProvider : GridValueProvider<Property, Row> {
         val row = Row()
 
         val label = Label(Labels.getLabel("property." + data.id))
+        label.setAttribute(COMP_ID, data.id)
         val control = generateControl(data)
 
         fields.add(FieldComponent(label, control))
@@ -39,7 +41,6 @@ class PropertyValueProvider : GridValueProvider<Property, Row> {
 
         obj as InputElement
         obj.setConstraint("no empty")
-        obj.id = prop.id
         obj.width = "60px"
 
         return obj
