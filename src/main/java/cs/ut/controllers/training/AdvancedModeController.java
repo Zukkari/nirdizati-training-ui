@@ -35,7 +35,6 @@ public class AdvancedModeController extends AbstractModeController implements Mo
     }
 
     /* TODO
-     * 2. Create listener that will add different hyperparameter grids
      * 3. Implement validation logic
      * 4. Implement value gathering for hyperparemeters. (Should be done after step 2)
      */
