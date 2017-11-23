@@ -46,11 +46,19 @@ public class AdvancedModeController extends AbstractModeController implements Mo
 
     @Override
     public boolean isValid() {
-        return false;
+        return true;
     }
 
     @Override
     public Map<String, List<ModelParameter>> gatherValues() {
-        return null;
+        Map<String, Object> gathered = grid.gatherValues();
+        Map<String, List<ModelParameter>> retVal = new HashMap<>();
+
+        for (Map.Entry<String, Object> entry : gathered.entrySet()) {
+            String key = entry.getKey();
+            List<ModelParameter> value = (List<ModelParameter>) entry.getValue();
+            retVal.put(key, value);
+        }
+        return retVal;
     }
 }

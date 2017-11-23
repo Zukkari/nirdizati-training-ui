@@ -1,5 +1,6 @@
 package cs.ut.ui
 
+import cs.ut.config.items.ModelParameter
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -90,6 +91,19 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
                 is Intbox -> valueMap[field.id] = field.value
                 is Doublebox -> valueMap[field.id] = field.value
                 is Combobox -> valueMap[field.id] = field.selectedItem.getValue()
+                is Checkbox -> {
+                    if (field.isChecked) {
+                        if (valueMap.containsKey(field.id)) {
+                            (valueMap[field.id] as MutableList<ModelParameter>).add(field.getValue())
+                        } else {
+                            valueMap[field.id] = mutableListOf<ModelParameter>()
+                            val params = valueMap[field.id]
+                            when (params) {
+                                is MutableList<*> -> (params as MutableList<ModelParameter>).add(field.getValue())
+                            }
+                        }
+                    }
+                }
             }
 
             gatherValueFromFields(valueMap, fields.tail())

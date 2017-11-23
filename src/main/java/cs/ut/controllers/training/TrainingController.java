@@ -115,7 +115,7 @@ public class TrainingController extends SelectorComposer<Component> {
 
     @Listen("onClick = #startTraining")
     public void startTraining() {
-        if (gridController.isValid()) {
+        if (!gridController.isValid()) {
             return;
         }
         log.debug("Parameters are valid, calling script to construct the model");

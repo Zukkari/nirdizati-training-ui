@@ -86,7 +86,7 @@ public class BasicModeController extends AbstractModeController implements ModeC
     public boolean isValid() {
         boolean valid = true;
         for (Component comp : gridContainer.getChildren()) {
-            if (comp instanceof NirdizatiGrid && ((NirdizatiGrid) comp).validate()) {
+            if (comp instanceof NirdizatiGrid && !((NirdizatiGrid) comp).validate()) {
                 valid = false;
             }
         }

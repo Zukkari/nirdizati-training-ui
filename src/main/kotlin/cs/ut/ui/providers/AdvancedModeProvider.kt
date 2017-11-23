@@ -19,6 +19,8 @@ class AdvancedModeProvider : GridValueProvider<GeneratorArgument, Row> {
         data.params.forEach {
             val control = Checkbox()
             control.label = Labels.getLabel(it.type + "." + it.id)
+            control.id = it.type
+            control.setValue(it)
             row.appendChild(control)
             fields.add(FieldComponent(label, control))
         }
