@@ -23,7 +23,10 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
         log.debug("Row generation start with ${data.size} properties")
         val start = System.currentTimeMillis()
 
-        if (clear) rows.getChildren<Component>().clear()
+        if (clear) {
+            rows.getChildren<Component>().clear()
+            fields.clear()
+        }
 
         generateRows(data.toMutableList(), rows)
 

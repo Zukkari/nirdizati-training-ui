@@ -91,7 +91,7 @@ public class DirectoryPathConfiguration {
         createDirIfAbsent(file);
     }
 
-    private void createDirIfAbsent(File file) {
+    protected void createDirIfAbsent(File file) {
         if (!file.exists() && !file.mkdir()) {
             throw new NirdizatiRuntimeException(String.format("Cannot write to directory <%s>", userLogDirectory));
         }
