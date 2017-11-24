@@ -64,7 +64,8 @@ class CsvReader(private val f: File) {
 
     fun generateDatasetParams(userCols: MutableMap<String, Any>): MutableMap<String, MutableList<String>> {
         val start = System.currentTimeMillis()
-        val cases = parseCsv(userCols[CASE_ID_COL] as String)
+        val case = userCols[CASE_ID_COL] ?: throw NirdizatiRuntimeException("No case id column in log")
+        val cases = parseCsv(case as String)
 
         val colValues = HashMap<String, MutableSet<String>>()
         val timestampCol = identifyTimestampColumn(cases.first().attributes) ?: throw NirdizatiRuntimeException("No date column found")
