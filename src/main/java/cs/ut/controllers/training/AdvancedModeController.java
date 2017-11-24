@@ -9,6 +9,7 @@ import cs.ut.ui.providers.AdvancedModeProvider;
 import cs.ut.ui.providers.GeneratorArgument;
 import cs.ut.ui.providers.PropertyValueProvider;
 import org.apache.log4j.Logger;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.CheckEvent;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Checkbox;
@@ -32,11 +33,6 @@ public class AdvancedModeController extends AbstractModeController implements Mo
     protected AdvancedModeController(Vlayout vlayout) {
         super(vlayout);
     }
-
-    /* TODO
-     * 3. Implement validation logic
-     * 4. Implement value gathering for hyperparemeters. (Should be done after step 2)
-     */
 
     @Override
     public void init() {
@@ -112,7 +108,15 @@ public class AdvancedModeController extends AbstractModeController implements Mo
 
     @Override
     public boolean isValid() {
-        return true;
+        boolean isValid = grid.validate();
+
+        for (Component component : hyperParamsContainer.getChildren()) {
+            if (component instanceof NirdizatiGrid && !((NirdizatiGrid) component).validate()) {
+                isValid = false;
+            }
+        }
+
+        return isValid;
     }
 
     @Override

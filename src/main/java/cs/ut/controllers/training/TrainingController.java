@@ -5,11 +5,8 @@ import com.google.common.escape.Escaper;
 import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
-import cs.ut.config.items.Property;
 import cs.ut.engine.JobManager;
 import cs.ut.manager.LogManager;
-import cs.ut.ui.NirdizatiGrid;
-import cs.ut.ui.providers.PropertyValueProvider;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -17,6 +14,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
@@ -27,7 +25,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class TrainingController extends SelectorComposer<Component> {
     private static final Logger log = Logger.getLogger(TrainingController.class);
@@ -118,14 +115,17 @@ public class TrainingController extends SelectorComposer<Component> {
         if (!gridController.isValid()) {
             return;
         }
+
+        Comboitem comboitem = predictionType.getSelectedItem();
+        Map<String, List<ModelParameter>> jobParameters = new HashMap<>();
+        jobParameters.put(PREDICTION, Lists.newArrayList((ModelParameter) comboitem.getValue()));
+        jobParameters.putAll(gridController.gatherValues());
+
+        if (!validateParameters(jobParameters)) return;
+
         log.debug("Parameters are valid, calling script to construct the model");
         Runnable jobs = () -> {
             JobManager.Manager.setLogFile(clientLogs.getSelectedItem().getValue());
-            Comboitem comboitem = predictionType.getSelectedItem();
-
-            Map<String, List<ModelParameter>> jobParameters = new HashMap<>();
-            jobParameters.put(PREDICTION, Lists.newArrayList((ModelParameter) comboitem.getValue()));
-            jobParameters.putAll(gridController.gatherValues());
 
             JobManager.Manager.generateJobs(jobParameters);
             JobManager.Manager.deployJobs();
@@ -133,5 +133,36 @@ public class TrainingController extends SelectorComposer<Component> {
 
         log.debug("Jobs generated...");
         jobs.run();
+    }
+
+    private boolean validateParameters(Map<String, List<ModelParameter>> jobParameters) {
+        boolean isValid = true;
+        String msg = "";
+
+        if (jobParameters.get(ENCODING) == null) {
+            msg = msg.concat(ENCODING);
+            isValid = false;
+        }
+
+        if (jobParameters.get(BUCKETING) == null) {
+            msg = msg.concat(msg.equalsIgnoreCase("") ? "" : ", ").concat(BUCKETING);
+            isValid = false;
+        }
+
+        if (jobParameters.get(LEARNER) == null) {
+            msg = msg.concat(msg.equalsIgnoreCase("") ? "" : ", ").concat(LEARNER);
+            isValid = false;
+        }
+
+        if (!isValid) {
+            Clients.showNotification(
+                    Labels.getLabel("training.validation_failed", new Object[]{msg}),
+                    "error",
+                    getSelf(),
+                    "bottom_center",
+                    -1);
+        }
+
+        return isValid;
     }
 }
