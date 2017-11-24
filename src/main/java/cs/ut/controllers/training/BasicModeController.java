@@ -1,6 +1,7 @@
 package cs.ut.controllers.training;
 
 import com.google.common.collect.Lists;
+import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
 import cs.ut.config.items.Property;
 import cs.ut.ui.FieldComponent;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class BasicModeController extends AbstractModeController implements ModeController {
@@ -58,6 +60,7 @@ public class BasicModeController extends AbstractModeController implements ModeC
         gridContainer.appendChild(grid);
         gridContainer.appendChild(parameterGrid);
         log.debug(String.format("Successfully generated grid with parameters <%s>", hyperParameters));
+        setUpBasicMode();
     }
 
     private void generateListener(Component control) {
@@ -80,6 +83,37 @@ public class BasicModeController extends AbstractModeController implements ModeC
                 parameterGrid.setVisible(true);
             }
         });
+    }
+
+    private void setUpBasicMode() {
+        log.debug("Setting up basic mode with preset parameters");
+        List<ModelParameter> basicParams = MasterConfiguration.getInstance().getModelConfiguration().getBasicParameters();
+        log.debug(String.format("Basic parameters: %s", basicParams));
+
+        List<FieldComponent> fields = grid.getFields();
+        log.debug(String.format("Got %s fields from grid", fields));
+        for (FieldComponent component : fields) {
+            Component control = component.getControl();
+            if (control instanceof Combobox) {
+                basicParams.forEach(it -> {
+                    Optional<Comboitem> item = ((Combobox) control).getItems().stream().filter(i -> i.getValue().equals(it)).findFirst();
+                    item.ifPresent(((Combobox) control)::setSelectedItem);
+                    if (item.isPresent()) {
+                        List<Property> props = ((ModelParameter)item.get().getValue()).getProperties();
+                        hyperParameters.addAll(props);
+                    }
+                });
+            }
+        }
+
+        log.debug(String.format("Hyperparams: %s", hyperParameters));
+        if (!hyperParameters.isEmpty()) {
+            log.debug("Hyperparameters not empty, regenerating grid");
+            parameterGrid.generate(hyperParameters, true);
+            parameterGrid.setVisible(true);
+        }
+
+        log.debug("Finished setting up basic mode");
     }
 
     @Override
