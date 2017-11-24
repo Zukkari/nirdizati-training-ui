@@ -1,8 +1,7 @@
 package cs.ut.jobs
 
 import cs.ut.exceptions.NirdizatiRuntimeException
-import cs.ut.util.CsvReader
-import cs.ut.util.FileWriter
+import cs.ut.util.*
 import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
 import org.zkoss.zk.ui.Desktop
@@ -17,9 +16,9 @@ class DataSetGenerationJob(val parameters: MutableMap<String, List<String>>, val
     private var fileName = FilenameUtils.getBaseName(currentFile.name)
 
     override fun preProcess() {
-        json.put(CsvReader.CASE_ID_COL, parameters.remove(CsvReader.CASE_ID_COL)!![0])
-        json.put(CsvReader.TIMESTAMP_COL, parameters.remove(CsvReader.TIMESTAMP_COL)!![0])
-        json.put(CsvReader.ACTIVITY_COL, parameters.remove(CsvReader.ACTIVITY_COL)!![0])
+        json.put(CASE_ID_COL, parameters.remove(CASE_ID_COL)!![0])
+        json.put(TIMESTAMP_COL, parameters.remove(TIMESTAMP_COL)!![0])
+        json.put(ACTIVITY_COL, parameters.remove(ACTIVITY_COL)!![0])
 
         parameters.forEach { k, v -> json.put(k, v) }
     }
