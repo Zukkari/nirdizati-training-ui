@@ -9,7 +9,6 @@ import cs.ut.ui.providers.AdvancedModeProvider;
 import cs.ut.ui.providers.GeneratorArgument;
 import cs.ut.ui.providers.PropertyValueProvider;
 import org.apache.log4j.Logger;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.CheckEvent;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Checkbox;
@@ -65,16 +64,16 @@ public class AdvancedModeController extends AbstractModeController implements Mo
                 if (TrainingController.LEARNER.equals(parameter.getType())) {
                     handleLearner(e, parameter);
                 } else {
-                    handleOther(parameter);
+                    handleOther(parameter, e);
                 }
             }
             generateGrids();
         });
     }
 
-    private void handleOther(ModelParameter parameter) {
+    private void handleOther(ModelParameter parameter, CheckEvent e) {
         hyperparameters.values().forEach(it -> {
-            if (it.containsAll(parameter.getProperties())) {
+            if (!e.isChecked()) {
                 it.removeAll(parameter.getProperties());
             } else {
                 it.addAll(parameter.getProperties());
@@ -103,7 +102,7 @@ public class AdvancedModeController extends AbstractModeController implements Mo
 
 
         NirdizatiGrid<Property> propertyGrid = new NirdizatiGrid<>(new PropertyValueProvider());
-        propertyGrid.setColumns(ImmutableMap.of(Labels.getLabel(key.getType() + "." + key.getId()), "min", "", "min"));
+        propertyGrid.setColumns(ImmutableMap.of(key.getType() + "." + key.getId(), "min", "", "min"));
         propertyGrid.generate(values, true);
         propertyGrid.setHflex("min");
 
@@ -121,9 +120,36 @@ public class AdvancedModeController extends AbstractModeController implements Mo
         Map<String, Object> gathered = grid.gatherValues();
         Map<String, List<ModelParameter>> retVal = new HashMap<>();
 
+        Map<String, Map<String, String>> hyperparemeters = new HashMap<>();
+        hyperParamsContainer.getChildren().forEach(it -> {
+            if (it instanceof NirdizatiGrid) {
+                hyperparemeters.put(((NirdizatiGrid) it).getColumns().getFirstChild().getId()
+                        , ((NirdizatiGrid) it).gatherValues());
+            }
+        });
+
         for (Map.Entry<String, Object> entry : gathered.entrySet()) {
             String key = entry.getKey();
             List<ModelParameter> value = (List<ModelParameter>) entry.getValue();
+
+            String[] keys = key.split("\\.");
+            if (keys.length > 1) {
+                Map<String, String> hyper = hyperparemeters.get(keys[1]);
+                if (hyper != null && key.equals(keys[0])) {
+                    value.forEach(it -> {
+                        if (it.getId().equals(keys[1])) {
+                            it.getProperties().clear();
+                            it.getProperties()
+                                    .addAll(hyper
+                                            .entrySet()
+                                            .stream()
+                                            .map(h -> new Property(h.getKey(), "", h.getValue()))
+                                            .collect(Collectors.toList()));
+                        }
+                    });
+                }
+            }
+
             retVal.put(key, value);
         }
         return retVal;

@@ -15,7 +15,7 @@ class AdvancedModeProvider : GridValueProvider<GeneratorArgument, Row> {
         val row = Row()
 
         val label = Label(Labels.getLabel(data.id))
-        label.setAttribute(COMP_ID, data.params.first().id)
+        label.setAttribute(COMP_ID, data.params.first().type)
         row.appendChild(label)
 
         data.params.forEach {

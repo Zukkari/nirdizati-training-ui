@@ -34,7 +34,8 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
     fun setColumns(properties: Map<String, String>) {
         appendChild(Columns())
         properties.entries.forEach {
-            val column = Column(it.key)
+            val column = Column(Labels.getLabel(it.key))
+            column.id = it.key
             column.width = it.value
             columns.appendChild(column)
         }
