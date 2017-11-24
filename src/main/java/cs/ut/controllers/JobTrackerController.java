@@ -27,8 +27,8 @@ public class JobTrackerController extends SelectorComposer<Component> {
         jobGrid.setId(GRID_ID);
 
         Map<String, String> properties = new HashMap<>();
-        properties.put(Labels.getLabel("tracker.job_name"), "240%");
-        properties.put(Labels.getLabel("tracker.job_status"), "140%");
+        properties.put("tracker.job_name", "240%");
+        properties.put("tracker.job_status", "140%");
 
         jobGrid.setColumns(properties);
         jobGrid.setSclass(GRID_ID);

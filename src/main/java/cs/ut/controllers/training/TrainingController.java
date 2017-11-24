@@ -7,6 +7,7 @@ import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
 import cs.ut.engine.JobManager;
 import cs.ut.manager.LogManager;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -58,7 +59,7 @@ public class TrainingController extends SelectorComposer<Component> {
         initClientLogs();
         initPredictions();
 
-        gridController = new BasicModeController(gridContainer);
+        gridController = new BasicModeController(gridContainer, getLogFileName());
         gridController.init();
     }
 
@@ -95,7 +96,11 @@ public class TrainingController extends SelectorComposer<Component> {
         clientLogs.setWidth("250px");
         clientLogs.setReadonly(true);
 
-        clientLogs.addEventListener(Events.ON_CHANGE, e -> gridController.init());
+        clientLogs.addEventListener(Events.ON_CHANGE, e -> switchMode());
+    }
+
+    private String getLogFileName() {
+        return FilenameUtils.getBaseName(((File) clientLogs.getSelectedItem().getValue()).getName());
     }
 
     @Listen("onCheck = #advancedMode")
@@ -105,7 +110,7 @@ public class TrainingController extends SelectorComposer<Component> {
             gridController = new AdvancedModeController(gridContainer);
         } else {
             log.debug("enabling basic mode");
-            gridController = new BasicModeController(gridContainer);
+            gridController = new BasicModeController(gridContainer, getLogFileName());
         }
         gridController.init();
     }

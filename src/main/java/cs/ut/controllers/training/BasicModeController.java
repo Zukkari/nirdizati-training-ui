@@ -1,6 +1,7 @@
 package cs.ut.controllers.training;
 
 import com.google.common.collect.Lists;
+import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
 import cs.ut.config.items.Property;
@@ -10,9 +11,11 @@ import cs.ut.ui.providers.GeneratorArgument;
 import cs.ut.ui.providers.ModelParamToCombo;
 import cs.ut.ui.providers.PropertyValueProvider;
 import org.apache.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.SelectEvent;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Vlayout;
@@ -27,16 +30,20 @@ import java.util.stream.Collectors;
 public class BasicModeController extends AbstractModeController implements ModeController {
     private static final Logger log = Logger.getLogger(BasicModeController.class);
 
+    private String logName;
+    private Map<String, List<ModelParameter>> optimized = MasterConfiguration.getInstance().getOptimizedParams();
+
     private NirdizatiGrid<GeneratorArgument> grid;
     private NirdizatiGrid<Property> parameterGrid;
     private List<Property> hyperParameters = new ArrayList<>();
     private List<Component> valueProviders = new ArrayList<>();
 
-    public BasicModeController(Vlayout vlayout) {
+    public BasicModeController(Vlayout vlayout, String logName) {
         super(vlayout);
         parameterGrid = new NirdizatiGrid<>(new PropertyValueProvider());
         parameterGrid.setVisible(false);
         parameterGrid.setHflex("min");
+        this.logName = logName;
     }
 
     @Override
@@ -60,7 +67,14 @@ public class BasicModeController extends AbstractModeController implements ModeC
         gridContainer.appendChild(grid);
         gridContainer.appendChild(parameterGrid);
         log.debug(String.format("Successfully generated grid with parameters <%s>", hyperParameters));
-        setUpBasicMode();
+
+        if (optimized.containsKey(logName)) {
+            log.debug("Optimized parameters for log are found, setting them up");
+            setUpAdvancedParameters();
+        } else {
+            log.debug("No optimized params for this log, initializing normal basic mode");
+            setUpBasicMode();
+        }
     }
 
     private void generateListener(Component control) {
@@ -85,21 +99,39 @@ public class BasicModeController extends AbstractModeController implements ModeC
         });
     }
 
+    private void setUpAdvancedParameters() {
+        List<ModelParameter> params = optimized.get(logName);
+
+        log.debug(String.format("Optimal parameters: %s", params));
+        String msg = Labels.getLabel("training.found_optimized_params", new Object[] {HtmlEscapers.htmlEscaper().escape(logName)});
+        log.debug(String.format("Showing notification message to user '%s'", msg));
+        Clients.showNotification(msg, grid);
+
+        setUpGridWithParams(params);
+        log.debug("Finished initializing optimized parameters.");
+    }
+
     private void setUpBasicMode() {
         log.debug("Setting up basic mode with preset parameters");
         List<ModelParameter> basicParams = MasterConfiguration.getInstance().getModelConfiguration().getBasicParameters();
         log.debug(String.format("Basic parameters: %s", basicParams));
 
+        setUpGridWithParams(basicParams);
+        log.debug("Finished setting up basic mode");
+    }
+
+    private void setUpGridWithParams(List<ModelParameter> parameters) {
+        hyperParameters.clear();
         List<FieldComponent> fields = grid.getFields();
         log.debug(String.format("Got %s fields from grid", fields));
         for (FieldComponent component : fields) {
             Component control = component.getControl();
             if (control instanceof Combobox) {
-                basicParams.forEach(it -> {
+                parameters.forEach(it -> {
                     Optional<Comboitem> item = ((Combobox) control).getItems().stream().filter(i -> i.getValue().equals(it)).findFirst();
                     item.ifPresent(((Combobox) control)::setSelectedItem);
                     if (item.isPresent()) {
-                        List<Property> props = ((ModelParameter)item.get().getValue()).getProperties();
+                        List<Property> props = ((ModelParameter) item.get().getValue()).getProperties();
                         hyperParameters.addAll(props);
                     }
                 });
@@ -112,8 +144,6 @@ public class BasicModeController extends AbstractModeController implements ModeC
             parameterGrid.generate(hyperParameters, true);
             parameterGrid.setVisible(true);
         }
-
-        log.debug("Finished setting up basic mode");
     }
 
     @Override
@@ -132,7 +162,7 @@ public class BasicModeController extends AbstractModeController implements ModeC
         Map<String, Object> gridValues = grid.gatherValues();
         Map<String, List<ModelParameter>> retVal = new HashMap<>();
 
-        for (Map.Entry<String, Object> entry: gridValues.entrySet()) {
+        for (Map.Entry<String, Object> entry : gridValues.entrySet()) {
             String key = entry.getKey();
             ModelParameter value = new ModelParameter((ModelParameter) entry.getValue());
 
