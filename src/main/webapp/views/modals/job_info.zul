@@ -1,0 +1,12 @@
+<window id="jobInfo" title="${labels.modal.job_information}"
+        apply="cs.ut.controllers.modal.JobInformationModalController"
+        position="center, center"
+        draggable="false">
+
+    <hlayout id="grid"/>
+
+    <hlayout>
+        <button id="closeBtn" hflex="1" label="${labels.modal.close}"/>
+        <button id="deployBtn" hflex="1" label="${labels.modal.deploy}" disabled="true"/>
+    </hlayout>
+</window>

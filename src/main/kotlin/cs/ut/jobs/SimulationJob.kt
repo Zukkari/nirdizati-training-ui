@@ -2,6 +2,7 @@ package cs.ut.jobs
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
+import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.util.FileWriter
 import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
@@ -16,9 +17,9 @@ import java.nio.file.StandardCopyOption
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class SimulationJob(private val encoding: ModelParameter,
-                    private val bucketing: ModelParameter,
-                    private val learner: ModelParameter,
+class SimulationJob(val encoding: ModelParameter,
+                    val bucketing: ModelParameter,
+                    val learner: ModelParameter,
                     val outcome: ModelParameter,
                     val logFile: File,
                     client: Desktop) : Job(client) {
@@ -49,7 +50,7 @@ class SimulationJob(private val encoding: ModelParameter,
     override fun execute() {
         try {
             val pb = ProcessBuilder(
-                    "python",
+                    MasterConfiguration.getInstance().directoryPathConfiguration.python,
                     "train.py",
                     logFile.name,
                     bucketing.parameter,
@@ -64,8 +65,8 @@ class SimulationJob(private val encoding: ModelParameter,
             val env = pb.environment()
             env.put("PYTHONPATH", scriptDir)
 
-            val process = pb.start()
             log.debug("Script call: ${pb.command()}")
+            val process = pb.start()
             if (!process.waitFor(180, TimeUnit.SECONDS)) {
                 process.destroy()
                 log.debug("Timed out while executing script")
@@ -77,14 +78,14 @@ class SimulationJob(private val encoding: ModelParameter,
             log.debug(file)
 
             if (!file.exists()) {
-                log.debug("Script did not write model to disk, job failed")
+                throw NirdizatiRuntimeException("Script failed to write model to disk, job failed")
             } else {
                 log.debug("Script exited successfully")
             }
         } catch (e: IOException) {
-            log.debug("Failed to execute script call", e)
+            throw NirdizatiRuntimeException("Script execution failed", e)
         } catch (e: InterruptedException) {
-            log.debug("Thread has been interrupted", e)
+            throw NirdizatiRuntimeException("Script execution failed", e)
         }
     }
 
@@ -100,7 +101,7 @@ class SimulationJob(private val encoding: ModelParameter,
             Files.move(Paths.get(scriptDir + pklDir + this.toString()),
                     Paths.get(userModelDir + noExtensionName + "/" + this.toString()), StandardCopyOption.REPLACE_EXISTING)
         } catch (e: IOException) {
-            log.debug(e)
+            throw NirdizatiRuntimeException("Script execution failed", e)
         }
     }
 

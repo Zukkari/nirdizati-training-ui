@@ -34,4 +34,20 @@ data class ModelParameter(
     fun getPropety(property: String): Property? {
         return properties.firstOrNull { it.id == property}
     }
+
+    override fun equals(other: Any?): Boolean {
+        return other is ModelParameter
+                && this.id == other.id
+                && this.enabled == other.enabled
+                && this.type == other.type
+                && this.parameter == other.parameter
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + parameter.hashCode()
+        result = 31 * result + type.hashCode()
+        result = 31 * result + enabled.hashCode()
+        return result
+    }
 }

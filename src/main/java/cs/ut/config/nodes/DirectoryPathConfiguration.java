@@ -9,6 +9,9 @@ import java.io.File;
 @XmlRootElement(name = "paths")
 public class DirectoryPathConfiguration {
 
+    @XmlElement(name = "python")
+    private String python;
+
     @XmlElement(name = "userLogDirectory")
     private String userLogDirectory;
 
@@ -58,6 +61,10 @@ public class DirectoryPathConfiguration {
         return ohpdir;
     }
 
+    public String getPython() {
+        return python;
+    }
+
     public void validatePathsExist() {
         File file = new File(userLogDirectory);
         createDirIfAbsent(file);
@@ -70,9 +77,21 @@ public class DirectoryPathConfiguration {
 
         file = new File(trainDirectory);
         createDirIfAbsent(file);
+
+        file = new File(scriptDirectory.concat("core/").concat(datasetDirectory));
+        createDirIfAbsent(file);
+
+        file = new File(scriptDirectory.concat("core/").concat(trainDirectory));
+        createDirIfAbsent(file);
+
+        file = new File(scriptDirectory.concat(pklDirectory));
+        createDirIfAbsent(file);
+
+        file = new File(scriptDirectory.concat("core/").concat(ohpdir));
+        createDirIfAbsent(file);
     }
 
-    private void createDirIfAbsent(File file) {
+    protected void createDirIfAbsent(File file) {
         if (!file.exists() && !file.mkdir()) {
             throw new NirdizatiRuntimeException(String.format("Cannot write to directory <%s>", userLogDirectory));
         }

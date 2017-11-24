@@ -22,22 +22,6 @@ class CsvReader(private val f: File) {
     private var activityId by Delegates.notNull<List<String>>()
     private var dateFormats by Delegates.notNull<List<Regex>>()
 
-    companion object Constants {
-        const val CASE_ID_COL = "case_id_col"
-        const val ACTIVITY_COL = "activity_col"
-        const val TIMESTAMP_COL = "timestamp_col"
-        const val LABEL_NUM_COLS = "label_num_cols"
-        const val LABEL_CAT_COLS = "label_cat_cols"
-
-        const val STATIC = "static"
-        const val DYNAMIC = "dynamic"
-        const val NUM_COL = "_num_cols"
-        const val CAT_COLS = "_cat_cols"
-
-        const val REMTIME = "remtime"
-        const val OUTCOME = "label"
-    }
-
     init {
         log.debug("Initializing csv reader...")
 
@@ -80,7 +64,8 @@ class CsvReader(private val f: File) {
 
     fun generateDatasetParams(userCols: MutableMap<String, Any>): MutableMap<String, MutableList<String>> {
         val start = System.currentTimeMillis()
-        val cases = parseCsv(userCols[CASE_ID_COL] as String)
+        val case = userCols[CASE_ID_COL] ?: throw NirdizatiRuntimeException("No case id column in log")
+        val cases = parseCsv(case as String)
 
         val colValues = HashMap<String, MutableSet<String>>()
         val timestampCol = identifyTimestampColumn(cases.first().attributes) ?: throw NirdizatiRuntimeException("No date column found")

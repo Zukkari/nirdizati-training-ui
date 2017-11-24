@@ -1,34 +1,44 @@
-package cs.ut.controller.modal;
+package cs.ut.controllers.modal;
 
 import com.google.common.collect.Lists;
 import com.google.common.escape.Escaper;
 import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
-import cs.ut.controller.MainPageController;
+import cs.ut.controllers.MainPageController;
 import cs.ut.engine.JobManager;
 import cs.ut.engine.Worker;
-import cs.ut.ui.ColumnRowValueProvider;
+import cs.ut.jobs.DataSetGenerationJob;
 import cs.ut.ui.GridValueProvider;
 import cs.ut.ui.NirdizatiGrid;
+import cs.ut.ui.providers.ColumnRowValueProvider;
 import cs.ut.util.CsvReader;
-import cs.ut.jobs.DataSetGenerationJob;
 import org.apache.log4j.Logger;
 import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.SerializableEventListener;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.util.GenericAutowireComposer;
-import org.zkoss.zul.*;
+import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.Hlayout;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Rows;
+import org.zkoss.zul.Window;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ParameterModalController extends GenericAutowireComposer<Component> {
     private static final Logger log = Logger.getLogger(ParameterModalController.class);
@@ -83,6 +93,7 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
 
         GridValueProvider<String, Row> provider = new ColumnRowValueProvider(fileColumns, identifiedCols);
         grid = new NirdizatiGrid<>(provider);
+        grid.setHflex("min");
 
         if (fileColumns.isEmpty()) {
             Clients.showNotification(Labels.getLabel(
@@ -97,7 +108,7 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
             return;
         }
 
-        grid.generate(cols);
+        grid.generate(cols, true);
 
         cancelBtn.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) e -> {
             Files.delete(Paths.get(file.getAbsolutePath()));
@@ -126,7 +137,7 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
         okBtnListener = e -> {
             Map<String, List<String>> acceptedParameters = gatherAcceptedValues();
             acceptedParameters.forEach((k, v) -> identifiedColumns.put(k, v));
-            Worker.getInstance().scheduleJob(new DataSetGenerationJob(identifiedColumns, file));
+            Worker.getInstance().scheduleJob(new DataSetGenerationJob(identifiedColumns, file, execution.getDesktop()));
             Clients.showNotification(Labels.getLabel("upload.success", new Object[]{HtmlEscapers.htmlEscaper().escape(file.getName())}), "info", getPage().getFirstRoot(), "bottom_right", -1);
             MainPageController.getInstance().setContent("landing", getPage());
             modal.detach();
