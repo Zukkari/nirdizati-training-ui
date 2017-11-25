@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1" apply="cs.ut.controller.TrainingController" xmlns="http://www.zkoss.org/2005/zul">
+<vbox hflex="1" vflex="1" apply="cs.ut.controllers.training.TrainingController" xmlns="http://www.zkoss.org/2005/zul">
     <grid hflex="1" sclass="grey-box" align="center">
         <columns>
             <column hflex="min"/>
@@ -6,9 +6,10 @@
             <column hflex="min"/>
             <column hflex="2"/>
             <column vflex="1" hflex="min"/>
+            <column hflex="min"/>
         </columns>
         <rows>
-            <row hflex="1">
+            <row hflex="min">
                 <label value="${labels.training.selected_log}" sclass="label-combo"/>
                 <combobox id="clientLogs" constraint="no empty"/>
 
@@ -17,21 +18,15 @@
                 <combobox id="predictionType" constraint="no empty"/>
 
 
-                <navbar id="modeSwitch" sclass="grey-box-navbar">
-                    <navitem vflex="1" id="basicMode" label="${labels.training.basic}" sclass="grey-box-navbar"/>
-                    <navitem vflex="1" id="advancedMode" label="${labels.training.advanced}" sclass="grey-box-navbar"/>
-                </navbar>
+                <label value="${labels.training.advanced}"/>
+                <checkbox id="advancedMode" zclass="toggle" sclass="switch toggle-round-flat"/>
             </row>
         </rows>
     </grid>
 
-    <grid oddRowSclass="none" hflex="1" id="optionsGrid">
-        <columns>
-            <column hflex="min"/>
-            <column hflex="max"/>
-        </columns>
-    </grid>
-    <vbox hflex="1" vflex="1" align="center" pack="center">
-        <button id="startTraining" sclass="big-blue-btn">${labels.training.start_training}</button>
+    <vlayout hflex="1" id="gridContainer"/>
+
+    <vbox hflex="1" vflex="1" align="center" pack="start">
+        <button id="startTraining" >${labels.training.start_training}</button>
     </vbox>
 </vbox>

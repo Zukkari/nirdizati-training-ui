@@ -1,4 +1,4 @@
-<hbox hflex="1" vflex="1" apply="cs.ut.controller.HeaderController" align="end">
+<hbox hflex="1" vflex="1" apply="cs.ut.controllers.HeaderController" align="start">
     <image id="headerLogo" src="/images/logo.png"/>
-    <navbar hflex="1" vflex="1" id="navbar" orient="horizontal" style="margin-left:20px"/>
+    <navbar hflex="min" vflex="1" id="navbar" orient="horizontal" style="margin-left:20px"/>
 </hbox>

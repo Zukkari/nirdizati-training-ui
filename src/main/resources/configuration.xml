@@ -34,6 +34,8 @@
 
     <!-- Paths configuration used for log, model and script storage -->
     <paths>
+        <!-- Path to python executable -->
+        <python>/home/zukkari/anaconda3/bin/python</python>
         <!-- Directory for user log storage -->
         <userLogDirectory>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/logdata/</userLogDirectory>
         <!-- Directory for user model storage -->
@@ -46,6 +48,8 @@
         <datasetDirectory>dataset_params/</datasetDirectory>
         <!-- Results where trained models are located relative to script directory -->
         <pklDirectory>pkl/</pklDirectory>
+        <!-- Optimized hyperparameter directory location relative to script directory -->
+        <ohpdir>core/optimal_params/</ohpdir>
     </paths>
 
     <!-- Header button configuration for header construction -->
@@ -100,7 +104,7 @@
 
         <!-- Values that will be used for timestamp column identification -->
         <timestampFormat>
-            <format>yyyy-MM-dd hh:mm:ss</format>
+            <format>\d{4}-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}</format>
             <format>yyyy-mm-dd'T'hh:mm:ss</format>
         </timestampFormat>
 
@@ -131,6 +135,12 @@
             <type>learner</type>
             <type>predictiontype</type>
         </types>
+
+        <basicParams>
+            <param>zero</param>
+            <param>agg</param>
+            <param>xgb</param>
+        </basicParams>
 
         <!-- Model parameters that are represented in the menu -->
         <modelparams>
@@ -175,6 +185,9 @@
                 <parameter>cluster</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>
+                <properties>
+                    <property id="n_clusters" type="org.zkoss.zul.Intbox">1</property>
+                </properties>
             </modelparam>
             <modelparam>
                 <id>prefix_lenght_based</id>
@@ -188,25 +201,44 @@
                 <parameter>rf</parameter>
                 <type>learner</type>
                 <enabled>true</enabled>
-                <estimators>300</estimators>
-                <maxfeatures>0.75</maxfeatures>
+                <properties>
+                    <property id="n_estimators" type="org.zkoss.zul.Intbox">300</property>
+                    <property id="max_features" type="org.zkoss.zul.Doublebox">0.5</property>
+                </properties>
             </modelparam>
             <modelparam>
                 <id>gradient_boosting</id>
                 <parameter>gbm</parameter>
                 <type>learner</type>
                 <enabled>true</enabled>
-                <estimators>300</estimators>
-                <maxfeatures>0.75</maxfeatures>
-                <gbmrate>1.0</gbmrate>
+                <properties>
+                    <property id="n_estimators" type="org.zkoss.zul.Intbox">300</property>
+                    <property id="max_features" type="org.zkoss.zul.Doublebox">0.5</property>
+                    <property id="gbmrate" type="org.zkoss.zul.Doublebox">0.1</property>
+                </properties>
             </modelparam>
             <modelparam>
                 <id>decision_tree</id>
                 <parameter>dt</parameter>
                 <type>learner</type>
                 <enabled>true</enabled>
-                <estimators>300</estimators>
-                <maxfeatures>0.75</maxfeatures>
+                <properties>
+                    <property id="n_estimators" type="org.zkoss.zul.Intbox">300</property>
+                    <property id="max_depth" type="org.zkoss.zul.Doublebox">5</property>
+                </properties>
+            </modelparam>
+            <modelparam>
+                <id>xgboost</id>
+                <parameter>xgb</parameter>
+                <type>learner</type>
+                <enabled>true</enabled>
+                <properties>
+                    <property id="n_estimators" type="org.zkoss.zul.Intbox">300</property>
+                    <property id="learning_rate" type="org.zkoss.zul.Doublebox">0.03</property>
+                    <property id="subsample" type="org.zkoss.zul.Doublebox">0.7</property>
+                    <property id="colsample_bytree" type="org.zkoss.zul.Doublebox">0.7</property>
+                    <property id="max_depth" type="org.zkoss.zul.Intbox">5</property>
+                </properties>
             </modelparam>
 
             <modelparam>
@@ -219,7 +251,7 @@
                 <id>outcome</id>
                 <parameter>label</parameter>
                 <type>predictiontype</type>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
             </modelparam>
         </modelparams>
     </modelConfig>

@@ -1,4 +1,4 @@
-<vbox hflex="1" vflex="1" pack="center" align="center" apply="cs.ut.controller.UploadLogController">
+<vbox hflex="1" vflex="1" pack="center" align="center" apply="cs.ut.controllers.UploadLogController">
     <vlayout>
         <label sclass="start-caption" style="margin:30px">${labels.upload.current.file}</label>
     </vlayout>
