@@ -1,0 +1,43 @@
+<vbox vflex="1" hflex="1">
+    <grid>
+        <columns>
+            <column hflex="min"/>
+            <column hflex="2"/>
+            <column hflex="min"/>
+            <column hflex="2"/>
+            <column hflex="min"/>
+            <column hflex="2"/>
+        </columns>
+        <rows hflex="min">
+            <row>
+                <label value="${labels.training.selected_log}"/>
+                <combobox id="selectedLog" constraint="no empty" readonly="true"/>
+
+                <label value="${labels.training.prediction_type}"/>
+                <combobox id="predicitonType" constraint="no empty" readonly="true"/>
+
+                <label value="${labels.validation.currently_viewing}"/>
+                <combobox id="optionCombo" readonly="true"/>
+            </row>
+        </rows>
+    </grid>
+    <grid>
+        <columns>
+            <column align="center" hflex="1"/>
+            <column align="center" hflex="1"/>
+            <column align="center" hflex="1"/>
+            <column align="center" hflex="1"/>
+        </columns>
+        <rows>
+            <row>
+                <label value="${labels.validation.bubble_chart.general}"/>
+                <label value="${labels.validation.bubble_chart.encoding}"/>
+                <label value="${labels.validation.bubble_chart.bucketing}"/>
+                <label value="${labels.validation.bubble_chart.learner}"/>
+            </row>
+        </rows>
+    </grid>
+    <vlayout hflex="1" vflex="1">
+        <include src="/views/graphs/sample_content.html"/>
+    </vlayout>
+</vbox>
