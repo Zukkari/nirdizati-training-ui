@@ -17,7 +17,7 @@ import org.zkoss.zul.Button;
 public class LandingPageController extends SelectorComposer<Component> {
 
     @Wire
-    Button uploadLog;
+    Button upload;
 
     @Wire
     Button existingLog;
@@ -38,11 +38,11 @@ public class LandingPageController extends SelectorComposer<Component> {
      * In this case it buttons set content of the page based on uri-s defined in configuration.xml
      */
     private void wireButtons() {
-        uploadLog.addEventListener(Events.ON_CLICK, new SerializableEventListener<Event>() {
+        upload.addEventListener(Events.ON_CLICK, new SerializableEventListener<Event>() {
 
             @Override
             public void onEvent(Event event) throws Exception {
-                MainPageController.getInstance().setContent("uploadLog", getPage());
+                MainPageController.getInstance().setContent("upload", getPage());
             }
         });
 
