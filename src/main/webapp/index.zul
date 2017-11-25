@@ -7,7 +7,7 @@
         <center hflex="1" vflex="1" border="none">
             <include id="contentInclude" src="/views/landing.zul"/>
         </center>
-        <east collapsible="true" hflex="min" border="none">
+        <east collapsible="true" splittable="true" border="none" flex="true" open="false" size="25%">
             <include src="/views/components/tracker.zul"/>
         </east>
     </borderlayout>
