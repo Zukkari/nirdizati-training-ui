@@ -53,7 +53,7 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
         if (data.isNotEmpty()) {
             val row = provider.provide(data.first())
             rows.appendChild(row)
-            generateRows(data.tail(), rows);
+            generateRows(data.tail(), rows)
         }
     }
 
@@ -115,12 +115,6 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
         }
     }
 
-    private fun isInRange(num: Number, min: Double = -1.0, max: Double = -1.0): Boolean {
-        return if (min != -1.0 && max != -1.0) num.toDouble() in min..max
-        else if (max != -1.0) num.toDouble() <= max
-        else min <= num.toDouble()
-    }
-
     private fun <T> MutableList<T>.tail(): MutableList<T> = drop(1).toMutableList()
 
     fun gatherValues(): MutableMap<String, Any> {
@@ -156,4 +150,10 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
             gatherValueFromFields(valueMap, fields.tail())
         }
     }
+}
+
+fun isInRange(num: Number, min: Double = -1.0, max: Double = -1.0): Boolean {
+    return if (min != -1.0 && max != -1.0) num.toDouble() in min..max
+    else if (max != -1.0) num.toDouble() <= max
+    else min <= num.toDouble()
 }
