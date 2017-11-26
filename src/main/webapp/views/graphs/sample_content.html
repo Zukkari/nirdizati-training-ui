@@ -1,5 +1,5 @@
-<n:div xmlns:n="http://www.w3.org/1999/xhtml">
-    <canvas id="chart"></canvas>
+<n:div xmlns:n="http://www.w3.org/1999/xhtml" align="center" style="width:80%; height:90%;">
+    <canvas id="chart" style="margin-left: 10%"></canvas>
 
     <script src="webjars/chartjs/2.7.0/Chart.js"></script>
     <script>
@@ -42,7 +42,8 @@
                                 beginAtZero:true
                             }
                         }]
-                    }
+                    },
+                    maintainaspectratio: false
                 }
             });
         }
