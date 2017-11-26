@@ -105,7 +105,7 @@ public class BasicModeController extends AbstractModeController implements ModeC
         log.debug(String.format("Optimal parameters: %s", params));
         String msg = Labels.getLabel("training.found_optimized_params", new Object[] {HtmlEscapers.htmlEscaper().escape(logName)});
         log.debug(String.format("Showing notification message to user '%s'", msg));
-        Clients.showNotification(msg, grid);
+        Clients.showNotification(msg, grid, true);
 
         setUpGridWithParams(params);
         log.debug("Finished initializing optimized parameters.");
