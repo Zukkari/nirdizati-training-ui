@@ -14,3 +14,5 @@ const val CAT_COLS = "_cat_cols"
 
 const val REMTIME = "remtime"
 const val OUTCOME = "label"
+
+const val PROPERTY = "property"

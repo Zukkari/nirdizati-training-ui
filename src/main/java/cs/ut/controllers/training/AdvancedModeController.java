@@ -155,7 +155,7 @@ public class AdvancedModeController extends AbstractModeController implements Mo
                                     .addAll(hyper
                                             .entrySet()
                                             .stream()
-                                            .map(h -> new Property(h.getKey(), "", h.getValue()))
+                                            .map(h -> new Property(h.getKey(), "", h.getValue(), -1, -1))
                                             .collect(Collectors.toList()));
                         }
                     });

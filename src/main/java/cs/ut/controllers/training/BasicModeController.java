@@ -180,7 +180,7 @@ public class BasicModeController extends AbstractModeController implements ModeC
         List<Property> properties = parameterGrid.gatherValues()
                 .entrySet()
                 .stream()
-                .map(it -> new Property(it.getKey(), "", it.getValue().toString()))
+                .map(it -> new Property(it.getKey(), "", it.getValue().toString(), -1, -1))
                 .collect(Collectors.toList());
         value.getProperties().clear();
         value.setProperties(properties);

@@ -88,7 +88,7 @@ tailrec private fun parseJson(jsons: MutableMap<String, String>, map: MutableMap
         val paramArray = thirdLevel.getJSONObject(learner).toMap()
         val properties = mutableListOf<Property>()
         paramArray.entries.forEach {
-            properties.add(Property(it.key, "", it.value.toString()))
+            properties.add(Property(it.key, "", it.value.toString(), -1.0, -1.0))
         }
 
         val modelProperties = getModelParams(params)

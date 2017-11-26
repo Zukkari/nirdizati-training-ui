@@ -186,7 +186,7 @@
                 <type>bucketing</type>
                 <enabled>true</enabled>
                 <properties>
-                    <property id="n_clusters" type="org.zkoss.zul.Intbox">1</property>
+                    <property id="n_clusters" type="org.zkoss.zul.Intbox" maxValue="10" minValue="1">1</property>
                 </properties>
             </modelparam>
             <modelparam>
@@ -202,8 +202,8 @@
                 <type>learner</type>
                 <enabled>true</enabled>
                 <properties>
-                    <property id="n_estimators" type="org.zkoss.zul.Intbox">300</property>
-                    <property id="max_features" type="org.zkoss.zul.Doublebox">0.5</property>
+                    <property id="n_estimators" type="org.zkoss.zul.Intbox" maxValue="400" minValue="1">300</property>
+                    <property id="max_features" type="org.zkoss.zul.Doublebox" minValue="0.01">0.5</property>
                 </properties>
             </modelparam>
             <modelparam>
@@ -212,9 +212,9 @@
                 <type>learner</type>
                 <enabled>true</enabled>
                 <properties>
-                    <property id="n_estimators" type="org.zkoss.zul.Intbox">300</property>
-                    <property id="max_features" type="org.zkoss.zul.Doublebox">0.5</property>
-                    <property id="gbmrate" type="org.zkoss.zul.Doublebox">0.1</property>
+                    <property id="n_estimators" type="org.zkoss.zul.Intbox" maxValue="400" minValue="1">300</property>
+                    <property id="max_features" type="org.zkoss.zul.Doublebox" minValue="0.01">0.5</property>
+                    <property id="gbmrate" type="org.zkoss.zul.Doublebox" minValue="0.01">0.1</property>
                 </properties>
             </modelparam>
             <modelparam>
@@ -223,8 +223,8 @@
                 <type>learner</type>
                 <enabled>true</enabled>
                 <properties>
-                    <property id="n_estimators" type="org.zkoss.zul.Intbox">300</property>
-                    <property id="max_depth" type="org.zkoss.zul.Doublebox">5</property>
+                    <property id="n_estimators" type="org.zkoss.zul.Intbox" maxValue="400" minValue="1">300</property>
+                    <property id="max_depth" type="org.zkoss.zul.Doublebox" minValue="1">5</property>
                 </properties>
             </modelparam>
             <modelparam>
@@ -233,11 +233,11 @@
                 <type>learner</type>
                 <enabled>true</enabled>
                 <properties>
-                    <property id="n_estimators" type="org.zkoss.zul.Intbox">300</property>
-                    <property id="learning_rate" type="org.zkoss.zul.Doublebox">0.03</property>
-                    <property id="subsample" type="org.zkoss.zul.Doublebox">0.7</property>
-                    <property id="colsample_bytree" type="org.zkoss.zul.Doublebox">0.7</property>
-                    <property id="max_depth" type="org.zkoss.zul.Intbox">5</property>
+                    <property id="n_estimators" type="org.zkoss.zul.Intbox" maxValue="400" minValue="1">300</property>
+                    <property id="learning_rate" type="org.zkoss.zul.Doublebox" minValue="0.01">0.03</property>
+                    <property id="subsample" type="org.zkoss.zul.Doublebox" minValue="0.1">0.7</property>
+                    <property id="colsample_bytree" type="org.zkoss.zul.Doublebox" minValue="0.1">0.7</property>
+                    <property id="max_depth" type="org.zkoss.zul.Intbox" minValue="1">5</property>
                 </properties>
             </modelparam>
 

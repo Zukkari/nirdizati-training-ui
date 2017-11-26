@@ -212,4 +212,8 @@ public class MasterConfiguration {
             throw new NirdizatiRuntimeException("Failed to read directories", e);
         }
     }
+
+    public static void main(String[] args) {
+        MasterConfiguration.getInstance();
+    }
 }
