@@ -37,7 +37,7 @@
             </row>
         </rows>
     </grid>
-    <vlayout hflex="1" vflex="1">
+    <vlayout style="margin-bottom:20px">
         <include src="/views/graphs/sample_content.html"/>
     </vlayout>
 </vbox>

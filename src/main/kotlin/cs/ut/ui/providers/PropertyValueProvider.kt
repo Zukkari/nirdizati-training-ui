@@ -5,6 +5,7 @@ import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.util.COMP_ID
+import cs.ut.util.PROPERTY
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zul.Doublebox
@@ -42,6 +43,7 @@ class PropertyValueProvider : GridValueProvider<Property, Row> {
         obj as InputElement
         obj.setConstraint("no empty")
         obj.width = "60px"
+        obj.setAttribute(PROPERTY, prop)
 
         return obj
     }
