@@ -4,7 +4,7 @@
     </hbox>
     <hbox hflex="1" vflex="1">
         <hbox vflex="1" hflex="1" pack="center" align="center">
-            <button id="uploadLog" sclass="big-blue-btn">${labels.upload.log}</button>
+            <button id="upload" sclass="big-blue-btn">${labels.upload.log}</button>
         </hbox>
         <hbox hflex="1" vflex="1" pack="center" align="center">
             <button id="existingLog" sclass="big-blue-btn">${labels.with.existing}</button>

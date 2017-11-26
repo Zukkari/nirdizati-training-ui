@@ -2,6 +2,7 @@ package cs.ut.controllers;
 
 import cs.ut.config.MasterConfiguration;
 import org.apache.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.select.SelectorComposer;
@@ -40,6 +41,7 @@ public class MainPageController extends SelectorComposer<Component> {
      * @param page        - caller page where Include element should be looked for.
      */
     public void setContent(String destination, Page page) {
+        getPage().setTitle(Labels.getLabel("header.".concat(destination)).concat(" - Nirdizati"));
         Include include = (Include) Selectors.iterable(page, "#contentInclude").iterator().next();
         include.setSrc(MasterConfiguration.getInstance().getPageConfiguration().getByPageName(destination).getUri());
     }

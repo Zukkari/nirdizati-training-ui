@@ -9,7 +9,7 @@
             <uri>/views/landing.zul</uri>
         </page>
         <page>
-            <id>uploadLog</id>
+            <id>upload</id>
             <uri>/views/upload_page.zul</uri>
         </page>
         <page>
@@ -56,7 +56,7 @@
     <headerConfiguration>
         <headerItem>
             <label>header.upload</label>
-            <redirect>uploadLog</redirect>
+            <redirect>upload</redirect>
             <enabled>true</enabled>
             <position>0</position>
         </headerItem>

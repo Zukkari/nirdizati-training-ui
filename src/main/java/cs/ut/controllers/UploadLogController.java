@@ -39,7 +39,7 @@ public class UploadLogController extends SelectorComposer<Component> {
     Fileupload chooseFile;
 
     @Wire
-    private Button uploadLog;
+    private Button upload;
 
     private transient Media media;
 
@@ -51,7 +51,7 @@ public class UploadLogController extends SelectorComposer<Component> {
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
 
-        uploadLog.setVisible(false);
+        upload.setVisible(false);
     }
 
 
@@ -73,14 +73,14 @@ public class UploadLogController extends SelectorComposer<Component> {
             fileName.setSclass("");
             fileName.setValue(uploaded.getName());
             saveMediaObject(uploaded);
-            uploadLog.setVisible(true);
+            upload.setVisible(true);
         } else {
             log.debug("Log is not in allowed format");
             log.debug("Showing error message");
             fileName.setSclass("error-label");
             fileName.setValue(Labels.getLabel("upload.wrong.format",
                     new Object[]{uploaded.getName(), FilenameUtils.getExtension(uploaded.getName())}));
-            uploadLog.setVisible(false);
+            upload.setVisible(false);
         }
     }
 
@@ -89,7 +89,7 @@ public class UploadLogController extends SelectorComposer<Component> {
      * Log serialization method. Starts a thread that serializes the log using the path configured in configuration.xml
      * Sends notification when process is completed successfully and then redirects the user.
      */
-    @Listen("onClick = #uploadLog")
+    @Listen("onClick = #upload")
     public void processLog() {
         if (media != null) {
 
