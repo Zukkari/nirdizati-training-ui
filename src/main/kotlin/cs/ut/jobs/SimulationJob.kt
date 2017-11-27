@@ -24,8 +24,6 @@ class SimulationJob(val encoding: ModelParameter,
                     val logFile: File,
                     client: Desktop) : Job(client) {
 
-    val log = Logger.getLogger(SimulationJob::class.java)!!
-
     override var startTime = Date()
     override var completeTime = Date()
 

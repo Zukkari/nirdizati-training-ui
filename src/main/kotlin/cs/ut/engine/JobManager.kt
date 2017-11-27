@@ -61,7 +61,7 @@ class JobManager {
         }
 
         fun deployJobs() {
-            val worker = Worker.getInstance()
+            val executor = NirdizatiThreadPool()
 
             val currentJobs = jobQueue[Executions.getCurrent().session]!!
             log.debug("Deploying ${currentJobs.size} jobs")
@@ -70,7 +70,7 @@ class JobManager {
             grid.generate(currentJobs.toList().reversed(), false)
 
             while (currentJobs.peek() != null) {
-                worker.scheduleJob(currentJobs.poll())
+                executor.execute(currentJobs.poll())
             }
 
             log.debug("Successfully deployed all jobs to worker")
