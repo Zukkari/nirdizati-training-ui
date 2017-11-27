@@ -7,7 +7,7 @@ import cs.ut.config.nodes.CSVConfiguration;
 import cs.ut.config.nodes.DirectoryPathConfiguration;
 import cs.ut.config.nodes.ModelConfiguration;
 import cs.ut.config.nodes.PageConfiguration;
-import cs.ut.engine.Worker;
+import cs.ut.config.nodes.ThreadPoolConfiguration;
 import cs.ut.exceptions.NirdizatiRuntimeException;
 import cs.ut.util.JsonReaderKt;
 import org.apache.log4j.ConsoleAppender;
@@ -62,6 +62,7 @@ public class MasterConfiguration {
     private ModelConfiguration modelConfiguration;
 
     private CSVConfiguration csvConfiguration;
+    private ThreadPoolConfiguration threadPoolConfiguration;
 
     private MasterConfiguration() {
         configureLogger();
@@ -110,9 +111,6 @@ public class MasterConfiguration {
         }
 
         log.debug("Successfully read master configuration");
-
-        /* Start worker thread */
-        Worker.getInstance().start();
     }
 
     public List<HeaderItem> getHeaderItems() {
@@ -125,6 +123,13 @@ public class MasterConfiguration {
             modelConfiguration = new ModelConfiguration(modelProperties);
         }
         return modelConfiguration;
+    }
+
+    public ThreadPoolConfiguration getThreadPoolConfiguration() {
+        if (threadPoolConfiguration == null) {
+            threadPoolConfiguration = readClass(ThreadPoolConfiguration.class, "threadpool");
+        }
+        return threadPoolConfiguration;
     }
 
     public List<String> getExtensions() {
@@ -211,9 +216,5 @@ public class MasterConfiguration {
         } catch (JAXBException e) {
             throw new NirdizatiRuntimeException("Failed to read directories", e);
         }
-    }
-
-    public static void main(String[] args) {
-        MasterConfiguration.getInstance();
     }
 }

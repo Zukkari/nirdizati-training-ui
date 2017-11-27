@@ -6,7 +6,7 @@ import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.controllers.MainPageController;
 import cs.ut.engine.JobManager;
-import cs.ut.engine.Worker;
+import cs.ut.engine.NirdizatiThreadPool;
 import cs.ut.jobs.DataSetGenerationJob;
 import cs.ut.ui.GridValueProvider;
 import cs.ut.ui.NirdizatiGrid;
@@ -137,7 +137,7 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
         okBtnListener = e -> {
             Map<String, List<String>> acceptedParameters = gatherAcceptedValues();
             acceptedParameters.forEach((k, v) -> identifiedColumns.put(k, v));
-            Worker.getInstance().scheduleJob(new DataSetGenerationJob(identifiedColumns, file, execution.getDesktop()));
+            new NirdizatiThreadPool().execute(new DataSetGenerationJob(identifiedColumns, file, execution.getDesktop()));
             Clients.showNotification(Labels.getLabel("upload.success", new Object[]{HtmlEscapers.htmlEscaper().escape(file.getName())}), "info", getPage().getFirstRoot(), "bottom_right", -1);
             MainPageController.getInstance().setContent("landing", getPage());
             modal.detach();

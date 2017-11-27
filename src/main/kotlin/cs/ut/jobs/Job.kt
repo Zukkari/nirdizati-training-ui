@@ -1,10 +1,18 @@
 package cs.ut.jobs
 
 import cs.ut.config.MasterConfiguration
+import cs.ut.controllers.MainPageController
+import cs.ut.engine.JobManager
+import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Desktop
+import org.zkoss.zk.ui.Executions
+import org.zkoss.zk.ui.event.Event
+import org.zkoss.zk.ui.util.Clients
 import java.util.*
 
-abstract class Job(val client: Desktop) {
+abstract class Job(val client: Desktop) : Runnable {
+    val log = Logger.getLogger(Job::class.java)!!
+
     var createTime: Date = Date()
     abstract var startTime: Date
     abstract var completeTime: Date
@@ -27,6 +35,64 @@ abstract class Job(val client: Desktop) {
     open fun isNotificationRequired() = false
 
     open fun getNotificationMessage() = ""
+
+    override fun run() {
+        log.debug("Started job execution: $this")
+
+        try {
+            log.debug("Stared preprocess stage")
+            status = JobStatus.PREPARING
+            JobManager.notifyOfJobStatusChange(this)
+            preProcess()
+        } catch (e: Exception) {
+            log.debug("Job $this failed in preprocess stage", e)
+            status = JobStatus.FAILED
+            JobManager.notifyOfJobStatusChange(this)
+        }
+
+        log.debug("Job $this finished preprocess step")
+
+        try {
+            log.debug("Job $this started execute stage")
+            status = JobStatus.RUNNING
+            JobManager.notifyOfJobStatusChange(this)
+            execute()
+        } catch (e: Exception) {
+            log.debug("Job $this failed in execute stage", e)
+            status = JobStatus.FAILED
+            JobManager.notifyOfJobStatusChange(this)
+        }
+
+        log.debug("Job $this finished execute step")
+
+        try {
+            log.debug("Job $this started post execute step")
+            status = JobStatus.FINISHING
+            JobManager.notifyOfJobStatusChange(this)
+            postExecute()
+        } catch (e: Exception) {
+            log.debug("Job $this failed in post execute step")
+            status = JobStatus.FAILED
+            JobManager.notifyOfJobStatusChange(this)
+        }
+
+        log.debug("Job $this completed successfully")
+        completeTime = Calendar.getInstance().time
+        status = JobStatus.COMPLETED
+
+        if (isNotificationRequired()) {
+            Executions.schedule(client,
+                    { _ ->
+                        Clients.showNotification(
+                                getNotificationMessage(),
+                                "info",
+                                MainPageController.getInstance().comp,
+                                "bottom_center",
+                                -1)
+                    },
+                    Event("jobStatus", null, "complete"))
+        }
+    }
 }
 
 
