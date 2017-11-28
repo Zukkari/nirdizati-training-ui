@@ -47,7 +47,7 @@
     <!-- Paths configuration used for log, model and script storage -->
     <paths>
         <!-- Path to python executable -->
-        <python>/usr/bin/python</python>
+        <python>/usr/bin/python3</python>
         <!-- Directory for user log storage -->
         <userLogDirectory>/home/ubuntu/git/nirdizati-training-ui/PredictiveMethods/logdata/</userLogDirectory>
         <!-- Directory for user model storage -->
