@@ -8,6 +8,7 @@ import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
@@ -52,6 +53,7 @@ public class UploadLogController extends SelectorComposer<Component> {
         super.doAfterCompose(comp);
 
         upload.setVisible(false);
+        upload.addEventListener(Events.ON_UPLOAD, e -> analyzeFile((UploadEvent) e));
     }
 
 

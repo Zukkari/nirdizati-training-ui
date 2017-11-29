@@ -9,6 +9,7 @@ import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.util.Clients
 import java.util.*
+import kotlin.NoSuchElementException
 
 abstract class Job(val client: Desktop) : Runnable {
     val log = Logger.getLogger(Job::class.java)!!
@@ -26,11 +27,11 @@ abstract class Job(val client: Desktop) : Runnable {
     protected val trainingDir = pathProvider.trainDirectory
     protected val pklDir = pathProvider.pklDirectory
 
-    abstract fun preProcess()
+    open fun preProcess() {}
 
-    abstract fun execute()
+    open fun execute() {}
 
-    abstract fun postExecute()
+    open fun postExecute() {}
 
     open fun isNotificationRequired() = false
 
@@ -73,7 +74,12 @@ abstract class Job(val client: Desktop) : Runnable {
         } catch (e: Exception) {
             log.debug("Job $this failed in post execute step")
             status = JobStatus.FAILED
-            JobManager.notifyOfJobStatusChange(this)
+
+            try {
+                JobManager.notifyOfJobStatusChange(this)
+            } catch (e: NoSuchElementException) {
+                log.debug("Could not notify $client of job status change: $e")
+            }
         }
 
         log.debug("Job $this completed successfully")

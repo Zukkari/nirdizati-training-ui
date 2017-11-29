@@ -22,7 +22,9 @@ public class JobTrackerController extends SelectorComposer<Component> {
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
 
-        NirdizatiGrid<Job> jobGrid = new NirdizatiGrid<>(new JobValueProvider());
+        NirdizatiGrid<Job> jobGrid = new NirdizatiGrid<>(new JobValueProvider(tracker));
+        ((JobValueProvider)jobGrid.getProvider()).setOriginator(jobGrid);
+
         jobGrid.setHflex("min");
         jobGrid.setId(GRID_ID);
 
@@ -31,7 +33,6 @@ public class JobTrackerController extends SelectorComposer<Component> {
         properties.put("tracker.job_status", "140%");
 
         jobGrid.setColumns(properties);
-        jobGrid.setSclass(GRID_ID);
         jobGrid.setHflex("min");
 
         jobGrid.setVflex("1");

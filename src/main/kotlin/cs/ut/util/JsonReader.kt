@@ -33,7 +33,7 @@ private fun readFilesFromDir(): List<File> {
     val dir = File(path)
     if (!dir.exists() && dir.isDirectory) throw NirdizatiRuntimeException("Optimized hyperparameter directory does not exist")
 
-    return dir.listFiles().toList()
+    return dir.listFiles()?.toList() ?: listOf()
 }
 
 private fun parseJsonFiles(files: List<File>): Map<String, List<ModelParameter>> {

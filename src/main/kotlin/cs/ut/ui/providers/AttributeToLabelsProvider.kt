@@ -1,6 +1,7 @@
 package cs.ut.ui.providers
 
 import cs.ut.config.items.ModelParameter
+import cs.ut.config.items.Property
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.JobStatus
 import cs.ut.ui.FieldComponent
@@ -49,6 +50,17 @@ class AttributeToLabelsProvider : GridValueProvider<Any, Row> {
             is JobStatus -> {
                 val label = Label(Labels.getLabel("attribute.job_status"))
                 val value = Label(data.name)
+
+                fields.add(FieldComponent(label, value))
+                row.appendChild(label)
+                row.appendChild(value)
+
+                return row
+            }
+
+            is Property -> {
+                val label = Label(Labels.getLabel("property." + data.id))
+                val value = Label(data.property)
 
                 fields.add(FieldComponent(label, value))
                 row.appendChild(label)

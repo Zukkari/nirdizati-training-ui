@@ -12,20 +12,8 @@
     background-color: rgba(255, 21, 0, 0.38);
 }
 
-.tracker_grid {
-    margin-left: 40px;
-}
-
-.tracker_grid .z-column-content {
-    font-size: 9px;
-    padding: 4px;
-}
-
 /* Toggle css taken from: */
 /* https://github.com/zkoss-demo/zk-template-examples/blob/toggle-switch/src/main/webapp/css-toggle-switch/css/cmn-toggle-for-zk-checkbox.css#L21 */
-.tracker_grid .z-row-content .z-label {
-    font-size: 9px;
-}
 
 .toggle > input {
     position: absolute;

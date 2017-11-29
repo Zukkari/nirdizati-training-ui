@@ -9,7 +9,7 @@
         <!-- Maximum threadpool size -->
         <max>20</max>
         <!-- How long thread should be kept alive after being idle -->
-        <keepAlive>180</keepAlive>
+        <keepAlive>10</keepAlive>
         <!-- Queue capacity -->
         <capacity>1024</capacity>
     </threadpool>
