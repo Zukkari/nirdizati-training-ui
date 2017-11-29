@@ -11,7 +11,7 @@ import org.zkoss.zul.*
 import org.zkoss.zul.impl.NumberInputElement
 
 
-class FieldComponent(val label: Label, val control: Component)
+class FieldComponent(val label: Component, val control: Component)
 
 class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
     private val log = Logger.getLogger(NirdizatiGrid::class.java)

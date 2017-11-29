@@ -4,7 +4,7 @@
     </vlayout>
     <vlayout style="padding: 20px">
         <label id="fileName" value="" height="100%"/>
-        <fileupload id="chooseFile" sclass="big-grey-btn" upload="true">${labels.upload.choose.file}</fileupload>
+        <fileupload id="chooseFile" upload="true">${labels.upload.choose.file}</fileupload>
     </vlayout>
     <vlayout>
         <label sclass="start-caption">${labels.upload.log_support}</label>
