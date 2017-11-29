@@ -32,7 +32,16 @@ class SimulationJob(val encoding: ModelParameter,
         val json = JSONObject()
 
         val params = JSONObject()
-        learner.properties.forEach { (k, _, v) -> params.put(k, convertToNumber(v)) }
+
+        if (bucketing.parameter == "prefix") {
+            val props = JSONObject()
+            learner.properties.forEach { (k, _, v) -> props.put(k, convertToNumber(v)) }
+            for (i in 1..15) {
+                params.put(i.toString(), props)
+            }
+        } else {
+            learner.properties.forEach { (k, _, v) -> params.put(k, convertToNumber(v)) }
+        }
 
         json.put(outcome.parameter,
                 JSONObject().put(bucketing.parameter + "_" + encoding.parameter,
