@@ -13,7 +13,7 @@
         <packname>-${project.version}-FL-${maven.build.timestamp}</packname>
         <kotlin.version>1.2.0</kotlin.version>
     </properties>
-    <packaging>pom</packaging>
+    <packaging>war</packaging>
     <name>The nirdizati-training-ui Project</name>
     <description>The nirdizati-training-ui Project</description>
     <licenses>
