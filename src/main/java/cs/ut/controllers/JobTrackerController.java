@@ -23,6 +23,8 @@ public class JobTrackerController extends SelectorComposer<Component> {
         super.doAfterCompose(comp);
 
         NirdizatiGrid<Job> jobGrid = new NirdizatiGrid<>(new JobValueProvider(tracker));
+        ((JobValueProvider)jobGrid.getProvider()).setOriginator(jobGrid);
+
         jobGrid.setHflex("min");
         jobGrid.setId(GRID_ID);
 
