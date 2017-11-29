@@ -27,11 +27,11 @@ abstract class Job(val client: Desktop) : Runnable {
     protected val trainingDir = pathProvider.trainDirectory
     protected val pklDir = pathProvider.pklDirectory
 
-    abstract fun preProcess()
+    open fun preProcess() {}
 
-    abstract fun execute()
+    open fun execute() {}
 
-    abstract fun postExecute()
+    open fun postExecute() {}
 
     open fun isNotificationRequired() = false
 

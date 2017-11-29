@@ -87,22 +87,6 @@ class SimulationJob(val encoding: ModelParameter,
         }
     }
 
-    override fun postExecute() {
-        log.debug("Moving file to user model storage directory <$userModelDir>")
-
-        val noExtensionName = FilenameUtils.getBaseName(log.name)
-        val dir = File(userModelDir + noExtensionName)
-
-        if (!dir.exists() && !dir.mkdir()) log.debug("Cannot create folder for model with name ${dir.name}")
-
-        try {
-            Files.move(Paths.get(scriptDir + pklDir + this.toString()),
-                    Paths.get(userModelDir + noExtensionName + "/" + this.toString()), StandardCopyOption.REPLACE_EXISTING)
-        } catch (e: IOException) {
-            throw NirdizatiRuntimeException("Script execution failed", e)
-        }
-    }
-
     override fun isNotificationRequired() = true
     override fun getNotificationMessage() = Labels.getLabel("job.completed.simulation", arrayOf(this.toString()))!!
 

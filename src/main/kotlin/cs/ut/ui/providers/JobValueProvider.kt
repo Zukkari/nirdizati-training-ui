@@ -39,9 +39,10 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
         val bucketing = job.bucketing
         val learner = job.learner
 
-        val label = Label(Labels.getLabel(encoding.type + "." + encoding.id) + " " +
-                Labels.getLabel(bucketing.type + "." + bucketing.id) + " " +
+        val label = Label(Labels.getLabel(encoding.type + "." + encoding.id) + "\n" +
+                Labels.getLabel(bucketing.type + "." + bucketing.id) + "\n" +
                 Labels.getLabel(learner.type + "." + learner.id))
+        label.isPre = true
         label.style = "font-weight: bold;"
 
         val bottom = formHyperparamRow(learner)
