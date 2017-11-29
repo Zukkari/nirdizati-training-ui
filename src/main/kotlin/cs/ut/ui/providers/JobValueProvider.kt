@@ -63,7 +63,7 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
         }
 
         val res = Label(label)
-        res.style = "font-size: 8px"
+        res.style = "font-size: 10px"
         res.isMultiline = true
         res.isPre = true
         return res
