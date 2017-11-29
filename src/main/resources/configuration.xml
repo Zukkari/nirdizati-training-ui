@@ -226,7 +226,7 @@
                 <properties>
                     <property id="n_estimators" type="org.zkoss.zul.Intbox" maxValue="400" minValue="1">300</property>
                     <property id="max_features" type="org.zkoss.zul.Doublebox" minValue="0.01">0.5</property>
-                    <property id="gbmrate" type="org.zkoss.zul.Doublebox" minValue="0.01">0.1</property>
+                    <property id="learning_rate" type="org.zkoss.zul.Doublebox" minValue="0.01">0.1</property>
                 </properties>
             </modelparam>
             <modelparam>

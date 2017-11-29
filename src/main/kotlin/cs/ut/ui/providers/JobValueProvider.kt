@@ -72,6 +72,8 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
 
     private fun addRowListener(row: Row) {
         row.addEventListener(Events.ON_CLICK, { _ ->
+            if (parent.getChildren<Component>().size == 2) return@addEventListener
+
             originator.isVisible = false
             val job = row.getValue<Job>() as SimulationJob
             val propertyList = generateParameters(job)
