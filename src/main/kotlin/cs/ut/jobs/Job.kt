@@ -49,6 +49,7 @@ abstract class Job(val client: Desktop) : Runnable {
             log.debug("Job $this failed in preprocess stage", e)
             status = JobStatus.FAILED
             JobManager.notifyOfJobStatusChange(this)
+            return
         }
 
         log.debug("Job $this finished preprocess step")
@@ -62,6 +63,7 @@ abstract class Job(val client: Desktop) : Runnable {
             log.debug("Job $this failed in execute stage", e)
             status = JobStatus.FAILED
             JobManager.notifyOfJobStatusChange(this)
+            return
         }
 
         log.debug("Job $this finished execute step")
@@ -80,6 +82,7 @@ abstract class Job(val client: Desktop) : Runnable {
             } catch (e: NoSuchElementException) {
                 log.debug("Could not notify $client of job status change: $e")
             }
+            return
         }
 
         log.debug("Job $this completed successfully")

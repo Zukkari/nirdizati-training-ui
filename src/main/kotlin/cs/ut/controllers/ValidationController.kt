@@ -34,6 +34,8 @@ class ValidationController : SelectorComposer<Component>() {
             log.debug("Received job argument $job, initializing in read only mode")
             generateReadOnlyMode()
         }
+
+        TODO("Validation without context not implemented yet")
     }
 
     private fun generateReadOnlyMode() {
