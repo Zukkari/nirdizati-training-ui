@@ -11,6 +11,7 @@ import cs.ut.jobs.DataSetGenerationJob;
 import cs.ut.ui.GridValueProvider;
 import cs.ut.ui.NirdizatiGrid;
 import cs.ut.ui.providers.ColumnRowValueProvider;
+import cs.ut.util.ConstKt;
 import cs.ut.util.CsvReader;
 import org.apache.log4j.Logger;
 import org.zkoss.bind.annotation.AfterCompose;
@@ -139,7 +140,7 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
             acceptedParameters.forEach((k, v) -> identifiedColumns.put(k, v));
             new NirdizatiThreadPool().execute(new DataSetGenerationJob(identifiedColumns, file, execution.getDesktop()));
             Clients.showNotification(Labels.getLabel("upload.success", new Object[]{HtmlEscapers.htmlEscaper().escape(file.getName())}), "info", getPage().getFirstRoot(), "bottom_right", -1);
-            MainPageController.getInstance().setContent("landing", getPage());
+            MainPageController.getInstance().setContent(ConstKt.PAGE_TRAINING, getPage());
             modal.detach();
         };
 

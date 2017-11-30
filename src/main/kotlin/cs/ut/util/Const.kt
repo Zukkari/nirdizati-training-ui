@@ -16,3 +16,9 @@ const val REMTIME = "remtime"
 const val OUTCOME = "label"
 
 const val PROPERTY = "property"
+
+const val PAGE_LANDING = "landing"
+const val PAGE_UPLOAD = "upload"
+const val PAGE_LOGOVERVIEW = "logOverview"
+const val PAGE_TRAINING = "training"
+const val PAGE_VALIDATION = "validation"
