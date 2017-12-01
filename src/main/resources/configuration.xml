@@ -62,6 +62,12 @@
         <pklDirectory>pkl/</pklDirectory>
         <!-- Optimized hyperparameter directory location relative to script directory -->
         <ohpdir>core/optimal_params/</ohpdir>
+        <!-- Detailed log result information path relative to script directory -->
+        <detailedDir>results/detailed/</detailedDir>
+        <!-- Feature importance dir location relative to script dir -->
+        <featureDir>results/improtance/</featureDir>
+        <!-- Validation directory relative to script dir -->
+        <validationDir>results/validation/</validationDir>
     </paths>
 
     <!-- Header button configuration for header construction -->

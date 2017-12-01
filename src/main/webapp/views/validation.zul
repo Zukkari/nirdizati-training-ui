@@ -9,6 +9,6 @@
         <rows id="selectionRows"/>
     </grid>
     <vlayout style="margin-bottom:20px">
-        <include src="/views/graphs/sample_content.html"/>
+        <include src="/views/graphs/graph_canvas.html"/>
     </vlayout>
 </vbox>
