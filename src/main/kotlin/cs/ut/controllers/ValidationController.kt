@@ -1,21 +1,23 @@
 package cs.ut.controllers
 
+import cs.ut.config.items.ChartData
+import cs.ut.config.items.ChartDataDelegate
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.providers.JobValueProvider
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
+import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zul.Hlayout
-import org.zkoss.zul.Label
-import org.zkoss.zul.Row
-import org.zkoss.zul.Rows
+import org.zkoss.zul.*
 
 class ValidationController : SelectorComposer<Component>() {
     private val log = Logger.getLogger(ValidationController::class.java)
     private var job: SimulationJob? = null
+
+    private val charts: List<ChartData> by lazy { ChartDataDelegate(job).getCharts() }
 
     @Wire
     lateinit private var metadataRows: Rows
@@ -42,6 +44,24 @@ class ValidationController : SelectorComposer<Component>() {
     private fun generateReadOnlyMode() {
         generateMetadataRow()
         generatePropertyRow()
+        generateChartOptions()
+    }
+
+    private fun generateChartOptions() {
+        val row = Row()
+        row.align = "center"
+        charts.forEach { generateCell(row, it) }
+        selectionRows.appendChild(row)
+    }
+
+    private fun generateCell(row: Row, data: ChartData) {
+        val cell = Cell()
+        val label = Label(Labels.getLabel(data.caption))
+        cell.align = "center"
+        cell.valign = "center"
+        cell.addEventListener(Events.ON_CLICK, data.action)
+        cell.appendChild(label)
+        row.appendChild(cell)
     }
 
     private fun generatePropertyRow() {

@@ -116,7 +116,7 @@ public class LogManager {
 
     @NotNull
     private File getFile(String fileName) {
-        File file = new File(fileName);
+        File file = new File(fileName.concat(".csv"));
         log.debug(String.format("Looking for file <%s>", file.getName()));
         if (!file.exists()) {
             throw new NirdizatiRuntimeException(String.format("Validation file '%s' could not be found.", fileName));

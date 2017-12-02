@@ -1,22 +1,44 @@
-function scatter_plot(payload, chart_label) {
-    var ctx = document.getElementById("chart_canvas").getContext('2d');
-    ctx.clear();
-    new Chart(ctx, {
-        type: 'scatter',
+function plot_scatter(payload, chart_label) {
+    console.log('Started chart rendering...');
+    var ctx = document.getElementById('chart_canvas').getContext('2d');
+    console.log('Cleared canvas');
+    Chart.Scatter(ctx, {
         data: {
             datasets: [{
                 label: chart_label,
-                data: payload
+                data: JSON.parse(payload)
             }]
         },
 
         options: {
             scales: {
                 xAxes: [{
-                    type: 'linear',
-                    position: 'bottom'
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Actual',
+                        fontSize: 18,
+                        fontStyle: 'bold'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Predicted',
+                        fontSize: 18,
+                        fontStyle: 'bold'
+                    }
                 }]
+            },
+            tooltips: {
+                callbacks: {
+                    label: function (tooltipItem, chart) {
+                        return 'Difference: ' + (tooltipItem.xLabel - tooltipItem.yLabel)
+                    }
+                }
             }
         }
-    })
+    });
+    console.log('Finished chart rendering')
 }
