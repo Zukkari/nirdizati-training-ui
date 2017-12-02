@@ -4,6 +4,7 @@ import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.util.FileWriter
+import cs.ut.util.PREFIX
 import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
 import org.json.JSONObject
@@ -33,7 +34,7 @@ class SimulationJob(val encoding: ModelParameter,
 
         val params = JSONObject()
 
-        if (bucketing.parameter == "prefix") {
+        if (bucketing.id == PREFIX) {
             val props = JSONObject()
             learner.properties.forEach { (k, _, v) -> props.put(k, convertToNumber(v)) }
             for (i in 1..15) {

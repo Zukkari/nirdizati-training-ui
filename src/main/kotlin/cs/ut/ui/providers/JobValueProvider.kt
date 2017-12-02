@@ -1,18 +1,25 @@
 package cs.ut.ui.providers
 
 import cs.ut.config.items.ModelParameter
+import cs.ut.controllers.MainPageController
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.ui.NirdizatiGrid
+import cs.ut.util.PAGE_VALIDATION
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
+import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zul.*
 
 class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
+    companion object {
+        const val jobArg = "JOB"
+    }
+
     override var fields: MutableList<FieldComponent> = mutableListOf()
     lateinit var originator: NirdizatiGrid<Job>
 
@@ -82,14 +89,18 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
             grid.generate(propertyList)
             parent.appendChild(grid)
 
-            grid.addEventListener(Events.ON_CLICK, {_ ->
+            grid.addEventListener(Events.ON_CLICK, { _ ->
                 parent.removeChild(grid)
                 originator.isVisible = true
             })
 
             val visualize = Button(Labels.getLabel("job_tracker.visiualize"))
-            visualize.isDisabled = true
             visualize.hflex = "1"
+
+            visualize.addEventListener(Events.ON_CLICK, { _ ->
+                Executions.getCurrent().setAttribute(jobArg, job)
+                MainPageController.getInstance().setContent(PAGE_VALIDATION, Executions.getCurrent().desktop.firstPage)
+            })
 
             val deploy = Button(Labels.getLabel("job_tracker.deploy_to_runtime"))
             deploy.isDisabled = true

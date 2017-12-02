@@ -2,6 +2,7 @@ package cs.ut.controllers;
 
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.nodes.PageConfiguration;
+import cs.ut.util.ConstKt;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -42,14 +43,14 @@ public class LandingPageController extends SelectorComposer<Component> {
 
             @Override
             public void onEvent(Event event) throws Exception {
-                MainPageController.getInstance().setContent("upload", getPage());
+                MainPageController.getInstance().setContent(ConstKt.PAGE_UPLOAD, getPage());
             }
         });
 
         existingLog.addEventListener(Events.ON_CLICK, new SerializableEventListener<Event>() {
             @Override
             public void onEvent(Event event) throws Exception {
-                MainPageController.getInstance().setContent("training", getPage());
+                MainPageController.getInstance().setContent(ConstKt.PAGE_TRAINING, getPage());
             }
         });
     }

@@ -117,6 +117,10 @@ public class MasterConfiguration {
         return headerItems;
     }
 
+    /**
+     * Training model configuration for Nirdizati application declared in configuration.xml
+     * @return Model configuration parameters
+     */
     public ModelConfiguration getModelConfiguration() {
         if (modelConfiguration == null) {
             modelProperties = readClass(ModelProperties.class, "modelConfig");
@@ -125,6 +129,10 @@ public class MasterConfiguration {
         return modelConfiguration;
     }
 
+    /**
+     * Thread pool configuration declared in configuration.xml
+     * @return configuration for thread pool
+     */
     public ThreadPoolConfiguration getThreadPoolConfiguration() {
         if (threadPoolConfiguration == null) {
             threadPoolConfiguration = readClass(ThreadPoolConfiguration.class, "threadpool");
@@ -132,14 +140,26 @@ public class MasterConfiguration {
         return threadPoolConfiguration;
     }
 
+    /**
+     * File extensions allowed for upload
+     * @return list of file extensions
+     */
     public List<String> getExtensions() {
         return extensions;
     }
 
+    /**
+     * List of columns that need to be identified when analyzing log
+     * @return list of columns
+     */
     public List<String> getUserCols() {
         return userCols;
     }
 
+    /**
+     * Optimized parameters for logs
+     * @return Map of optimized parameters where key is file name and value is list of optimized parameters
+     */
     public Map<String, List<ModelParameter>> getOptimizedParams() {
         return JsonReaderKt.readHyperParameterJson();
     }
@@ -169,6 +189,10 @@ public class MasterConfiguration {
         Logger.getRootLogger().addAppender(fileAppender);
     }
 
+    /**
+     * Directory configuration where Nirdizati will look for various elements declared in configuration.xml
+     * @return DirectoryPathConfiguration
+     */
     public DirectoryPathConfiguration getDirectoryPathConfiguration() {
         if (directoryPathConfiguration == null) {
             directoryPathConfiguration = readClass(DirectoryPathConfiguration.class, "paths");
@@ -176,6 +200,10 @@ public class MasterConfiguration {
         return directoryPathConfiguration;
     }
 
+    /**
+     * CSV reader configuration that defines user columns for csv parsing
+     * @return CSVConfiguration
+     */
     public CSVConfiguration getCSVConfiguration() {
         if (csvConfiguration == null) {
             csvConfiguration = readClass(CSVConfiguration.class, "csvConfig");
@@ -183,6 +211,10 @@ public class MasterConfiguration {
         return csvConfiguration;
     }
 
+    /**
+     * Page configuration that defines redirects in Nirdizati Training UI
+     * @return PageConfiguration
+     */
     public PageConfiguration getPageConfiguration() {
         if (pageConfiguration == null) {
             pageConfiguration = readClass(PageConfiguration.class, "pageConfig");
