@@ -16,6 +16,7 @@ public class JobTrackerController extends SelectorComposer<Component> {
     private Hbox tracker;
 
     public static final String GRID_ID = "tracker_grid";
+    public static final String TRACKER = "tracker";
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
