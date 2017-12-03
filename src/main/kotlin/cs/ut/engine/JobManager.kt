@@ -6,6 +6,7 @@ import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.NirdizatiGrid
+import cs.ut.ui.providers.JobValueProvider
 import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
@@ -84,6 +85,18 @@ class JobManager {
         fun notifyOfJobStatusChange(job: Job) {
             val grid: NirdizatiGrid<Job> = job.client.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
             updateJobStatus(job, grid.rows.getChildren(), grid)
+            val tracker = job.client.components.first { it.id == JobTrackerController.TRACKER }
+            val children = tracker.getChildren<Component>()
+            if (children.size > 1 && children[1].getAttribute(JobValueProvider.jobArg) == job) {
+                val metaGrid = children[1] as NirdizatiGrid<Any>
+                val btnRow = JobValueProvider.generateButtons(job as SimulationJob)
+                Executions.schedule(job.client,
+                        { _ ->
+                            metaGrid.generate(JobValueProvider.generateParameters(job))
+                            metaGrid.rows.appendChild(btnRow)
+                        },
+                        Event("job_status", null, "update"))
+            }
         }
 
         tailrec private fun updateJobStatus(job: Job, rows: List<Row>, grid: NirdizatiGrid<Job>) {
