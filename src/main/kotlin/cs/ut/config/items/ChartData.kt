@@ -2,7 +2,8 @@ package cs.ut.config.items
 
 import cs.ut.jobs.SimulationJob
 import cs.ut.manager.LogManager
-import cs.ut.ui.getScatterPayload
+import cs.ut.ui.Mode
+import cs.ut.ui.getLinearPayload
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.event.SerializableEventListener
@@ -22,10 +23,16 @@ class ChartDataDelegate(val job: SimulationJob?) {
     fun getCharts(): List<ChartData> = if (job == null) listOf() else listOf(
             /* True vs predicted value */
             ChartData(namespace + "true_vs_predicted", SerializableEventListener { _ ->
-                val payload = getScatterPayload(LogManager.getInstance().getDetailedFile(job))
-                val type = ChartType.scatter.name
+                val payload = getLinearPayload(LogManager.getInstance().getDetailedFile(job), Mode.SCATTER)
                 val caption = namespace + "true_vs_predicted"
                 evalJs(payload, caption, ChartType.scatter)
+            }),
+
+            /* Number of events vs MAE */
+            ChartData(namespace + "number_vs_mae", SerializableEventListener { _ ->
+                val payload = getLinearPayload(LogManager.getInstance().getValidationFile(job), Mode.LINE)
+                val caption = namespace + "number_vs_mae"
+                evalJs(payload, caption, ChartType.line)
             })
     )
 
