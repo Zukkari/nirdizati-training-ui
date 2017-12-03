@@ -53,7 +53,7 @@ function getScalesData(xLabel, yLabel) {
     }
 }
 
-function plot_line(payload, chart_label) {
+function plot_line(payload, chart_label, n_of_events) {
     var canvas = document.getElementById('chart_canvas');
     var ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -61,10 +61,18 @@ function plot_line(payload, chart_label) {
     chart = Chart.Line(ctx, {
         data: {
             datasets: getLinearDatasetData(payload, chart_label),
-            labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"]
+            labels: generateLabels(n_of_events)
         },
         options: {
             scales: getScalesData('Number of events', 'Mean average error')
         }
     })
+}
+
+function generateLabels(n_of_events) {
+    var labels = [];
+    for (var i = 1; i <= n_of_events; i++) {
+        labels.push(i.toString())
+    }
+    return labels
 }
