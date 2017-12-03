@@ -85,6 +85,10 @@ class JobManager {
         fun notifyOfJobStatusChange(job: Job) {
             val grid: NirdizatiGrid<Job> = job.client.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
             updateJobStatus(job, grid.rows.getChildren(), grid)
+            updateMetadataView(job)
+        }
+
+        private fun updateMetadataView(job: Job) {
             val tracker = job.client.components.first { it.id == JobTrackerController.TRACKER }
             val children = tracker.getChildren<Component>()
             if (children.size > 1 && children[1].getAttribute(JobValueProvider.jobArg) == job) {
