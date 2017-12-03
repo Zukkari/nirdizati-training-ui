@@ -1,6 +1,5 @@
 package cs.ut.ui
 
-import com.google.gson.Gson
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
@@ -33,7 +32,7 @@ fun getLinearPayload(file: File, mode: Mode): List<LinearData> {
 
     rows.filter { it.contains(MAE) || mode == Mode.SCATTER }.forEach {
         val items = it.split(delim)
-        dataSet.add(LinearData(x = items.get(indexes.first).toFloat(), y = items.get(indexes.second).toFloat()))
+        dataSet.add(LinearData(x = items.get(indexes.first).toFloat(), y = items.get(indexes.second).toFloat() / 86400))
     }
     return dataSet
 }
