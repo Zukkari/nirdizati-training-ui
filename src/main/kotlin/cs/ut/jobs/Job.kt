@@ -9,7 +9,6 @@ import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.util.Clients
 import java.util.*
-import kotlin.NoSuchElementException
 
 abstract class Job(val client: Desktop) : Runnable {
     val log = Logger.getLogger(Job::class.java)!!

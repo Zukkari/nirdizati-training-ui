@@ -7,26 +7,36 @@ import java.io.FileReader
 
 const val ACTUAL = "actual"
 const val PREDICTED = "predicted"
+const val NR_EVENTS = "nr_events"
+const val SCORE = "score"
 const val delim = ","
+const val MAE = "mae"
 
-class ScatterData(val x: Float, val y: Float)
+class LinearData(val x: Float, val y: Float)
 
-fun getScatterPayload(file: File): String {
-    val dataSet = mutableListOf<ScatterData>()
+enum class Mode {
+    SCATTER,
+    LINE
+}
+
+fun getLinearPayload(file: File, mode: Mode): String {
+    val dataSet = mutableListOf<LinearData>()
     val gson = Gson()
 
     var rows = BufferedReader(FileReader(file)).use { it.readLines() }
     val headerNames = rows.toMutableList().removeAt(0).split(delim)
-    val indexes = Pair(headerNames.indexOf(ACTUAL), headerNames.indexOf(PREDICTED))
+
+    val indexes: Pair<Int, Int> =
+            if (Mode.SCATTER == mode) Pair(headerNames.indexOf(ACTUAL), headerNames.indexOf(PREDICTED))
+            else Pair(headerNames.indexOf(NR_EVENTS), headerNames.indexOf(SCORE))
+
     rows = rows.subList(1, rows.size)
 
-    rows.forEach {
+    rows.filter { it.contains(MAE) || mode == Mode.SCATTER }.forEach {
         val items = it.split(delim)
-        dataSet.add(ScatterData(x = items.get(indexes.first).toFloat(), y = items.get(indexes.second).toFloat()))
+        dataSet.add(LinearData(x = items.get(indexes.first).toFloat(), y = items.get(indexes.second).toFloat()))
     }
     return gson.toJson(dataSet)
 }
 
-fun getLineChartPayload(file: File): String = ""
-
-fun getHistogrammPayload(file: File): String = ""
+fun getBarChartPayload(file: File): String = ""

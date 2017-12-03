@@ -6,15 +6,11 @@ import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.util.FileWriter
 import cs.ut.util.PREFIX
 import org.apache.commons.io.FilenameUtils
-import org.apache.log4j.Logger
 import org.json.JSONObject
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Desktop
 import java.io.File
 import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 import java.util.*
 import java.util.concurrent.TimeUnit
 
