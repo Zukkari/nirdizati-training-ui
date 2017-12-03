@@ -122,7 +122,7 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
             val propertyList = generateParameters(job)
 
             val grid = NirdizatiGrid(AttributeToLabelsProvider())
-            grid.id = job.toString()
+            grid.setAttribute(jobArg, job)
             grid.generate(propertyList)
             parent.appendChild(grid)
 

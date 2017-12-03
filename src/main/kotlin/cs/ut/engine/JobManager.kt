@@ -87,7 +87,7 @@ class JobManager {
             updateJobStatus(job, grid.rows.getChildren(), grid)
             val tracker = job.client.components.first { it.id == JobTrackerController.TRACKER }
             val children = tracker.getChildren<Component>()
-            if (children.size > 1 && children[1].id == job.toString()) {
+            if (children.size > 1 && children[1].getAttribute(JobValueProvider.jobArg) == job) {
                 val metaGrid = children[1] as NirdizatiGrid<Any>
                 val btnRow = JobValueProvider.generateButtons(job as SimulationJob)
                 Executions.schedule(job.client,
