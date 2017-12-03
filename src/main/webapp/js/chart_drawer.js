@@ -64,7 +64,7 @@ function plot_line(payload, chart_label, n_of_events) {
             labels: generateLabels(n_of_events)
         },
         options: {
-            scales: getScalesData('Number of events', 'Mean average error')
+            scales: getScalesData('Number of events', 'Mean average error (days)')
         }
     })
 }
