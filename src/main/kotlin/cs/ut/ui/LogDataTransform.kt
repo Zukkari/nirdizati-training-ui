@@ -19,9 +19,8 @@ enum class Mode {
     LINE
 }
 
-fun getLinearPayload(file: File, mode: Mode): String {
+fun getLinearPayload(file: File, mode: Mode): List<LinearData> {
     val dataSet = mutableListOf<LinearData>()
-    val gson = Gson()
 
     var rows = BufferedReader(FileReader(file)).use { it.readLines() }
     val headerNames = rows.toMutableList().removeAt(0).split(delim)
@@ -36,7 +35,7 @@ fun getLinearPayload(file: File, mode: Mode): String {
         val items = it.split(delim)
         dataSet.add(LinearData(x = items.get(indexes.first).toFloat(), y = items.get(indexes.second).toFloat()))
     }
-    return gson.toJson(dataSet)
+    return dataSet
 }
 
 fun getBarChartPayload(file: File): String = ""
