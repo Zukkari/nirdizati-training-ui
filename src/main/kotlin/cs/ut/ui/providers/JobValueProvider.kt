@@ -96,6 +96,7 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
 
             val visualize = Button(Labels.getLabel("job_tracker.visiualize"))
             visualize.hflex = "1"
+            visualize.isDisabled = !JobStatus.COMPLETED.equals(job.status)
 
             visualize.addEventListener(Events.ON_CLICK, { _ ->
                 Executions.getCurrent().setAttribute(jobArg, job)

@@ -1,12 +1,12 @@
 function plot_scatter(payload, chart_label) {
-    console.log('Started chart rendering...');
     var ctx = document.getElementById('chart_canvas').getContext('2d');
-    console.log('Cleared canvas');
     Chart.Scatter(ctx, {
         data: {
             datasets: [{
                 label: chart_label,
-                data: JSON.parse(payload)
+                data: JSON.parse(payload),
+                borderColor: 'rgba(0, 147, 249, 0.4)',
+                backgroundColor: 'rgba(0, 147, 249, 0.2)'
             }]
         },
 
@@ -40,5 +40,4 @@ function plot_scatter(payload, chart_label) {
             }
         }
     });
-    console.log('Finished chart rendering')
 }
