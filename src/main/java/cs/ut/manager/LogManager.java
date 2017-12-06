@@ -109,7 +109,12 @@ public class LogManager {
             List<File> files = new ArrayList<>();
             for (int i = 1; i <= 15; i++) {
                 String fileName = featureImportanceDir.concat(FEATURE.concat(FilenameUtils.getBaseName(job.toString()).concat("_").concat(String.valueOf(i))));
-                files.add(getFile(fileName));
+                try {
+                    files.add(getFile(fileName));
+                } catch (Exception e) {
+                    log.debug(String.format("Found %s files for job %s", files.size(), job));
+                    return files;
+                }
             }
             log.debug(String.format("Found <%s> files for job '%s'", files, job));
             return files;
