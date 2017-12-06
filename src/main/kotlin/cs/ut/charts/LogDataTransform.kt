@@ -1,4 +1,4 @@
-package cs.ut.ui
+package cs.ut.charts
 
 import java.io.BufferedReader
 import java.io.File
@@ -37,4 +37,21 @@ fun getLinearPayload(file: File, mode: Mode): List<LinearData> {
     return dataSet
 }
 
-fun getBarChartPayload(file: File): String = ""
+const val LABEL_INDEX = 0
+const val VALUE_INDEX = 1
+
+class BarChartData(val label: String, val value: Float)
+
+fun getBarChartPayload(file: File): List<BarChartData> {
+    val dataSet = mutableListOf<BarChartData>()
+
+    var rows = BufferedReader(FileReader(file)).use { it.readLines() }
+    rows = rows.subList(1, rows.size)
+
+    rows.forEach {
+        val items = it.split(delim)
+        dataSet.add(BarChartData(items.get(LABEL_INDEX), items.get(VALUE_INDEX).toFloat()))
+    }
+
+    return dataSet.filter { it.value > 0 }.sortedWith(compareByDescending { it.value }).take(20)
+}

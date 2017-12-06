@@ -56,7 +56,6 @@ function getScalesData(xLabel, yLabel) {
 function plot_line(payload, chart_label, n_of_events) {
     var canvas = document.getElementById('chart_canvas');
     var ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (chart != null) chart.destroy();
     chart = Chart.Line(ctx, {
         data: {
@@ -65,6 +64,39 @@ function plot_line(payload, chart_label, n_of_events) {
         },
         options: {
             scales: getScalesData('Number of events', 'Mean average error (days)')
+        }
+    })
+}
+
+function plot_bar(payload, chart_label, labels) {
+    var canvas = document.getElementById('chart_canvas');
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (chart != null) chart.destroy();
+
+    chart = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: {
+            labels: JSON.parse(labels),
+            datasets: [
+                {
+                    label: chart_label,
+                    data: JSON.parse(payload),
+                    backgroundColor: 'rgba(0, 147, 249, 0.4)',
+                    borderColor: 'rgba(0, 147, 249, 0.2)',
+                    borderWidth: 1
+                }
+            ]
+        },
+
+        options: {
+            elements: {
+                rectangle: {
+                    borderWidth: 2
+                }
+            },
+            reponsive: true
         }
     })
 }
