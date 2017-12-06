@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,6 +74,7 @@ public class LogManager {
 
     /**
      * Returns file from configured validation directory that is made as result of given job
+     *
      * @param job for which job file should be retrieved
      * @return file that contains job results
      */
@@ -84,6 +86,7 @@ public class LogManager {
 
     /**
      * Returns file from configured detailed directory that is made as result of given job
+     *
      * @param job for which job file should be retrieved
      * @return file that contains job results
      */
@@ -95,10 +98,11 @@ public class LogManager {
 
     /**
      * Returns either a file or List<File> based on the job. If job uses 'Prefix' encoding then list of files is returned.
+     *
      * @param job for which job file should be retrieved
      * @return file or list of files that contain job results
      */
-    public Object getFeatureImportanceFiles(SimulationJob job) {
+    public List<File> getFeatureImportanceFiles(SimulationJob job) {
         log.debug(String.format("Fetching feature importance log information for '%s'", job));
         if (ConstKt.PREFIX.equalsIgnoreCase(job.getBucketing().getId())) {
             log.debug("Prefix job, returing list of files");
@@ -110,7 +114,7 @@ public class LogManager {
             log.debug(String.format("Found <%s> files for job '%s'", files, job));
             return files;
         } else {
-            return getFile(featureImportanceDir.concat(FEATURE.concat(FilenameUtils.getBaseName(job.toString()).concat("_1"))));
+            return Collections.singletonList(getFile(featureImportanceDir.concat(FEATURE.concat(FilenameUtils.getBaseName(job.toString()).concat("_1")))));
         }
     }
 

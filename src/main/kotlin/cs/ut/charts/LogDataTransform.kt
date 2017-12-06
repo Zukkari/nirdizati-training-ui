@@ -1,4 +1,4 @@
-package cs.ut.ui
+package cs.ut.charts
 
 import java.io.BufferedReader
 import java.io.File
@@ -53,5 +53,5 @@ fun getBarChartPayload(file: File): List<BarChartData> {
         dataSet.add(BarChartData(items.get(LABEL_INDEX), items.get(VALUE_INDEX).toFloat()))
     }
 
-    return dataSet.filter { it.value > 0 }.sortedWith(compareByDescending { it.value }).take(10)
+    return dataSet.filter { it.value > 0 }.sortedWith(compareByDescending { it.value }).take(20)
 }
