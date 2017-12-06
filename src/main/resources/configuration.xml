@@ -65,7 +65,7 @@
         <!-- Detailed log result information path relative to script directory -->
         <detailedDir>results/detailed/</detailedDir>
         <!-- Feature importance dir location relative to script dir -->
-        <featureDir>results/improtance/</featureDir>
+        <featureDir>results/feature_importance/</featureDir>
         <!-- Validation directory relative to script dir -->
         <validationDir>results/validation/</validationDir>
     </paths>

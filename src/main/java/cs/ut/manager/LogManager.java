@@ -104,13 +104,13 @@ public class LogManager {
             log.debug("Prefix job, returing list of files");
             List<File> files = new ArrayList<>();
             for (int i = 1; i <= 15; i++) {
-                String fileName = FEATURE.concat(FilenameUtils.getBaseName(job.toString()).concat("_").concat(String.valueOf(i)));
+                String fileName = featureImportanceDir.concat(FEATURE.concat(FilenameUtils.getBaseName(job.toString()).concat("_").concat(String.valueOf(i))));
                 files.add(getFile(fileName));
             }
             log.debug(String.format("Found <%s> files for job '%s'", files, job));
             return files;
         } else {
-            return getFile(FEATURE.concat(FilenameUtils.getBaseName(job.toString())));
+            return getFile(featureImportanceDir.concat(FEATURE.concat(FilenameUtils.getBaseName(job.toString()).concat("_1"))));
         }
     }
 
@@ -119,7 +119,7 @@ public class LogManager {
         File file = new File(fileName.concat(".csv"));
         log.debug(String.format("Looking for file <%s>", file.getName()));
         if (!file.exists()) {
-            throw new NirdizatiRuntimeException(String.format("Validation file '%s' could not be found.", fileName));
+            throw new NirdizatiRuntimeException(String.format("Validation file '%s' could not be found.", file.getAbsolutePath()));
         }
         log.debug("File successfully found");
         return file;

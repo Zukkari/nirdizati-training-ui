@@ -75,14 +75,19 @@ function plot_bar(payload, chart_label, labels) {
 
     if (chart != null) chart.destroy();
 
-    chart = Chart.Bar(ctx, {
+    chart = new Chart(ctx, {
         type: 'horizontalBar',
         data: {
             labels: JSON.parse(labels),
-            backgroundColor: 'rgba(0, 147, 249, 0.4)',
-            borderColor: 'rgba(0, 147, 249, 0.2)',
-            borderWidth: 1,
-            data: JSON.parse(payload)
+            datasets: [
+                {
+                    label: chart_label,
+                    data: JSON.parse(payload),
+                    backgroundColor: 'rgba(0, 147, 249, 0.4)',
+                    borderColor: 'rgba(0, 147, 249, 0.2)',
+                    borderWidth: 1
+                }
+            ]
         },
 
         options: {
@@ -91,11 +96,7 @@ function plot_bar(payload, chart_label, labels) {
                     borderWidth: 2
                 }
             },
-            reponsive: true,
-            title: {
-                display: true,
-                text: chart_label
-            }
+            reponsive: true
         }
     })
 }
