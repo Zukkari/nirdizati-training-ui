@@ -86,7 +86,7 @@ class ValidationController : SelectorComposer<Component>() {
         return SerializableEventListener { _ ->
             removeChildren()
             val hlayout = Hlayout()
-            hlayout.appendChild(Label(Labels.getLabel("validation.select_version")))
+            hlayout.appendChild(Label())
 
             val combobox = Combobox()
             (1..charts.size).zip(charts).forEach {
