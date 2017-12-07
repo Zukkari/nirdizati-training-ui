@@ -1,14 +1,17 @@
 package cs.ut.controllers
 
-import cs.ut.config.items.ChartData
-import cs.ut.config.items.ChartDataDelegate
+import cs.ut.charts.Chart
+import cs.ut.charts.ChartGenerator
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.providers.JobValueProvider
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
+import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.event.Events
+import org.zkoss.zk.ui.event.SelectEvent
+import org.zkoss.zk.ui.event.SerializableEventListener
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Wire
 import org.zkoss.zul.*
@@ -16,8 +19,7 @@ import org.zkoss.zul.*
 class ValidationController : SelectorComposer<Component>() {
     private val log = Logger.getLogger(ValidationController::class.java)
     private var job: SimulationJob? = null
-
-    private val charts: List<ChartData> by lazy { ChartDataDelegate(job).getCharts() }
+    private val charts: Map<String, List<Chart>> by lazy { ChartGenerator(job).getCharts().groupBy { it.getCaption() } }
 
     @Wire
     lateinit private var metadataRows: Rows
@@ -54,14 +56,64 @@ class ValidationController : SelectorComposer<Component>() {
         selectionRows.appendChild(row)
     }
 
-    private fun generateCell(row: Row, data: ChartData) {
+    private fun generateCell(row: Row, entry: Map.Entry<String, List<Chart>>) {
         val cell = Cell()
-        val label = Label(Labels.getLabel(data.caption))
+        val label = Label(Labels.getLabel(entry.key))
         cell.align = "center"
         cell.valign = "center"
-        cell.addEventListener(Events.ON_CLICK, data.action)
+        cell.addEventListener(Events.ON_CLICK,
+                if (entry.value.size == 1) generateListenerForOne(entry.value.first()) else generateListenerForMany(entry.value))
+        cell.addEventListener(Events.ON_CLICK, {_ ->
+            selectionRows.getChildren<Row>().first().getChildren<Cell>().forEach { it.setClass("") }
+            cell.setClass("selected-option")})
         cell.appendChild(label)
         row.appendChild(cell)
+    }
+
+    private fun generateListenerForOne(chart: Chart): SerializableEventListener<Event> {
+        return SerializableEventListener { _ ->
+            removeChildren()
+            chart.render()
+        }
+    }
+
+    private fun removeChildren() {
+        val children = selectionRows.getChildren<Row>()
+        while (children.size > 1) selectionRows.removeChild(children.last())
+    }
+
+    private fun generateListenerForMany(charts: List<Chart>): SerializableEventListener<Event> {
+        return SerializableEventListener { _ ->
+            removeChildren()
+            val hlayout = Hlayout()
+            hlayout.appendChild(Label(Labels.getLabel("validation.select_version")))
+
+            val combobox = Combobox()
+            (1..charts.size).zip(charts).forEach {
+                val comboItem = combobox.appendItem(it.first.toString())
+                comboItem.setValue(it.second)
+            }
+
+            combobox.isReadonly = true
+            combobox.setConstraint("no empty")
+            combobox.selectedItem = combobox.items.first()
+            (combobox.selectedItem.getValue() as Chart).render()
+
+            combobox.addEventListener(Events.ON_SELECT, { e -> (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).render() })
+            hlayout.appendChild(combobox)
+
+            val row = Row()
+            row.align = "center"
+            row.valign = "center"
+            row.appendChild(Cell())
+            row.appendChild(Cell())
+
+            val cell = Cell()
+            cell.appendChild(hlayout)
+            cell.sclass = "selected-option"
+            row.appendChild(cell)
+            selectionRows.appendChild(row)
+        }
     }
 
     private fun generatePropertyRow() {

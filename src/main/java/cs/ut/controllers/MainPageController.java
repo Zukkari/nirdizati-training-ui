@@ -43,6 +43,7 @@ public class MainPageController extends SelectorComposer<Component> {
     public void setContent(String destination, Page page) {
         getPage().setTitle(Labels.getLabel("header.".concat(destination)).concat(" - Nirdizati"));
         Include include = (Include) Selectors.iterable(page, "#contentInclude").iterator().next();
+        include.setSrc(null);
         include.setSrc(MasterConfiguration.getInstance().getPageConfiguration().getByPageName(destination).getUri());
     }
 

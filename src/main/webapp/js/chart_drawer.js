@@ -27,6 +27,7 @@ function getLinearDatasetData(payload, chart_label, labels) {
         data: JSON.parse(payload),
         borderColor: 'rgba(0, 147, 249, 0.4)',
         backgroundColor: 'rgba(0, 147, 249, 0.2)',
+        fill: false
     }]
 }
 
@@ -63,6 +64,11 @@ function plot_line(payload, chart_label, n_of_events) {
             labels: generateLabels(n_of_events)
         },
         options: {
+            elements: {
+                line: {
+                    tension: 0
+                }
+            },
             scales: getScalesData('Number of events', 'Mean average error (days)')
         }
     })
