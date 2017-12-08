@@ -9,7 +9,7 @@ function plot_scatter(payload, chart_label) {
             datasets: getLinearDatasetData(payload, chart_label)
         },
         options: {
-            scales: getScalesData('Actual', 'Predicted'),
+            scales: getScalesData('Actual (days)', 'Predicted (days)'),
             tooltips: {
                 callbacks: {
                     label: function (tooltipItem, chart) {
@@ -69,7 +69,7 @@ function plot_line(payload, chart_label, n_of_events) {
                     tension: 0
                 }
             },
-            scales: getScalesData('Number of events', 'Mean average error (days)')
+            scales: getScalesData('Number of events', 'Mean absolute error (days)')
         }
     })
 }

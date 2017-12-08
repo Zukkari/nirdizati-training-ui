@@ -3,6 +3,7 @@ package cs.ut.util
 const val COMP_ID = "compId"
 const val CASE_ID_COL = "case_id_col"
 const val ACTIVITY_COL = "activity_col"
+const val RESOURCE_COL = "resource_col"
 const val TIMESTAMP_COL = "timestamp_col"
 const val LABEL_NUM_COLS = "label_num_cols"
 const val LABEL_CAT_COLS = "label_cat_cols"

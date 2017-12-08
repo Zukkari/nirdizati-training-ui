@@ -25,7 +25,6 @@ public class JobTrackerController extends SelectorComposer<Component> {
         NirdizatiGrid<Job> jobGrid = new NirdizatiGrid<>(new JobValueProvider(tracker));
         ((JobValueProvider)jobGrid.getProvider()).setOriginator(jobGrid);
 
-        jobGrid.setHflex("min");
         jobGrid.setId(GRID_ID);
 
         Map<String, String> properties = new HashMap<>();
@@ -33,10 +32,6 @@ public class JobTrackerController extends SelectorComposer<Component> {
         properties.put("tracker.job_status", "140%");
 
         jobGrid.setColumns(properties);
-        jobGrid.setHflex("min");
-
-        jobGrid.setVflex("1");
-        jobGrid.getRows().setVflex("1");
 
         tracker.appendChild(jobGrid);
     }

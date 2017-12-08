@@ -19,23 +19,9 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
     companion object {
         const val jobArg = "JOB"
 
-        fun generateParameters(job: SimulationJob): List<Any> {
-            var propertyList = listOf(
-                    mapOf(Pair("log_file", job.logFile)),
-                    mapOf(Pair("create_time", job.createTime)),
-                    mapOf(Pair("start_time", if (job.status == JobStatus.PENDING) "" else job.startTime)),
-                    mapOf(Pair("complete_time", if (job.status == JobStatus.COMPLETED) job.completeTime else "")),
-                    job.status,
-                    job.encoding,
-                    job.bucketing,
-                    job.learner,
-                    job.outcome
-            )
-            propertyList += job.learner.properties
-            return propertyList
-        }
+        fun generateButtons(job: SimulationJob): Vlayout {
+            val vlayout = Vlayout()
 
-        fun generateButtons(job: SimulationJob): Row {
             val visualize = Button(Labels.getLabel("job_tracker.visiualize"))
             visualize.hflex = "1"
             visualize.isDisabled = !(JobStatus.COMPLETED == job.status || JobStatus.FINISHING == job.status)
@@ -52,7 +38,11 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
             val btnRow = Row()
             btnRow.appendChild(visualize)
             btnRow.appendChild(deploy)
-            return btnRow
+
+            vlayout.appendChild(visualize)
+            vlayout.appendChild(deploy)
+
+            return vlayout
         }
     }
 
@@ -68,7 +58,6 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
         row.appendChild(label)
         row.appendChild(status)
         row.setValue(data)
-        addRowListener(row)
 
         fields.add(FieldComponent(label, status))
 
@@ -93,6 +82,7 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
         val vlayout = Vlayout()
         vlayout.appendChild(label)
         vlayout.appendChild(bottom)
+        vlayout.appendChild(generateButtons(job))
 
         return vlayout
     }
@@ -111,28 +101,5 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
         res.isMultiline = true
         res.isPre = true
         return res
-    }
-
-    private fun addRowListener(row: Row) {
-        row.addEventListener(Events.ON_CLICK, { _ ->
-            if (parent.getChildren<Component>().size == 2) return@addEventListener
-
-            originator.isVisible = false
-            val job = row.getValue<Job>() as SimulationJob
-            val propertyList = generateParameters(job)
-
-            val grid = NirdizatiGrid(AttributeToLabelsProvider())
-            grid.setAttribute(jobArg, job)
-            grid.generate(propertyList)
-            parent.appendChild(grid)
-
-            grid.addEventListener(Events.ON_CLICK, { _ ->
-                parent.removeChild(grid)
-                originator.isVisible = true
-            })
-
-            val btnRow = generateButtons(job)
-            grid.rows.appendChild(btnRow)
-        })
     }
 }

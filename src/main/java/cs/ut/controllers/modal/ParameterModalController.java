@@ -89,6 +89,7 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
 
         Map<String, String> identifiedCols = new HashMap<>();
         csvReader.identifyUserColumns(fileColumns, identifiedCols);
+        identifiedCols.put(ConstKt.TIMESTAMP_COL, csvReader.getTimeStamp());
 
         Escaper escaper = HtmlEscapers.htmlEscaper();
 
