@@ -10,6 +10,7 @@ import cs.ut.ui.NirdizatiGrid;
 import cs.ut.ui.providers.GeneratorArgument;
 import cs.ut.ui.providers.ModelParamToCombo;
 import cs.ut.ui.providers.PropertyValueProvider;
+import cs.ut.util.NirdizatiUtil;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -103,7 +104,7 @@ public class BasicModeController extends AbstractModeController implements ModeC
         List<ModelParameter> params = optimized.get(logName);
 
         log.debug(String.format("Optimal parameters: %s", params));
-        String msg = Labels.getLabel("training.found_optimized_params", new Object[]{HtmlEscapers.htmlEscaper().escape(logName)});
+        String msg = NirdizatiUtil.Companion.localizeText("training.found_optimized_params", HtmlEscapers.htmlEscaper().escape(logName));
         log.debug(String.format("Showing notification message to user '%s'", msg));
         Clients.showNotification(msg, "info", grid, "end_center", 5000, true);
 

@@ -4,6 +4,7 @@ import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.util.FileWriter
+import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PREFIX
 import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
@@ -94,7 +95,7 @@ class SimulationJob(val encoding: ModelParameter,
     }
 
     override fun isNotificationRequired() = true
-    override fun getNotificationMessage() = Labels.getLabel("job.completed.simulation", arrayOf(this.toString()))!!
+    override fun getNotificationMessage() = NirdizatiUtil.localizeText("job.completed.simulation", this.toString())
 
     override fun toString(): String {
         return FilenameUtils.getBaseName(logFile.name) +
