@@ -21,18 +21,20 @@ enum class Mode {
 fun getLinearPayload(file: File, mode: Mode): List<LinearData> {
     val dataSet = mutableListOf<LinearData>()
 
-    var rows = BufferedReader(FileReader(file)).use { it.readLines() }
-    val headerNames = rows.toMutableList().removeAt(0).split(delim)
+    var indexes = Pair(-1, -1)
+    BufferedReader(FileReader(file)).lines().forEach {
+        if (indexes.first == -1) {
+            val headerItems = it.split(delim)
+            indexes = if (Mode.SCATTER == mode) Pair(headerItems.indexOf(ACTUAL), headerItems.indexOf(PREDICTED))
+            else Pair(headerItems.indexOf(NR_EVENTS), headerItems.indexOf(SCORE))
+        } else if (it.contains(MAE) || mode == Mode.SCATTER) {
+            val items = it.split(delim)
+            dataSet.add(
+                    LinearData(
+                            x = items.get(indexes.first).toFloat() / if (mode == Mode.SCATTER) 86400 else 1,
+                            y = items.get(indexes.second).toFloat() / 86400))
+        }
 
-    val indexes: Pair<Int, Int> =
-            if (Mode.SCATTER == mode) Pair(headerNames.indexOf(ACTUAL), headerNames.indexOf(PREDICTED))
-            else Pair(headerNames.indexOf(NR_EVENTS), headerNames.indexOf(SCORE))
-
-    rows = rows.subList(1, rows.size)
-
-    rows.filter { it.contains(MAE) || mode == Mode.SCATTER }.forEach {
-        val items = it.split(delim)
-        dataSet.add(LinearData(x = items.get(indexes.first).toFloat(), y = items.get(indexes.second).toFloat() / 86400))
     }
     return dataSet
 }
@@ -53,5 +55,5 @@ fun getBarChartPayload(file: File): List<BarChartData> {
         dataSet.add(BarChartData(items.get(LABEL_INDEX), items.get(VALUE_INDEX).toFloat()))
     }
 
-    return dataSet.filter { it.value > 0 }.sortedWith(compareByDescending { it.value }).take(20)
+    return dataSet
 }

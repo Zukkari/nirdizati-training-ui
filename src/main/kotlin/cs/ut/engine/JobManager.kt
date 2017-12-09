@@ -4,14 +4,15 @@ import cs.ut.config.items.ModelParameter
 import cs.ut.controllers.JobTrackerController
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.Job
+import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.NirdizatiGrid
-import cs.ut.ui.providers.JobValueProvider
 import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.Session
 import org.zkoss.zk.ui.event.Event
+import org.zkoss.zul.Button
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import java.io.File
@@ -22,7 +23,6 @@ class JobManager {
     companion object Manager {
         val log = Logger.getLogger(JobManager::class.java)!!
 
-        private val completedJobs: List<Job> = arrayListOf()
         private val jobQueue: MutableMap<Session, Queue<Job>> = HashMap()
 
         var logFile: File? = null
@@ -69,6 +69,7 @@ class JobManager {
 
             val grid = Executions.getCurrent().desktop.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
             grid.generate(currentJobs.toList().reversed(), false)
+            grid.isVisible = true
 
             while (currentJobs.peek() != null) {
                 executor.execute(currentJobs.poll())
@@ -85,35 +86,23 @@ class JobManager {
         fun notifyOfJobStatusChange(job: Job) {
             val grid: NirdizatiGrid<Job> = job.client.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
             updateJobStatus(job, grid.rows.getChildren(), grid)
-            updateMetadataView(job)
-        }
-
-        private fun updateMetadataView(job: Job) {
-            val tracker = job.client.components.first { it.id == JobTrackerController.TRACKER }
-            val children = tracker.getChildren<Component>()
-            if (children.size > 1 && children[1].getAttribute(JobValueProvider.jobArg) == job) {
-                val metaGrid = children[1] as NirdizatiGrid<Any>
-                val btnRow = JobValueProvider.generateButtons(job as SimulationJob)
-                Executions.schedule(job.client,
-                        { _ ->
-                            metaGrid.generate(JobValueProvider.generateParameters(job))
-                            metaGrid.rows.appendChild(btnRow)
-                        },
-                        Event("job_status", null, "update"))
-            }
         }
 
         tailrec private fun updateJobStatus(job: Job, rows: List<Row>, grid: NirdizatiGrid<Job>) {
             if (rows.isNotEmpty()) {
                 val row = rows.first()
+                val buttons = row.lastChild.lastChild.getChildren<Component>()
+                val children = row.lastChild.getChildren<Component>()
+                val statusLabel = children[children.size - 2].lastChild.lastChild as Label
 
                 if (job == row.getValue()) {
-                    val statusLabel = row.getChildren<Component>()[1] as Label
-
                     Executions.schedule(job.client,
                             { _ ->
                                 statusLabel.value = job.status.name
-                                grid.hflex = "min"
+                                buttons.forEach { (it as Button).isDisabled = job.status != JobStatus.COMPLETED }
+                                if (grid.rows.getChildren<Row>().size > 3) {
+                                    grid.vflex = "min"
+                                }
                             },
                             Event("job_status", null, "update"))
                 } else {

@@ -63,9 +63,10 @@ class ValidationController : SelectorComposer<Component>() {
         cell.valign = "center"
         cell.addEventListener(Events.ON_CLICK,
                 if (entry.value.size == 1) generateListenerForOne(entry.value.first()) else generateListenerForMany(entry.value))
-        cell.addEventListener(Events.ON_CLICK, {_ ->
+        cell.addEventListener(Events.ON_CLICK, { _ ->
             selectionRows.getChildren<Row>().first().getChildren<Cell>().forEach { it.setClass("") }
-            cell.setClass("selected-option")})
+            cell.setClass("selected-option")
+        })
         cell.appendChild(label)
         row.appendChild(cell)
     }

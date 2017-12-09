@@ -20,6 +20,10 @@ public class CSVConfiguration {
     @XmlElement(name = "id")
     private List<String> activityId;
 
+    @XmlElementWrapper(name = "resourceId")
+    @XmlElement(name = "id")
+    private List<String> resourceId;
+
     @XmlElementWrapper(name = "timestampFormat")
     @XmlElement(name = "format")
     private List<String> timestampFormat;
@@ -67,5 +71,9 @@ public class CSVConfiguration {
 
     public Integer getSampleSize() {
         return sampleSize;
+    }
+
+    public List<String> getResourceId() {
+        return resourceId;
     }
 }

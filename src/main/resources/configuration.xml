@@ -103,6 +103,7 @@
         <userCols>
             <col>case_id_col</col>
             <col>activity_col</col>
+            <col>timestamp_col</col>
         </userCols>
 
         <!-- Values that will be used to search for case id column -->
@@ -120,9 +121,14 @@
             <id>event_name</id>
         </activityId>
 
+        <!-- Values that will be used to search for resource column -->
+        <resourceId>
+            <id>resource</id>
+        </resourceId>
+
         <!-- Values that will be used for timestamp column identification -->
         <timestampFormat>
-            <format>\d{4}-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}</format>
+            <format>\d{4}[-/]\d{1,2}[-/]\d{1,2}[ T]\d{1,2}:\d{1,2}:\d{1,2}</format>
             <format>yyyy-mm-dd'T'hh:mm:ss</format>
         </timestampFormat>
 
@@ -137,7 +143,7 @@
         </emptyValues>
 
         <!-- Threshold that decides whether value is categorical or numerical -->
-        <threshold>10</threshold>
+        <threshold>20</threshold>
 
         <!-- Sample size, how many cases should be used for categorization -->
         <sampleSize>100</sampleSize>
