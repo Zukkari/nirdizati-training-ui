@@ -18,32 +18,6 @@ import org.zkoss.zul.*
 class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
     companion object {
         const val jobArg = "JOB"
-
-        fun generateButtons(job: SimulationJob): Vlayout {
-            val vlayout = Vlayout()
-
-            val visualize = Button(Labels.getLabel("job_tracker.visiualize"))
-            visualize.hflex = "1"
-            visualize.isDisabled = !(JobStatus.COMPLETED == job.status || JobStatus.FINISHING == job.status)
-
-            visualize.addEventListener(Events.ON_CLICK, { _ ->
-                Executions.getCurrent().setAttribute(jobArg, job)
-                MainPageController.getInstance().setContent(PAGE_VALIDATION, Executions.getCurrent().desktop.firstPage)
-            })
-
-            val deploy = Button(Labels.getLabel("job_tracker.deploy_to_runtime"))
-            deploy.isDisabled = true
-            deploy.hflex = "1"
-
-            val btnRow = Row()
-            btnRow.appendChild(visualize)
-            btnRow.appendChild(deploy)
-
-            vlayout.appendChild(visualize)
-            vlayout.appendChild(deploy)
-
-            return vlayout
-        }
     }
 
     override var fields: MutableList<FieldComponent> = mutableListOf()
@@ -53,10 +27,11 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
         val status = Label(data.status.name)
 
         val row = Row()
+        row.valign = "end"
+
         val label = formJobLabel(data)
 
         row.appendChild(label)
-        row.appendChild(status)
         row.setValue(data)
 
         fields.add(FieldComponent(label, status))
@@ -82,9 +57,62 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
         val vlayout = Vlayout()
         vlayout.appendChild(label)
         vlayout.appendChild(bottom)
-        vlayout.appendChild(generateButtons(job))
+        vlayout.appendChild(formJobMetadata(job))
+
+        val hlayout = Hlayout()
+        hlayout.appendChild(getVisualizeBtn(job))
+        hlayout.appendChild(getDeployBtn())
+        vlayout.appendChild(hlayout)
 
         return vlayout
+    }
+
+    private fun getVisualizeBtn(job: SimulationJob): Button {
+        val visualize = Button(Labels.getLabel("job_tracker.visiualize"))
+        visualize.hflex = "1"
+        visualize.isDisabled = !(JobStatus.COMPLETED == job.status || JobStatus.FINISHING == job.status)
+
+        visualize.addEventListener(Events.ON_CLICK, { _ ->
+            Executions.getCurrent().setAttribute(jobArg, job)
+            MainPageController.getInstance().setContent(PAGE_VALIDATION, Executions.getCurrent().desktop.firstPage)
+        })
+
+        return visualize
+    }
+
+    private fun getDeployBtn(): Button {
+        val deploy = Button(Labels.getLabel("job_tracker.deploy_to_runtime"))
+        deploy.isDisabled = true
+        deploy.hflex = "1"
+        deploy.vflex = "min"
+
+        return deploy
+    }
+
+    private fun formJobMetadata(job: SimulationJob): Vlayout {
+        val statusLabel = Label(Labels.getLabel("attribute.job_status"))
+        statusLabel.style = "font-weight: bold;"
+
+        val status = Label(job.status.name)
+
+        val statusLayout = Hlayout()
+        statusLayout.appendChild(statusLabel)
+        statusLayout.appendChild(status)
+
+        val fileLabel = Label(Labels.getLabel("attribute.log_file"))
+        fileLabel.style = "font-weight: bold;"
+
+        val file = Label(job.logFile.name)
+
+        val fileLayout = Hlayout()
+        fileLayout.appendChild(fileLabel)
+        fileLayout.appendChild(file)
+
+        val res = Vlayout()
+        res.appendChild(fileLayout)
+        res.appendChild(statusLayout)
+
+        return res
     }
 
     private fun formHyperparamRow(learner: ModelParameter): Label {

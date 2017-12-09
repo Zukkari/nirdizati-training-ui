@@ -17,6 +17,7 @@ const val REMTIME = "remtime"
 const val OUTCOME = "label"
 
 const val PROPERTY = "property"
+const val TRACKER_EAST = "trackerEast"
 
 const val PAGE_LANDING = "landing"
 const val PAGE_UPLOAD = "upload"

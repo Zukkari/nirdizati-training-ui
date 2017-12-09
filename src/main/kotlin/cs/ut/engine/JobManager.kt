@@ -69,6 +69,7 @@ class JobManager {
 
             val grid = Executions.getCurrent().desktop.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
             grid.generate(currentJobs.toList().reversed(), false)
+            grid.isVisible = true
 
             while (currentJobs.peek() != null) {
                 executor.execute(currentJobs.poll())
@@ -90,16 +91,18 @@ class JobManager {
         tailrec private fun updateJobStatus(job: Job, rows: List<Row>, grid: NirdizatiGrid<Job>) {
             if (rows.isNotEmpty()) {
                 val row = rows.first()
+                val buttons = row.lastChild.lastChild.getChildren<Component>()
+                val children = row.lastChild.getChildren<Component>()
+                val statusLabel = children[children.size - 2].lastChild.lastChild as Label
 
                 if (job == row.getValue()) {
-                    val statusLabel = row.getChildren<Component>()[1] as Label
-                    val visualize = row.getChildren<Component>()[0].lastChild.firstChild as Button
-
                     Executions.schedule(job.client,
                             { _ ->
                                 statusLabel.value = job.status.name
-                                visualize.isDisabled = job.status != JobStatus.COMPLETED
-                                grid.vflex = "min"
+                                buttons.forEach { (it as Button).isDisabled = job.status != JobStatus.COMPLETED }
+                                if (grid.rows.getChildren<Row>().size > 3) {
+                                    grid.vflex = "min"
+                                }
                             },
                             Event("job_status", null, "update"))
                 } else {

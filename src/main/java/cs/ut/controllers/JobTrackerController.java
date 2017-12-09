@@ -6,6 +6,7 @@ import cs.ut.ui.providers.JobValueProvider;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zul.East;
 import org.zkoss.zul.Hbox;
 
 import java.util.HashMap;
@@ -24,15 +25,9 @@ public class JobTrackerController extends SelectorComposer<Component> {
 
         NirdizatiGrid<Job> jobGrid = new NirdizatiGrid<>(new JobValueProvider(tracker));
         ((JobValueProvider)jobGrid.getProvider()).setOriginator(jobGrid);
+        jobGrid.setVisible(false);
 
         jobGrid.setId(GRID_ID);
-
-        Map<String, String> properties = new HashMap<>();
-        properties.put("tracker.job_name", "240%");
-        properties.put("tracker.job_status", "140%");
-
-        jobGrid.setColumns(properties);
-
         tracker.appendChild(jobGrid);
     }
 }
