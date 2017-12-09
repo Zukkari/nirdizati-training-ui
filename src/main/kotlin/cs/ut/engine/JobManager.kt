@@ -7,7 +7,6 @@ import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.NirdizatiGrid
-import cs.ut.ui.providers.JobValueProvider
 import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions

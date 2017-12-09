@@ -55,5 +55,5 @@ fun getBarChartPayload(file: File): List<BarChartData> {
         dataSet.add(BarChartData(items.get(LABEL_INDEX), items.get(VALUE_INDEX).toFloat()))
     }
 
-    return dataSet.filter { it.value > 0 }.sortedWith(compareByDescending { it.value }).take(20)
+    return dataSet
 }
