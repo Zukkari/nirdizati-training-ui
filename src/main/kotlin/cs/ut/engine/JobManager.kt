@@ -2,6 +2,7 @@ package cs.ut.engine
 
 import cs.ut.config.items.ModelParameter
 import cs.ut.controllers.JobTrackerController
+import cs.ut.controllers.MainPageController
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
@@ -9,6 +10,7 @@ import cs.ut.jobs.SimulationJob
 import cs.ut.ui.NirdizatiGrid
 import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Component
+import org.zkoss.zk.ui.Desktop
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.Session
 import org.zkoss.zk.ui.event.Event
@@ -100,14 +102,18 @@ class JobManager {
                             { _ ->
                                 statusLabel.value = job.status.name
                                 buttons.forEach { (it as Button).isDisabled = job.status != JobStatus.COMPLETED }
-                                if (grid.rows.getChildren<Row>().size > 3) {
-                                    grid.vflex = "min"
-                                }
+                                resizeGrid(job.client, grid)
                             },
                             Event("job_status", null, "update"))
                 } else {
                     updateJobStatus(job, rows.drop(1), grid)
                 }
+            }
+        }
+
+        private fun resizeGrid(desktop: Desktop, grid: NirdizatiGrid<Job>) {
+            if (grid.rows.getChildren<Row>().size >= MainPageController.getInstance().getClientInfo(desktop.session).maxJobCount) {
+                grid.vflex = "min"
             }
         }
     }
