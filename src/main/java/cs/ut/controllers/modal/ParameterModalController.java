@@ -140,7 +140,7 @@ public class ParameterModalController extends GenericAutowireComposer<Component>
             Map<String, List<String>> acceptedParameters = gatherAcceptedValues();
             acceptedParameters.forEach((k, v) -> identifiedColumns.put(k, v));
             new NirdizatiThreadPool().execute(new DataSetGenerationJob(identifiedColumns, file, execution.getDesktop()));
-            Clients.showNotification(Labels.getLabel("upload.success", new Object[]{HtmlEscapers.htmlEscaper().escape(file.getName())}), "info", getPage().getFirstRoot(), "bottom_right", -1);
+            Clients.showNotification(Labels.getLabel("upload.success", new Object[]{HtmlEscapers.htmlEscaper().escape(file.getName())}), "info", getPage().getFirstRoot(), "bottom_center", -1, true);
             MainPageController.getInstance().setContent(ConstKt.PAGE_TRAINING, getPage());
             modal.detach();
         };
