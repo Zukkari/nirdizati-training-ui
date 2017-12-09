@@ -15,7 +15,7 @@ class PageConfigurationTest {
 
     @Test
     fun existingPageTest() {
-        assertNotNull(config.getByPageName("uploadLog"), "Existing page should be present")
+        assertNotNull(config.getByPageName("upload"), "Existing page should be present")
     }
 
     @Test

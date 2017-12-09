@@ -12,25 +12,14 @@
     background-color: rgba(255, 21, 0, 0.38);
 }
 
-.tracker_grid {
-    margin-left: 40px;
-}
-
-.tracker_grid .z-column-content {
-    font-size: 9px;
-    padding: 4px;
-}
-
 /* Toggle css taken from: */
 /* https://github.com/zkoss-demo/zk-template-examples/blob/toggle-switch/src/main/webapp/css-toggle-switch/css/cmn-toggle-for-zk-checkbox.css#L21 */
-.tracker_grid .z-row-content .z-label {
-    font-size: 9px;
-}
 
 .toggle > input {
     position: absolute;
     visibility: hidden;
 }
+
 .toggle > label {
     display: block;
     position: relative;
@@ -46,12 +35,14 @@
     border-radius: 30px;
     transition: background 0.4s;
 }
+
 .toggle-round-flat > label:before,
 .toggle-round-flat > label:after {
     display: block;
     position: absolute;
     content: "";
 }
+
 .toggle-round-flat > label:before {
     top: 1px;
     left: 1px;
@@ -61,6 +52,7 @@
     border-radius: 30px;
     transition: background 0.4s;
 }
+
 .toggle-round-flat > label:after {
     top: 2px;
     left: 2px;
@@ -70,10 +62,21 @@
     border-radius: 26px;
     transition: margin 0.4s, background 0.4s;
 }
+
 .toggle-round-flat > input:checked + label {
     background-color: #4fb7ff;
 }
+
 .toggle-round-flat > input:checked + label:after {
     margin-left: 30px;
     background-color: #4fb7ff;
+}
+
+.z-navbar-horizontal > li {
+    padding-left: 15px;
+}
+
+.selected-option {
+    background: #bcdeff !important;
+    color: white;
 }

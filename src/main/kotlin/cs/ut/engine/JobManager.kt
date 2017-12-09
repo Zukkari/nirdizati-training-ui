@@ -4,13 +4,16 @@ import cs.ut.config.items.ModelParameter
 import cs.ut.controllers.JobTrackerController
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.Job
+import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.NirdizatiGrid
+import cs.ut.ui.providers.JobValueProvider
 import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.Session
 import org.zkoss.zk.ui.event.Event
+import org.zkoss.zul.Button
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import java.io.File
@@ -21,7 +24,6 @@ class JobManager {
     companion object Manager {
         val log = Logger.getLogger(JobManager::class.java)!!
 
-        private val completedJobs: List<Job> = arrayListOf()
         private val jobQueue: MutableMap<Session, Queue<Job>> = HashMap()
 
         var logFile: File? = null
@@ -61,7 +63,7 @@ class JobManager {
         }
 
         fun deployJobs() {
-            val worker = Worker.getInstance()
+            val executor = NirdizatiThreadPool()
 
             val currentJobs = jobQueue[Executions.getCurrent().session]!!
             log.debug("Deploying ${currentJobs.size} jobs")
@@ -70,7 +72,7 @@ class JobManager {
             grid.generate(currentJobs.toList().reversed(), false)
 
             while (currentJobs.peek() != null) {
-                worker.scheduleJob(currentJobs.poll())
+                executor.execute(currentJobs.poll())
             }
 
             log.debug("Successfully deployed all jobs to worker")
@@ -92,11 +94,13 @@ class JobManager {
 
                 if (job == row.getValue()) {
                     val statusLabel = row.getChildren<Component>()[1] as Label
+                    val visualize = row.getChildren<Component>()[0].lastChild.firstChild as Button
 
                     Executions.schedule(job.client,
                             { _ ->
                                 statusLabel.value = job.status.name
-                                grid.hflex = "min"
+                                visualize.isDisabled = job.status != JobStatus.COMPLETED
+                                grid.vflex = "min"
                             },
                             Event("job_status", null, "update"))
                 } else {

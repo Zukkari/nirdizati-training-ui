@@ -16,6 +16,7 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Hlayout;
 import org.zkoss.zul.Vlayout;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -53,10 +54,14 @@ public class AdvancedModeController extends AbstractModeController implements Mo
     }
 
     private void generateListener(FieldComponent component) {
+        ModelParameter parameter = ((Checkbox)component.getControl()).getValue();
+        if (TrainingController.LEARNER.equals(parameter.getType())) {
+            hyperparameters.put(parameter, new ArrayList<>());
+        }
+
         component.getControl().addEventListener(Events.ON_CHECK, (CheckEvent e) -> {
             log.debug(String.format("%s value changed, regenerating grids", component));
             if (component.getControl() instanceof Checkbox) {
-                ModelParameter parameter = ((Checkbox) component.getControl()).getValue();
                 if (TrainingController.LEARNER.equals(parameter.getType())) {
                     handleLearner(e, parameter);
                 } else {
@@ -79,9 +84,9 @@ public class AdvancedModeController extends AbstractModeController implements Mo
 
     private void handleLearner(CheckEvent e, ModelParameter parameter) {
         if (e.isChecked()) {
-            hyperparameters.put(parameter, parameter.getProperties());
+            hyperparameters.get(parameter).addAll(parameter.getProperties());
         } else {
-            hyperparameters.remove(parameter);
+            hyperparameters.get(parameter).removeAll(parameter.getProperties());
         }
     }
 
@@ -93,6 +98,9 @@ public class AdvancedModeController extends AbstractModeController implements Mo
     private void generateGrid(Map.Entry<ModelParameter, List<Property>> entry) {
         ModelParameter key = entry.getKey();
         List<Property> values = entry.getValue();
+
+        if (values.size() < 2) return;
+
         log.debug("Key: " + key);
         log.debug("Properties: " + values);
 
@@ -147,7 +155,7 @@ public class AdvancedModeController extends AbstractModeController implements Mo
                                     .addAll(hyper
                                             .entrySet()
                                             .stream()
-                                            .map(h -> new Property(h.getKey(), "", h.getValue()))
+                                            .map(h -> new Property(h.getKey(), "", h.getValue(), -1, -1))
                                             .collect(Collectors.toList()));
                         }
                     });

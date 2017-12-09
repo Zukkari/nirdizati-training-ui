@@ -1,0 +1,14 @@
+<vbox vflex="1" hflex="1" apply="cs.ut.controllers.ValidationController">
+    <grid>
+        <rows id="metadataRows"/>
+    </grid>
+    <grid>
+        <rows id="propertyRows"/>
+    </grid>
+    <grid>
+        <rows id="selectionRows"/>
+    </grid>
+    <vlayout style="margin-bottom:20px">
+        <include src="/views/graphs/graph_canvas.html"/>
+    </vlayout>
+</vbox>

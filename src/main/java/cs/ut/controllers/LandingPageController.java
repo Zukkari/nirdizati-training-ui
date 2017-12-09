@@ -2,6 +2,7 @@ package cs.ut.controllers;
 
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.nodes.PageConfiguration;
+import cs.ut.util.ConstKt;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -17,7 +18,7 @@ import org.zkoss.zul.Button;
 public class LandingPageController extends SelectorComposer<Component> {
 
     @Wire
-    Button uploadLog;
+    Button upload;
 
     @Wire
     Button existingLog;
@@ -38,18 +39,18 @@ public class LandingPageController extends SelectorComposer<Component> {
      * In this case it buttons set content of the page based on uri-s defined in configuration.xml
      */
     private void wireButtons() {
-        uploadLog.addEventListener(Events.ON_CLICK, new SerializableEventListener<Event>() {
+        upload.addEventListener(Events.ON_CLICK, new SerializableEventListener<Event>() {
 
             @Override
             public void onEvent(Event event) throws Exception {
-                MainPageController.getInstance().setContent("uploadLog", getPage());
+                MainPageController.getInstance().setContent(ConstKt.PAGE_UPLOAD, getPage());
             }
         });
 
         existingLog.addEventListener(Events.ON_CLICK, new SerializableEventListener<Event>() {
             @Override
             public void onEvent(Event event) throws Exception {
-                MainPageController.getInstance().setContent("training", getPage());
+                MainPageController.getInstance().setContent(ConstKt.PAGE_TRAINING, getPage());
             }
         });
     }

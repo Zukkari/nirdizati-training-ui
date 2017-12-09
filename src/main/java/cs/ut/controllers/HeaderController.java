@@ -45,16 +45,14 @@ public class HeaderController extends SelectorComposer<Component> {
         items.forEach(it -> {
             Navitem navitem = new Navitem();
             navitem.setLabel(Labels.getLabel(it.getLabel()));
-            navitem.addEventListener(Events.ON_CLICK, new SerializableEventListener<Event>() {
-                @Override
-                public void onEvent(Event event) throws Exception {
-                    MainPageController.getInstance().setContent(it.getRedirect(), getPage());
-                    navbar.selectItem(navitem);
-                }
+            navitem.addEventListener(Events.ON_CLICK, (SerializableEventListener<Event>) event -> {
+                MainPageController.getInstance().setContent(it.getRedirect(), getPage());
+                navbar.selectItem(navitem);
             });
 
             log.debug(String.format("Nav item with label '%s' is enabled: %s", it.getLabel(), it.getEnabled()));
             navitem.setDisabled(!it.getEnabled());
+            navitem.setStyle("padding-left: 15px");
 
             navbar.appendChild(navitem);
         });

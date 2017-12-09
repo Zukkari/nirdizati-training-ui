@@ -103,9 +103,9 @@ public class BasicModeController extends AbstractModeController implements ModeC
         List<ModelParameter> params = optimized.get(logName);
 
         log.debug(String.format("Optimal parameters: %s", params));
-        String msg = Labels.getLabel("training.found_optimized_params", new Object[] {HtmlEscapers.htmlEscaper().escape(logName)});
+        String msg = Labels.getLabel("training.found_optimized_params", new Object[]{HtmlEscapers.htmlEscaper().escape(logName)});
         log.debug(String.format("Showing notification message to user '%s'", msg));
-        Clients.showNotification(msg, grid);
+        Clients.showNotification(msg, "info", grid, "end_center", 5000, true);
 
         setUpGridWithParams(params);
         log.debug("Finished initializing optimized parameters.");
@@ -180,7 +180,7 @@ public class BasicModeController extends AbstractModeController implements ModeC
         List<Property> properties = parameterGrid.gatherValues()
                 .entrySet()
                 .stream()
-                .map(it -> new Property(it.getKey(), "", it.getValue().toString()))
+                .map(it -> new Property(it.getKey(), "", it.getValue().toString(), -1, -1))
                 .collect(Collectors.toList());
         value.getProperties().clear();
         value.setProperties(properties);

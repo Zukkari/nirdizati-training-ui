@@ -3,10 +3,10 @@
         <label value="${labels.landing.start}" sclass="start-caption"/>
     </hbox>
     <hbox hflex="1" vflex="1">
-        <hbox vflex="1" hflex="1" pack="center" align="center">
-            <button id="uploadLog" sclass="big-blue-btn">${labels.upload.log}</button>
+        <hbox vflex="1" hflex="1" pack="end" align="center">
+            <button id="upload" sclass="big-blue-btn">${labels.upload.log}</button>
         </hbox>
-        <hbox hflex="1" vflex="1" pack="center" align="center">
+        <hbox hflex="1" vflex="1" pack="start" align="center">
             <button id="existingLog" sclass="big-blue-btn">${labels.with.existing}</button>
         </hbox>
     </hbox>

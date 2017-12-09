@@ -21,6 +21,7 @@ class CsvReader(private val f: File) {
     private var caseId by Delegates.notNull<List<String>>()
     private var activityId by Delegates.notNull<List<String>>()
     private var dateFormats by Delegates.notNull<List<Regex>>()
+    private var resourceId by Delegates.notNull<List<String>>()
 
     init {
         log.debug("Initializing csv reader...")
@@ -33,6 +34,7 @@ class CsvReader(private val f: File) {
         activityId = config.activityId
         caseId = config.caseId
         dateFormats = config.timestampFormat.map { it.toRegex() }
+        resourceId = config.resourceId
 
         log.debug("Finished initializing csv reader...")
     }
@@ -48,13 +50,14 @@ class CsvReader(private val f: File) {
 
             identifyColumn(head, caseId.toMutableList(), CASE_ID_COL, result)
             identifyColumn(head, activityId.toMutableList(), ACTIVITY_COL, result)
+            identifyColumn(head, resourceId.toMutableList(), RESOURCE_COL, result)
             identifyUserColumns(cols.drop(1), result)
         }
     }
 
     tailrec private fun identifyColumn(col: String, ids: MutableList<String>, type: String, result: MutableMap<String, String>) {
         if (ids.isNotEmpty()) {
-            if (col.toLowerCase() == ids.first().toLowerCase()) {
+            if (ids.first() in col.toLowerCase()) {
                 result[type] = col
             } else {
                 identifyColumn(col, ids.drop(1).toMutableList(), type, result)
@@ -68,12 +71,12 @@ class CsvReader(private val f: File) {
         val cases = parseCsv(case as String)
 
         val colValues = HashMap<String, MutableSet<String>>()
-        val timestampCol = identifyTimestampColumn(cases.first().attributes) ?: throw NirdizatiRuntimeException("No date column found")
 
         cases.forEach {
-            it.attributes.remove(timestampCol)
+            it.attributes.remove(userCols[TIMESTAMP_COL])
             it.attributes.remove(userCols[CASE_ID_COL])
             it.attributes.remove(userCols[ACTIVITY_COL])
+            it.attributes.remove(userCols[RESOURCE_COL])
 
             if (it.attributes.keys.contains(REMTIME)) {
                 it.attributes.remove(REMTIME)
@@ -101,6 +104,11 @@ class CsvReader(private val f: File) {
         resultCols[DYNAMIC + CAT_COLS] = mutableListOf()
         resultCols[DYNAMIC + NUM_COL] = mutableListOf()
 
+        userCols[RESOURCE_COL]?.let {
+            resultCols[DYNAMIC + CAT_COLS]!!.add(userCols[RESOURCE_COL] as String)
+            userCols.remove(RESOURCE_COL)
+        }
+
         cases.forEach {
             val map = it.classifiedColumns
             it.dynamicCols.forEach { insertIntoMap(map, DYNAMIC, it, colValues[it]) }
@@ -109,9 +117,6 @@ class CsvReader(private val f: File) {
         }
 
         userCols.forEach { k, v -> resultCols[k] = Collections.singletonList(v as String) }
-        resultCols[DYNAMIC + CAT_COLS]!!.add(userCols[ACTIVITY_COL] as String)
-        resultCols[TIMESTAMP_COL] = mutableListOf(timestampCol)
-
         val end = System.currentTimeMillis()
         log.debug("Finished generating data set params in ${end - start} ms")
 
@@ -246,4 +251,17 @@ class CsvReader(private val f: File) {
     }
 
     fun getColumnList(): MutableList<String> = mutableListOf(STATIC + NUM_COL, STATIC + CAT_COLS, DYNAMIC + NUM_COL, DYNAMIC + CAT_COLS)
+
+    private fun readOneCase(): Case {
+        val reader = BufferedReader(FileReader(f))
+        val heads = reader.readLine().split(splitter)
+        val items = reader.readLine().split(splitter)
+
+        val case = Case("")
+        heads.zip(items).forEach { case.attributes[it.first] = mutableSetOf(it.second) }
+
+        return case
+    }
+
+    fun getTimeStamp(): String = identifyTimestampColumn(readOneCase().attributes) ?: ""
 }

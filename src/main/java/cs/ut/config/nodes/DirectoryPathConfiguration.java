@@ -33,6 +33,15 @@ public class DirectoryPathConfiguration {
     @XmlElement(name = "ohpdir")
     private String ohpdir;
 
+    @XmlElement(name = "detailedDir")
+    private String detailedDir;
+
+    @XmlElement(name = "featureDir")
+    private String featureDir;
+
+    @XmlElement(name = "validationDir")
+    private String validationDir;
+
     public String getUserLogDirectory() {
         return userLogDirectory;
     }
@@ -63,6 +72,18 @@ public class DirectoryPathConfiguration {
 
     public String getPython() {
         return python;
+    }
+
+    public String getDetailedDir() {
+        return detailedDir;
+    }
+
+    public String getFeatureDir() {
+        return featureDir;
+    }
+
+    public String getValidationDir() {
+        return validationDir;
     }
 
     public void validatePathsExist() {
