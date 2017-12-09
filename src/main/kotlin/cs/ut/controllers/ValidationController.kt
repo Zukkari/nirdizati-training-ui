@@ -4,6 +4,7 @@ import cs.ut.charts.Chart
 import cs.ut.charts.ChartGenerator
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.providers.JobValueProvider
+import cs.ut.util.NirdizatiUtil
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -19,7 +20,7 @@ import org.zkoss.zul.*
 class ValidationController : SelectorComposer<Component>() {
     private val log = Logger.getLogger(ValidationController::class.java)
     private var job: SimulationJob? = null
-    private val charts: Map<String, List<Chart>> by lazy { ChartGenerator(job).getCharts().groupBy { it.getCaption() } }
+    private val charts: Map<String, List<Chart>> by lazy { ChartGenerator(job).getCharts().groupBy { it.javaClass.name } }
 
     @Wire
     lateinit private var metadataRows: Rows
@@ -62,7 +63,7 @@ class ValidationController : SelectorComposer<Component>() {
         cell.align = "center"
         cell.valign = "center"
         cell.addEventListener(Events.ON_CLICK,
-                if (entry.value.size == 1) generateListenerForOne(entry.value.first()) else generateListenerForMany(entry.value))
+                if (entry.value.size == 1) generateListenerForOne(entry.value.first()) else generateListenerForMany(entry.value, entry.key))
         cell.addEventListener(Events.ON_CLICK, { _ ->
             selectionRows.getChildren<Row>().first().getChildren<Cell>().forEach { it.setClass("") }
             cell.setClass("selected-option")
@@ -83,16 +84,33 @@ class ValidationController : SelectorComposer<Component>() {
         while (children.size > 1) selectionRows.removeChild(children.last())
     }
 
-    private fun generateListenerForMany(charts: List<Chart>): SerializableEventListener<Event> {
+    private fun generateListenerForMany(charts: List<Chart>, key: String): SerializableEventListener<Event> {
+        fun populateRow(row: Row): Cell {
+            val keys = this.charts.keys.toList()
+
+            for (i in 0 until keys.indexOf(key)) {
+                row.appendChild(Cell())
+            }
+
+            val cell = Cell()
+            row.appendChild(cell)
+
+            for (i in 0..keys.size - (keys.indexOf(key) + 2)) {
+                row.appendChild(Cell())
+            }
+
+            return cell
+        }
+
         return SerializableEventListener { _ ->
             removeChildren()
             val hlayout = Hlayout()
             hlayout.appendChild(Label(Labels.getLabel("validation.select_version")))
 
             val combobox = Combobox()
-            (1..charts.size).zip(charts).forEach {
-                val comboItem = combobox.appendItem(it.first.toString())
-                comboItem.setValue(it.second)
+            charts.forEach {
+                val comboItem = combobox.appendItem(NirdizatiUtil.localizeText(it.getCaption()))
+                comboItem.setValue(it)
             }
 
             combobox.isReadonly = true
@@ -106,16 +124,15 @@ class ValidationController : SelectorComposer<Component>() {
             val row = Row()
             row.align = "center"
             row.valign = "center"
-            row.appendChild(Cell())
-            row.appendChild(Cell())
 
-            val cell = Cell()
+            val cell = populateRow(row)
             cell.appendChild(hlayout)
             cell.sclass = "selected-option"
-            row.appendChild(cell)
             selectionRows.appendChild(row)
         }
     }
+
+
 
     private fun generatePropertyRow() {
         val row = Row()

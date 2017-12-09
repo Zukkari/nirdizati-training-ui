@@ -1,4 +1,5 @@
 var chart = null;
+Chart.defaults.global.legend.display = false;
 
 function plot_scatter(payload, chart_label) {
     var canvas = document.getElementById('chart_canvas');
@@ -69,7 +70,7 @@ function plot_line(payload, chart_label, n_of_events) {
                     tension: 0
                 }
             },
-            scales: getScalesData('Number of events', 'Mean absolute error (days)')
+            scales: getScalesData('Number of events', chart_label)
         }
     })
 }

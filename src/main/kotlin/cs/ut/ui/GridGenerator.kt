@@ -3,6 +3,7 @@ package cs.ut.ui
 import cs.ut.config.items.ModelParameter
 import cs.ut.config.items.Property
 import cs.ut.util.COMP_ID
+import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PROPERTY
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
@@ -40,7 +41,7 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
     fun setColumns(properties: Map<String, String>) {
         appendChild(Columns())
         properties.entries.forEach {
-            val column = Column(Labels.getLabel(it.key))
+            val column = Column(NirdizatiUtil.localizeText(it.key))
             column.id = it.key
             column.width = it.value
             columns.appendChild(column)
@@ -70,7 +71,7 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
             when (comp) {
                 is Intbox -> if (comp.value == null || !isInLimits(comp)) {
                     if (!comp.hasAttribute(PROPERTY)) {
-                        comp.errorMessage = Labels.getLabel("training.validation.greater_than_zero")
+                        comp.errorMessage = NirdizatiUtil.localizeText("training.validation.greater_than_zero")
                     } else {
                         setErrorMsg(comp)
                     }
@@ -78,7 +79,7 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
                 }
                 is Doublebox -> if (comp.value == null || !isInLimits(comp)) {
                     if (!comp.hasAttribute(PROPERTY)) {
-                        comp.errorMessage = Labels.getLabel("training.validation.greater_than_zero")
+                        comp.errorMessage = NirdizatiUtil.localizeText("training.validation.greater_than_zero")
                     } else {
                         setErrorMsg(comp)
                     }
@@ -93,11 +94,11 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
         val prop = comp.getAttribute(PROPERTY) as Property
 
         if (prop.minValue != -1.0 && prop.maxValue != -1.0) {
-            comp.errorMessage = Labels.getLabel("training.validation.in_range", arrayOf(prop.minValue, prop.maxValue))
+            comp.errorMessage = NirdizatiUtil.localizeText("training.validation.in_range", prop.minValue, prop.maxValue)
         } else if (prop.minValue != -1.0) {
-            comp.errorMessage = Labels.getLabel("training.validation.min_val", arrayOf(prop.minValue))
+            comp.errorMessage = NirdizatiUtil.localizeText("training.validation.min_val", prop.minValue)
         } else {
-            comp.errorMessage = Labels.getLabel("training.validation.max_val", arrayOf(prop.maxValue))
+            comp.errorMessage = NirdizatiUtil.localizeText("training.validation.max_val", prop.maxValue)
         }
     }
 

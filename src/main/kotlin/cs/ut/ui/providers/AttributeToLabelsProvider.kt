@@ -6,6 +6,7 @@ import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.JobStatus
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
+import cs.ut.util.NirdizatiUtil
 import org.zkoss.util.resource.Labels
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
@@ -20,7 +21,7 @@ class AttributeToLabelsProvider : GridValueProvider<Any, Row> {
         when (data) {
             is Map<*, *> -> {
                 val entry = data.entries.first()
-                val label = Label(Labels.getLabel("attribute." + entry.key as String))
+                val label = Label(NirdizatiUtil.localizeText("attribute." + entry.key as String))
 
                 val entryVal = entry.value
                 val value = when (entryVal) {
@@ -36,8 +37,8 @@ class AttributeToLabelsProvider : GridValueProvider<Any, Row> {
             }
 
             is ModelParameter -> {
-                val label = Label(Labels.getLabel(data.type))
-                val value = Label(Labels.getLabel(data.type + "." + data.id))
+                val label = Label(NirdizatiUtil.localizeText(data.type))
+                val value = Label(NirdizatiUtil.localizeText(data.type + "." + data.id))
 
                 fields.add(FieldComponent(label, value))
 
@@ -48,7 +49,7 @@ class AttributeToLabelsProvider : GridValueProvider<Any, Row> {
             }
 
             is JobStatus -> {
-                val label = Label(Labels.getLabel("attribute.job_status"))
+                val label = Label(NirdizatiUtil.localizeText("attribute.job_status"))
                 val value = Label(data.name)
 
                 fields.add(FieldComponent(label, value))
@@ -59,7 +60,7 @@ class AttributeToLabelsProvider : GridValueProvider<Any, Row> {
             }
 
             is Property -> {
-                val label = Label(Labels.getLabel("property." + data.id))
+                val label = Label(NirdizatiUtil.localizeText("property." + data.id))
                 val value = Label(data.property)
 
                 fields.add(FieldComponent(label, value))
