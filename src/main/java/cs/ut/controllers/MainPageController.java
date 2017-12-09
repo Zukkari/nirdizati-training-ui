@@ -1,13 +1,24 @@
 package cs.ut.controllers;
 
+import cs.ut.config.ClientInfo;
 import cs.ut.config.MasterConfiguration;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Page;
+import org.zkoss.zk.ui.Session;
+import org.zkoss.zk.ui.event.ClientInfoEvent;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.Selectors;
+import org.zkoss.zk.ui.select.annotation.Listen;
+import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zul.Borderlayout;
+import org.zkoss.zul.East;
 import org.zkoss.zul.Include;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Controller that responds for the content of the index page
@@ -19,6 +30,20 @@ import org.zkoss.zul.Include;
 public class MainPageController extends SelectorComposer<Component> {
     private static final Logger log = Logger.getLogger(MainPageController.class);
     private static MainPageController mainPageController;
+    private final transient Map<Session, ClientInfo> clientInformation = new HashMap<>();
+
+    @Wire
+    private Borderlayout mainLayout;
+
+    @Wire
+    private East trackerEast;
+
+
+    @Override
+    public void doAfterCompose(Component comp) throws Exception {
+        super.doAfterCompose(comp);
+        mainPageController = this;
+    }
 
     /**
      * Instantiates the controller if it is the first access.
@@ -26,11 +51,41 @@ public class MainPageController extends SelectorComposer<Component> {
      * @return MainPageController that allows to set content of the page asynchronously.
      */
     public static MainPageController getInstance() {
-        if (mainPageController == null) {
-            mainPageController = new MainPageController();
-        }
-
         return mainPageController;
+    }
+
+    @Listen("onClientInfo = #mainLayout")
+    public void gatherInformation(ClientInfoEvent event) {
+        log.debug("Gathering client browser information...");
+        ClientInfo clientInfo = new ClientInfo(
+                event.getScreenWidth(),
+                event.getScreenHeight(),
+                event.getDesktopWidth(),
+                event.getDesktopHeight(),
+                event.getColorDepth(),
+                event.getOrientation(),
+                (event.getDesktopHeight() - 100) / 280
+        );
+
+        clientInformation.put(Executions.getCurrent().getSession(), clientInfo);
+        configureTracker(clientInfo);
+        log.debug("Finished gather client information: ");
+    }
+
+    /**
+     * Returns information about current sessions browser
+     *
+     * @param session which information to fetch
+     * @return nullable if information aobut session does not exist
+     */
+    public ClientInfo getClientInfo(Session session) {
+        return clientInformation.get(session);
+    }
+
+    private void configureTracker(ClientInfo clientInfo) {
+        if (trackerEast != null) {
+            trackerEast.setSize(clientInfo.getWindowWidth() * 0.25 + "px");
+        }
     }
 
     /**
