@@ -73,7 +73,8 @@ class JobValueProvider() : GridValueProvider<Job, Row> {
 
         val vlayout = Vlayout()
         vlayout.appendChild(fileContainer)
-        vlayout.appendChild(label)
+
+        vlayout.appendChild(generateStatus(label, job))
         vlayout.appendChild(bottom)
 
         val hlayout = Hlayout()
@@ -82,6 +83,25 @@ class JobValueProvider() : GridValueProvider<Job, Row> {
         vlayout.appendChild(hlayout)
 
         return vlayout
+    }
+
+    private fun generateStatus(label: Label, job: Job): Hlayout {
+        val labelStatusContainer = Hlayout()
+        val labelContainer = Hlayout()
+        labelContainer.appendChild(label)
+        label.hflex = "1"
+        labelStatusContainer.appendChild(labelContainer)
+
+        val status = Label(job.status.name)
+        val statusContainer = Hbox()
+        statusContainer.appendChild(status)
+        statusContainer.hflex = "1"
+        statusContainer.vflex = "1"
+        statusContainer.pack = "end"
+        statusContainer.align = "center"
+        labelStatusContainer.appendChild(statusContainer)
+
+        return labelStatusContainer
     }
 
     private fun generateFileInfo(job: SimulationJob): Hlayout {
@@ -100,6 +120,7 @@ class JobValueProvider() : GridValueProvider<Job, Row> {
         val btn = Button("x")
         btn.vflex = "min"
         btn.hflex = "min"
+        btn.sclass = "close-btn"
 
         btn.addEventListener(Events.ON_CLICK, { _ ->
             val grid: NirdizatiGrid<Job> = job.client.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>

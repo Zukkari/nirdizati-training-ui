@@ -161,6 +161,7 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
 
     fun removeRow(row: Row) {
         rows.removeChild(row)
+        if (rows.getChildren<Component>().isEmpty()) isVisible = false
     }
 }
 

@@ -94,11 +94,12 @@ class JobManager {
             if (rows.isNotEmpty()) {
                 val row = rows.first()
                 val buttons = row.lastChild.lastChild.getChildren<Component>()
-                val children = row.lastChild.getChildren<Component>()
+                val statusLabel = row.firstChild.getChildren<Component>()[1].lastChild.firstChild as Label
 
                 if (job == row.getValue()) {
                     Executions.schedule(job.client,
                             { _ ->
+                                statusLabel.value = job.status.name
                                 buttons.forEach { (it as Button).isDisabled = job.status != JobStatus.COMPLETED }
                             },
                             Event("job_status", null, "update"))
