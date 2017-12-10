@@ -28,6 +28,7 @@ public class JobTrackerController extends SelectorComposer<Component> {
         NirdizatiGrid<Job> jobGrid = new NirdizatiGrid<>(new JobValueProvider(tracker));
         ((JobValueProvider) jobGrid.getProvider()).setOriginator(jobGrid);
         jobGrid.setVisible(false);
+        jobGrid.setVflex("1");
 
         jobGrid.setId(GRID_ID);
         tracker.appendChild(jobGrid);
