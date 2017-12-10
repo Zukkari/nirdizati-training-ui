@@ -100,3 +100,8 @@
     padding-left: 70px;
     font-size: medium;
 }
+
+.close-btn {
+    color: black !important;
+    background-color: whitesmoke !important;
+}

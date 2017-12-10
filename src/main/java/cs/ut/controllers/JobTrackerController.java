@@ -25,7 +25,7 @@ public class JobTrackerController extends SelectorComposer<Component> {
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
 
-        NirdizatiGrid<Job> jobGrid = new NirdizatiGrid<>(new JobValueProvider(tracker));
+        NirdizatiGrid<Job> jobGrid = new NirdizatiGrid<>(new JobValueProvider());
         ((JobValueProvider) jobGrid.getProvider()).setOriginator(jobGrid);
         jobGrid.setVisible(false);
         jobGrid.setVflex("1");

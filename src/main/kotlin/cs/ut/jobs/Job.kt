@@ -17,6 +17,7 @@ abstract class Job(val client: Desktop) : Runnable {
     abstract var startTime: Date
     abstract var completeTime: Date
     var status: JobStatus = JobStatus.PENDING
+    protected var stop = false
 
     val pathProvider = MasterConfiguration.getInstance().directoryPathConfiguration
     protected val scriptDir = pathProvider.scriptDirectory
@@ -42,6 +43,12 @@ abstract class Job(val client: Desktop) : Runnable {
         try {
             log.debug("Stared preprocess stage")
             status = JobStatus.PREPARING
+
+            if (stop) {
+                log.debug("Job $this has been stopped by the user")
+                return
+            }
+
             JobManager.notifyOfJobStatusChange(this)
             preProcess()
         } catch (e: Exception) {
@@ -56,6 +63,12 @@ abstract class Job(val client: Desktop) : Runnable {
         try {
             log.debug("Job $this started execute stage")
             status = JobStatus.RUNNING
+
+            if (stop) {
+                log.debug("Job $this has been stopped by the user")
+                return
+            }
+
             JobManager.notifyOfJobStatusChange(this)
             execute()
         } catch (e: Exception) {
@@ -70,6 +83,12 @@ abstract class Job(val client: Desktop) : Runnable {
         try {
             log.debug("Job $this started post execute step")
             status = JobStatus.FINISHING
+
+            if (stop) {
+                log.debug("Job $this has been stopped by the user")
+                return
+            }
+
             JobManager.notifyOfJobStatusChange(this)
             postExecute()
         } catch (e: Exception) {
@@ -88,6 +107,11 @@ abstract class Job(val client: Desktop) : Runnable {
         completeTime = Calendar.getInstance().time
         status = JobStatus.COMPLETED
 
+        if (stop) {
+            log.debug("Job $this has been stopped by the user")
+            return
+        }
+
         if (isNotificationRequired()) {
             Executions.schedule(client,
                     { _ ->
@@ -100,6 +124,10 @@ abstract class Job(val client: Desktop) : Runnable {
                     },
                     Event("jobStatus", null, "complete"))
         }
+    }
+
+    open fun kill() {
+        stop = true
     }
 }
 

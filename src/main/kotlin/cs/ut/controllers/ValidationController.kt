@@ -23,6 +23,7 @@ import org.zkoss.zul.Hlayout
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import org.zkoss.zul.Rows
+import org.zkoss.zul.Vbox
 
 class ValidationController : SelectorComposer<Component>() {
     private val log = Logger.getLogger(ValidationController::class.java)
@@ -37,6 +38,9 @@ class ValidationController : SelectorComposer<Component>() {
 
     @Wire
     lateinit private var propertyRows: Rows
+
+    @Wire
+    lateinit private var comboLayout: Vbox
 
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
@@ -72,7 +76,7 @@ class ValidationController : SelectorComposer<Component>() {
         cell.align = "center"
         cell.valign = "center"
         cell.addEventListener(Events.ON_CLICK,
-                if (entry.value.size == 1) generateListenerForOne(entry.value.first()) else generateListenerForMany(entry.value, entry.key))
+                if (entry.value.size == 1) generateListenerForOne(entry.value.first()) else generateListenerForMany(entry.value))
         cell.addEventListener(Events.ON_CLICK, { _ ->
             selectionRows.getChildren<Row>().first().getChildren<Cell>().forEach { it.setClass("") }
             cell.setClass("selected-option")
@@ -89,33 +93,18 @@ class ValidationController : SelectorComposer<Component>() {
     }
 
     private fun removeChildren() {
-        val children = selectionRows.getChildren<Row>()
-        while (children.size > 1) selectionRows.removeChild(children.last())
+        comboLayout.getChildren<Component>().clear()
     }
 
-    private fun generateListenerForMany(charts: List<Chart>, key: String): SerializableEventListener<Event> {
-        fun populateRow(row: Row): Cell {
-            val keys = this.charts.keys.toList()
-
-            for (i in 0 until keys.indexOf(key)) {
-                row.appendChild(Cell())
-            }
-
-            val cell = Cell()
-            row.appendChild(cell)
-
-            for (i in 0..keys.size - (keys.indexOf(key) + 2)) {
-                row.appendChild(Cell())
-            }
-
-            return cell
-        }
-
+    private fun generateListenerForMany(charts: List<Chart>): SerializableEventListener<Event> {
         return SerializableEventListener { _ ->
             removeChildren()
-            val hlayout = Hlayout()
-            hlayout.appendChild(Label(Labels.getLabel("validation.select_version")))
 
+            val label = Label(Labels.getLabel("validation.select_version"))
+            label.style = "font-weight: bold;"
+            comboLayout.appendChild(label)
+
+            var itemSet = false
             val combobox = Combobox()
             charts.forEach {
                 val comboItem = combobox.appendItem(NirdizatiUtil.localizeText(it.getCaption()))
@@ -123,24 +112,19 @@ class ValidationController : SelectorComposer<Component>() {
 
                 if (MAE == it.name) {
                     combobox.selectedItem = comboItem
+                    itemSet = true
                 }
             }
+
+            if (!itemSet) combobox.selectedItem = combobox.items.first()
 
             combobox.isReadonly = true
             combobox.setConstraint("no empty")
             (combobox.selectedItem.getValue() as Chart).render()
+            combobox.width = "330px"
 
             combobox.addEventListener(Events.ON_SELECT, { e -> (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).render() })
-            hlayout.appendChild(combobox)
-
-            val row = Row()
-            row.align = "center"
-            row.valign = "center"
-
-            val cell = populateRow(row)
-            cell.appendChild(hlayout)
-            cell.sclass = "selected-option"
-            selectionRows.appendChild(row)
+            comboLayout.appendChild(combobox)
         }
     }
 

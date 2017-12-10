@@ -1,6 +1,7 @@
 package cs.ut.ui.providers
 
 import cs.ut.config.items.ModelParameter
+import cs.ut.controllers.JobTrackerController
 import cs.ut.controllers.MainPageController
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
@@ -10,13 +11,17 @@ import cs.ut.ui.GridValueProvider
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PAGE_VALIDATION
-import org.zkoss.util.resource.Labels
-import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
+import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.event.Events
-import org.zkoss.zul.*
+import org.zkoss.zul.Button
+import org.zkoss.zul.Hbox
+import org.zkoss.zul.Hlayout
+import org.zkoss.zul.Label
+import org.zkoss.zul.Row
+import org.zkoss.zul.Vlayout
 
-class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
+class JobValueProvider() : GridValueProvider<Job, Row> {
     companion object {
         const val jobArg = "JOB"
     }
@@ -30,7 +35,7 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
         val row = Row()
         row.valign = "end"
 
-        val label = formJobLabel(data)
+        val label = formJobLabel(data, row)
 
         row.appendChild(label)
         row.setValue(data)
@@ -40,7 +45,7 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
         return row
     }
 
-    private fun formJobLabel(job: Job): Vlayout {
+    private fun formJobLabel(job: Job, row: Row): Vlayout {
         job as SimulationJob
 
         val encoding = job.encoding
@@ -55,10 +60,22 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
 
         val bottom = formHyperparamRow(learner)
 
+        val fileLayout = generateFileInfo(job)
+        fileLayout.hflex = "1"
+        val fileContainer = Hlayout()
+        fileContainer.appendChild(fileLayout)
+
+        val btnContainer = Hbox()
+        btnContainer.hflex = "1"
+        btnContainer.pack = "end"
+        btnContainer.appendChild(generateRemoveBtn(job, row))
+        fileContainer.appendChild(btnContainer)
+
         val vlayout = Vlayout()
-        vlayout.appendChild(label)
+        vlayout.appendChild(fileContainer)
+
+        vlayout.appendChild(generateStatus(label, job))
         vlayout.appendChild(bottom)
-        vlayout.appendChild(formJobMetadata(job))
 
         val hlayout = Hlayout()
         hlayout.appendChild(getVisualizeBtn(job))
@@ -66,6 +83,56 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
         vlayout.appendChild(hlayout)
 
         return vlayout
+    }
+
+    private fun generateStatus(label: Label, job: Job): Hlayout {
+        val labelStatusContainer = Hlayout()
+        val labelContainer = Hlayout()
+        labelContainer.appendChild(label)
+        label.hflex = "1"
+        labelStatusContainer.appendChild(labelContainer)
+
+        val status = Label(job.status.name)
+        val statusContainer = Hbox()
+        statusContainer.appendChild(status)
+        statusContainer.hflex = "1"
+        statusContainer.vflex = "1"
+        statusContainer.pack = "end"
+        statusContainer.align = "center"
+        labelStatusContainer.appendChild(statusContainer)
+
+        return labelStatusContainer
+    }
+
+    private fun generateFileInfo(job: SimulationJob): Hlayout {
+        val fileLabel = Label(NirdizatiUtil.localizeText("attribute.log_file"))
+        fileLabel.style = "font-weight: bold;"
+
+        val file = Label(job.logFile.name)
+
+        val fileLayout = Hlayout()
+        fileLayout.appendChild(fileLabel)
+        fileLayout.appendChild(file)
+        return fileLayout
+    }
+
+    private fun generateRemoveBtn(job: Job, row: Row): Button {
+        val btn = Button("x")
+        btn.vflex = "min"
+        btn.hflex = "min"
+        btn.sclass = "close-btn"
+
+        btn.addEventListener(Events.ON_CLICK, { _ ->
+            val grid: NirdizatiGrid<Job> = job.client.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
+            (job as SimulationJob).kill()
+            Executions.schedule(job.client,
+                    { _ ->
+                        grid.removeRow(row)
+                    },
+                    Event("abort_job", null, null))
+        })
+
+        return btn
     }
 
     private fun getVisualizeBtn(job: SimulationJob): Button {
@@ -88,32 +155,6 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
         deploy.vflex = "min"
 
         return deploy
-    }
-
-    private fun formJobMetadata(job: SimulationJob): Vlayout {
-        val statusLabel = Label(NirdizatiUtil.localizeText("attribute.job_status"))
-        statusLabel.style = "font-weight: bold;"
-
-        val status = Label(job.status.name)
-
-        val statusLayout = Hlayout()
-        statusLayout.appendChild(statusLabel)
-        statusLayout.appendChild(status)
-
-        val fileLabel = Label(NirdizatiUtil.localizeText("attribute.log_file"))
-        fileLabel.style = "font-weight: bold;"
-
-        val file = Label(job.logFile.name)
-
-        val fileLayout = Hlayout()
-        fileLayout.appendChild(fileLabel)
-        fileLayout.appendChild(file)
-
-        val res = Vlayout()
-        res.appendChild(fileLayout)
-        res.appendChild(statusLayout)
-
-        return res
     }
 
     private fun formHyperparamRow(learner: ModelParameter): Label {
