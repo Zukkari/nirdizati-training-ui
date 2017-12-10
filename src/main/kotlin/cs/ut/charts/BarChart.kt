@@ -1,10 +1,12 @@
 package cs.ut.charts
 
-import org.zkoss.util.resource.Labels
+import cs.ut.util.NirdizatiUtil
 import org.zkoss.zk.ui.util.Clients
 
 class BarChart(name: String, payload: String, private val labels: String) : Chart(name, payload) {
+    override fun getCaption(): String = name
+
     override fun render() {
-        Clients.evalJavaScript("plot_bar('$payload','${Labels.getLabel(getCaption())}', '$labels')")
+        Clients.evalJavaScript("plot_bar('$payload','${NirdizatiUtil.localizeText(getCaption())}', '$labels')")
     }
 }

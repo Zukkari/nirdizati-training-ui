@@ -7,6 +7,7 @@ import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
 import cs.ut.engine.JobManager;
 import cs.ut.manager.LogManager;
+import cs.ut.util.NirdizatiUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -68,7 +69,7 @@ public class TrainingController extends SelectorComposer<Component> {
         log.debug(String.format("Received %s prediction types", params.size()));
 
         params.forEach(it -> {
-            Comboitem item = predictionType.appendItem(Labels.getLabel(it.getType().concat(".").concat(it.getId())));
+            Comboitem item = predictionType.appendItem(NirdizatiUtil.Companion.localizeText(it.getType().concat(".").concat(it.getId())));
             item.setValue(it);
         });
 

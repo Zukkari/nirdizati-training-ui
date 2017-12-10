@@ -5,6 +5,7 @@ import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.util.COMP_ID
+import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PROPERTY
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -20,7 +21,7 @@ class PropertyValueProvider : GridValueProvider<Property, Row> {
     override fun provide(data: Property): Row {
         val row = Row()
 
-        val label = Label(Labels.getLabel("property." + data.id))
+        val label = Label(NirdizatiUtil.localizeText("property." + data.id))
         label.setAttribute(COMP_ID, data.id)
         val control = generateControl(data)
 

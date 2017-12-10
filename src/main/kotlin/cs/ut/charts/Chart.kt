@@ -5,5 +5,5 @@ abstract class Chart(val name: String, protected val payload: String) : Renderab
         const val NAMESPACE = "chart_data."
     }
 
-    fun getCaption(): String = NAMESPACE + name
+    open fun getCaption(): String = NAMESPACE + name
 }

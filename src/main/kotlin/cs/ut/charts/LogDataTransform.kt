@@ -9,9 +9,11 @@ const val PREDICTED = "predicted"
 const val NR_EVENTS = "nr_events"
 const val SCORE = "score"
 const val delim = ","
+const val METRIC = "metric"
 const val MAE = "mae"
+val normalized = listOf<String>("nmae", "nrmse")
 
-class LinearData(val x: Float, val y: Float)
+class LinearData(val x: Float, val y: Float, val dataType: String)
 
 enum class Mode {
     SCATTER,
@@ -22,21 +24,24 @@ fun getLinearPayload(file: File, mode: Mode): List<LinearData> {
     val dataSet = mutableListOf<LinearData>()
 
     var indexes = Pair(-1, -1)
+    var indexOfMetric = -1
     BufferedReader(FileReader(file)).lines().forEach {
         if (indexes.first == -1) {
             val headerItems = it.split(delim)
             indexes = if (Mode.SCATTER == mode) Pair(headerItems.indexOf(ACTUAL), headerItems.indexOf(PREDICTED))
             else Pair(headerItems.indexOf(NR_EVENTS), headerItems.indexOf(SCORE))
-        } else if (it.contains(MAE) || mode == Mode.SCATTER) {
+
+            indexOfMetric = if (Mode.SCATTER == mode) -1 else headerItems.indexOf(METRIC)
+        } else {
             val items = it.split(delim)
             dataSet.add(
                     LinearData(
-                            x = items.get(indexes.first).toFloat() / if (mode == Mode.SCATTER) 86400 else 1,
-                            y = items.get(indexes.second).toFloat() / 86400))
+                            x = items[indexes.first].toFloat() / if (mode == Mode.SCATTER) 86400 else 1,
+                            y = items[indexes.second].toFloat() / if (mode == Mode.SCATTER || items[indexOfMetric] !in normalized) 86400 else 1,
+                            dataType = if (Mode.SCATTER == mode) "" else items[indexOfMetric]))
         }
-
     }
-    return dataSet
+    return dataSet.sortedBy { it.dataType }
 }
 
 const val LABEL_INDEX = 0

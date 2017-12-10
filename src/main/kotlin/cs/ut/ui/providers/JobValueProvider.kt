@@ -8,6 +8,7 @@ import cs.ut.jobs.SimulationJob
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.ui.NirdizatiGrid
+import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PAGE_VALIDATION
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -46,9 +47,9 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
         val bucketing = job.bucketing
         val learner = job.learner
 
-        val label = Label(Labels.getLabel(encoding.type + "." + encoding.id) + "\n" +
-                Labels.getLabel(bucketing.type + "." + bucketing.id) + "\n" +
-                Labels.getLabel(learner.type + "." + learner.id))
+        val label = Label(NirdizatiUtil.localizeText(encoding.type + "." + encoding.id) + "\n" +
+                NirdizatiUtil.localizeText(bucketing.type + "." + bucketing.id) + "\n" +
+                NirdizatiUtil.localizeText(learner.type + "." + learner.id))
         label.isPre = true
         label.style = "font-weight: bold;"
 
@@ -68,7 +69,7 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
     }
 
     private fun getVisualizeBtn(job: SimulationJob): Button {
-        val visualize = Button(Labels.getLabel("job_tracker.visiualize"))
+        val visualize = Button(NirdizatiUtil.localizeText("job_tracker.visiualize"))
         visualize.hflex = "1"
         visualize.isDisabled = !(JobStatus.COMPLETED == job.status || JobStatus.FINISHING == job.status)
 
@@ -81,7 +82,7 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
     }
 
     private fun getDeployBtn(): Button {
-        val deploy = Button(Labels.getLabel("job_tracker.deploy_to_runtime"))
+        val deploy = Button(NirdizatiUtil.localizeText("job_tracker.deploy_to_runtime"))
         deploy.isDisabled = true
         deploy.hflex = "1"
         deploy.vflex = "min"
@@ -90,7 +91,7 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
     }
 
     private fun formJobMetadata(job: SimulationJob): Vlayout {
-        val statusLabel = Label(Labels.getLabel("attribute.job_status"))
+        val statusLabel = Label(NirdizatiUtil.localizeText("attribute.job_status"))
         statusLabel.style = "font-weight: bold;"
 
         val status = Label(job.status.name)
@@ -99,7 +100,7 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
         statusLayout.appendChild(statusLabel)
         statusLayout.appendChild(status)
 
-        val fileLabel = Label(Labels.getLabel("attribute.log_file"))
+        val fileLabel = Label(NirdizatiUtil.localizeText("attribute.log_file"))
         fileLabel.style = "font-weight: bold;"
 
         val file = Label(job.logFile.name)
@@ -121,7 +122,7 @@ class JobValueProvider(val parent: Hbox) : GridValueProvider<Job, Row> {
 
         while (iterator.hasNext()) {
             val prop = iterator.next()
-            label += Labels.getLabel("property." + prop.id) + ": " + prop.property + "\n"
+            label += NirdizatiUtil.localizeText("property." + prop.id) + ": " + prop.property + "\n"
         }
 
         val res = Label(label)
