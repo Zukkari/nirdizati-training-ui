@@ -8,7 +8,6 @@ import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PREFIX
 import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
-import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Desktop
 import java.io.File
 import java.io.IOException
@@ -24,6 +23,8 @@ class SimulationJob(val encoding: ModelParameter,
 
     override var startTime = Date()
     override var completeTime = Date()
+
+    private var process: Process? = null
 
     override fun preProcess() {
         log.debug("Generating training parameters for job $this")
@@ -71,10 +72,11 @@ class SimulationJob(val encoding: ModelParameter,
             env.put("PYTHONPATH", scriptDir)
 
             log.debug("Script call: ${pb.command()}")
-            val process = pb.start()
-            if (!process.waitFor(180, TimeUnit.SECONDS)) {
-                process.destroy()
-                log.debug("Timed out while executing script")
+            process = pb.start()
+            if (!process!!.waitFor(180, TimeUnit.SECONDS) || stop) {
+                process!!.destroy()
+                log.debug("Stopping script -> stop: $stop")
+                return
             }
 
             log.debug("Script finished running...")
@@ -94,6 +96,11 @@ class SimulationJob(val encoding: ModelParameter,
         }
     }
 
+    override fun kill() {
+        process?.destroy()
+        stop = true
+    }
+
     override fun isNotificationRequired() = true
     override fun getNotificationMessage() = NirdizatiUtil.localizeText("job.completed.simulation", this.toString())
 
@@ -110,11 +117,10 @@ class SimulationJob(val encoding: ModelParameter,
                 ".pkl"
     }
 
-    private fun convertToNumber(value: String): Number {
-        try {
-            return value.toInt()
-        } catch (e: NumberFormatException) {
-            return value.toDouble()
-        }
-    }
+    private fun convertToNumber(value: String): Number =
+            try {
+                value.toInt()
+            } catch (e: NumberFormatException) {
+                value.toDouble()
+            }
 }

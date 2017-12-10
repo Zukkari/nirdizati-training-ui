@@ -11,7 +11,7 @@ const val SCORE = "score"
 const val delim = ","
 const val METRIC = "metric"
 const val MAE = "mae"
-val normalized = listOf<String>("nmae", "nrmse")
+val normalized = listOf("nmae", "nrmse")
 
 class LinearData(val x: Float, val y: Float, val dataType: String)
 

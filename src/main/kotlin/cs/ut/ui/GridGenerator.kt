@@ -6,9 +6,16 @@ import cs.ut.util.COMP_ID
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PROPERTY
 import org.apache.log4j.Logger
-import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
-import org.zkoss.zul.*
+import org.zkoss.zul.Checkbox
+import org.zkoss.zul.Column
+import org.zkoss.zul.Columns
+import org.zkoss.zul.Combobox
+import org.zkoss.zul.Doublebox
+import org.zkoss.zul.Grid
+import org.zkoss.zul.Intbox
+import org.zkoss.zul.Row
+import org.zkoss.zul.Rows
 import org.zkoss.zul.impl.NumberInputElement
 
 
@@ -150,6 +157,10 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
 
             gatherValueFromFields(valueMap, fields.tail())
         }
+    }
+
+    fun removeRow(row: Row) {
+        rows.removeChild(row)
     }
 }
 
