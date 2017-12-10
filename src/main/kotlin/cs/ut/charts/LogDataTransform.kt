@@ -10,6 +10,8 @@ const val NR_EVENTS = "nr_events"
 const val SCORE = "score"
 const val delim = ","
 const val METRIC = "metric"
+const val MAE = "mae"
+val normalized = listOf<String>("nmae", "nrmse")
 
 class LinearData(val x: Float, val y: Float, val dataType: String)
 
@@ -35,7 +37,7 @@ fun getLinearPayload(file: File, mode: Mode): List<LinearData> {
             dataSet.add(
                     LinearData(
                             x = items[indexes.first].toFloat() / if (mode == Mode.SCATTER) 86400 else 1,
-                            y = items[indexes.second].toFloat() / 86400,
+                            y = items[indexes.second].toFloat() / if (mode == Mode.SCATTER || items[indexOfMetric] !in normalized) 86400 else 1,
                             dataType = if (Mode.SCATTER == mode) "" else items[indexOfMetric]))
         }
     }
