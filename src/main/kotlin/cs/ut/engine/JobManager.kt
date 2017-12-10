@@ -8,6 +8,7 @@ import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.NirdizatiGrid
+import cs.ut.util.TRACKER_EAST
 import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Desktop
@@ -72,6 +73,7 @@ class JobManager {
             val grid = Executions.getCurrent().desktop.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
             grid.generate(currentJobs.toList().reversed(), false)
             grid.isVisible = true
+            Executions.getCurrent().desktop.components.first { it.id == TRACKER_EAST }.isVisible = true
 
             while (currentJobs.peek() != null) {
                 executor.execute(currentJobs.poll())

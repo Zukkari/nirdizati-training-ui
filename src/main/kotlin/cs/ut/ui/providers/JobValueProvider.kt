@@ -11,6 +11,7 @@ import cs.ut.ui.GridValueProvider
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PAGE_VALIDATION
+import cs.ut.util.TRACKER_EAST
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.event.Events
@@ -128,6 +129,9 @@ class JobValueProvider() : GridValueProvider<Job, Row> {
             Executions.schedule(job.client,
                     { _ ->
                         grid.removeRow(row)
+                        if (!grid.isVisible) {
+                            job.client.components.first { it.id == TRACKER_EAST }.isVisible = false
+                        }
                     },
                     Event("abort_job", null, null))
         })
