@@ -55,7 +55,7 @@ function getScalesData(xLabel, yLabel) {
     }
 }
 
-function plot_line(payload, chart_label, n_of_events) {
+function plot_line(payload, chart_label, n_of_events, axis_label) {
     var canvas = document.getElementById('chart_canvas');
     var ctx = canvas.getContext('2d');
     if (chart != null) chart.destroy();
@@ -70,7 +70,7 @@ function plot_line(payload, chart_label, n_of_events) {
                     tension: 0
                 }
             },
-            scales: getScalesData('Number of events', chart_label)
+            scales: getScalesData('Number of events', axis_label)
         }
     })
 }

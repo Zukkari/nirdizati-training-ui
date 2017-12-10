@@ -2,6 +2,7 @@ package cs.ut.controllers
 
 import cs.ut.charts.Chart
 import cs.ut.charts.ChartGenerator
+import cs.ut.charts.MAE
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.providers.JobValueProvider
 import cs.ut.util.NirdizatiUtil
@@ -15,7 +16,13 @@ import org.zkoss.zk.ui.event.SelectEvent
 import org.zkoss.zk.ui.event.SerializableEventListener
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zul.*
+import org.zkoss.zul.Cell
+import org.zkoss.zul.Combobox
+import org.zkoss.zul.Comboitem
+import org.zkoss.zul.Hlayout
+import org.zkoss.zul.Label
+import org.zkoss.zul.Row
+import org.zkoss.zul.Rows
 
 class ValidationController : SelectorComposer<Component>() {
     private val log = Logger.getLogger(ValidationController::class.java)
@@ -55,11 +62,13 @@ class ValidationController : SelectorComposer<Component>() {
         row.align = "center"
         charts.forEach { generateCell(row, it) }
         selectionRows.appendChild(row)
+        Events.postEvent("onClick", row.getChildren<Component>().first { it.id == "cs.ut.charts.LineChart" }, null)
     }
 
     private fun generateCell(row: Row, entry: Map.Entry<String, List<Chart>>) {
         val cell = Cell()
         val label = Label(Labels.getLabel(entry.key))
+        cell.id = entry.key
         cell.align = "center"
         cell.valign = "center"
         cell.addEventListener(Events.ON_CLICK,
@@ -111,11 +120,14 @@ class ValidationController : SelectorComposer<Component>() {
             charts.forEach {
                 val comboItem = combobox.appendItem(NirdizatiUtil.localizeText(it.getCaption()))
                 comboItem.setValue(it)
+
+                if (MAE == it.name) {
+                    combobox.selectedItem = comboItem
+                }
             }
 
             combobox.isReadonly = true
             combobox.setConstraint("no empty")
-            combobox.selectedItem = combobox.items.first()
             (combobox.selectedItem.getValue() as Chart).render()
 
             combobox.addEventListener(Events.ON_SELECT, { e -> (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).render() })
@@ -131,7 +143,6 @@ class ValidationController : SelectorComposer<Component>() {
             selectionRows.appendChild(row)
         }
     }
-
 
 
     private fun generatePropertyRow() {

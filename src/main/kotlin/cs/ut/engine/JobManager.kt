@@ -102,18 +102,11 @@ class JobManager {
                             { _ ->
                                 statusLabel.value = job.status.name
                                 buttons.forEach { (it as Button).isDisabled = job.status != JobStatus.COMPLETED }
-                                resizeGrid(job.client, grid)
                             },
                             Event("job_status", null, "update"))
                 } else {
                     updateJobStatus(job, rows.drop(1), grid)
                 }
-            }
-        }
-
-        private fun resizeGrid(desktop: Desktop, grid: NirdizatiGrid<Job>) {
-            if (grid.rows.getChildren<Row>().size >= MainPageController.getInstance().getClientInfo(desktop.session).maxJobCount) {
-                grid.vflex = "min"
             }
         }
     }
