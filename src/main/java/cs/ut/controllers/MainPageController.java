@@ -85,6 +85,7 @@ public class MainPageController extends SelectorComposer<Component> {
     private void configureTracker(ClientInfo clientInfo) {
         if (trackerEast != null) {
             trackerEast.setSize(clientInfo.getWindowWidth() * 0.25 + "px");
+            trackerEast.setVisible(false);
         }
     }
 
