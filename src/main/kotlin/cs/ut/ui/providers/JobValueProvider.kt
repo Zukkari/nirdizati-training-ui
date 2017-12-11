@@ -12,6 +12,7 @@ import cs.ut.ui.NirdizatiGrid
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PAGE_VALIDATION
 import cs.ut.util.TRACKER_EAST
+import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.event.Events
@@ -131,7 +132,7 @@ class JobValueProvider() : GridValueProvider<Job, Row> {
             Executions.schedule(this.client,
                     { _ ->
                         row.detach()
-                        if (!grid.isVisible) {
+                        if (grid.rows.getChildren<Component>().isEmpty()) {
                             this.client.components.first { it.id == TRACKER_EAST }.isVisible = false
                         }
                     },
