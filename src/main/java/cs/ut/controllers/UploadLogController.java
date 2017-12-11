@@ -1,8 +1,8 @@
 package cs.ut.controllers;
 
 import cs.ut.config.MasterConfiguration;
-import cs.ut.manager.LogManager;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
@@ -44,7 +44,7 @@ public class UploadLogController extends SelectorComposer<Component> {
 
     private transient Media media;
 
-    private transient LogManager manager = LogManager.getInstance();
+    private transient LogManager manager = new LogManager();
 
     private List<String> allowedExtensions = MasterConfiguration.getInstance().getExtensions();
 

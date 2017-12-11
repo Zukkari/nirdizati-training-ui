@@ -11,7 +11,7 @@ import org.zkoss.zk.ui.Desktop
 import java.io.File
 import java.util.*
 
-class DataSetGenerationJob(val parameters: MutableMap<String, List<String>>, val currentFile: File, client: Desktop) : Job(client) {
+class DataSetGenerationJob(val parameters: MutableMap<String, MutableList<String>>, currentFile: File, client: Desktop) : Job(client) {
     override var startTime = Date()
     override var completeTime = Date()
 

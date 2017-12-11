@@ -1,8 +1,8 @@
 package cs.ut.charts
 
 import com.google.gson.Gson
+import cs.ut.engine.LogManager
 import cs.ut.jobs.SimulationJob
-import cs.ut.manager.LogManager
 
 class ChartGenerator(val job: SimulationJob?) {
     companion object {
@@ -10,6 +10,7 @@ class ChartGenerator(val job: SimulationJob?) {
         const val FEATURES = "feature_importance"
     }
 
+    private val logManager: LogManager = LogManager()
     private val gson = Gson()
 
     fun getCharts(): List<Chart> {
@@ -17,25 +18,25 @@ class ChartGenerator(val job: SimulationJob?) {
 
         charts.add(generateScatterPlot(TRUE_VS_PREDICTED))
         charts.addAll(generateLineCharts())
-        charts.addAll(generateBarCharts(FEATURES))
+        charts.addAll(generateBarCharts())
 
         return charts
     }
 
     private fun generateScatterPlot(name: String): ScatterPlot {
-        val payload = getLinearPayload(LogManager.getInstance().getDetailedFile(job), Mode.SCATTER)
+        val payload = getLinearPayload(logManager.getDetailedFile(job!!), Mode.SCATTER)
         return ScatterPlot(name, gson.toJson(payload))
     }
 
     private fun generateLineCharts(): List<LineChart> {
-        val payload = getLinearPayload(LogManager.getInstance().getValidationFile(job), Mode.LINE).groupBy { it.dataType }
+        val payload = getLinearPayload(logManager.getValidationFile(job!!), Mode.LINE).groupBy { it.dataType }
         var charts = listOf<LineChart>()
         payload.forEach { charts += LineChart(it.key, gson.toJson(it.value), it.value.last().x.toInt()) }
         return charts
     }
 
-    private fun generateBarCharts(name: String): List<BarChart> {
-        val files = LogManager.getInstance().getFeatureImportanceFiles(job)
+    private fun generateBarCharts(): List<BarChart> {
+        val files = logManager.getFeatureImportanceFiles(job!!)
         val charts = mutableListOf<BarChart>()
 
         (1..files.size).zip(files).forEach {
