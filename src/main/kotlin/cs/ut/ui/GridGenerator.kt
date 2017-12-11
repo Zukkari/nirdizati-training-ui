@@ -158,11 +158,6 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
             gatherValueFromFields(valueMap, fields.tail())
         }
     }
-
-    fun removeRow(row: Row) {
-        rows.removeChild(row)
-        if (rows.getChildren<Component>().isEmpty()) isVisible = false
-    }
 }
 
 fun isInRange(num: Number, min: Double = -1.0, max: Double = -1.0): Boolean {

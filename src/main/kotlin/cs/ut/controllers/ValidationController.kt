@@ -64,31 +64,31 @@ class ValidationController : SelectorComposer<Component>() {
     private fun generateChartOptions() {
         val row = Row()
         row.align = "center"
-        charts.forEach { generateCell(row, it) }
+        charts.forEach { row.generateCell(it) }
         selectionRows.appendChild(row)
         Events.postEvent("onClick", row.getChildren<Component>().first { it.id == "cs.ut.charts.LineChart" }, null)
     }
 
-    private fun generateCell(row: Row, entry: Map.Entry<String, List<Chart>>) {
+    private fun Row.generateCell(entry: Map.Entry<String, List<Chart>>) {
         val cell = Cell()
         val label = Label(Labels.getLabel(entry.key))
         cell.id = entry.key
         cell.align = "center"
         cell.valign = "center"
         cell.addEventListener(Events.ON_CLICK,
-                if (entry.value.size == 1) generateListenerForOne(entry.value.first()) else generateListenerForMany(entry.value))
+                if (entry.value.size == 1) entry.value.first().generateListenerForOne() else entry.value.generateListenerForMany())
         cell.addEventListener(Events.ON_CLICK, { _ ->
             selectionRows.getChildren<Row>().first().getChildren<Cell>().forEach { it.setClass("") }
             cell.setClass("selected-option")
         })
         cell.appendChild(label)
-        row.appendChild(cell)
+        this.appendChild(cell)
     }
 
-    private fun generateListenerForOne(chart: Chart): SerializableEventListener<Event> {
+    private fun Chart.generateListenerForOne(): SerializableEventListener<Event> {
         return SerializableEventListener { _ ->
             removeChildren()
-            chart.render()
+            this.render()
         }
     }
 
@@ -96,7 +96,7 @@ class ValidationController : SelectorComposer<Component>() {
         comboLayout.getChildren<Component>().clear()
     }
 
-    private fun generateListenerForMany(charts: List<Chart>): SerializableEventListener<Event> {
+    private fun List<Chart>.generateListenerForMany(): SerializableEventListener<Event> {
         return SerializableEventListener { _ ->
             removeChildren()
 
@@ -106,7 +106,7 @@ class ValidationController : SelectorComposer<Component>() {
 
             var itemSet = false
             val combobox = Combobox()
-            charts.forEach {
+            this.forEach {
                 val comboItem = combobox.appendItem(NirdizatiUtil.localizeText(it.getCaption()))
                 comboItem.setValue(it)
 
@@ -132,31 +132,31 @@ class ValidationController : SelectorComposer<Component>() {
     private fun generatePropertyRow() {
         val row = Row()
         row.align = "center"
-        generatePropertyData(row)
+        row.generatePropertyData()
         propertyRows.appendChild(row)
     }
 
     private fun generateMetadataRow() {
         val row = Row()
         row.align = "center"
-        generateMainData(row)
+        row.generateMainData()
         metadataRows.appendChild(row)
     }
 
-    private fun generatePropertyData(row: Row) {
-        job!!.learner.properties.forEach { generateLabelAndValue(row, "property." + it.id, it.property, false) }
+    private fun Row.generatePropertyData() {
+        job!!.learner.properties.forEach { this.generateLabelAndValue("property." + it.id, it.property, false) }
     }
 
-    private fun generateMainData(row: Row) {
+    private fun Row.generateMainData() {
         var param = job!!.encoding
-        generateLabelAndValue(row, param.type, param.type + "." + param.id)
+        generateLabelAndValue(param.type, param.type + "." + param.id)
         param = job!!.bucketing
-        generateLabelAndValue(row, param.type, param.type + "." + param.id)
+        generateLabelAndValue(param.type, param.type + "." + param.id)
         param = job!!.learner
-        generateLabelAndValue(row, param.type, param.type + "." + param.id)
+        generateLabelAndValue(param.type, param.type + "." + param.id)
     }
 
-    private fun generateLabelAndValue(row: Row, labelCaption: String, valueCaption: String, localizeValue: Boolean = true) {
+    private fun Row.generateLabelAndValue(labelCaption: String, valueCaption: String, localizeValue: Boolean = true) {
         val label = Label(Labels.getLabel(labelCaption) + ": ")
         val value = Label(if (localizeValue) Labels.getLabel(valueCaption) else valueCaption)
         value.style = "font-weight: bold"
@@ -164,6 +164,6 @@ class ValidationController : SelectorComposer<Component>() {
         val hlayout = Hlayout()
         hlayout.appendChild(label)
         hlayout.appendChild(value)
-        row.appendChild(hlayout)
+        this.appendChild(hlayout)
     }
 }
