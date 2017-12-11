@@ -6,7 +6,7 @@ import com.google.common.html.HtmlEscapers;
 import cs.ut.config.MasterConfiguration;
 import cs.ut.config.items.ModelParameter;
 import cs.ut.engine.JobManager;
-import cs.ut.manager.LogManager;
+import cs.ut.engine.LogManager;
 import cs.ut.util.NirdizatiUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
@@ -78,7 +78,7 @@ public class TrainingController extends SelectorComposer<Component> {
     }
 
     private void initClientLogs() {
-        LogManager manager = LogManager.getInstance();
+        LogManager manager = new LogManager();
         List<File> fileNames = manager.getAllAvailableLogs();
         log.debug(String.format("Got %s items for client log combobox", fileNames.size()));
 

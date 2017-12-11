@@ -109,11 +109,10 @@ class CsvReader(private val f: File) {
             userCols.remove(RESOURCE_COL)
         }
 
-        cases.forEach {
-            val map = it.classifiedColumns
-            it.dynamicCols.forEach { insertIntoMap(map, DYNAMIC, it, colValues[it]) }
-            it.staticCols.forEach { insertIntoMap(map, STATIC, it, colValues[it]) }
-            postProcessCase(resultCols, it, alreadyClassified)
+        cases.forEach { c ->
+            c.dynamicCols.forEach { insertIntoMap(c.classifiedColumns, DYNAMIC, it, colValues[it]) }
+            c.staticCols.forEach { insertIntoMap(c.classifiedColumns, STATIC, it, colValues[it]) }
+            postProcessCase(resultCols, c, alreadyClassified)
         }
 
         userCols.forEach { k, v -> resultCols[k] = Collections.singletonList(v as String) }
@@ -166,7 +165,7 @@ class CsvReader(private val f: File) {
                 it.toDouble()
             } catch (e: NumberFormatException) {
                 isNumeric = false
-                return
+                return@forEach
             }
         }
 
