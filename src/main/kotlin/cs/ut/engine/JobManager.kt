@@ -86,29 +86,5 @@ class JobManager {
             jobQueue[Executions.getCurrent().session]?.clear()
             log.debug("Cleared all jobs for session ${Executions.getCurrent().session}")
         }
-
-        fun notifyOfJobStatusChange(job: Job) {
-            val grid: NirdizatiGrid<Job> = job.client.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
-            updateJobStatus(job, grid.rows.getChildren(), grid)
-        }
-
-        tailrec private fun updateJobStatus(job: Job, rows: List<Row>, grid: NirdizatiGrid<Job>) {
-            if (rows.isNotEmpty()) {
-                val row = rows.first()
-                val buttons = row.lastChild.lastChild.getChildren<Component>()
-                val statusLabel = row.firstChild.getChildren<Component>()[1].lastChild.firstChild as Label
-
-                if (job == row.getValue()) {
-                    Executions.schedule(job.client,
-                            { _ ->
-                                statusLabel.value = job.status.name
-                                buttons.forEach { (it as Button).isDisabled = job.status != JobStatus.COMPLETED }
-                            },
-                            Event("job_status", null, "update"))
-                } else {
-                    updateJobStatus(job, rows.drop(1), grid)
-                }
-            }
-        }
     }
 }
