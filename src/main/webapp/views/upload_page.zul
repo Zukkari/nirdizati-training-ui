@@ -10,6 +10,6 @@
         <label sclass="start-caption">${labels.upload.log_support}</label>
     </vlayout>
     <vlayout>
-        <button id="upload" sclass="big-blue-btn" style="margin: 30px">${labels.upload.log}</button>
+        <button id="upload" sclass="big-blue-btn" style="margin: 30px" visible="false">${labels.upload.log}</button>
     </vlayout>
 </vbox>
