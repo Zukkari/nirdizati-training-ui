@@ -12,6 +12,7 @@ import cs.ut.ui.NirdizatiGrid
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PAGE_VALIDATION
 import cs.ut.util.TRACKER_EAST
+import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
@@ -23,7 +24,7 @@ import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import org.zkoss.zul.Vlayout
 
-class JobValueProvider() : GridValueProvider<Job, Row> {
+class JobValueProvider : GridValueProvider<Job, Row> {
     companion object {
         const val jobArg = "JOB"
     }
@@ -47,18 +48,29 @@ class JobValueProvider() : GridValueProvider<Job, Row> {
         return row
     }
 
+    private fun ModelParameter.generateResultLabel(): Hlayout {
+        val hlayout = Hlayout()
+
+        val label = Label(Labels.getLabel("property.outcome"))
+        label.style = "font-weight: bold;"
+
+        val outcome = Label(Labels.getLabel(this.type + "." + this.id))
+        hlayout.appendChild(label)
+        hlayout.appendChild(outcome)
+
+        return hlayout
+    }
+
     private fun Row.formJobLabel(job: Job): Vlayout {
         job as SimulationJob
 
         val encoding = job.encoding
         val bucketing = job.bucketing
         val learner = job.learner
-        val outcome = job.outcome
 
         val label = Label(NirdizatiUtil.localizeText(encoding.type + "." + encoding.id) + "\n" +
                 NirdizatiUtil.localizeText(bucketing.type + "." + bucketing.id) + "\n" +
-                NirdizatiUtil.localizeText(learner.type + "." + learner.id) + "\n" +
-                NirdizatiUtil.localizeText(outcome.type + "." + outcome.id))
+                NirdizatiUtil.localizeText(learner.type + "." + learner.id))
         label.isPre = true
         label.style = "font-weight: bold;"
 
@@ -66,14 +78,21 @@ class JobValueProvider() : GridValueProvider<Job, Row> {
 
         val fileLayout = job.generateFileInfo()
         fileLayout.hflex = "1"
+
+        val labelsContainer = Vlayout()
+        labelsContainer.appendChild(fileLayout)
+        labelsContainer.appendChild(job.outcome.generateResultLabel())
+        labelsContainer.hflex = "1"
+
         val fileContainer = Hlayout()
-        fileContainer.appendChild(fileLayout)
+        fileContainer.appendChild(labelsContainer)
 
         val btnContainer = Hbox()
-        btnContainer.hflex = "1"
+        btnContainer.hflex = "min"
         btnContainer.pack = "end"
         btnContainer.appendChild(job.generateRemoveBtn(this))
         fileContainer.appendChild(btnContainer)
+        fileContainer.hflex = "1"
 
         val vlayout = Vlayout()
         vlayout.appendChild(fileContainer)
