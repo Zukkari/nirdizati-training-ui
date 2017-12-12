@@ -12,6 +12,7 @@ import cs.ut.ui.providers.ComboArgument
 import cs.ut.ui.providers.ComboProvider
 import cs.ut.util.CsvReader
 import cs.ut.util.TIMESTAMP_COL
+import org.apache.commons.io.FileUtils
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -124,6 +125,8 @@ class ParameterModalController : GenericAutowireComposer<Component>() {
             NirdizatiThreadPool().execute(DataSetGenerationJob(params, file, execution.desktop))
             Clients.showNotification(Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.getName()))), "info", getPage().getFirstRoot(), "bottom_center", -1)
             MainPageController.getInstance().setContent("landing", getPage())
+            FileUtils.moveFile(file,
+                    File(MasterConfiguration.getInstance().directoryPathConfiguration.userLogDirectory + file.name))
             modal.detach()
         }
         okBtn.addEventListener(Events.ON_CLICK, okBtnListener)

@@ -1,10 +1,12 @@
 package cs.ut.config.nodes;
 
 import cs.ut.exceptions.NirdizatiRuntimeException;
+import org.apache.commons.io.FileUtils;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
+import java.io.IOException;
 
 @XmlRootElement(name = "paths")
 public class DirectoryPathConfiguration {
@@ -41,6 +43,9 @@ public class DirectoryPathConfiguration {
 
     @XmlElement(name = "validationDir")
     private String validationDir;
+
+    @XmlElement(name = "tmpDir")
+    private String tmpDir;
 
     public String getUserLogDirectory() {
         return userLogDirectory;
@@ -86,9 +91,25 @@ public class DirectoryPathConfiguration {
         return validationDir;
     }
 
+    public String getTmpDir() {
+        return tmpDir;
+    }
+
     public void validatePathsExist() {
         File file = new File(userLogDirectory);
         createDirIfAbsent(file);
+
+        file = new File(tmpDir);
+        if (file.exists()) {
+            try {
+                FileUtils.deleteDirectory(file);
+            } catch (IOException e) {
+                throw new NirdizatiRuntimeException("No permission to delete tmp dir");
+            }
+        }
+        if (!file.mkdir()) {
+            throw new NirdizatiRuntimeException("No permission to create tmp dir");
+        }
 
         file = new File(userModelDirectory);
         createDirIfAbsent(file);
@@ -113,8 +134,8 @@ public class DirectoryPathConfiguration {
     }
 
     protected void createDirIfAbsent(File file) {
-        if (!file.exists() && !file.mkdir()) {
-            throw new NirdizatiRuntimeException(String.format("Cannot write to directory <%s>", userLogDirectory));
+        if (!file.exists()) {
+            file.mkdir();
         }
     }
 }
