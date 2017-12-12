@@ -19,6 +19,7 @@ class LogManager {
 
     private val allowedExtensions: List<String>
 
+    private val scriptDir: String
     private val logDirectory: String
     private val validationDir: String
     private val featureImportanceDir: String
@@ -27,6 +28,9 @@ class LogManager {
     init {
         log.debug("Initializing $this")
         val conf = MasterConfiguration.getInstance().directoryPathConfiguration
+        scriptDir = conf.scriptDirectory
+        log.debug("Script directory -> $scriptDir")
+
         logDirectory = conf.userLogDirectory
         log.debug("User log directory -> $logDirectory")
 
@@ -97,7 +101,7 @@ class LogManager {
     }
 
     private fun getFile(fileName: String): File {
-        val file = File(fileName + ".csv")
+        val file = File(scriptDir + fileName + ".csv")
         log.debug("Looking for file with name ${file.name}")
 
         if (!file.exists()) {
