@@ -69,7 +69,7 @@
         <!-- Validation directory relative to script dir -->
         <validationDir>results/validation/</validationDir>
         <!-- temporary directory for user log storage -->
-        <tmpDir>/home/zukkari/git/nirdizati-training-ui/tmp/</tmpDir>
+        <tmpDir>/home/ubuntu/git/nirdizati-training-ui/tmp/</tmpDir>
     </paths>
 
     <!-- Header button configuration for header construction -->
