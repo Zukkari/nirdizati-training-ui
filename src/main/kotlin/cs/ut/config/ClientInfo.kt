@@ -6,6 +6,5 @@ data class ClientInfo(
         val windowWidth: Int,
         val windowHeight: Int,
         val colorDepth: Int,
-        val orientation: String,
-        val maxJobCount: Int
+        val orientation: String
 )

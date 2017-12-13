@@ -31,11 +31,11 @@ class LandingPageController : SelectorComposer<Component>() {
      */
     private fun wireButtons() {
         upload.addEventListener(Events.ON_CLICK, { _ ->
-            MainPageController.getInstance().setContent(PAGE_UPLOAD, page)
+            MainPageController.mainPageController.setContent(PAGE_UPLOAD, page)
         })
 
         existingLog.addEventListener(Events.ON_CLICK, { _ ->
-            MainPageController.getInstance().setContent(PAGE_TRAINING, page)
+            MainPageController.mainPageController.setContent(PAGE_TRAINING, page)
         })
     }
 }

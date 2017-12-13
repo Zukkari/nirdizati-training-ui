@@ -29,7 +29,7 @@ class HeaderController : SelectorComposer<Component>() {
             val navItem = Navitem()
             navItem.label = Labels.getLabel(it.label)
             navItem.addEventListener(Events.ON_CLICK, { _ ->
-                MainPageController.getInstance().setContent(it.redirect, page)
+                MainPageController.mainPageController.setContent(it.redirect, page)
                 navbar.selectItem(navItem)
             })
             navItem.isDisabled = !it.enabled
@@ -41,7 +41,7 @@ class HeaderController : SelectorComposer<Component>() {
 
     @Listen("onClick = #headerLogo")
     fun handleClick() {
-        MainPageController.getInstance().setContent(PAGE_LANDING, page)
+        MainPageController.mainPageController.setContent(PAGE_LANDING, page)
         navbar.selectItem(null)
     }
 }
