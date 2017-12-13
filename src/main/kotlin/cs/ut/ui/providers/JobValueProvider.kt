@@ -30,7 +30,6 @@ class JobValueProvider : GridValueProvider<Job, Row> {
     }
 
     override var fields: MutableList<FieldComponent> = mutableListOf()
-    lateinit var originator: NirdizatiGrid<Job>
 
     override fun provide(data: Job): Row {
         val status = Label(data.status.name)
@@ -168,7 +167,7 @@ class JobValueProvider : GridValueProvider<Job, Row> {
 
         visualize.addEventListener(Events.ON_CLICK, { _ ->
             Executions.getCurrent().setAttribute(jobArg, this)
-            MainPageController.getInstance().setContent(PAGE_VALIDATION, Executions.getCurrent().desktop.firstPage)
+            MainPageController.mainPageController.setContent(PAGE_VALIDATION, Executions.getCurrent().desktop.firstPage)
         })
 
         return visualize

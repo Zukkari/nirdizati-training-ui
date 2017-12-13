@@ -12,10 +12,10 @@ import cs.ut.ui.providers.ComboArgument
 import cs.ut.ui.providers.ComboProvider
 import cs.ut.util.CsvReader
 import cs.ut.util.TIMESTAMP_COL
-import org.apache.commons.io.FileUtils
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
+import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.event.SerializableEventListener
@@ -28,6 +28,7 @@ import org.zkoss.zul.Window
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 
 class ParameterModalController : GenericAutowireComposer<Component>() {
     private val log: Logger = Logger.getLogger(ParameterModalController::class.java)!!
@@ -123,11 +124,11 @@ class ParameterModalController : GenericAutowireComposer<Component>() {
                 }
             }
             NirdizatiThreadPool().execute(DataSetGenerationJob(params, file, execution.desktop))
-            Clients.showNotification(Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.getName()))), "info", getPage().getFirstRoot(), "bottom_center", -1)
-            MainPageController.getInstance().setContent("landing", getPage())
-            FileUtils.moveFile(file,
-                    File(MasterConfiguration.getInstance().directoryPathConfiguration.userLogDirectory + file.name))
+            Clients.showNotification(Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.getName()))), "info", getPage().getFirstRoot(), "bottom_center", -1, true)
+            Files.move(Paths.get(file.absolutePath),
+                    Paths.get(File(MasterConfiguration.getInstance().directoryPathConfiguration.userLogDirectory + file.name).absolutePath), StandardCopyOption.REPLACE_EXISTING)
             modal.detach()
+            MainPageController.mainPageController.setContent("training", getPage(), 2000, Executions.getCurrent().desktop)
         }
         okBtn.addEventListener(Events.ON_CLICK, okBtnListener)
 
@@ -150,8 +151,8 @@ class ParameterModalController : GenericAutowireComposer<Component>() {
         gridSlot.getChildren<Component>().clear()
         gridSlot.getChildren<Component>().add(grid)
 
-        grid.setMold("paging")
-        grid.setPageSize(10)
+        grid.mold = "paging"
+        grid.pageSize = 10
         grid.hflex = "min"
 
         return grid

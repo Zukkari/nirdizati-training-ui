@@ -123,7 +123,7 @@ abstract class Job(val client: Desktop) : Runnable {
                         Clients.showNotification(
                                 getNotificationMessage(),
                                 "info",
-                                MainPageController.getInstance().comp,
+                                MainPageController.mainPageController.getComp(),
                                 "bottom_center",
                                 -1)
                     },
