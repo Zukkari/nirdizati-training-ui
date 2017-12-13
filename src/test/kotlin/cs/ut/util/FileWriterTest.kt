@@ -16,9 +16,7 @@ class FileWriterTest {
         var writer by Delegates.notNull<FileWriter>()
         var jsonName = "testJson"
 
-        val dir = MasterConfiguration
-                .getInstance()
-                .directoryPathConfiguration
+        val dir = MasterConfiguration.getInstance().directoryPathConfiguration
                 .scriptDirectory + "core/"
 
         @BeforeClass

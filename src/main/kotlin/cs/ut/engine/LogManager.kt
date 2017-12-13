@@ -43,7 +43,7 @@ class LogManager {
         detailedDir = conf.detailedDir
         log.debug("Detailed log directory -> $detailedDir")
 
-        allowedExtensions = MasterConfiguration.getInstance().extensions
+        allowedExtensions = MasterConfiguration.getInstance().csvConfiguration.extensions
     }
 
     /**

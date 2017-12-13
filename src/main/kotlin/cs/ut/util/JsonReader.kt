@@ -19,7 +19,7 @@ fun readHyperParameterJson(): Map<String, List<ModelParameter>> {
 }
 
 private fun mapTypes(modelsParams: Map<String, List<ModelParameter>>) {
-    val allProperties = MasterConfiguration.getInstance().modelConfiguration.allProperties
+    val allProperties = MasterConfiguration.getInstance().modelConfiguration.getAllProperties()
 
     modelsParams.values.flatMap { it }.flatMap { it.properties }.forEach { prop ->
         val withType = allProperties.first { it.id == prop.id }
@@ -101,7 +101,7 @@ tailrec private fun parseJson(jsons: MutableMap<String, String>, map: MutableMap
 }
 
 private fun getModelParams(paramNames: List<String>): List<ModelParameter> {
-    val alreadyDefined = MasterConfiguration.getInstance().modelConfiguration.initialParameters
+    val alreadyDefined = MasterConfiguration.getInstance().modelConfiguration.parameters
 
     val rightParameters = mutableListOf<ModelParameter>()
     paramNames.forEach { param -> rightParameters.add(ModelParameter(alreadyDefined.first { it.parameter == param })) }

@@ -1,6 +1,7 @@
 package cs.ut.controllers
 
 import cs.ut.config.MasterConfiguration
+import cs.ut.config.items.HeaderItem
 import cs.ut.util.PAGE_LANDING
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -22,8 +23,8 @@ class HeaderController : SelectorComposer<Component>() {
     }
 
     private fun composeHeader() {
-        val items = MasterConfiguration.getInstance().headerItems
-        items.sortBy { it.position }
+        val items: List<HeaderItem> = MasterConfiguration.getInstance().headerConfiguration.headerItems
+        items.sortedBy { it.position }
 
         items.forEach {
             val navItem = Navitem()
