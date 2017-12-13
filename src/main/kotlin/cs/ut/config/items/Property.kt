@@ -1,6 +1,11 @@
 package cs.ut.config.items
 
-import javax.xml.bind.annotation.*
+import javax.xml.bind.annotation.XmlAccessType
+import javax.xml.bind.annotation.XmlAccessorType
+import javax.xml.bind.annotation.XmlAttribute
+import javax.xml.bind.annotation.XmlRootElement
+import javax.xml.bind.annotation.XmlType
+import javax.xml.bind.annotation.XmlValue
 
 @XmlRootElement(name = "property")
 @XmlType(propOrder = arrayOf("id", "type", "property", "maxValue", "minValue"))
