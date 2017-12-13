@@ -19,7 +19,6 @@ import org.zkoss.zul.Borderlayout
 import org.zkoss.zul.East
 import org.zkoss.zul.Include
 import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.concurrent.timerTask
 
 class MainPageController : SelectorComposer<Component>() {
@@ -86,7 +85,7 @@ class MainPageController : SelectorComposer<Component>() {
         page.title = Labels.getLabel("header.$dest") + "- Nirdizati"
         val include = Selectors.iterable(page, "#contentInclude").iterator().next() as Include
         include.src = null
-        include.src = MasterConfiguration.getInstance().pageConfiguration.getByPageName(dest).uri
+        include.src = MasterConfiguration.getInstance().pageConfiguration.getPageByName(dest).uri
     }
 
     fun setContent(dest: String, page: Page, delay: Int, desktop: Desktop) {

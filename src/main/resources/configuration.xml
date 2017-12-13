@@ -38,12 +38,6 @@
         </page>
     </pageConfig>
 
-    <!-- extensions allowed for file upload -->
-    <extensions>
-        <ext>xes</ext>
-        <ext>csv</ext>
-    </extensions>
-
     <!-- Paths configuration used for log, model and script storage -->
     <paths>
         <!-- Path to python executable -->
@@ -74,30 +68,32 @@
 
     <!-- Header button configuration for header construction -->
     <headerConfiguration>
-        <headerItem>
-            <label>header.upload</label>
-            <redirect>upload</redirect>
-            <enabled>true</enabled>
-            <position>0</position>
-        </headerItem>
-        <headerItem>
-            <label>header.overview</label>
-            <redirect>logOverview</redirect>
-            <enabled>false</enabled>
-            <position>1</position>
-        </headerItem>
-        <headerItem>
-            <label>header.training</label>
-            <redirect>training</redirect>
-            <enabled>true</enabled>
-            <position>2</position>
-        </headerItem>
-        <headerItem>
-            <label>header.validation</label>
-            <redirect>validation</redirect>
-            <enabled>true</enabled>
-            <position>3</position>
-        </headerItem>
+        <headerItems>
+            <headerItem>
+                <label>header.upload</label>
+                <redirect>upload</redirect>
+                <enabled>true</enabled>
+                <position>0</position>
+            </headerItem>
+            <headerItem>
+                <label>header.overview</label>
+                <redirect>logOverview</redirect>
+                <enabled>false</enabled>
+                <position>1</position>
+            </headerItem>
+            <headerItem>
+                <label>header.training</label>
+                <redirect>training</redirect>
+                <enabled>true</enabled>
+                <position>2</position>
+            </headerItem>
+            <headerItem>
+                <label>header.validation</label>
+                <redirect>validation</redirect>
+                <enabled>true</enabled>
+                <position>3</position>
+            </headerItem>
+        </headerItems>
     </headerConfiguration>
 
     <csvConfig>
@@ -149,6 +145,12 @@
 
         <!-- Sample size, how many cases should be used for categorization -->
         <sampleSize>100</sampleSize>
+
+        <!-- extensions allowed for file upload -->
+        <extensions>
+            <ext>xes</ext>
+            <ext>csv</ext>
+        </extensions>
     </csvConfig>
 
     <!-- Model training configurations -->

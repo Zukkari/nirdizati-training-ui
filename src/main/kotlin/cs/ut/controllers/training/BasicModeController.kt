@@ -6,7 +6,7 @@ import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Component
 import org.zkoss.zul.Vlayout
 
-class BasicModeController(gridContainer: Vlayout,private val logName: String) : AbstractModeController(gridContainer), ModeController {
+class BasicModeController(gridContainer: Vlayout, private val logName: String) : AbstractModeController(gridContainer), ModeController {
     private val log: Logger = Logger.getLogger(BasicModeController::class.java)!!
     private val optimized: Map<String, List<ModelParameter>> = MasterConfiguration.getInstance().optimizedParams
 

@@ -24,13 +24,13 @@ abstract class Job(val client: Desktop) : Runnable {
     var status: JobStatus = JobStatus.PENDING
     protected var stop = false
 
-    val pathProvider = MasterConfiguration.getInstance().directoryPathConfiguration!!
-    protected val scriptDir = pathProvider.scriptDirectory!!
-    protected val userModelDir = pathProvider.userModelDirectory!!
+    val pathProvider = MasterConfiguration.getInstance().directoryPathConfiguration
+    protected val scriptDir = pathProvider.scriptDirectory
+    protected val userModelDir = pathProvider.userModelDirectory
     protected val coreDir = scriptDir + "core/"
-    protected val datasetDir = pathProvider.datasetDirectory!!
-    protected val trainingDir = pathProvider.trainDirectory!!
-    protected val pklDir = pathProvider.pklDirectory!!
+    protected val datasetDir = pathProvider.datasetDirectory
+    protected val trainingDir = pathProvider.trainDirectory
+    protected val pklDir = pathProvider.pklDirectory
 
     open fun preProcess() {}
 

@@ -15,13 +15,13 @@ class PageConfigurationTest {
 
     @Test
     fun existingPageTest() {
-        assertNotNull(config.getByPageName("upload"), "Existing page should be present")
+        assertNotNull(config.getPageByName("upload"), "Existing page should be present")
     }
 
     @Test
     fun nonExistingPageTest() {
         assertFailsWith<NoSuchElementException> {
-            config.getByPageName("randomnonexistingpage")
+            config.getPageByName("randomnonexistingpage")
         }
     }
 }
