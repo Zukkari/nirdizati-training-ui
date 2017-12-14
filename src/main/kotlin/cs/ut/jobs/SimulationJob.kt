@@ -4,16 +4,13 @@ import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.util.FileWriter
+import cs.ut.util.NirdizatiUtil
+import cs.ut.util.PREFIX
 import org.apache.commons.io.FilenameUtils
-import org.apache.log4j.Logger
 import org.json.JSONObject
-import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Desktop
 import java.io.File
 import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -24,17 +21,26 @@ class SimulationJob(val encoding: ModelParameter,
                     val logFile: File,
                     client: Desktop) : Job(client) {
 
-    val log = Logger.getLogger(SimulationJob::class.java)!!
-
     override var startTime = Date()
     override var completeTime = Date()
+
+    private var process: Process? = null
 
     override fun preProcess() {
         log.debug("Generating training parameters for job $this")
         val json = JSONObject()
 
         val params = JSONObject()
-        learner.properties.forEach { (k, _, v) -> params.put(k, convertToNumber(v)) }
+
+        if (bucketing.id == PREFIX) {
+            val props = JSONObject()
+            learner.properties.forEach { (k, _, v) -> props.put(k, convertToNumber(v)) }
+            for (i in 1..15) {
+                params.put(i.toString(), props)
+            }
+        } else {
+            learner.properties.forEach { (k, _, v) -> params.put(k, convertToNumber(v)) }
+        }
 
         json.put(outcome.parameter,
                 JSONObject().put(bucketing.parameter + "_" + encoding.parameter,
@@ -66,10 +72,11 @@ class SimulationJob(val encoding: ModelParameter,
             env.put("PYTHONPATH", scriptDir)
 
             log.debug("Script call: ${pb.command()}")
-            val process = pb.start()
-            if (!process.waitFor(180, TimeUnit.SECONDS)) {
-                process.destroy()
-                log.debug("Timed out while executing script")
+            process = pb.start()
+            if (!process!!.waitFor(180, TimeUnit.SECONDS) || stop) {
+                process!!.destroy()
+                log.debug("Stopping script -> stop: $stop")
+                return
             }
 
             log.debug("Script finished running...")
@@ -89,24 +96,13 @@ class SimulationJob(val encoding: ModelParameter,
         }
     }
 
-    override fun postExecute() {
-        log.debug("Moving file to user model storage directory <$userModelDir>")
-
-        val noExtensionName = FilenameUtils.getBaseName(log.name)
-        val dir = File(userModelDir + noExtensionName)
-
-        if (!dir.exists() && !dir.mkdir()) log.debug("Cannot create folder for model with name ${dir.name}")
-
-        try {
-            Files.move(Paths.get(scriptDir + pklDir + this.toString()),
-                    Paths.get(userModelDir + noExtensionName + "/" + this.toString()), StandardCopyOption.REPLACE_EXISTING)
-        } catch (e: IOException) {
-            throw NirdizatiRuntimeException("Script execution failed", e)
-        }
+    override fun kill() {
+        process?.destroy()
+        stop = true
     }
 
     override fun isNotificationRequired() = true
-    override fun getNotificationMessage() = Labels.getLabel("job.completed.simulation", arrayOf(this.toString()))!!
+    override fun getNotificationMessage() = NirdizatiUtil.localizeText("job.completed.simulation", this.toString())
 
     override fun toString(): String {
         return FilenameUtils.getBaseName(logFile.name) +
@@ -121,11 +117,10 @@ class SimulationJob(val encoding: ModelParameter,
                 ".pkl"
     }
 
-    private fun convertToNumber(value: String): Number {
-        try {
-            return value.toInt()
-        } catch (e: NumberFormatException) {
-            return value.toDouble()
-        }
-    }
+    private fun convertToNumber(value: String): Number =
+            try {
+                value.toInt()
+            } catch (e: NumberFormatException) {
+                value.toDouble()
+            }
 }

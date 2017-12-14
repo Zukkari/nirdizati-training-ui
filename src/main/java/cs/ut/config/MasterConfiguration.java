@@ -1,13 +1,12 @@
 package cs.ut.config;
 
-import cs.ut.config.items.HeaderItem;
 import cs.ut.config.items.ModelParameter;
-import cs.ut.config.items.ModelProperties;
-import cs.ut.config.nodes.CSVConfiguration;
+import cs.ut.config.nodes.CsvConfiguration;
 import cs.ut.config.nodes.DirectoryPathConfiguration;
+import cs.ut.config.nodes.HeaderConfiguration;
 import cs.ut.config.nodes.ModelConfiguration;
 import cs.ut.config.nodes.PageConfiguration;
-import cs.ut.engine.Worker;
+import cs.ut.config.nodes.ThreadPoolConfiguration;
 import cs.ut.exceptions.NirdizatiRuntimeException;
 import cs.ut.util.JsonReaderKt;
 import org.apache.log4j.ConsoleAppender;
@@ -22,9 +21,6 @@ import org.xml.sax.SAXException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,35 +29,22 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@XmlRootElement(name = "configuration")
 public class MasterConfiguration {
     private static final Logger log = Logger.getLogger(MasterConfiguration.class);
 
     private static MasterConfiguration master;
 
-    @XmlElement(name = "pageConfig")
-    private PageConfiguration pageConfiguration;
-
-    @XmlElementWrapper(name = "headerConfiguration")
-    @XmlElement(name = "headerItem")
-    private List<HeaderItem> headerItems;
-
-    @XmlElement(name = "modelConfig")
-    private ModelProperties modelProperties;
-
-    @XmlElementWrapper(name = "extensions")
-    @XmlElement(name = "ext")
-    private List<String> extensions;
-
-    @XmlElementWrapper(name = "userCols")
-    @XmlElement(name = "col")
-    private List<String> userCols;
-
     private DirectoryPathConfiguration directoryPathConfiguration;
 
     private ModelConfiguration modelConfiguration;
 
-    private CSVConfiguration csvConfiguration;
+    private CsvConfiguration csvConfiguration;
+
+    private ThreadPoolConfiguration threadPoolConfiguration;
+
+    private HeaderConfiguration headerConfiguration;
+
+    private PageConfiguration pageConfiguration;
 
     private MasterConfiguration() {
         configureLogger();
@@ -75,66 +58,47 @@ public class MasterConfiguration {
     public static MasterConfiguration getInstance() {
         if (master == null) {
             master = new MasterConfiguration();
-            try {
-                master.readMasterConfig();
-            } catch (JAXBException e) {
-                throw new NirdizatiRuntimeException("Failed to read master configuration", e);
-            }
         }
         return master;
     }
 
-    /**
-     * Reads configuration.xml file and parses it into Java objects.
-     *
-     * @throws JAXBException if configuration is defined incorrectly
-     */
-    private void readMasterConfig() throws JAXBException {
-        log.debug("Reading master configuration");
-        File file = new File(getClass().getClassLoader().getResource("configuration.xml").getFile());
-
-        JAXBContext jaxbContext = JAXBContext.newInstance(MasterConfiguration.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        MasterConfiguration configuration = (MasterConfiguration) unmarshaller.unmarshal(file);
-        log.debug("Finished reading configuration");
-
-        headerItems = configuration.getHeaderItems();
-        log.debug(String.format("Successfully read %s header items", headerItems.size()));
-        extensions = configuration.getExtensions();
-        userCols = configuration.getUserCols();
-
-        try {
-            getDirectoryPathConfiguration().validatePathsExist();
-        } catch (Exception e) {
-            log.debug("Validating paths failed...");
+    public HeaderConfiguration getHeaderConfiguration() {
+        if (headerConfiguration == null) {
+            headerConfiguration = readClass(HeaderConfiguration.class, "headerConfiguration");
         }
-
-        log.debug("Successfully read master configuration");
-
-        /* Start worker thread */
-        Worker.getInstance().start();
+        return headerConfiguration;
     }
 
-    public List<HeaderItem> getHeaderItems() {
-        return headerItems;
-    }
-
+    /**
+     * Training model configuration for Nirdizati application declared in configuration.xml
+     *
+     * @return Model configuration parameters
+     */
     public ModelConfiguration getModelConfiguration() {
         if (modelConfiguration == null) {
-            modelProperties = readClass(ModelProperties.class, "modelConfig");
-            modelConfiguration = new ModelConfiguration(modelProperties);
+            modelConfiguration = readClass(ModelConfiguration.class, "modelConfig");
+            modelConfiguration.prepareData();
         }
         return modelConfiguration;
     }
 
-    public List<String> getExtensions() {
-        return extensions;
+    /**
+     * Thread pool configuration declared in configuration.xml
+     *
+     * @return configuration for thread pool
+     */
+    public ThreadPoolConfiguration getThreadPoolConfiguration() {
+        if (threadPoolConfiguration == null) {
+            threadPoolConfiguration = readClass(ThreadPoolConfiguration.class, "threadpool");
+        }
+        return threadPoolConfiguration;
     }
 
-    public List<String> getUserCols() {
-        return userCols;
-    }
-
+    /**
+     * Optimized parameters for logs
+     *
+     * @return Map of optimized parameters where key is file name and value is list of optimized parameters
+     */
     public Map<String, List<ModelParameter>> getOptimizedParams() {
         return JsonReaderKt.readHyperParameterJson();
     }
@@ -164,25 +128,41 @@ public class MasterConfiguration {
         Logger.getRootLogger().addAppender(fileAppender);
     }
 
+    /**
+     * Directory configuration where Nirdizati will look for various elements declared in configuration.xml
+     *
+     * @return DirectoryPathConfiguration
+     */
     public DirectoryPathConfiguration getDirectoryPathConfiguration() {
         if (directoryPathConfiguration == null) {
             directoryPathConfiguration = readClass(DirectoryPathConfiguration.class, "paths");
+            directoryPathConfiguration.createTmpDir();
         }
         return directoryPathConfiguration;
     }
 
-    public CSVConfiguration getCSVConfiguration() {
+    /**
+     * CSV reader configuration that defines user columns for csv parsing
+     *
+     * @return CSVConfiguration
+     */
+    public CsvConfiguration getCSVConfiguration() {
         if (csvConfiguration == null) {
-            csvConfiguration = readClass(CSVConfiguration.class, "csvConfig");
+            csvConfiguration = readClass(CsvConfiguration.class, "csvConfig");
         }
         return csvConfiguration;
     }
 
+    /**
+     * Page configuration that defines redirects in Nirdizati Training UI
+     *
+     * @return PageConfiguration
+     */
     public PageConfiguration getPageConfiguration() {
         if (pageConfiguration == null) {
             pageConfiguration = readClass(PageConfiguration.class, "pageConfig");
         }
-        log.debug(String.format("Successfully retrieved %s page configurations", pageConfiguration.getPages().size()));
+        log.debug(String.format("Successfully retrieved %s page configurations", pageConfiguration.getPage().size()));
         return pageConfiguration;
     }
 
@@ -199,7 +179,7 @@ public class MasterConfiguration {
             db = dbf.newDocumentBuilder();
             doc = db.parse(file);
         } catch (ParserConfigurationException | IOException | SAXException e) {
-            throw new NirdizatiRuntimeException(e);
+            throw new NirdizatiRuntimeException("Failed to parse config", e, false, false);
         }
 
         NodeList node = doc.getElementsByTagName(nodeName);
@@ -209,7 +189,7 @@ public class MasterConfiguration {
             unmarshaller = jaxbContext.createUnmarshaller();
             return unmarshaller.unmarshal(node.item(0), clazz).getValue();
         } catch (JAXBException e) {
-            throw new NirdizatiRuntimeException("Failed to read directories", e);
+            throw new NirdizatiRuntimeException("Failed to read directories", e, false, false);
         }
     }
 }

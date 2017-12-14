@@ -1,14 +1,17 @@
 package cs.ut.jobs
 
 import cs.ut.exceptions.NirdizatiRuntimeException
-import cs.ut.util.*
+import cs.ut.util.ACTIVITY_COL
+import cs.ut.util.CASE_ID_COL
+import cs.ut.util.FileWriter
+import cs.ut.util.TIMESTAMP_COL
 import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
 import org.zkoss.zk.ui.Desktop
 import java.io.File
 import java.util.*
 
-class DataSetGenerationJob(val parameters: MutableMap<String, List<String>>, val currentFile: File, client: Desktop) : Job(client) {
+class DataSetGenerationJob(val parameters: MutableMap<String, MutableList<String>>, currentFile: File, client: Desktop) : Job(client) {
     override var startTime = Date()
     override var completeTime = Date()
 

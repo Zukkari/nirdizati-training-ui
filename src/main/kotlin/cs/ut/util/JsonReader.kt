@@ -19,7 +19,7 @@ fun readHyperParameterJson(): Map<String, List<ModelParameter>> {
 }
 
 private fun mapTypes(modelsParams: Map<String, List<ModelParameter>>) {
-    val allProperties = MasterConfiguration.getInstance().modelConfiguration.allProperties
+    val allProperties = MasterConfiguration.getInstance().modelConfiguration.getAllProperties()
 
     modelsParams.values.flatMap { it }.flatMap { it.properties }.forEach { prop ->
         val withType = allProperties.first { it.id == prop.id }
@@ -33,7 +33,7 @@ private fun readFilesFromDir(): List<File> {
     val dir = File(path)
     if (!dir.exists() && dir.isDirectory) throw NirdizatiRuntimeException("Optimized hyperparameter directory does not exist")
 
-    return dir.listFiles().toList()
+    return dir.listFiles()?.toList() ?: listOf()
 }
 
 private fun parseJsonFiles(files: List<File>): Map<String, List<ModelParameter>> {
@@ -88,7 +88,7 @@ tailrec private fun parseJson(jsons: MutableMap<String, String>, map: MutableMap
         val paramArray = thirdLevel.getJSONObject(learner).toMap()
         val properties = mutableListOf<Property>()
         paramArray.entries.forEach {
-            properties.add(Property(it.key, "", it.value.toString()))
+            properties.add(Property(it.key, "", it.value.toString(), -1.0, -1.0))
         }
 
         val modelProperties = getModelParams(params)
@@ -101,7 +101,7 @@ tailrec private fun parseJson(jsons: MutableMap<String, String>, map: MutableMap
 }
 
 private fun getModelParams(paramNames: List<String>): List<ModelParameter> {
-    val alreadyDefined = MasterConfiguration.getInstance().modelConfiguration.initialParameters
+    val alreadyDefined = MasterConfiguration.getInstance().modelConfiguration.parameters
 
     val rightParameters = mutableListOf<ModelParameter>()
     paramNames.forEach { param -> rightParameters.add(ModelParameter(alreadyDefined.first { it.parameter == param })) }

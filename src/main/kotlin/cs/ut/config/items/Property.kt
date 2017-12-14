@@ -3,7 +3,7 @@ package cs.ut.config.items
 import javax.xml.bind.annotation.*
 
 @XmlRootElement(name = "property")
-@XmlType(propOrder = arrayOf("id", "type", "property"))
+@XmlType(propOrder = arrayOf("id", "type", "property", "maxValue", "minValue"))
 @XmlAccessorType(XmlAccessType.FIELD)
 data class Property(
         @XmlAttribute(name = "id")
@@ -13,9 +13,15 @@ data class Property(
         var type: String,
 
         @XmlValue
-        var property: String) {
+        var property: String,
 
-        constructor() : this("", "","")
+        @XmlAttribute(name = "maxValue")
+        var maxValue: Double,
 
-        constructor(property: Property) : this(property.id, property.type, property.property)
+        @XmlAttribute(name = "minValue")
+        var minValue: Double) {
+
+    constructor() : this("", "", "", -1.0, -1.0)
+
+    constructor(property: Property) : this(property.id, property.type, property.property, property.maxValue, property.minValue)
 }
