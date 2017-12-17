@@ -30,7 +30,7 @@ data class CsvConfiguration(
         var resourceId: List<String>,
 
         @field:[
-        XmlElementWrapper(name = "timestmapFormat")
+        XmlElementWrapper(name = "timestampFormat")
         XmlElement(name = "format")]
         var timestampFormat: List<String>,
 
