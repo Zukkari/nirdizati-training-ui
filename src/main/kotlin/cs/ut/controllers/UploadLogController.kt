@@ -73,7 +73,7 @@ class UploadLogController : SelectorComposer<Component>() {
             file.createNewFile()
 
             FileOutputStream(file).use {
-                it.write(media.stringData.toByteArray(Charset.forName("UTF-8")))
+                it.write(media.stringData.replace("/", "-").toByteArray(Charset.forName("UTF-8")))
             }
 
             val args = mapOf("file" to file)
