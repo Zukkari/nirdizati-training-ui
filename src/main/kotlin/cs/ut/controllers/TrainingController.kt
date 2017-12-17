@@ -9,6 +9,7 @@ import cs.ut.controllers.training.ModeController
 import cs.ut.engine.JobManager
 import cs.ut.engine.LogManager
 import cs.ut.util.NirdizatiUtil
+import cs.ut.util.readLogColumns
 import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
@@ -20,6 +21,7 @@ import org.zkoss.zk.ui.select.annotation.Wire
 import org.zkoss.zk.ui.util.Clients
 import org.zkoss.zul.Checkbox
 import org.zkoss.zul.Combobox
+import org.zkoss.zul.Comboitem
 import org.zkoss.zul.Vlayout
 import java.io.File
 
@@ -62,9 +64,20 @@ class TrainingController : SelectorComposer<Component>() {
         val params: List<ModelParameter> = MasterConfiguration.getInstance().modelConfiguration.properties[PREDICTION]!!
         log.debug("Received ${params.size} prediciton types")
 
+        val logFile: File = clientLogs.selectedItem.getValue<File>() ?: return
+
+        val dataSetColumns: List<String> = readLogColumns(FilenameUtils.getBaseName(logFile.name))
+
         params.forEach {
-            val item = predictionType.appendItem(NirdizatiUtil.localizeText("${it.type}.${it.id}"))
+            val item: Comboitem = predictionType.appendItem(NirdizatiUtil.localizeText("${it.type}.${it.id}"))
             item.setValue(it)
+        }
+
+        dataSetColumns.forEach {
+            val modelParameter = ModelParameter(it, it, PREDICTION, true, mutableListOf())
+            modelParameter.translate = false
+            val item: Comboitem = predictionType.appendItem(modelParameter.id)
+            item.setValue(modelParameter)
         }
 
         predictionType.selectedItem = predictionType.items[0]

@@ -12,7 +12,6 @@ import cs.ut.ui.NirdizatiGrid
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PAGE_VALIDATION
 import cs.ut.util.TRACKER_EAST
-import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
@@ -50,10 +49,10 @@ class JobValueProvider : GridValueProvider<Job, Row> {
     private fun ModelParameter.generateResultLabel(): Hlayout {
         val hlayout = Hlayout()
 
-        val label = Label(Labels.getLabel("property.outcome"))
+        val label = Label(NirdizatiUtil.localizeText("property.outcome"))
         label.style = "font-weight: bold;"
 
-        val outcome = Label(Labels.getLabel(this.type + "." + this.id))
+        val outcome = Label(NirdizatiUtil.localizeText(if (this.translate) this.getTranslateName() else this.id))
         hlayout.appendChild(label)
         hlayout.appendChild(outcome)
 

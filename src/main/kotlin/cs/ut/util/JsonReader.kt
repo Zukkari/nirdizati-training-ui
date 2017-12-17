@@ -1,8 +1,12 @@
 package cs.ut.util
 
+import com.google.gson.Gson
+import com.google.gson.stream.JsonReader
 import cs.ut.config.MasterConfiguration
+import cs.ut.config.TrainingData
 import cs.ut.config.items.ModelParameter
 import cs.ut.config.items.Property
+import cs.ut.config.nodes.DirectoryPathConfiguration
 import cs.ut.exceptions.NirdizatiRuntimeException
 import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
@@ -18,6 +22,17 @@ fun readHyperParameterJson(): Map<String, List<ModelParameter>> {
     return modelsParams
 }
 
+fun readLogColumns(logName: String): List<String> {
+    val config: DirectoryPathConfiguration = MasterConfiguration.getInstance().directoryPathConfiguration
+    val path: String = config.scriptDirectory + "core/" + config.datasetDirectory
+
+    val file = File(path + logName + ".json")
+    val jsonReader = JsonReader(FileReader(file))
+
+    val json: TrainingData = Gson().fromJson<TrainingData>(jsonReader, TrainingData::class.java)
+    return json.getAllColumns()
+}
+
 private fun mapTypes(modelsParams: Map<String, List<ModelParameter>>) {
     val allProperties = MasterConfiguration.getInstance().modelConfiguration.getAllProperties()
 
@@ -26,6 +41,7 @@ private fun mapTypes(modelsParams: Map<String, List<ModelParameter>>) {
         prop.type = withType.type
     }
 }
+
 
 private fun readFilesFromDir(): List<File> {
     val path = MasterConfiguration.getInstance().directoryPathConfiguration.scriptDirectory + MasterConfiguration.getInstance().directoryPathConfiguration.ohpdir
