@@ -61,6 +61,9 @@ class TrainingController : SelectorComposer<Component>() {
     private fun getLogFileName(): String = FilenameUtils.getBaseName((clientLogs.selectedItem.getValue() as File).name)
 
     private fun initPredictions() {
+        predictionType.items.clear()
+        log.debug("Cleared prediction type items")
+
         val params: List<ModelParameter> = MasterConfiguration.getInstance().modelConfiguration.properties[PREDICTION]!!
         log.debug("Received ${params.size} prediciton types")
 
@@ -106,6 +109,7 @@ class TrainingController : SelectorComposer<Component>() {
 
         clientLogs.addEventListener(Events.ON_SELECT, { _ ->
             switchMode()
+            initPredictions()
         })
     }
 
