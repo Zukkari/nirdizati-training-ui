@@ -1,6 +1,11 @@
 package cs.ut.config.items
 
-import javax.xml.bind.annotation.*
+import javax.xml.bind.annotation.XmlAccessType
+import javax.xml.bind.annotation.XmlAccessorType
+import javax.xml.bind.annotation.XmlElement
+import javax.xml.bind.annotation.XmlElementWrapper
+import javax.xml.bind.annotation.XmlTransient
+import javax.xml.bind.annotation.XmlType
 
 @XmlType(propOrder = arrayOf("id", "parameter", "type", "enabled", "properties"))
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -19,6 +24,10 @@ data class ModelParameter(
             modelParameter.enabled,
             modelParameter.properties
     )
+
+    @XmlTransient
+    var translate = true
+    fun getTranslateName() = this.type + "." + this.id
 
     constructor() : this("", "", "", false, mutableListOf())
 

@@ -26,5 +26,4 @@ class BasicModeController(gridContainer: Vlayout, private val logName: String) :
             return MasterConfiguration.getInstance().modelConfiguration.basicParameters.groupBy { it.type }
         }
     }
-
 }

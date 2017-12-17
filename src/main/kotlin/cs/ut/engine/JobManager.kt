@@ -2,22 +2,14 @@ package cs.ut.engine
 
 import cs.ut.config.items.ModelParameter
 import cs.ut.controllers.JobTrackerController
-import cs.ut.controllers.MainPageController
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.Job
-import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.util.TRACKER_EAST
 import org.apache.log4j.Logger
-import org.zkoss.zk.ui.Component
-import org.zkoss.zk.ui.Desktop
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.Session
-import org.zkoss.zk.ui.event.Event
-import org.zkoss.zul.Button
-import org.zkoss.zul.Label
-import org.zkoss.zul.Row
 import java.io.File
 import java.util.*
 import kotlin.collections.HashMap

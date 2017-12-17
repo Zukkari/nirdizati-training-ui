@@ -7,7 +7,6 @@ import cs.ut.ui.GridValueProvider
 import cs.ut.util.COMP_ID
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PROPERTY
-import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zul.Doublebox
 import org.zkoss.zul.Intbox
