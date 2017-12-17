@@ -4,7 +4,6 @@ import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.util.COMP_ID
 import cs.ut.util.NirdizatiUtil
-import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.WrongValueException
 import org.zkoss.zul.Combobox
 import org.zkoss.zul.Label

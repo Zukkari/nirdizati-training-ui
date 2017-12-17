@@ -7,7 +7,6 @@ import cs.ut.jobs.JobStatus
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.util.NirdizatiUtil
-import org.zkoss.util.resource.Labels
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import java.io.File
