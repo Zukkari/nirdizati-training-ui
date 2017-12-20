@@ -76,6 +76,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
 
         propGrid.generate(value)
         propGrid.hflex = "min"
+        propGrid.vflex = "1"
 
         hyperParamsContainer.appendChild(propGrid)
     }
