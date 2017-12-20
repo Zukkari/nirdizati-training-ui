@@ -25,7 +25,7 @@ import org.zkoss.zul.Comboitem
 import org.zkoss.zul.Vlayout
 import java.io.File
 
-class TrainingController : SelectorComposer<Component>() {
+class TrainingController : SelectorComposer<Component>(), Redirectable {
     private val log: Logger = Logger.getLogger(TrainingController::class.java)!!
 
     companion object {
@@ -64,7 +64,7 @@ class TrainingController : SelectorComposer<Component>() {
         predictionType.items.clear()
         log.debug("Cleared prediction type items")
 
-        val params: List<ModelParameter> = MasterConfiguration.getInstance().modelConfiguration.properties[PREDICTION]!!
+        val params: List<ModelParameter> = MasterConfiguration.modelConfiguration.properties[PREDICTION]!!
         log.debug("Received ${params.size} prediciton types")
 
         val logFile: File = clientLogs.selectedItem.getValue<File>() ?: return
@@ -88,8 +88,7 @@ class TrainingController : SelectorComposer<Component>() {
     }
 
     private fun initClientLogs() {
-        val manager = LogManager()
-        val files = manager.getAllAvailableLogs()
+        val files = LogManager.getAllAvailableLogs()
         log.debug("Found ${files.size} log files")
 
         val escaper = HtmlEscapers.htmlEscaper()

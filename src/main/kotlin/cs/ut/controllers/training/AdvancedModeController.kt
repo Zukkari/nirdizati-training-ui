@@ -14,6 +14,8 @@ import org.zkoss.zk.ui.event.CheckEvent
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zul.Checkbox
 import org.zkoss.zul.Hlayout
+import org.zkoss.zul.Label
+import org.zkoss.zul.Row
 import org.zkoss.zul.Vlayout
 
 class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gridContainer), ModeController {
@@ -34,6 +36,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
         gridContainer.appendChild(grid)
         gridContainer.appendChild(hyperParamsContainer)
         grid.fields.forEach { it.generateListener() }
+        grid.hflex = "min"
         log.debug("Finished grid initialization")
     }
 
@@ -125,7 +128,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
                     if (parameter.id == keys[1]) {
                         parameter.properties.clear()
                         v.forEach {
-                            parameter.properties.add(Property(it.key, "" ,it.value.toString(), -1.0, -1.0))
+                            parameter.properties.add(Property(it.key, "", it.value.toString(), -1.0, -1.0))
                         }
                     }
                     copy.add(parameter)

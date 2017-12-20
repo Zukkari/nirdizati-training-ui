@@ -2,8 +2,8 @@ package cs.ut.jobs
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.controllers.JobTrackerController
-import cs.ut.controllers.MainPageController
 import cs.ut.ui.NirdizatiGrid
+import cs.ut.util.MAINLAYOUT
 import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Desktop
@@ -33,7 +33,7 @@ abstract class Job(val client: Desktop) : Runnable {
     var status: JobStatus = JobStatus.PENDING
     protected var stop = false
 
-    val pathProvider = MasterConfiguration.getInstance().directoryPathConfiguration
+    val pathProvider = MasterConfiguration.directoryPathConfiguration
     protected val scriptDir = pathProvider.scriptDirectory
     protected val userModelDir = pathProvider.userModelDirectory
     protected val coreDir = scriptDir + "core/"
@@ -132,7 +132,7 @@ abstract class Job(val client: Desktop) : Runnable {
                         Clients.showNotification(
                                 getNotificationMessage(),
                                 "info",
-                                MainPageController.mainPageController.getComp(),
+                                client.components.first {it.id == MAINLAYOUT},
                                 "bottom_center",
                                 -1)
                     },

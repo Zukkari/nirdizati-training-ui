@@ -10,7 +10,7 @@ class PageConfigurationTest {
     var config by Delegates.notNull<PageConfiguration>()
 
     init {
-        config = MasterConfiguration.getInstance().pageConfiguration
+        config = MasterConfiguration.pageConfiguration
     }
 
     @Test

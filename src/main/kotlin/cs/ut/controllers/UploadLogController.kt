@@ -18,7 +18,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.nio.charset.Charset
 
-class UploadLogController : SelectorComposer<Component>() {
+class UploadLogController : SelectorComposer<Component>(), Redirectable {
     private val log: Logger = Logger.getLogger(UploadLogController::class.java)!!
 
     @Wire
@@ -29,7 +29,7 @@ class UploadLogController : SelectorComposer<Component>() {
 
     private lateinit var media: Media
 
-    private val allowedExtensions = MasterConfiguration.getInstance().csvConfiguration.extensions
+    private val allowedExtensions = MasterConfiguration.csvConfiguration.extensions
 
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
@@ -67,7 +67,7 @@ class UploadLogController : SelectorComposer<Component>() {
     @Listen("onClick = #upload")
     fun processLog() {
         val runnable = Runnable {
-            val tmpDir = MasterConfiguration.getInstance().directoryPathConfiguration.tmpDir
+            val tmpDir = MasterConfiguration.directoryPathConfiguration.tmpDir
             val file = File(tmpDir + media.name)
             log.debug("Creating file: ${file.absolutePath}")
             file.createNewFile()

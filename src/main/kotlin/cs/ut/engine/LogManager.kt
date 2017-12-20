@@ -8,14 +8,12 @@ import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
 import java.io.File
 
-class LogManager {
+object LogManager {
     private val log: Logger = Logger.getLogger(LogManager::class.java)!!
 
-    companion object {
-        const val VALIDATION = "validation_"
-        const val FEATURE = "feat_importance_"
-        const val DETAILED = "detailed_"
-    }
+    private const val VALIDATION = "validation_"
+    private const val FEATURE = "feat_importance_"
+    private const val DETAILED = "detailed_"
 
     private val allowedExtensions: List<String>
 
@@ -27,7 +25,7 @@ class LogManager {
 
     init {
         log.debug("Initializing $this")
-        val conf = MasterConfiguration.getInstance().directoryPathConfiguration
+        val conf = MasterConfiguration.directoryPathConfiguration
         scriptDir = conf.scriptDirectory
         log.debug("Script directory -> $scriptDir")
 
@@ -43,7 +41,7 @@ class LogManager {
         detailedDir = conf.detailedDir
         log.debug("Detailed log directory -> $detailedDir")
 
-        allowedExtensions = MasterConfiguration.getInstance().csvConfiguration.extensions
+        allowedExtensions = MasterConfiguration.csvConfiguration.extensions
     }
 
     /**

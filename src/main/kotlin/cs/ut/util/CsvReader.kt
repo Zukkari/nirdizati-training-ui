@@ -26,7 +26,7 @@ class CsvReader(private val f: File) {
     init {
         log.debug("Initializing csv reader...")
 
-        val config = MasterConfiguration.getInstance().csvConfiguration
+        val config = MasterConfiguration.csvConfiguration
         splitter = config.splitter.toRegex()
         emptyValues = config.emptyValues
         confThreshold = config.threshold

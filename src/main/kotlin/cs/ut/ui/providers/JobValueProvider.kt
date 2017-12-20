@@ -2,7 +2,7 @@ package cs.ut.ui.providers
 
 import cs.ut.config.items.ModelParameter
 import cs.ut.controllers.JobTrackerController
-import cs.ut.controllers.MainPageController
+import cs.ut.controllers.Redirectable
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
@@ -23,7 +23,7 @@ import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import org.zkoss.zul.Vlayout
 
-class JobValueProvider : GridValueProvider<Job, Row> {
+class JobValueProvider : GridValueProvider<Job, Row>, Redirectable {
     companion object {
         const val jobArg = "JOB"
     }
@@ -166,7 +166,7 @@ class JobValueProvider : GridValueProvider<Job, Row> {
 
         visualize.addEventListener(Events.ON_CLICK, { _ ->
             Executions.getCurrent().setAttribute(jobArg, this)
-            MainPageController.mainPageController.setContent(PAGE_VALIDATION, Executions.getCurrent().desktop.firstPage)
+            setContent(PAGE_VALIDATION, Executions.getCurrent().desktop.firstPage)
         })
 
         return visualize

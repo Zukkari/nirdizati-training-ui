@@ -8,7 +8,7 @@ import org.zkoss.zul.Vlayout
 
 class BasicModeController(gridContainer: Vlayout, private val logName: String) : AbstractModeController(gridContainer), ModeController {
     private val log: Logger = Logger.getLogger(BasicModeController::class.java)!!
-    private val optimized: Map<String, List<ModelParameter>> = MasterConfiguration.getInstance().optimizedParams
+    private val optimized: Map<String, List<ModelParameter>> = MasterConfiguration.optimizedParams
 
     init {
         log.debug("Initializing basic mode controller")
@@ -23,7 +23,7 @@ class BasicModeController(gridContainer: Vlayout, private val logName: String) :
             return optimized[logName]!!.groupBy { it.type }
         } else {
             log.debug("Did not find optimized params for log $log. Using default params")
-            return MasterConfiguration.getInstance().modelConfiguration.basicParameters.groupBy { it.type }
+            return MasterConfiguration.modelConfiguration.basicParameters.groupBy { it.type }
         }
     }
 }

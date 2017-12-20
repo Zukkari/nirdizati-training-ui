@@ -51,13 +51,13 @@ class SimulationJob(val encoding: ModelParameter,
 
         val writer = FileWriter()
         writer.writeJsonToDisk(json, FilenameUtils.getBaseName(logFile.name),
-                MasterConfiguration.getInstance().directoryPathConfiguration.trainDirectory)
+                MasterConfiguration.directoryPathConfiguration.trainDirectory)
     }
 
     override fun execute() {
         try {
             val pb = ProcessBuilder(
-                    MasterConfiguration.getInstance().directoryPathConfiguration.python,
+                    MasterConfiguration.directoryPathConfiguration.python,
                     "train.py",
                     logFile.name,
                     bucketing.parameter,
@@ -75,6 +75,7 @@ class SimulationJob(val encoding: ModelParameter,
             log.debug("Script call: ${pb.command()}")
             process = pb.start()
             if (!process!!.waitFor(180, TimeUnit.SECONDS) || stop) {
+                status = JobStatus.FAILED
                 process!!.destroy()
                 log.debug("Stopping script -> stop: $stop")
                 return
@@ -86,6 +87,7 @@ class SimulationJob(val encoding: ModelParameter,
             log.debug(file)
 
             if (!file.exists()) {
+                status = JobStatus.FAILED
                 throw NirdizatiRuntimeException("Script failed to write model to disk, job failed")
             } else {
                 log.debug("Script exited successfully")

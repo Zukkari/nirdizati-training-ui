@@ -2,6 +2,7 @@ package cs.ut.controllers
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.HeaderItem
+import cs.ut.util.DEST
 import cs.ut.util.PAGE_LANDING
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -12,7 +13,7 @@ import org.zkoss.zk.ui.select.annotation.Wire
 import org.zkoss.zkmax.zul.Navbar
 import org.zkoss.zkmax.zul.Navitem
 
-class HeaderController : SelectorComposer<Component>() {
+class HeaderController : SelectorComposer<Component>(), Redirectable {
 
     @Wire
     private lateinit var navbar: Navbar
@@ -23,14 +24,15 @@ class HeaderController : SelectorComposer<Component>() {
     }
 
     private fun composeHeader() {
-        val items: List<HeaderItem> = MasterConfiguration.getInstance().headerConfiguration.headerItems
+        val items: List<HeaderItem> = MasterConfiguration.headerConfiguration.headerItems
         items.sortedBy { it.position }
 
         items.forEach {
             val navItem = Navitem()
             navItem.label = Labels.getLabel(it.label)
+            navItem.setAttribute(DEST, it.redirect)
             navItem.addEventListener(Events.ON_CLICK, { _ ->
-                MainPageController.mainPageController.setContent(it.redirect, page)
+                setContent(it.redirect, page)
                 navbar.selectItem(navItem)
             })
             navItem.isDisabled = !it.enabled
@@ -42,7 +44,7 @@ class HeaderController : SelectorComposer<Component>() {
 
     @Listen("onClick = #headerLogo")
     fun handleClick() {
-        MainPageController.mainPageController.setContent(PAGE_LANDING, page)
+        setContent(PAGE_LANDING, page)
         navbar.selectItem(null)
     }
 }

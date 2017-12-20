@@ -23,18 +23,28 @@ fun readHyperParameterJson(): Map<String, List<ModelParameter>> {
 }
 
 fun readLogColumns(logName: String): List<String> {
-    val config: DirectoryPathConfiguration = MasterConfiguration.getInstance().directoryPathConfiguration
+    val json: TrainingData = readTrainingData(logName)
+    return json.getAllColumns()
+}
+
+private fun readTrainingData(logName: String): TrainingData {
+    val config: DirectoryPathConfiguration = MasterConfiguration.directoryPathConfiguration
     val path: String = config.scriptDirectory + "core/" + config.datasetDirectory
 
     val file = File(path + logName + ".json")
     val jsonReader = JsonReader(FileReader(file))
 
     val json: TrainingData = Gson().fromJson<TrainingData>(jsonReader, TrainingData::class.java)
-    return json.getAllColumns()
+    return json
+}
+
+fun isColumnStatic(colName: String, logName: String): Boolean {
+    val data = readTrainingData(logName)
+    return data.isColumnStatic(colName)
 }
 
 private fun mapTypes(modelsParams: Map<String, List<ModelParameter>>) {
-    val allProperties = MasterConfiguration.getInstance().modelConfiguration.getAllProperties()
+    val allProperties = MasterConfiguration.modelConfiguration.getAllProperties()
 
     modelsParams.values.flatMap { it }.flatMap { it.properties }.forEach { prop ->
         val withType = allProperties.first { it.id == prop.id }
@@ -44,7 +54,7 @@ private fun mapTypes(modelsParams: Map<String, List<ModelParameter>>) {
 
 
 private fun readFilesFromDir(): List<File> {
-    val path = MasterConfiguration.getInstance().directoryPathConfiguration.scriptDirectory + MasterConfiguration.getInstance().directoryPathConfiguration.ohpdir
+    val path = MasterConfiguration.directoryPathConfiguration.scriptDirectory + MasterConfiguration.directoryPathConfiguration.ohpdir
 
     val dir = File(path)
     if (!dir.exists() && dir.isDirectory) throw NirdizatiRuntimeException("Optimized hyperparameter directory does not exist")
@@ -117,7 +127,7 @@ tailrec private fun parseJson(jsons: MutableMap<String, String>, map: MutableMap
 }
 
 private fun getModelParams(paramNames: List<String>): List<ModelParameter> {
-    val alreadyDefined = MasterConfiguration.getInstance().modelConfiguration.parameters
+    val alreadyDefined = MasterConfiguration.modelConfiguration.parameters
 
     val rightParameters = mutableListOf<ModelParameter>()
     paramNames.forEach { param -> rightParameters.add(ModelParameter(alreadyDefined.first { it.parameter == param })) }

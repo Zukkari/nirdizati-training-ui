@@ -7,7 +7,7 @@ import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Wire
 import org.zkoss.zul.Hbox
 
-class JobTrackerController : SelectorComposer<Component>() {
+class JobTrackerController : SelectorComposer<Component>(), Redirectable {
 
     @Wire
     private lateinit var jobTracker: Hbox

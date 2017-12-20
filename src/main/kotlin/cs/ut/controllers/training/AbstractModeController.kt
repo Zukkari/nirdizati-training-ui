@@ -7,6 +7,6 @@ import org.zkoss.zul.Vlayout
 
 abstract class AbstractModeController(protected val gridContrainer: Vlayout) {
     protected val parameters: Map<String, List<ModelParameter>> by lazy {
-        (MasterConfiguration.getInstance().modelConfiguration.properties - TrainingController.PREDICTION)
+        (MasterConfiguration.modelConfiguration.properties - TrainingController.PREDICTION)
     }
 }

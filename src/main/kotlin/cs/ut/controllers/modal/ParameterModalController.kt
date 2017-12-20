@@ -2,7 +2,7 @@ package cs.ut.controllers.modal
 
 import com.google.common.html.HtmlEscapers
 import cs.ut.config.MasterConfiguration
-import cs.ut.controllers.MainPageController
+import cs.ut.controllers.Redirectable
 import cs.ut.engine.JobManager
 import cs.ut.engine.NirdizatiThreadPool
 import cs.ut.jobs.DataSetGenerationJob
@@ -30,7 +30,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
-class ParameterModalController : GenericAutowireComposer<Component>() {
+class ParameterModalController : GenericAutowireComposer<Component>(), Redirectable {
     private val log: Logger = Logger.getLogger(ParameterModalController::class.java)!!
 
     @Wire
@@ -60,7 +60,7 @@ class ParameterModalController : GenericAutowireComposer<Component>() {
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
 
-        cols = MasterConfiguration.getInstance().csvConfiguration.userCols
+        cols = MasterConfiguration.csvConfiguration.userCols
         log.debug("Read columns from master config: $cols")
 
         this.file = arg["file"] as File
@@ -126,9 +126,9 @@ class ParameterModalController : GenericAutowireComposer<Component>() {
             NirdizatiThreadPool().execute(DataSetGenerationJob(params, file, execution.desktop))
             Clients.showNotification(Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.getName()))), "info", getPage().getFirstRoot(), "bottom_center", -1, true)
             Files.move(Paths.get(file.absolutePath),
-                    Paths.get(File(MasterConfiguration.getInstance().directoryPathConfiguration.userLogDirectory + file.name).absolutePath), StandardCopyOption.REPLACE_EXISTING)
+                    Paths.get(File(MasterConfiguration.directoryPathConfiguration.userLogDirectory + file.name).absolutePath), StandardCopyOption.REPLACE_EXISTING)
             modal.detach()
-            MainPageController.mainPageController.setContent("training", getPage(), 2000, Executions.getCurrent().desktop)
+            setContent("training", getPage(), 2000, Executions.getCurrent().desktop)
         }
         okBtn.addEventListener(Events.ON_CLICK, okBtnListener)
 
