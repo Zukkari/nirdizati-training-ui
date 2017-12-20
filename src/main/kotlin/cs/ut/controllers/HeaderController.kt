@@ -2,6 +2,7 @@ package cs.ut.controllers
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.HeaderItem
+import cs.ut.util.DEST
 import cs.ut.util.PAGE_LANDING
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -29,6 +30,7 @@ class HeaderController : SelectorComposer<Component>(), Redirectable {
         items.forEach {
             val navItem = Navitem()
             navItem.label = Labels.getLabel(it.label)
+            navItem.setAttribute(DEST, it.redirect)
             navItem.addEventListener(Events.ON_CLICK, { _ ->
                 setContent(it.redirect, page)
                 navbar.selectItem(navItem)

@@ -1,6 +1,8 @@
 package cs.ut.util
 
 const val MAINLAYOUT = "mainLayout"
+const val NAVBAR = "navbar"
+const val DEST = "dest"
 
 const val COMP_ID = "compId"
 const val CASE_ID_COL = "case_id_col"
