@@ -60,6 +60,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
 
     private fun generateGrids() {
         hyperParamsContainer.getChildren<Component>().clear()
+        hyperParamsContainer.vflex = "1"
         hyperParameters.entries.forEach { it.generateGrid() }
     }
 
