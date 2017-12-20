@@ -28,8 +28,10 @@ fun getLinearPayload(file: File, mode: Mode): List<LinearData> {
     BufferedReader(FileReader(file)).lines().forEach {
         if (indexes.first == -1) {
             val headerItems = it.split(delim)
-            indexes = if (Mode.SCATTER == mode) Pair(headerItems.indexOf(ACTUAL), headerItems.indexOf(PREDICTED))
-            else Pair(headerItems.indexOf(NR_EVENTS), headerItems.indexOf(SCORE))
+            indexes = when (mode) {
+                Mode.SCATTER -> Pair(headerItems.indexOf(ACTUAL), headerItems.indexOf(PREDICTED))
+                Mode.LINE -> Pair(headerItems.indexOf(NR_EVENTS), headerItems.indexOf(SCORE))
+            }
 
             indexOfMetric = if (Mode.SCATTER == mode) -1 else headerItems.indexOf(METRIC)
         } else {

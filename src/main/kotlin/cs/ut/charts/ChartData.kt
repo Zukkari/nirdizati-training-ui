@@ -16,7 +16,8 @@ class ChartGenerator(val job: SimulationJob) {
         val charts = mutableListOf<Chart>()
 
         if (job.isClassification) {
-
+            charts.addAll(generateLineCharts())
+            charts.addAll(generateBarCharts())
         } else {
             charts.add(generateScatterPlot(TRUE_VS_PREDICTED))
             charts.addAll(generateLineCharts())

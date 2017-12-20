@@ -43,7 +43,7 @@ class JobManager {
             encodings.forEach { encoding ->
                 bucketing.forEach { bucketing ->
                     learner.forEach { learner ->
-                        val job = SimulationJob(encoding, bucketing, learner, result, learner.parameter != REMTIME, logFile!!, desktop)
+                        val job = SimulationJob(encoding, bucketing, learner, result, result.parameter != REMTIME, logFile!!, desktop)
                         log.debug("Scheduled job $job")
                         jobs.add(job)
                     }

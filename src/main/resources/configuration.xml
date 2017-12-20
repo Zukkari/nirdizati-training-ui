@@ -41,7 +41,7 @@
     <!-- Paths configuration used for log, model and script storage -->
     <paths>
         <!-- Path to python executable -->
-        <python>/usr/bin/python</python>
+        <python>/home/zukkari/anaconda3/envs/myenv/bin/python</python>
         <!-- Directory for user log storage -->
         <userLogDirectory>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/logdata/</userLogDirectory>
         <!-- Directory for user model storage -->
