@@ -15,69 +15,67 @@ import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
 
-class JobManager {
-    companion object Manager {
-        val log = Logger.getLogger(JobManager::class.java)!!
+object JobManager {
+    val log = Logger.getLogger(JobManager::class.java)!!
 
-        private val jobQueue: MutableMap<Session, Queue<Job>> = HashMap()
+    private val jobQueue: MutableMap<Session, Queue<Job>> = HashMap()
 
-        var logFile: File? = null
+    var logFile: File? = null
 
-        fun generateJobs(parameters: Map<String, List<ModelParameter>>) {
-            logFile ?: throw NirdizatiRuntimeException("Log file is null")
+    fun generateJobs(parameters: Map<String, List<ModelParameter>>) {
+        logFile ?: throw NirdizatiRuntimeException("Log file is null")
 
-            log.debug("Started generating jobs...")
-            val start = System.currentTimeMillis()
+        log.debug("Started generating jobs...")
+        val start = System.currentTimeMillis()
 
-            val encodings = parameters["encoding"]!!
-            val bucketing = parameters["bucketing"]!!
-            val learner = parameters["learner"]!!
-            val result = parameters["predictiontype"]!![0]
+        val encodings = parameters["encoding"]!!
+        val bucketing = parameters["bucketing"]!!
+        val learner = parameters["learner"]!!
+        val result = parameters["predictiontype"]!![0]
 
-            val currentSession = Executions.getCurrent().session
-            val desktop = Executions.getCurrent().desktop
-            desktop.enableServerPush(true)
+        val currentSession = Executions.getCurrent().session
+        val desktop = Executions.getCurrent().desktop
+        desktop.enableServerPush(true)
 
-            val jobs = jobQueue[currentSession] ?: LinkedList()
+        val jobs = jobQueue[currentSession] ?: LinkedList()
 
-            encodings.forEach { encoding ->
-                bucketing.forEach { bucketing ->
-                    learner.forEach { learner ->
-                        val job = SimulationJob(encoding, bucketing, learner, result, result.parameter != REMTIME, logFile!!, desktop)
-                        log.debug("Scheduled job $job")
-                        jobs.add(job)
-                    }
+        encodings.forEach { encoding ->
+            bucketing.forEach { bucketing ->
+                learner.forEach { learner ->
+                    val job = SimulationJob(encoding, bucketing, learner, result, result.parameter != REMTIME, logFile!!, desktop)
+                    log.debug("Scheduled job $job")
+                    jobs.add(job)
                 }
             }
-
-            jobQueue[currentSession] = jobs
-            logFile = null
-
-            val end = System.currentTimeMillis()
-            log.debug("Finished generating ${jobs.size} jobs in <${end - start} ms>")
         }
 
-        fun deployJobs() {
-            val executor = NirdizatiThreadPool()
+        jobQueue[currentSession] = jobs
+        logFile = null
 
-            val currentJobs = jobQueue[Executions.getCurrent().session]!!
-            log.debug("Deploying ${currentJobs.size} jobs")
+        val end = System.currentTimeMillis()
+        log.debug("Finished generating ${jobs.size} jobs in <${end - start} ms>")
+    }
 
-            val grid = Executions.getCurrent().desktop.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
-            grid.generate(currentJobs.toList().reversed(), false)
-            grid.isVisible = true
-            Executions.getCurrent().desktop.components.first { it.id == TRACKER_EAST }.isVisible = true
+    fun deployJobs() {
+        val executor = NirdizatiThreadPool()
 
-            while (currentJobs.peek() != null) {
-                executor.execute(currentJobs.poll())
-            }
+        val currentJobs = jobQueue[Executions.getCurrent().session]!!
+        log.debug("Deploying ${currentJobs.size} jobs")
 
-            log.debug("Successfully deployed all jobs to worker")
+        val grid = Executions.getCurrent().desktop.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
+        grid.generate(currentJobs.toList().reversed(), false)
+        grid.isVisible = true
+        Executions.getCurrent().desktop.components.first { it.id == TRACKER_EAST }.isVisible = true
+
+        while (currentJobs.peek() != null) {
+            executor.execute(currentJobs.poll())
         }
 
-        fun flushJobs() {
-            jobQueue[Executions.getCurrent().session]?.clear()
-            log.debug("Cleared all jobs for session ${Executions.getCurrent().session}")
-        }
+        log.debug("Successfully deployed all jobs to worker")
+    }
+
+    fun flushJobs() {
+        jobQueue[Executions.getCurrent().session]?.clear()
+        log.debug("Cleared all jobs for session ${Executions.getCurrent().session}")
     }
 }

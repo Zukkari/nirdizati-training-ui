@@ -15,7 +15,7 @@ class FileWriter {
 
     private val log = Logger.getLogger(FileWriter::class.java)
 
-    private val pathProvider = MasterConfiguration.getInstance().directoryPathConfiguration
+    private val pathProvider = MasterConfiguration.directoryPathConfiguration
     private val scriptDir = pathProvider.scriptDirectory
     private val coreDir = scriptDir + "core/"
 

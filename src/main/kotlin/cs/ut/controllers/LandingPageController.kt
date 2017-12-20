@@ -11,7 +11,7 @@ import org.zkoss.zul.Button
 /**
  *  Controller that responds for landing page and controls found on that page
  */
-class LandingPageController : SelectorComposer<Component>() {
+class LandingPageController : SelectorComposer<Component>(), Redirectable {
 
     @Wire
     private lateinit var upload: Button
@@ -31,11 +31,11 @@ class LandingPageController : SelectorComposer<Component>() {
      */
     private fun wireButtons() {
         upload.addEventListener(Events.ON_CLICK, { _ ->
-            MainPageController.mainPageController.setContent(PAGE_UPLOAD, page)
+            setContent(PAGE_UPLOAD, page)
         })
 
         existingLog.addEventListener(Events.ON_CLICK, { _ ->
-            MainPageController.mainPageController.setContent(PAGE_TRAINING, page)
+            setContent(PAGE_TRAINING, page)
         })
     }
 }

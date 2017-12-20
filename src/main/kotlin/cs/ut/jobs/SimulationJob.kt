@@ -51,13 +51,13 @@ class SimulationJob(val encoding: ModelParameter,
 
         val writer = FileWriter()
         writer.writeJsonToDisk(json, FilenameUtils.getBaseName(logFile.name),
-                MasterConfiguration.getInstance().directoryPathConfiguration.trainDirectory)
+                MasterConfiguration.directoryPathConfiguration.trainDirectory)
     }
 
     override fun execute() {
         try {
             val pb = ProcessBuilder(
-                    MasterConfiguration.getInstance().directoryPathConfiguration.python,
+                    MasterConfiguration.directoryPathConfiguration.python,
                     "train.py",
                     logFile.name,
                     bucketing.parameter,

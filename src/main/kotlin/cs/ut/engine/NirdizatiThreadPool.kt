@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit
 
 class NirdizatiThreadPool() {
     companion object {
-        val config = MasterConfiguration.getInstance().threadPoolConfiguration
+        val config = MasterConfiguration.threadPoolConfiguration
         val threadPool = ThreadPoolExecutor(config.core,
                 config.max,
                 config.keepAlive.toLong(),
