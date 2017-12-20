@@ -6,8 +6,9 @@ import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.NirdizatiGrid
-import cs.ut.util.REMTIME
 import cs.ut.util.TRACKER_EAST
+import cs.ut.util.isColumnStatic
+import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.Session
@@ -42,7 +43,15 @@ object JobManager {
         encodings.forEach { encoding ->
             bucketing.forEach { bucketing ->
                 learner.forEach { learner ->
-                    val job = SimulationJob(encoding, bucketing, learner, result, result.parameter != REMTIME, logFile!!, desktop)
+                    val job = SimulationJob(
+                            encoding,
+                            bucketing,
+                            learner,
+                            result,
+                            isColumnStatic(result.parameter, FilenameUtils.getBaseName((logFile as File).name)),
+                            logFile!!,
+                            desktop)
+
                     log.debug("Scheduled job $job")
                     jobs.add(job)
                 }

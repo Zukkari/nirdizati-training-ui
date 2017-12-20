@@ -23,6 +23,11 @@ fun readHyperParameterJson(): Map<String, List<ModelParameter>> {
 }
 
 fun readLogColumns(logName: String): List<String> {
+    val json: TrainingData = readTrainingData(logName)
+    return json.getAllColumns()
+}
+
+private fun readTrainingData(logName: String): TrainingData {
     val config: DirectoryPathConfiguration = MasterConfiguration.directoryPathConfiguration
     val path: String = config.scriptDirectory + "core/" + config.datasetDirectory
 
@@ -30,7 +35,12 @@ fun readLogColumns(logName: String): List<String> {
     val jsonReader = JsonReader(FileReader(file))
 
     val json: TrainingData = Gson().fromJson<TrainingData>(jsonReader, TrainingData::class.java)
-    return json.getAllColumns()
+    return json
+}
+
+fun isColumnStatic(colName: String, logName: String): Boolean {
+    val data = readTrainingData(logName)
+    return data.isColumnStatic(colName)
 }
 
 private fun mapTypes(modelsParams: Map<String, List<ModelParameter>>) {
