@@ -25,7 +25,7 @@ import org.zkoss.zul.Row
 import org.zkoss.zul.Rows
 import org.zkoss.zul.Vbox
 
-class ValidationController : SelectorComposer<Component>(), Redirectable {
+class ValidationController : SelectorComposer<Component>() {
     private val log = Logger.getLogger(ValidationController::class.java)
     private var job: SimulationJob? = null
     private val charts: Map<String, List<Chart>> by lazy { ChartGenerator(job as SimulationJob).getCharts().groupBy { it.javaClass.name } }

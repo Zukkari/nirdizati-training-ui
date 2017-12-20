@@ -75,6 +75,7 @@ class SimulationJob(val encoding: ModelParameter,
             log.debug("Script call: ${pb.command()}")
             process = pb.start()
             if (!process!!.waitFor(180, TimeUnit.SECONDS) || stop) {
+                status = JobStatus.FAILED
                 process!!.destroy()
                 log.debug("Stopping script -> stop: $stop")
                 return
@@ -86,6 +87,7 @@ class SimulationJob(val encoding: ModelParameter,
             log.debug(file)
 
             if (!file.exists()) {
+                status = JobStatus.FAILED
                 throw NirdizatiRuntimeException("Script failed to write model to disk, job failed")
             } else {
                 log.debug("Script exited successfully")
