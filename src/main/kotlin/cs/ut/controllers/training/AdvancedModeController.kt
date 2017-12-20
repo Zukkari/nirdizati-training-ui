@@ -118,15 +118,19 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
             val keys = k.split(".")
             if (keys.size > 1) {
                 val params = gathered[keys[0]] as List<*>
+                val copy = mutableListOf<ModelParameter>()
                 params.forEach { param ->
                     param as ModelParameter
-                    if (param.id == keys[1]) {
-                        param.properties.clear()
+                    val parameter = ModelParameter(param)
+                    if (parameter.id == keys[1]) {
+                        parameter.properties.clear()
                         v.forEach {
-                            param.properties.add(Property(it.key, "" ,it.value.toString(), -1.0, -1.0))
+                            parameter.properties.add(Property(it.key, "" ,it.value.toString(), -1.0, -1.0))
                         }
                     }
+                    copy.add(parameter)
                 }
+                gathered[keys[0]] = copy
             }
         }
 

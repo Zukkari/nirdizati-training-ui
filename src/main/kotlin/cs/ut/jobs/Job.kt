@@ -15,6 +15,15 @@ import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import java.util.*
 
+enum class JobStatus {
+    PENDING,
+    PREPARING,
+    RUNNING,
+    FINISHING,
+    COMPLETED,
+    FAILED
+}
+
 abstract class Job(val client: Desktop) : Runnable {
     val log = Logger.getLogger(Job::class.java)!!
 
@@ -158,14 +167,4 @@ abstract class Job(val client: Desktop) : Runnable {
             }
         }
     }
-}
-
-
-enum class JobStatus {
-    PENDING,
-    PREPARING,
-    RUNNING,
-    FINISHING,
-    COMPLETED,
-    FAILED
 }

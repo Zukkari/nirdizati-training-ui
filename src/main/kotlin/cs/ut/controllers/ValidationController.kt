@@ -28,7 +28,7 @@ import org.zkoss.zul.Vbox
 class ValidationController : SelectorComposer<Component>() {
     private val log = Logger.getLogger(ValidationController::class.java)
     private var job: SimulationJob? = null
-    private val charts: Map<String, List<Chart>> by lazy { ChartGenerator(job).getCharts().groupBy { it.javaClass.name } }
+    private val charts: Map<String, List<Chart>> by lazy { ChartGenerator(job as SimulationJob).getCharts().groupBy { it.javaClass.name } }
 
     @Wire
     lateinit private var metadataRows: Rows

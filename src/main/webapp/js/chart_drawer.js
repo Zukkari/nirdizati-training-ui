@@ -10,7 +10,7 @@ function plot_scatter(payload, chart_label) {
             datasets: getLinearDatasetData(payload, chart_label)
         },
         options: {
-            scales: getScalesData('Actual (days)', 'Predicted (days)'),
+            scales: getScalesData('Actual', 'Predicted'),
             tooltips: {
                 callbacks: {
                     label: function (tooltipItem, chart) {
