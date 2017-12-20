@@ -25,10 +25,6 @@
             <uri>/views/upload_page.zul</uri>
         </page>
         <page>
-            <id>logOverview</id>
-            <uri>/views/logOverview.zul</uri>
-        </page>
-        <page>
             <id>training</id>
             <uri>/views/training.zul</uri>
         </page>
@@ -76,22 +72,16 @@
                 <position>0</position>
             </headerItem>
             <headerItem>
-                <label>header.overview</label>
-                <redirect>logOverview</redirect>
-                <enabled>false</enabled>
-                <position>1</position>
-            </headerItem>
-            <headerItem>
                 <label>header.training</label>
                 <redirect>training</redirect>
                 <enabled>true</enabled>
-                <position>2</position>
+                <position>1</position>
             </headerItem>
             <headerItem>
                 <label>header.validation</label>
                 <redirect>validation</redirect>
                 <enabled>true</enabled>
-                <position>3</position>
+                <position>2</position>
             </headerItem>
         </headerItems>
     </headerConfiguration>
