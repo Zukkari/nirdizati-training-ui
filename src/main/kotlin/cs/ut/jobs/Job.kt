@@ -2,6 +2,7 @@ package cs.ut.jobs
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.controllers.JobTrackerController
+import cs.ut.engine.IdProvider
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.util.MAINLAYOUT
 import org.apache.log4j.Logger
@@ -26,6 +27,8 @@ enum class JobStatus {
 
 abstract class Job(val client: Desktop) : Runnable {
     val log = Logger.getLogger(Job::class.java)!!
+
+    val id: String = IdProvider.getNextId()
 
     var createTime: Date = Date()
     abstract var startTime: Date
@@ -59,54 +62,54 @@ abstract class Job(val client: Desktop) : Runnable {
             status = JobStatus.PREPARING
 
             if (stop) {
-                log.debug("Job $this has been stopped by the user")
+                log.debug("Job $id has been stopped by the user")
                 return
             }
 
             notifyOfJobStatusChange()
             preProcess()
         } catch (e: Exception) {
-            log.debug("Job $this failed in preprocess stage", e)
+            log.debug("Job $id failed in preprocess stage", e)
             status = JobStatus.FAILED
             notifyOfJobStatusChange()
             return
         }
 
-        log.debug("Job $this finished preprocess step")
+        log.debug("Job $id finished preprocess step")
 
         try {
-            log.debug("Job $this started execute stage")
+            log.debug("Job $id started execute stage")
             status = JobStatus.RUNNING
 
             if (stop) {
-                log.debug("Job $this has been stopped by the user")
+                log.debug("Job $id has been stopped by the user")
                 return
             }
 
             notifyOfJobStatusChange()
             execute()
         } catch (e: Exception) {
-            log.debug("Job $this failed in execute stage", e)
+            log.debug("Job $id failed in execute stage", e)
             status = JobStatus.FAILED
             notifyOfJobStatusChange()
             return
         }
 
-        log.debug("Job $this finished execute step")
+        log.debug("Job $id finished execute step")
 
         try {
-            log.debug("Job $this started post execute step")
+            log.debug("Job $id started post execute step")
             status = JobStatus.FINISHING
 
             if (stop) {
-                log.debug("Job $this has been stopped by the user")
+                log.debug("Job $id has been stopped by the user")
                 return
             }
 
             notifyOfJobStatusChange()
             postExecute()
         } catch (e: Exception) {
-            log.debug("Job $this failed in post execute step")
+            log.debug("Job $id failed in post execute step")
             status = JobStatus.FAILED
 
             try {
@@ -117,7 +120,7 @@ abstract class Job(val client: Desktop) : Runnable {
             return
         }
 
-        log.debug("Job $this completed successfully")
+        log.debug("Job $id completed successfully")
         completeTime = Calendar.getInstance().time
         status = JobStatus.COMPLETED
 
@@ -132,7 +135,7 @@ abstract class Job(val client: Desktop) : Runnable {
                         Clients.showNotification(
                                 getNotificationMessage(),
                                 "info",
-                                client.components.first {it.id == MAINLAYOUT},
+                                client.components.first { it.id == MAINLAYOUT },
                                 "bottom_center",
                                 -1)
                     },

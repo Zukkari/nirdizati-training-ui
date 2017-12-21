@@ -46,6 +46,12 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
         return row
     }
 
+    private fun Job.identifierLabel(): Label {
+        val label = Label(this.id)
+        label.style = "font-size: 8px"
+        return label
+    }
+
     private fun ModelParameter.generateResultLabel(): Hlayout {
         val hlayout = Hlayout()
 
@@ -97,6 +103,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
 
         vlayout.appendChild(job.generateStatus(label))
         vlayout.appendChild(bottom)
+        vlayout.appendChild(job.identifierLabel())
 
         val hlayout = Hlayout()
         hlayout.appendChild(job.getVisualizeBtn())

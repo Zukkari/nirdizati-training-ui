@@ -3,6 +3,7 @@ package cs.ut.controllers.modal
 import com.google.common.html.HtmlEscapers
 import cs.ut.config.MasterConfiguration
 import cs.ut.controllers.Redirectable
+import cs.ut.engine.IdProvider
 import cs.ut.engine.JobManager
 import cs.ut.engine.NirdizatiThreadPool
 import cs.ut.jobs.DataSetGenerationJob
