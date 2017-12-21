@@ -7,9 +7,9 @@ import cs.ut.engine.JobManager
 import cs.ut.engine.NirdizatiThreadPool
 import cs.ut.jobs.DataSetGenerationJob
 import cs.ut.ui.NirdizatiGrid
-import cs.ut.ui.providers.ColumnRowValueProvider
-import cs.ut.ui.providers.ComboArgument
-import cs.ut.ui.providers.ComboProvider
+import cs.ut.ui.adapters.ColumnRowValueAdapter
+import cs.ut.ui.adapters.ComboArgument
+import cs.ut.ui.adapters.ComboProvider
 import cs.ut.util.CsvReader
 import cs.ut.util.TIMESTAMP_COL
 import org.apache.log4j.Logger
@@ -77,7 +77,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         csvReader.identifyUserColumns(header.toMutableList(), identifiedColumns)
         identifiedColumns[TIMESTAMP_COL] = csvReader.getTimeStamp()
 
-        val provider = ColumnRowValueProvider(header, identifiedColumns)
+        val provider = ColumnRowValueAdapter(header, identifiedColumns)
         val grid = NirdizatiGrid(provider)
         grid.hflex = "min"
 

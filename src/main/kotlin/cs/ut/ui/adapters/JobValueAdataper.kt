@@ -1,4 +1,4 @@
-package cs.ut.ui.providers
+package cs.ut.ui.adapters
 
 import cs.ut.config.items.ModelParameter
 import cs.ut.controllers.JobTrackerController
@@ -23,7 +23,7 @@ import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import org.zkoss.zul.Vlayout
 
-class JobValueProvider : GridValueProvider<Job, Row>, Redirectable {
+class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
     companion object {
         const val jobArg = "JOB"
     }
