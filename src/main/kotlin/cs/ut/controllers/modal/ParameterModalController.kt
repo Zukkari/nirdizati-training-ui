@@ -123,7 +123,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
                     params[v] = mutableListOf(k)
                 }
             }
-            NirdizatiThreadPool().execute(DataSetGenerationJob(params, file, execution.desktop))
+            NirdizatiThreadPool.execute(DataSetGenerationJob(params, file, execution.desktop))
             Clients.showNotification(Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.getName()))), "info", getPage().getFirstRoot(), "bottom_center", -1, true)
             Files.move(Paths.get(file.absolutePath),
                     Paths.get(File(MasterConfiguration.directoryPathConfiguration.userLogDirectory + file.name).absolutePath), StandardCopyOption.REPLACE_EXISTING)

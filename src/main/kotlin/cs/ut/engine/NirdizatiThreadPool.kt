@@ -6,14 +6,18 @@ import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
 
-class NirdizatiThreadPool() {
-    companion object {
+object NirdizatiThreadPool {
+    private val threadPool: ThreadPoolExecutor
+
+    init {
         val config = MasterConfiguration.threadPoolConfiguration
-        val threadPool = ThreadPoolExecutor(config.core,
+        threadPool = ThreadPoolExecutor(
+                config.core,
                 config.max,
                 config.keepAlive.toLong(),
                 TimeUnit.SECONDS,
-                ArrayBlockingQueue<Runnable>(config.capacity))
+                ArrayBlockingQueue<Runnable>(config.capacity)
+        )
     }
 
     fun execute(runnable: Runnable) {
