@@ -37,13 +37,13 @@
     <!-- Paths configuration used for log, model and script storage -->
     <paths>
         <!-- Path to python executable -->
-        <python>/usr/bin/python</python>
+        <python>/usr/bin/python3</python>
         <!-- Directory for user log storage -->
-        <userLogDirectory>/home/stanislav/git/nirdizati-training-ui/PredictiveMethods/logdata/</userLogDirectory>
+        <userLogDirectory>/home/ubuntu/git/nirdizati-training-ui/PredictiveMethods/logdata/</userLogDirectory>
         <!-- Directory for user model storage -->
-        <userModelDirectory>/home/stanislav/git/nirdizati-training-ui/usermodels/</userModelDirectory>
+        <userModelDirectory>/home/ubuntu/git/nirdizati-training-ui/usermodels/</userModelDirectory>
         <!-- Directory where to look for prediction scripts -->
-        <scriptDirectory>/home/stanislav/git/nirdizati-training-ui/PredictiveMethods/</scriptDirectory>
+        <scriptDirectory>/home/ubuntu/git/nirdizati-training-ui/PredictiveMethods/</scriptDirectory>
         <!-- Directory for training parameters relative to script directory -->
         <trainDirectory>training_params/</trainDirectory>
         <!-- Directory for data set parameters relative to script directory-->
@@ -59,7 +59,7 @@
         <!-- Validation directory relative to script dir -->
         <validationDir>results/validation/</validationDir>
         <!-- temporary directory for user log storage -->
-        <tmpDir>/home/stanislav/git/nirdizati-training-ui/tmp/</tmpDir>
+        <tmpDir>/home/ubuntu/git/nirdizati-training-ui/tmp/</tmpDir>
     </paths>
 
     <!-- Header button configuration for header construction -->
