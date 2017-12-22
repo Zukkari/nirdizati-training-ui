@@ -1,4 +1,4 @@
-package cs.ut.ui.providers
+package cs.ut.ui.adapters
 
 import cs.ut.config.items.ModelParameter
 import cs.ut.controllers.JobTrackerController
@@ -10,20 +10,16 @@ import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.util.NirdizatiUtil
+import cs.ut.util.OUTCOME
 import cs.ut.util.PAGE_VALIDATION
 import cs.ut.util.TRACKER_EAST
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.event.Events
-import org.zkoss.zul.Button
-import org.zkoss.zul.Hbox
-import org.zkoss.zul.Hlayout
-import org.zkoss.zul.Label
-import org.zkoss.zul.Row
-import org.zkoss.zul.Vlayout
+import org.zkoss.zul.*
 
-class JobValueProvider : GridValueProvider<Job, Row>, Redirectable {
+class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
     companion object {
         const val jobArg = "JOB"
     }
@@ -46,6 +42,12 @@ class JobValueProvider : GridValueProvider<Job, Row>, Redirectable {
         return row
     }
 
+    private fun Job.identifierLabel(): Label {
+        val label = Label(this.id)
+        label.style = "font-size: 8px"
+        return label
+    }
+
     private fun ModelParameter.generateResultLabel(): Hlayout {
         val hlayout = Hlayout()
 
@@ -65,14 +67,22 @@ class JobValueProvider : GridValueProvider<Job, Row>, Redirectable {
         val encoding = job.encoding
         val bucketing = job.bucketing
         val learner = job.learner
+        val outcome = job.outcome
 
         val label = Label(NirdizatiUtil.localizeText(encoding.type + "." + encoding.id) + "\n" +
                 NirdizatiUtil.localizeText(bucketing.type + "." + bucketing.id) + "\n" +
-                NirdizatiUtil.localizeText(learner.type + "." + learner.id))
+                NirdizatiUtil.localizeText(learner.type + "." + learner.id)
+        )
         label.isPre = true
         label.style = "font-weight: bold;"
 
-        val bottom = learner.formHyperparamRow()
+        val outcomeText = "" + if (outcome.id == OUTCOME) NirdizatiUtil.localizeText("threshold.threshold_msg") + ": " +
+                (if (outcome.parameter == "-1.0") NirdizatiUtil.localizeText("threshold.avg").toLowerCase()
+                else outcome.parameter) + "\n"
+        else ""
+
+        val bottom: Label = learner.formHyperparamRow()
+        bottom.value = outcomeText + bottom.value
 
         val fileLayout = job.generateFileInfo()
         fileLayout.hflex = "1"
@@ -97,6 +107,7 @@ class JobValueProvider : GridValueProvider<Job, Row>, Redirectable {
 
         vlayout.appendChild(job.generateStatus(label))
         vlayout.appendChild(bottom)
+        vlayout.appendChild(job.identifierLabel())
 
         val hlayout = Hlayout()
         hlayout.appendChild(job.getVisualizeBtn())

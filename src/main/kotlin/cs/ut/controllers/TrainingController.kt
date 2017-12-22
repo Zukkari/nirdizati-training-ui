@@ -9,20 +9,19 @@ import cs.ut.controllers.training.ModeController
 import cs.ut.engine.JobManager
 import cs.ut.engine.LogManager
 import cs.ut.util.NirdizatiUtil
+import cs.ut.util.OUTCOME
 import cs.ut.util.readLogColumns
 import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.event.Events
+import org.zkoss.zk.ui.event.SelectEvent
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
 import org.zkoss.zk.ui.util.Clients
-import org.zkoss.zul.Checkbox
-import org.zkoss.zul.Combobox
-import org.zkoss.zul.Comboitem
-import org.zkoss.zul.Vlayout
+import org.zkoss.zul.*
 import java.io.File
 
 class TrainingController : SelectorComposer<Component>(), Redirectable {
@@ -33,6 +32,8 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         const val ENCODING = "encoding"
         const val BUCKETING = "bucketing"
         const val PREDICTION = "predictiontype"
+
+        const val DEFAULT = 0.1
     }
 
     @Wire
@@ -47,10 +48,17 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
     @Wire
     private lateinit var gridContainer: Vlayout
 
+    @Wire
+    private lateinit var thresholdContainer: Hbox
+
+    private lateinit var radioGroup: Radiogroup
+
     private lateinit var gridController: ModeController
 
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
+
+        radioGroup = Radiogroup()
 
         initClientLogs()
         initPredictions()
@@ -73,7 +81,12 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
 
         params.forEach {
             val item: Comboitem = predictionType.appendItem(NirdizatiUtil.localizeText("${it.type}.${it.id}"))
-            item.setValue(it)
+            val modelParam = ModelParameter(it)
+            item.setValue(modelParam)
+
+            if (modelParam.id == OUTCOME) {
+                modelParam.setUpRadioButtons()
+            }
         }
 
         dataSetColumns.forEach {
@@ -83,8 +96,51 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
             item.setValue(modelParameter)
         }
 
+        predictionType.addEventListener(Events.ON_SELECT, { e ->
+            e as SelectEvent<*, *>
+            val param = (e.selectedItems.first() as Comboitem).getValue() as ModelParameter
+            log.debug("Prediction type model changed to $param")
+            if (param.id == OUTCOME) {
+                thresholdContainer.isVisible = true
+                log.debug("Prediciton type is $OUTCOME generating radio buttons")
+            } else {
+                log.debug("Clearing thresholdContainer")
+                thresholdContainer.isVisible = false
+            }
+        })
+
         predictionType.selectedItem = predictionType.items[0]
         predictionType.isReadonly = true
+    }
+
+    private fun ModelParameter.setUpRadioButtons() {
+        val avg = radioGroup.appendItem(NirdizatiUtil.localizeText("threshold.avg"), this.parameter)
+        avg.setValue(this.parameter.toDouble())
+        radioGroup.selectedItem = avg
+
+        val custom = radioGroup.appendItem(NirdizatiUtil.localizeText("threshold.custom"), this.parameter)
+        custom.setValue(DEFAULT)
+        val customBox = Doublebox()
+        customBox.width = "60px"
+        customBox.setValue(DEFAULT)
+        customBox.style = "padding-top: 10px"
+        customBox.vflex = "1"
+        customBox.addEventListener(Events.ON_CHANGE, { _ ->
+            log.debug("New value for custom threshold ${customBox.value}")
+            val res: Double? = customBox.value
+
+            if (res == null || res <= 0) {
+                custom.setValue(DEFAULT)
+                customBox.setValue(DEFAULT)
+                customBox.errorMessage = NirdizatiUtil.localizeText("threshold.custom_error", 0)
+            } else {
+                customBox.clearErrorMessage()
+                custom.setValue(res)
+            }
+        })
+
+        thresholdContainer.appendChild(radioGroup)
+        thresholdContainer.appendChild(customBox)
     }
 
     private fun initClientLogs() {
@@ -129,6 +185,9 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         jobParamters.putAll(gridController.gatherValues())
 
         if (!jobParamters.validateParameters()) return
+
+        val prediction: ModelParameter = jobParamters[PREDICTION]!!.first()
+        prediction.parameter = (radioGroup.selectedItem.getValue() as Double).toString()
 
         log.debug("Parameters are valid, calling script to train the model")
         val jobThread = Runnable {

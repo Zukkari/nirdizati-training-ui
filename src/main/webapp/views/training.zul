@@ -15,11 +15,11 @@
                 <combobox id="predictionType" constraint="no empty"/>
             </row>
             <row>
-                <hlayout/>
                 <hlayout>
                     <label value="${labels.training.advanced}" hflex="1"/>
                     <checkbox id="advancedMode" zclass="toggle" sclass="switch toggle-round-flat" hflex="1"/>
                 </hlayout>
+                <hbox align="center" vflex="1" id="thresholdContainer" visible="false"/>
             </row>
         </rows>
     </grid>

@@ -268,7 +268,7 @@
             </modelparam>
             <modelparam>
                 <id>outcome</id>
-                <parameter>label</parameter>
+                <parameter>-1</parameter>
                 <type>predictiontype</type>
                 <enabled>true</enabled>
             </modelparam>

@@ -60,7 +60,7 @@ object LogManager {
      */
     fun getDetailedFile(job: SimulationJob): File {
         log.debug("Getting detailed log information for job '$job'")
-        val fileName = DETAILED + FilenameUtils.getBaseName(job.toString())
+        val fileName = DETAILED + FilenameUtils.getBaseName(job.id)
         return getFile(detailedDir + fileName)
     }
 
@@ -72,18 +72,18 @@ object LogManager {
      */
     fun getValidationFile(job: SimulationJob): File {
         log.debug("Getting validation log file for job '$job'")
-        val fileName = VALIDATION + FilenameUtils.getBaseName(job.toString())
+        val fileName = VALIDATION + FilenameUtils.getBaseName(job.id)
         return getFile(validationDir + fileName)
     }
 
     fun getFeatureImportanceFiles(job: SimulationJob): List<File> {
-        log.debug("Getting feature importance log information for job: '$job'")
+        log.debug("Getting feature importance log information for job: '${job.id}'")
         if (PREFIX == job.bucketing.id) {
             log.debug("Prefix job, looking for all possible files for this job")
 
             val files = mutableListOf<File>()
             (1..15).forEach { i ->
-                val fileName = featureImportanceDir + FEATURE + FilenameUtils.getBaseName(job.toString()) + "_$i"
+                val fileName = featureImportanceDir + FEATURE + FilenameUtils.getBaseName(job.id) + "_$i"
                 try {
                     files.add(getFile(fileName))
                 } catch (e: Exception) {
@@ -94,7 +94,7 @@ object LogManager {
             log.debug("Found ${files.size} files for job: $job")
             return files
         } else {
-            return listOf(getFile(featureImportanceDir + FEATURE + FilenameUtils.getBaseName(job.toString()) + "_1"))
+            return listOf(getFile(featureImportanceDir + FEATURE + FilenameUtils.getBaseName(job.id) + "_1"))
         }
     }
 

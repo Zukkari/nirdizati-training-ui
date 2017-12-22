@@ -1,4 +1,4 @@
-package cs.ut.ui.providers
+package cs.ut.ui.adapters
 
 import cs.ut.config.items.ModelParameter
 import cs.ut.config.items.Property
@@ -11,7 +11,7 @@ import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import java.io.File
 
-class AttributeToLabelsProvider : GridValueProvider<Any, Row> {
+class AttributeToLabelsAdapter : GridValueProvider<Any, Row> {
     override var fields: MutableList<FieldComponent> = mutableListOf()
 
     override fun provide(data: Any): Row {

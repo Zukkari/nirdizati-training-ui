@@ -1,4 +1,4 @@
-package cs.ut.ui.providers
+package cs.ut.ui.adapters
 
 import cs.ut.config.items.Property
 import cs.ut.exceptions.NirdizatiRuntimeException
@@ -14,7 +14,7 @@ import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import org.zkoss.zul.impl.InputElement
 
-class PropertyValueProvider : GridValueProvider<Property, Row> {
+class PropertyValueAdapter : GridValueProvider<Property, Row> {
     override var fields: MutableList<FieldComponent> = mutableListOf()
 
     override fun provide(data: Property): Row {

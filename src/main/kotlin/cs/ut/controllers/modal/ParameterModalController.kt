@@ -3,13 +3,14 @@ package cs.ut.controllers.modal
 import com.google.common.html.HtmlEscapers
 import cs.ut.config.MasterConfiguration
 import cs.ut.controllers.Redirectable
+import cs.ut.engine.IdProvider
 import cs.ut.engine.JobManager
 import cs.ut.engine.NirdizatiThreadPool
 import cs.ut.jobs.DataSetGenerationJob
 import cs.ut.ui.NirdizatiGrid
-import cs.ut.ui.providers.ColumnRowValueProvider
-import cs.ut.ui.providers.ComboArgument
-import cs.ut.ui.providers.ComboProvider
+import cs.ut.ui.adapters.ColumnRowValueAdapter
+import cs.ut.ui.adapters.ComboArgument
+import cs.ut.ui.adapters.ComboProvider
 import cs.ut.util.CsvReader
 import cs.ut.util.TIMESTAMP_COL
 import org.apache.log4j.Logger
@@ -77,7 +78,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         csvReader.identifyUserColumns(header.toMutableList(), identifiedColumns)
         identifiedColumns[TIMESTAMP_COL] = csvReader.getTimeStamp()
 
-        val provider = ColumnRowValueProvider(header, identifiedColumns)
+        val provider = ColumnRowValueAdapter(header, identifiedColumns)
         val grid = NirdizatiGrid(provider)
         grid.hflex = "min"
 
@@ -123,7 +124,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
                     params[v] = mutableListOf(k)
                 }
             }
-            NirdizatiThreadPool().execute(DataSetGenerationJob(params, file, execution.desktop))
+            NirdizatiThreadPool.execute(DataSetGenerationJob(params, file, execution.desktop))
             Clients.showNotification(Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.getName()))), "info", getPage().getFirstRoot(), "bottom_center", -1, true)
             Files.move(Paths.get(file.absolutePath),
                     Paths.get(File(MasterConfiguration.directoryPathConfiguration.userLogDirectory + file.name).absolutePath), StandardCopyOption.REPLACE_EXISTING)

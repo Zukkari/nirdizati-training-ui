@@ -4,7 +4,7 @@ import cs.ut.charts.Chart
 import cs.ut.charts.ChartGenerator
 import cs.ut.charts.MAE
 import cs.ut.jobs.SimulationJob
-import cs.ut.ui.providers.JobValueProvider
+import cs.ut.ui.adapters.JobValueAdataper
 import cs.ut.util.NirdizatiUtil
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
@@ -45,7 +45,7 @@ class ValidationController : SelectorComposer<Component>() {
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
 
-        job = Executions.getCurrent().getAttribute(JobValueProvider.jobArg) as SimulationJob?
+        job = Executions.getCurrent().getAttribute(JobValueAdataper.jobArg) as SimulationJob?
         job?.let {
             log.debug("Received job argument $job, initializing in read only mode")
             generateReadOnlyMode()

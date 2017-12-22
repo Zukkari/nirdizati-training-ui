@@ -66,8 +66,6 @@ object JobManager {
     }
 
     fun deployJobs() {
-        val executor = NirdizatiThreadPool()
-
         val currentJobs = jobQueue[Executions.getCurrent().session]!!
         log.debug("Deploying ${currentJobs.size} jobs")
 
@@ -77,7 +75,7 @@ object JobManager {
         Executions.getCurrent().desktop.components.first { it.id == TRACKER_EAST }.isVisible = true
 
         while (currentJobs.peek() != null) {
-            executor.execute(currentJobs.poll())
+            NirdizatiThreadPool.execute(currentJobs.poll())
         }
 
         log.debug("Successfully deployed all jobs to worker")
