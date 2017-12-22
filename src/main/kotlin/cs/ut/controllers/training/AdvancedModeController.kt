@@ -5,9 +5,9 @@ import cs.ut.config.items.Property
 import cs.ut.controllers.TrainingController
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.NirdizatiGrid
-import cs.ut.ui.providers.AdvancedModeProvider
-import cs.ut.ui.providers.GeneratorArgument
-import cs.ut.ui.providers.PropertyValueProvider
+import cs.ut.ui.adapters.AdvancedModeAdapter
+import cs.ut.ui.adapters.GeneratorArgument
+import cs.ut.ui.adapters.PropertyValueAdapter
 import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.event.CheckEvent
@@ -19,7 +19,7 @@ import org.zkoss.zul.Vlayout
 class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gridContainer), ModeController {
     private val log: Logger = Logger.getLogger(AdvancedModeController::class.java)!!
 
-    private val grid: NirdizatiGrid<GeneratorArgument> = NirdizatiGrid(AdvancedModeProvider())
+    private val grid: NirdizatiGrid<GeneratorArgument> = NirdizatiGrid(AdvancedModeAdapter())
     private val hyperParamsContainer = Hlayout()
     private var hyperParameters: MutableMap<ModelParameter, MutableList<Property>> = mutableMapOf()
 
@@ -67,7 +67,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
 
         log.debug("Key: $key -> value: $value")
 
-        val propGrid = NirdizatiGrid(PropertyValueProvider())
+        val propGrid = NirdizatiGrid(PropertyValueAdapter())
         propGrid.setColumns(mapOf(
                 key.type + "." + key.id to "min",
                 "" to "min"

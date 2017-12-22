@@ -1,4 +1,4 @@
-package cs.ut.ui.providers
+package cs.ut.ui.adapters
 
 import cs.ut.config.items.ModelParameter
 import cs.ut.ui.FieldComponent

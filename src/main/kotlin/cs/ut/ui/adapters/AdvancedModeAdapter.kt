@@ -1,4 +1,4 @@
-package cs.ut.ui.providers
+package cs.ut.ui.adapters
 
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
@@ -8,7 +8,7 @@ import org.zkoss.zul.Checkbox
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 
-class AdvancedModeProvider : GridValueProvider<GeneratorArgument, Row> {
+class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
     override var fields: MutableList<FieldComponent> = mutableListOf()
 
     override fun provide(data: GeneratorArgument): Row {

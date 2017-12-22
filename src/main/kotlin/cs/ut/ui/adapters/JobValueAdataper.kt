@@ -1,4 +1,4 @@
-package cs.ut.ui.providers
+package cs.ut.ui.adapters
 
 import cs.ut.config.items.ModelParameter
 import cs.ut.controllers.JobTrackerController
@@ -23,7 +23,7 @@ import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import org.zkoss.zul.Vlayout
 
-class JobValueProvider : GridValueProvider<Job, Row>, Redirectable {
+class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
     companion object {
         const val jobArg = "JOB"
     }
@@ -44,6 +44,12 @@ class JobValueProvider : GridValueProvider<Job, Row>, Redirectable {
         fields.add(FieldComponent(label, status))
 
         return row
+    }
+
+    private fun Job.identifierLabel(): Label {
+        val label = Label(this.id)
+        label.style = "font-size: 8px"
+        return label
     }
 
     private fun ModelParameter.generateResultLabel(): Hlayout {
@@ -97,6 +103,7 @@ class JobValueProvider : GridValueProvider<Job, Row>, Redirectable {
 
         vlayout.appendChild(job.generateStatus(label))
         vlayout.appendChild(bottom)
+        vlayout.appendChild(job.identifierLabel())
 
         val hlayout = Hlayout()
         hlayout.appendChild(job.getVisualizeBtn())

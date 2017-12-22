@@ -1,7 +1,7 @@
 package cs.ut.controllers
 
 import cs.ut.ui.NirdizatiGrid
-import cs.ut.ui.providers.JobValueProvider
+import cs.ut.ui.adapters.JobValueAdataper
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Wire
@@ -20,7 +20,7 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
 
-        val jobGrid = NirdizatiGrid(JobValueProvider())
+        val jobGrid = NirdizatiGrid(JobValueAdataper())
         jobGrid.isVisible = false
         jobGrid.vflex = "1"
         jobGrid.id = GRID_ID

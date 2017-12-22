@@ -14,13 +14,14 @@ import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class SimulationJob(val encoding: ModelParameter,
-                    val bucketing: ModelParameter,
-                    val learner: ModelParameter,
-                    val outcome: ModelParameter,
-                    val isClassification: Boolean,
-                    val logFile: File,
-                    client: Desktop) : Job(client) {
+class SimulationJob(
+        val encoding: ModelParameter,
+        val bucketing: ModelParameter,
+        val learner: ModelParameter,
+        val outcome: ModelParameter,
+        val isClassification: Boolean,
+        val logFile: File,
+        client: Desktop) : Job(client) {
 
     override var startTime = Date()
     override var completeTime = Date()
