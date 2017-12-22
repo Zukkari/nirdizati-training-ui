@@ -77,7 +77,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
         label.style = "font-weight: bold;"
 
         val outcomeText = "" + if (outcome.id == OUTCOME) NirdizatiUtil.localizeText("threshold.threshold_msg") + ": " +
-                (if (outcome.parameter == "-1.0") NirdizatiUtil.localizeText("threshold.avg").toLowerCase()
+                (if (outcome.parameter == "-1") NirdizatiUtil.localizeText("threshold.avg").toLowerCase()
                 else outcome.parameter) + "\n"
         else ""
 

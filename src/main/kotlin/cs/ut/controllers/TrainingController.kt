@@ -187,7 +187,9 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         if (!jobParamters.validateParameters()) return
 
         val prediction: ModelParameter = jobParamters[PREDICTION]!!.first()
-        prediction.parameter = (radioGroup.selectedItem.getValue() as Double).toString()
+
+        val value = (radioGroup.selectedItem.getValue() as Double)
+        prediction.parameter = if (value == -1.0) "-1" else value.toString()
 
         log.debug("Parameters are valid, calling script to train the model")
         val jobThread = Runnable {
