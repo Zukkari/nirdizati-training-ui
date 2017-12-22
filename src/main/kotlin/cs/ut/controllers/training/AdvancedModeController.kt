@@ -14,8 +14,6 @@ import org.zkoss.zk.ui.event.CheckEvent
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zul.Checkbox
 import org.zkoss.zul.Hlayout
-import org.zkoss.zul.Label
-import org.zkoss.zul.Row
 import org.zkoss.zul.Vlayout
 
 class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gridContainer), ModeController {
@@ -60,6 +58,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
 
     private fun generateGrids() {
         hyperParamsContainer.getChildren<Component>().clear()
+        hyperParamsContainer.vflex = "1"
         hyperParameters.entries.forEach { it.generateGrid() }
     }
 

@@ -18,7 +18,7 @@ const val NUM_COL = "_num_cols"
 const val CAT_COLS = "_cat_cols"
 
 const val REMTIME = "remtime"
-const val OUTCOME = "label"
+const val OUTCOME = "outcome"
 
 const val PROPERTY = "property"
 const val TRACKER_EAST = "trackerEast"
