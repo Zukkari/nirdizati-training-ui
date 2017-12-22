@@ -33,7 +33,8 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         const val BUCKETING = "bucketing"
         const val PREDICTION = "predictiontype"
 
-        const val DEFAULT = 0.1
+        val DEFAULT = MasterConfiguration.defaultValuesConfiguration.minValue
+        val AVERAGE = MasterConfiguration.defaultValuesConfiguration.average.toString()
     }
 
     @Wire
@@ -189,7 +190,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         val prediction: ModelParameter = jobParamters[PREDICTION]!!.first()
 
         val value = (radioGroup.selectedItem.getValue() as Double)
-        prediction.parameter = if (value == -1.0) "-1" else value.toString()
+        prediction.parameter = if (value == -1.0) AVERAGE else value.toString()
 
         log.debug("Parameters are valid, calling script to train the model")
         val jobThread = Runnable {

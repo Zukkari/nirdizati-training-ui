@@ -14,6 +14,12 @@
         <capacity>1024</capacity>
     </threadpool>
 
+    <!-- Configuration for default values in TrainingController-->
+    <defaultConfig>
+        <minValue>0.1</minValue>
+        <average>-1</average>
+    </defaultConfig>
+
     <!-- Page configuration used for redirects -->
     <pageConfig>
         <page>
