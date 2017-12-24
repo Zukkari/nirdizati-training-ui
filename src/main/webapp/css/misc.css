@@ -82,23 +82,46 @@
 }
 
 .z-notification-info .z-notification-content {
+    background-color: rgba(45, 255, 0, 0.15);
     text-align: center;
-    border-radius: 1px;
+    border-radius: 5px;
+    padding: 40px 40px 40px 70px;
+    width: 100%;
+    border: thin solid rgba(35, 170, 0, 0.7);
+}
+
+.z-notification-error .z-notification-content {
+    background-color: rgba(255, 29, 4, 0.25);
+    border: thin solid rgba(170, 4, 4, 0.7);
+    text-align: center;
+    border-radius: 5px;
     padding: 40px 40px 40px 70px;
     width: 100%;
 }
 
-.z-notification-error .z-notification-content {
-    text-align: center;
-    border-radius: 1px;
-    padding: 40px;
-    width: 100%;
-    margin-bottom: 50%;
+.z-notification-error .z-notification-close {
+    background-color: rgba(255, 0, 3, 0.05);
+}
+
+.z-notification-error .z-notification-icon {
+    background-color: rgba(45, 255, 0, 0.05);
+}
+
+.z-notification-info .z-notification-close {
+    background-color: rgba(255, 0, 6, 0.05);
+}
+
+.z-notification-info .z-notification-icon {
+    background-color: rgba(45, 255, 0, 0.05);
+}
+
+.z-icon-info-circle {
+    content: none
 }
 
 .z-notification-content {
     padding-left: 70px;
-    font-size: medium;
+    font-size: small;
 }
 
 .close-btn {

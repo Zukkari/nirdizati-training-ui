@@ -24,16 +24,20 @@ object IdProvider {
         var iteration = 1
 
         var new: String = getNextHash()
-        while (previous == new) {
-            new = getNextHash()
-            iteration += 1
-        }
 
-        log.debug("Finished id generation in $iteration iterations")
-        previous = new
+        synchronized(this) {
+            while (previous == new) {
+                new = getNextHash()
+                iteration += 1
+            }
+
+            log.debug("Finished id generation in $iteration iterations")
+            previous = new
+        }
 
         log.debug("New id is -> $new")
         return new
+
     }
 
     private fun getNextHash(): String {

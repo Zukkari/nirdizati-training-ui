@@ -15,12 +15,12 @@ import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
+import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.event.SelectEvent
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zk.ui.util.Clients
 import org.zkoss.zul.*
 import java.io.File
 
@@ -224,12 +224,11 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         }
 
         if (!isValid) {
-            Clients.showNotification(
+            NirdizatiUtil.showNotificationAsync(
                     Labels.getLabel("training.validation_failed", arrayOf(msg)),
-                    "error",
-                    self,
-                    "bottom_center",
-                    -1)
+                    Executions.getCurrent().desktop,
+                    "error"
+            )
         }
 
         return isValid
