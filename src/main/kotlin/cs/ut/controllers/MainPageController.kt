@@ -47,7 +47,7 @@ class MainPageController : SelectorComposer<Component>(), Redirectable {
      */
     private fun ClientInfo.configureTracker() {
         log.debug("Configuring job tracker for $this")
-        trackerEast.size = "${this.windowWidth * 0.25}px"
+        trackerEast.size = "${this.windowWidth * 0.3}px"
         trackerEast.isVisible = false
     }
 

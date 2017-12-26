@@ -1,5 +1,6 @@
 package cs.ut.ui.adapters
 
+import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
 import cs.ut.controllers.JobTrackerController
 import cs.ut.controllers.Redirectable
@@ -22,6 +23,7 @@ import org.zkoss.zul.*
 class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
     companion object {
         const val jobArg = "JOB"
+        val AVERAGE = MasterConfiguration.defaultValuesConfiguration.average.toString()
     }
 
     override var fields: MutableList<FieldComponent> = mutableListOf()
@@ -77,7 +79,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
         label.style = "font-weight: bold;"
 
         val outcomeText = "" + if (outcome.id == OUTCOME) NirdizatiUtil.localizeText("threshold.threshold_msg") + ": " +
-                (if (outcome.parameter == "-1.0") NirdizatiUtil.localizeText("threshold.avg").toLowerCase()
+                (if (outcome.parameter == AVERAGE) NirdizatiUtil.localizeText("threshold.avg").toLowerCase()
                 else outcome.parameter) + "\n"
         else ""
 

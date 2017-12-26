@@ -4,13 +4,12 @@ import cs.ut.config.MasterConfiguration
 import cs.ut.controllers.JobTrackerController
 import cs.ut.engine.IdProvider
 import cs.ut.ui.NirdizatiGrid
-import cs.ut.util.MAINLAYOUT
+import cs.ut.util.NirdizatiUtil
 import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Desktop
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
-import org.zkoss.zk.ui.util.Clients
 import org.zkoss.zul.Button
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
@@ -130,16 +129,10 @@ abstract class Job(val client: Desktop) : Runnable {
         }
 
         if (isNotificationRequired()) {
-            Executions.schedule(client,
-                    { _ ->
-                        Clients.showNotification(
-                                getNotificationMessage(),
-                                "info",
-                                client.components.first { it.id == MAINLAYOUT },
-                                "bottom_center",
-                                -1)
-                    },
-                    Event("jobStatus", null, "complete"))
+            NirdizatiUtil.showNotificationAsync(
+                    getNotificationMessage(),
+                    client
+            )
         }
     }
 

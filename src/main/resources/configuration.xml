@@ -14,6 +14,12 @@
         <capacity>1024</capacity>
     </threadpool>
 
+    <!-- Configuration for default values in TrainingController-->
+    <defaultConfig>
+        <minValue>0.1</minValue>
+        <average>-1</average>
+    </defaultConfig>
+
     <!-- Page configuration used for redirects -->
     <pageConfig>
         <page>
@@ -37,7 +43,7 @@
     <!-- Paths configuration used for log, model and script storage -->
     <paths>
         <!-- Path to python executable -->
-        <python>/usr/bin/python</python>
+        <python>/usr/bin/python3</python>
         <!-- Directory for user log storage -->
         <userLogDirectory>/home/stanislav/git/nirdizati-training-ui/PredictiveMethods/logdata/</userLogDirectory>
         <!-- Directory for user model storage -->
