@@ -24,7 +24,7 @@ enum class JobStatus {
     FAILED
 }
 
-abstract class Job(val client: Desktop) : Runnable {
+abstract class Job(var client: Desktop) : Runnable {
     val log = Logger.getLogger(Job::class.java)!!
 
     val id: String = IdProvider.getNextId()
