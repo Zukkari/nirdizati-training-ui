@@ -19,7 +19,12 @@ import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.event.Events
-import org.zkoss.zul.*
+import org.zkoss.zul.Button
+import org.zkoss.zul.Hbox
+import org.zkoss.zul.Hlayout
+import org.zkoss.zul.Label
+import org.zkoss.zul.Row
+import org.zkoss.zul.Vlayout
 
 class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
     companion object {
