@@ -1,7 +1,5 @@
 package cs.ut.config
 
-import cs.ut.util.OUTCOME
-
 class TrainingData {
     var static_cat_cols: Array<String> = arrayOf()
     var dynamic_cat_cols: Array<String> = arrayOf()
@@ -16,5 +14,12 @@ class TrainingData {
 
     fun getAllColumns(): List<String> = ((static_cat_cols + static_num_cols).toList() - activity_col)
 
-    fun isColumnStatic(column: String): Boolean = column in static_cat_cols || column in static_num_cols || column == OUTCOME
+    fun isColumnStatic(column: String): Boolean = column in static_cat_cols || column in static_num_cols || isOutcome(column)
+
+    private fun isOutcome(col: String): Boolean = try {
+        col.toFloat()
+        true
+    } catch (e: NumberFormatException) {
+        false
+    }
 }
