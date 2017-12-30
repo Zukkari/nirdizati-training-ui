@@ -4,6 +4,7 @@ import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
 import cs.ut.controllers.JobTrackerController
 import cs.ut.controllers.Redirectable
+import cs.ut.engine.JobManager
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
@@ -18,7 +19,12 @@ import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.event.Events
-import org.zkoss.zul.*
+import org.zkoss.zul.Button
+import org.zkoss.zul.Hbox
+import org.zkoss.zul.Hlayout
+import org.zkoss.zul.Label
+import org.zkoss.zul.Row
+import org.zkoss.zul.Vlayout
 
 class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
     companion object {
@@ -157,7 +163,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
         btn.sclass = "close-btn"
 
         btn.addEventListener(Events.ON_CLICK, { _ ->
-            val grid: NirdizatiGrid<Job> = this.client.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
+            val grid: NirdizatiGrid<Job> = this.client.components.firstOrNull { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
             this.kill()
             Executions.schedule(this.client,
                     { _ ->
@@ -167,6 +173,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
                         }
                     },
                     Event("abort_job", null, null))
+            JobManager.removeJob(this)
         })
 
         return btn

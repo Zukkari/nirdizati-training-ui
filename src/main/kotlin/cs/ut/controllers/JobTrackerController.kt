@@ -21,7 +21,6 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
         super.doAfterCompose(comp)
 
         val jobGrid = NirdizatiGrid(JobValueAdataper())
-        jobGrid.isVisible = false
         jobGrid.vflex = "1"
         jobGrid.id = GRID_ID
         jobTracker.appendChild(jobGrid)
