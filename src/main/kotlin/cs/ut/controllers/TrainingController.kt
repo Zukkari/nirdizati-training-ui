@@ -160,7 +160,6 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
             clientLogs.isDisabled = true
         }
 
-        clientLogs.width = "250px"
         clientLogs.isReadonly = true
 
         clientLogs.addEventListener(Events.ON_SELECT, { _ ->

@@ -60,7 +60,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
         val hlayout = Hlayout()
 
         val label = Label(NirdizatiUtil.localizeText("property.outcome"))
-        label.style = "font-weight: bold;"
+        label.sclass = "bold-text"
 
         val outcome = Label(NirdizatiUtil.localizeText(if (this.translate) this.getTranslateName() else this.id))
         hlayout.appendChild(label)
@@ -82,7 +82,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
                 NirdizatiUtil.localizeText(learner.type + "." + learner.id)
         )
         label.isPre = true
-        label.style = "font-weight: bold;"
+        label.sclass = "bold-text"
 
         val outcomeText = "" + if (outcome.id == OUTCOME) NirdizatiUtil.localizeText("threshold.threshold_msg") + ": " +
                 (if (outcome.parameter == AVERAGE) NirdizatiUtil.localizeText("threshold.avg").toLowerCase()
@@ -146,7 +146,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
 
     private fun SimulationJob.generateFileInfo(): Hlayout {
         val fileLabel = Label(NirdizatiUtil.localizeText("attribute.log_file"))
-        fileLabel.style = "font-weight: bold;"
+        fileLabel.sclass = "bold-text"
 
         val file = Label(this.logFile.name)
 

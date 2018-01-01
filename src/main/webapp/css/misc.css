@@ -128,3 +128,7 @@
     color: black !important;
     background-color: whitesmoke !important;
 }
+
+.bold-text {
+    font-weight: bold;
+}
