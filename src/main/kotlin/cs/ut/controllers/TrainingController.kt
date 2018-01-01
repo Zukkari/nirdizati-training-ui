@@ -70,6 +70,10 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
     private fun getLogFileName(): String = FilenameUtils.getBaseName((clientLogs.selectedItem.getValue() as File).name)
 
     private fun initPredictions() {
+        radioGroup.getChildren<Component>().clear()
+        thresholdContainer.getChildren<Component>().clear()
+        thresholdContainer.isVisible = false
+
         predictionType.items.clear()
         log.debug("Cleared prediction type items")
 

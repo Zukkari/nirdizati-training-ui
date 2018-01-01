@@ -110,12 +110,6 @@ abstract class Job(var client: Desktop) : Runnable {
         } catch (e: Exception) {
             log.debug("Job $id failed in post execute step")
             status = JobStatus.FAILED
-
-            try {
-                notifyOfJobStatusChange()
-            } catch (e: NoSuchElementException) {
-                log.debug("Could not notify $client of job status change: $e")
-            }
             return
         }
 
@@ -129,10 +123,14 @@ abstract class Job(var client: Desktop) : Runnable {
         }
 
         if (isNotificationRequired()) {
-            NirdizatiUtil.showNotificationAsync(
-                    getNotificationMessage(),
-                    client
-            )
+            try {
+                NirdizatiUtil.showNotificationAsync(
+                        getNotificationMessage(),
+                        client
+                )
+            } catch (e: Exception) {
+                log.warn("Desktop $client is not available, could not notify of status update")
+            }
         }
     }
 
@@ -141,8 +139,12 @@ abstract class Job(var client: Desktop) : Runnable {
     }
 
     private fun notifyOfJobStatusChange() {
-        val grid: NirdizatiGrid<Job> = this.client.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
-        this.updateJobStatus(grid.rows.getChildren(), grid)
+        try {
+            val grid: NirdizatiGrid<Job> = this.client.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
+            this.updateJobStatus(grid.rows.getChildren(), grid)
+        } catch (e: Exception) {
+            log.debug("Could not notify $client of job status change")
+        }
     }
 
     tailrec private fun updateJobStatus(rows: List<Row>, grid: NirdizatiGrid<Job>) {
