@@ -49,13 +49,13 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable {
 
         if (FilenameUtils.getExtension(uploaded.name) in allowedExtensions) {
             log.debug("Log is in allowed format")
-            fileName.sclass = ""
+            fileName.sclass = "file-upload-label"
             fileName.value = uploaded.name
             media = uploaded
             upload.isVisible = true
         } else {
             log.debug("Log is not in allowed format -> showing error")
-            fileName.sclass = "error-label"
+            fileName.sclass = "file-upload-label-err"
             fileName.value = Labels.getLabel(
                     "upload.wrong.format",
                     arrayOf(uploaded.name, FilenameUtils.getExtension(uploaded.name))

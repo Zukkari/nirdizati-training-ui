@@ -1,8 +1,9 @@
 <window id="modal" title="${labels.modals.window_title}"
-    apply="cs.ut.controllers.modal.ParameterModalController"
-    closable="false"
-    position="center, center"
-    draggable="false">
+        apply="cs.ut.controllers.modal.ParameterModalController"
+        closable="false"
+        position="center, center"
+        draggable="false"
+        sclass="param-modal">
 
     <hlayout id="gridSlot"/>
 

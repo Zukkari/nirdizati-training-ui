@@ -80,6 +80,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         val provider = ColumnRowValueAdapter(header, identifiedColumns)
         val grid = NirdizatiGrid(provider)
         grid.hflex = "min"
+        grid.vflex = "1"
 
         grid.generate(cols)
 
@@ -154,9 +155,11 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         gridSlot.getChildren<Component>().clear()
         gridSlot.getChildren<Component>().add(grid)
 
+        grid.setColumns(mapOf("param.modal.name" to "1", "param.modal.control" to "2"))
         grid.mold = "paging"
         grid.pageSize = 10
         grid.hflex = "min"
+        grid.vflex = "1"
 
         return grid
     }

@@ -46,11 +46,13 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
     }
 
     fun setColumns(properties: Map<String, String>) {
-        appendChild(Columns())
+        val cols = Columns()
+        cols.vflex = "1"
+        appendChild(cols)
         properties.entries.forEach {
             val column = Column(NirdizatiUtil.localizeText(it.key))
             column.id = it.key
-            column.width = it.value
+            column.hflex = it.value
             columns.appendChild(column)
         }
     }

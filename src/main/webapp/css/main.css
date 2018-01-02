@@ -5,13 +5,6 @@
     vertical-align: middle;
 }
 
-.error-label {
-    color: red;
-    padding: 10px;
-    border-radius: 3px;
-    background-color: rgba(255, 21, 0, 0.38);
-}
-
 /* Toggle css taken from: */
 /* https://github.com/zkoss-demo/zk-template-examples/blob/toggle-switch/src/main/webapp/css-toggle-switch/css/cmn-toggle-for-zk-checkbox.css#L21 */
 
@@ -131,4 +124,45 @@
 
 .bold-text {
     font-weight: bold;
+}
+
+.n-btn {
+    min-height: 48px;
+    min-width: 48px;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.c-cont {
+    text-align: center;
+    font-weight: bold;
+    max-width: 100%;
+}
+
+.s-text {
+    font-size: 25px;
+}
+
+.file-upload-label {
+    margin: auto;
+    padding: auto;
+    font-weight: bold;
+}
+
+.file-upload-label-err {
+    padding: 30px;
+    font-weight: bold;
+    color: red;
+    border-radius: 3px;
+    background-color: rgba(255, 21, 0, 0.38);
+}
+
+.param-modal {
+    max-width: 95%;
+    max-height: 100%;
+}
+
+.param-modal-combo {
+    max-width: 100%;
+    min-width: 48px;
 }

@@ -1,15 +1,19 @@
 <vbox hflex="1" vflex="1" pack="center" align="center" apply="cs.ut.controllers.UploadLogController">
-    <vlayout>
-        <label sclass="start-caption" style="margin:30px">${labels.upload.current.file}</label>
-    </vlayout>
-    <vlayout style="padding: 20px">
-        <label id="fileName" value="" height="100%"/>
-        <fileupload id="chooseFile" upload="true">${labels.upload.choose.file}</fileupload>
-    </vlayout>
-    <vlayout>
-        <label sclass="start-caption">${labels.upload.log_support}</label>
-    </vlayout>
-    <vlayout>
-        <button id="upload" sclass="big-blue-btn" style="margin: 30px" visible="false">${labels.upload.train}</button>
-    </vlayout>
+    <vbox vflex="1" align="center" pack="center">
+        <vbox vflex="2" align="end" pack="end">
+            <label sclass="upload-label">${labels.upload.current.file}</label>
+        </vbox>
+        <vbox pack="center" vflex="1">
+            <label id="fileName" sclass="file-upload-label"/>
+        </vbox>
+        <vlayout vflex="2">
+            <vlayout>
+                <fileupload sclass="n-btn" id="chooseFile" upload="true">${labels.upload.choose.file}</fileupload>
+            </vlayout>
+            <vlayout style="margin-top: 40px">
+                <label sclass="upload-label">${labels.upload.log_support}</label>
+            </vlayout>
+            <button id="upload" sclass="n-btn" style="margin: 30px" visible="false">${labels.upload.train}</button>
+        </vlayout>
+    </vbox>
 </vbox>
