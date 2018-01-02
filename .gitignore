@@ -141,4 +141,5 @@ dataset_params/
 /PredictiveMethods/logdata/
 /PredictiveMethods/core/optimal_params/
 /PredictiveMethods/core/training_params/
+/PredictiveMethods/tmp/
 training_params/
