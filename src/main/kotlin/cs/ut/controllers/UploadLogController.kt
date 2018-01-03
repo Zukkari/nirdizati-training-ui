@@ -31,10 +31,6 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable {
 
     private val allowedExtensions = MasterConfiguration.csvConfiguration.extensions
 
-    override fun doAfterCompose(comp: Component?) {
-        super.doAfterCompose(comp)
-    }
-
 
     /**
      * Method that analyzes uploaded file. Checks that the file has required extension.
@@ -84,6 +80,7 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable {
             ) as Window
             if (self.getChildren<Component>().contains(window)) {
                 window.doModal()
+                upload.isDisabled = true
             }
         }
         runnable.run()

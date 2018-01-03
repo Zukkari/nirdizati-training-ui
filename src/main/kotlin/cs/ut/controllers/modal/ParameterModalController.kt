@@ -86,6 +86,10 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
         cancelBtn.addEventListener(Events.ON_CLICK, { _ ->
             Files.delete(Paths.get(file.absolutePath))
+            Executions.getCurrent().desktop.components.firstOrNull { it.id == "upload" }?.let {
+                it as Button
+                it.isDisabled = false
+            }
             modal.detach()
         })
 

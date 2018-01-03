@@ -25,7 +25,7 @@ object MasterConfiguration {
     val threadPoolConfiguration by lazy { readClass(ThreadPoolConfiguration::class.java, "threadpool") }
     val headerConfiguration by lazy { readClass(HeaderConfiguration::class.java, "headerConfiguration") }
     val pageConfiguration by lazy { readClass(PageConfiguration::class.java, "pageConfig") }
-
+    val userPreferences by lazy { readClass(UserPreferences::class.java, "userPreferences") }
     val defaultValuesConfiguration by lazy { readClass(DefaultValuesConfiguration::class.java, "defaultConfig") }
 
     val optimizedParams: Map<String, List<ModelParameter>> by lazy { readHyperParameterJson() }

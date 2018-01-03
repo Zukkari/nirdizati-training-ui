@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlElement
 import javax.xml.bind.annotation.XmlType
 
-@XmlType(propOrder = arrayOf("core", "max", "keepAlive", "capacity"))
+@XmlType(propOrder = ["core", "max", "keepAlive", "capacity"])
 @XmlAccessorType(XmlAccessType.FIELD)
 class ThreadPoolConfiguration(
         @XmlElement(name = "core") var core: Int,

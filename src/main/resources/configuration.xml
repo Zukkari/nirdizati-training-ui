@@ -14,6 +14,12 @@
         <capacity>1024</capacity>
     </threadpool>
 
+    <userPreferences>
+        <!-- Whether the simulation process should be run under specific user (root by default) -->
+        <enabled>true</enabled>
+        <userName>zukkari</userName>
+    </userPreferences>
+
     <!-- Configuration for default values in TrainingController-->
     <defaultConfig>
         <minValue>0.1</minValue>
@@ -132,7 +138,7 @@
 
         <!-- Values that are used to clean columns for categori<ation -->
         <emptyValues>
-            <id></id>
+            <id/>
             <id>EMPTY</id>
             <id>empty</id>
         </emptyValues>
@@ -152,7 +158,6 @@
 
     <!-- Model training configurations -->
     <modelConfig>
-
         <!-- Types that can be used for model construction -->
         <types>
             <type>encoding</type>

@@ -2,6 +2,7 @@ package cs.ut.jobs
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
+import cs.ut.config.nodes.UserPreferences
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.util.FileWriter
 import cs.ut.util.NirdizatiUtil
@@ -56,16 +57,32 @@ class SimulationJob(
     }
 
     override fun execute() {
+        val prefs: UserPreferences = MasterConfiguration.userPreferences
+        val python: String = MasterConfiguration.directoryPathConfiguration.python
+
         try {
-            val pb = ProcessBuilder(
-                    MasterConfiguration.directoryPathConfiguration.python,
-                    "train.py",
-                    logFile.name,
-                    bucketing.parameter,
-                    encoding.parameter,
-                    learner.parameter,
-                    outcome.parameter
-            )
+            val pb =
+                    if (prefs.enabled) ProcessBuilder(
+                            "sudo",
+                            "-u",
+                            prefs.userName,
+                            python,
+                            "train.py",
+                            logFile.name,
+                            bucketing.parameter,
+                            encoding.parameter,
+                            learner.parameter,
+                            outcome.parameter
+                    )
+                    else ProcessBuilder(
+                            python,
+                            "train.py",
+                            logFile.name,
+                            bucketing.parameter,
+                            encoding.parameter,
+                            learner.parameter,
+                            outcome.parameter
+                    )
 
             pb.directory(File(coreDir))
             pb.inheritIO()
