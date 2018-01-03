@@ -143,3 +143,6 @@ dataset_params/
 /PredictiveMethods/core/training_params/
 /PredictiveMethods/tmp/
 training_params/
+
+.sass-cache/
+*.css.map
