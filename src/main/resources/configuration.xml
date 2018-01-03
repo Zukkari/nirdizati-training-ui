@@ -82,18 +82,21 @@
                 <redirect>upload</redirect>
                 <enabled>true</enabled>
                 <position>0</position>
+                <icon>z-icon-cloud-upload</icon>
             </headerItem>
             <headerItem>
                 <label>header.training</label>
                 <redirect>training</redirect>
                 <enabled>true</enabled>
                 <position>1</position>
+                <icon>z-icon-gears</icon>
             </headerItem>
             <headerItem>
                 <label>header.validation</label>
                 <redirect>validation</redirect>
                 <enabled>true</enabled>
                 <position>2</position>
+                <icon>z-icon-line-chart</icon>
             </headerItem>
         </headerItems>
     </headerConfiguration>

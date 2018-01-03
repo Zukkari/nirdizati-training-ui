@@ -4,10 +4,10 @@
     </hbox>
     <hlayout vflex="1" hflex="1" sclass="c-cont">
         <span>
-            <button id="upload" sclass="n-btn">${labels.upload.log}</button>
+            <button id="upload" sclass="n-btn" label="${labels.upload.log}"/>
         </span>
         <span>
-            <button id="existingLog" sclass="n-btn">${labels.with.existing}</button>
+            <button id="existingLog" sclass="n-btn" hflex="min" label="${labels.with.existing}"/>
         </span>
     </hlayout>
 </vbox>

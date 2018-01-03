@@ -31,12 +31,13 @@ class HeaderController : SelectorComposer<Component>(), Redirectable {
             val navItem = Navitem()
             navItem.label = Labels.getLabel(it.label)
             navItem.setAttribute(DEST, it.redirect)
+            navItem.iconSclass = it.icon
+            navItem.sclass = "n-nav-item"
             navItem.addEventListener(Events.ON_CLICK, { _ ->
                 setContent(it.redirect, page)
                 navbar.selectItem(navItem)
             })
             navItem.isDisabled = !it.enabled
-            navItem.style = "padding-left: 15px"
 
             navbar.appendChild(navItem)
         }

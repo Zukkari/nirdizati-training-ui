@@ -1,0 +1,14 @@
+%centered
+  text-align: center
+  max-width: 100%
+
+@mixin font($size)
+  font-size: $size
+
+.c-cont
+  @extend %centered
+  font:
+    weight: bold
+
+.s-text
+  @include font(25px)

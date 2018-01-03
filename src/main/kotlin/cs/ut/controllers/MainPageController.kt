@@ -6,6 +6,7 @@ import cs.ut.engine.JobManager
 import cs.ut.jobs.Job
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.util.CookieUtil
+import cs.ut.util.NAVBAR
 import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
@@ -14,6 +15,7 @@ import org.zkoss.zk.ui.event.ClientInfoEvent
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
+import org.zkoss.zkmax.zul.Navbar
 import org.zkoss.zul.Borderlayout
 import org.zkoss.zul.East
 import java.util.*
@@ -44,12 +46,25 @@ class MainPageController : SelectorComposer<Component>(), Redirectable {
                 e.orientation
         )
 
+        if (e.desktopWidth <= 680) {
+            updateHeader(true)
+        } else {
+            updateHeader()
+        }
+
         Executions.getCurrent().desktop.enableServerPush(true)
         clientInformation += mapOf(Executions.getCurrent().session to info)
         info.configureTracker()
         log.debug("Finished gathering information about browser")
 
         handleCookie()
+    }
+
+    private fun updateHeader(collapse: Boolean = false) {
+        Executions.getCurrent().desktop.components.firstOrNull { it.id == NAVBAR }?.let {
+            it as Navbar
+            it.isCollapsed = collapse
+        }
     }
 
     /**
