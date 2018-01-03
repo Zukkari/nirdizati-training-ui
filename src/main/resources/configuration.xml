@@ -118,7 +118,6 @@
 
         <!-- Values that will be used to search for activity column -->
         <activityId>
-            <id>activity</id>
             <id>activity_name</id>
             <id>activity_id</id>
             <id>event_name</id>

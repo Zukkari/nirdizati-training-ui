@@ -32,7 +32,9 @@ class ColumnRowValueAdapter(private val valueList: List<String>, private val ide
         }
 
 
-        if (combobox.selectedItem == null) {
+        try {
+            combobox.selectedItem
+        } catch (e: Exception) {
             combobox.selectedItem = (combobox.getItemAtIndex(0))
         }
 
