@@ -147,3 +147,4 @@ training_params/
 .sass-cache/
 *.css.map
 *.css
+!main.css
