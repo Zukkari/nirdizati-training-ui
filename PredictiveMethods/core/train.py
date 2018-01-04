@@ -90,6 +90,9 @@ with open(outfile, 'w') as fout:
     except ValueError:
         if label_col == "remtime":  # prediction of remaining time
             mode = "regr"
+        elif label_col == "next":  # prediction of the next activity
+            mode = "class"
+            data = data.groupby(dataset_manager.case_id_col, as_index=False).apply(dataset_manager.get_next_activity)
         elif label_col in data.columns:  # prediction of existing column
             mode = dataset_manager.determine_mode(data)
         else:
@@ -157,10 +160,8 @@ with open(outfile, 'w') as fout:
                                                                        relevant_cases_bucket)  # one row per event
         train_y = dataset_manager.get_label(dt_train_bucket, mode=mode)
 
-        feature_combiner = FeatureUnion(
-            [(method, EncoderFactory.get_encoder(method, **cls_encoder_args)) for method in methods])
-        pipelines[bucket] = Pipeline(
-            [('encoder', feature_combiner), ('cls', ClassifierFactory.get_classifier(cls_method, **cls_args))])
+        feature_combiner = FeatureUnion([(method, EncoderFactory.get_encoder(method, **cls_encoder_args)) for method in methods])
+        pipelines[bucket] = Pipeline([('encoder', feature_combiner), ('cls', ClassifierFactory.get_classifier(cls_method, **cls_args))])
 
         pipelines[bucket].fit(dt_train_bucket, train_y)
 
