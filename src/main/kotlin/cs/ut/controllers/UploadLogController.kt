@@ -13,6 +13,7 @@ import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
 import org.zkoss.zul.Button
 import org.zkoss.zul.Label
+import org.zkoss.zul.Vbox
 import org.zkoss.zul.Window
 import java.io.File
 import java.io.FileOutputStream
@@ -27,13 +28,12 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable {
     @Wire
     private lateinit var upload: Button
 
+    @Wire
+    private lateinit var fileNameCont: Vbox
+
     private lateinit var media: Media
 
     private val allowedExtensions = MasterConfiguration.csvConfiguration.extensions
-
-    override fun doAfterCompose(comp: Component?) {
-        super.doAfterCompose(comp)
-    }
 
 
     /**
@@ -49,13 +49,13 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable {
 
         if (FilenameUtils.getExtension(uploaded.name) in allowedExtensions) {
             log.debug("Log is in allowed format")
-            fileName.sclass = ""
+            fileNameCont.sclass = "file-upload"
             fileName.value = uploaded.name
             media = uploaded
             upload.isVisible = true
         } else {
             log.debug("Log is not in allowed format -> showing error")
-            fileName.sclass = "error-label"
+            fileNameCont.sclass = "file-upload-err"
             fileName.value = Labels.getLabel(
                     "upload.wrong.format",
                     arrayOf(uploaded.name, FilenameUtils.getExtension(uploaded.name))
@@ -84,6 +84,7 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable {
             ) as Window
             if (self.getChildren<Component>().contains(window)) {
                 window.doModal()
+                upload.isDisabled = true
             }
         }
         runnable.run()

@@ -4,13 +4,12 @@ import cs.ut.config.MasterConfiguration
 import cs.ut.controllers.JobTrackerController
 import cs.ut.engine.IdProvider
 import cs.ut.ui.NirdizatiGrid
-import cs.ut.util.MAINLAYOUT
+import cs.ut.util.NirdizatiUtil
 import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Desktop
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
-import org.zkoss.zk.ui.util.Clients
 import org.zkoss.zul.Button
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
@@ -25,7 +24,7 @@ enum class JobStatus {
     FAILED
 }
 
-abstract class Job(val client: Desktop) : Runnable {
+abstract class Job(var client: Desktop) : Runnable {
     val log = Logger.getLogger(Job::class.java)!!
 
     val id: String = IdProvider.getNextId()
@@ -111,12 +110,6 @@ abstract class Job(val client: Desktop) : Runnable {
         } catch (e: Exception) {
             log.debug("Job $id failed in post execute step")
             status = JobStatus.FAILED
-
-            try {
-                notifyOfJobStatusChange()
-            } catch (e: NoSuchElementException) {
-                log.debug("Could not notify $client of job status change: $e")
-            }
             return
         }
 
@@ -130,16 +123,14 @@ abstract class Job(val client: Desktop) : Runnable {
         }
 
         if (isNotificationRequired()) {
-            Executions.schedule(client,
-                    { _ ->
-                        Clients.showNotification(
-                                getNotificationMessage(),
-                                "info",
-                                client.components.first { it.id == MAINLAYOUT },
-                                "bottom_center",
-                                -1)
-                    },
-                    Event("jobStatus", null, "complete"))
+            try {
+                NirdizatiUtil.showNotificationAsync(
+                        getNotificationMessage(),
+                        client
+                )
+            } catch (e: Exception) {
+                log.warn("Desktop $client is not available, could not notify of status update")
+            }
         }
     }
 
@@ -148,8 +139,12 @@ abstract class Job(val client: Desktop) : Runnable {
     }
 
     private fun notifyOfJobStatusChange() {
-        val grid: NirdizatiGrid<Job> = this.client.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
-        this.updateJobStatus(grid.rows.getChildren(), grid)
+        try {
+            val grid: NirdizatiGrid<Job> = this.client.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
+            this.updateJobStatus(grid.rows.getChildren(), grid)
+        } catch (e: Exception) {
+            log.debug("Could not notify $client of job status change")
+        }
     }
 
     tailrec private fun updateJobStatus(rows: List<Row>, grid: NirdizatiGrid<Job>) {

@@ -24,7 +24,7 @@ interface Redirectable {
      * @param page        - caller page where Include element should be looked for.
      */
     fun setContent(dest: String, page: Page) {
-        page.title = Labels.getLabel("header.$dest") + "- Nirdizati"
+        page.title = "${Labels.getLabel("header.$dest")} - Nirdizati"
         val include = Selectors.iterable(page, "#contentInclude").iterator().next() as Include
         include.src = null
         include.src = MasterConfiguration.pageConfiguration.getPageByName(dest).uri

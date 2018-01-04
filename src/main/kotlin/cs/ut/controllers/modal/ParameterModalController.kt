@@ -3,7 +3,6 @@ package cs.ut.controllers.modal
 import com.google.common.html.HtmlEscapers
 import cs.ut.config.MasterConfiguration
 import cs.ut.controllers.Redirectable
-import cs.ut.engine.IdProvider
 import cs.ut.engine.JobManager
 import cs.ut.engine.NirdizatiThreadPool
 import cs.ut.jobs.DataSetGenerationJob
@@ -12,6 +11,7 @@ import cs.ut.ui.adapters.ColumnRowValueAdapter
 import cs.ut.ui.adapters.ComboArgument
 import cs.ut.ui.adapters.ComboProvider
 import cs.ut.util.CsvReader
+import cs.ut.util.NirdizatiUtil
 import cs.ut.util.TIMESTAMP_COL
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
@@ -21,7 +21,6 @@ import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.event.SerializableEventListener
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zk.ui.util.Clients
 import org.zkoss.zk.ui.util.GenericAutowireComposer
 import org.zkoss.zul.Button
 import org.zkoss.zul.Hlayout
@@ -81,11 +80,16 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         val provider = ColumnRowValueAdapter(header, identifiedColumns)
         val grid = NirdizatiGrid(provider)
         grid.hflex = "min"
+        grid.vflex = "1"
 
         grid.generate(cols)
 
         cancelBtn.addEventListener(Events.ON_CLICK, { _ ->
             Files.delete(Paths.get(file.absolutePath))
+            Executions.getCurrent().desktop.components.firstOrNull { it.id == "upload" }?.let {
+                it as Button
+                it.isDisabled = false
+            }
             modal.detach()
         })
 
@@ -125,7 +129,10 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
                 }
             }
             NirdizatiThreadPool.execute(DataSetGenerationJob(params, file, execution.desktop))
-            Clients.showNotification(Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.getName()))), "info", getPage().getFirstRoot(), "bottom_center", -1, true)
+            NirdizatiUtil.showNotificationAsync(
+                    Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))),
+                    Executions.getCurrent().desktop)
+
             Files.move(Paths.get(file.absolutePath),
                     Paths.get(File(MasterConfiguration.directoryPathConfiguration.userLogDirectory + file.name).absolutePath), StandardCopyOption.REPLACE_EXISTING)
             modal.detach()
@@ -152,9 +159,11 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         gridSlot.getChildren<Component>().clear()
         gridSlot.getChildren<Component>().add(grid)
 
+        grid.setColumns(mapOf("param.modal.name" to "1", "param.modal.control" to "2"))
         grid.mold = "paging"
         grid.pageSize = 10
         grid.hflex = "min"
+        grid.vflex = "1"
 
         return grid
     }
@@ -162,13 +171,13 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
     private fun validateDataPresent(header: List<String>): Boolean {
         if (header.isEmpty()) {
-            Clients.showNotification(
+            NirdizatiUtil.showNotificationAsync(
                     Labels.getLabel("modals.unknown_separator",
                             arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))),
-                    "error", getPage().firstRoot,
-                    "bottom_center"
-                    , -1, true
+                    Executions.getCurrent().desktop,
+                    "error"
             )
+
             JobManager.flushJobs()
             modal.detach()
             return true

@@ -1,18 +1,9 @@
 package cs.ut.config
 
 import cs.ut.config.items.ModelParameter
-import cs.ut.config.nodes.CsvConfiguration
-import cs.ut.config.nodes.DirectoryPathConfiguration
-import cs.ut.config.nodes.HeaderConfiguration
-import cs.ut.config.nodes.ModelConfiguration
-import cs.ut.config.nodes.PageConfiguration
-import cs.ut.config.nodes.ThreadPoolConfiguration
+import cs.ut.config.nodes.*
 import cs.ut.util.readHyperParameterJson
-import org.apache.log4j.ConsoleAppender
-import org.apache.log4j.FileAppender
-import org.apache.log4j.Level
-import org.apache.log4j.Logger
-import org.apache.log4j.PatternLayout
+import org.apache.log4j.*
 import java.io.File
 import javax.xml.bind.JAXBContext
 import javax.xml.parsers.DocumentBuilder
@@ -34,6 +25,8 @@ object MasterConfiguration {
     val threadPoolConfiguration by lazy { readClass(ThreadPoolConfiguration::class.java, "threadpool") }
     val headerConfiguration by lazy { readClass(HeaderConfiguration::class.java, "headerConfiguration") }
     val pageConfiguration by lazy { readClass(PageConfiguration::class.java, "pageConfig") }
+    val userPreferences by lazy { readClass(UserPreferences::class.java, "userPreferences") }
+    val defaultValuesConfiguration by lazy { readClass(DefaultValuesConfiguration::class.java, "defaultConfig") }
 
     val optimizedParams: Map<String, List<ModelParameter>> by lazy { readHyperParameterJson() }
 

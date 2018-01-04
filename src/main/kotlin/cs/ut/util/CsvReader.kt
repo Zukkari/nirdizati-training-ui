@@ -57,7 +57,7 @@ class CsvReader(private val f: File) {
 
     tailrec private fun identifyColumn(col: String, ids: MutableList<String>, type: String, result: MutableMap<String, String>) {
         if (ids.isNotEmpty()) {
-            if (ids.first() in col.toLowerCase()) {
+            if (ids.first() == col.toLowerCase()) {
                 result[type] = col
             } else {
                 identifyColumn(col, ids.drop(1).toMutableList(), type, result)

@@ -1,8 +1,10 @@
 package cs.ut.ui.adapters
 
+import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
 import cs.ut.controllers.JobTrackerController
 import cs.ut.controllers.Redirectable
+import cs.ut.engine.JobManager
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
@@ -17,11 +19,17 @@ import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.event.Events
-import org.zkoss.zul.*
+import org.zkoss.zul.Button
+import org.zkoss.zul.Hbox
+import org.zkoss.zul.Hlayout
+import org.zkoss.zul.Label
+import org.zkoss.zul.Row
+import org.zkoss.zul.Vlayout
 
 class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
     companion object {
         const val jobArg = "JOB"
+        val AVERAGE = MasterConfiguration.defaultValuesConfiguration.average.toString()
     }
 
     override var fields: MutableList<FieldComponent> = mutableListOf()
@@ -52,7 +60,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
         val hlayout = Hlayout()
 
         val label = Label(NirdizatiUtil.localizeText("property.outcome"))
-        label.style = "font-weight: bold;"
+        label.sclass = "bold-text"
 
         val outcome = Label(NirdizatiUtil.localizeText(if (this.translate) this.getTranslateName() else this.id))
         hlayout.appendChild(label)
@@ -74,10 +82,10 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
                 NirdizatiUtil.localizeText(learner.type + "." + learner.id)
         )
         label.isPre = true
-        label.style = "font-weight: bold;"
+        label.sclass = "bold-text"
 
         val outcomeText = "" + if (outcome.id == OUTCOME) NirdizatiUtil.localizeText("threshold.threshold_msg") + ": " +
-                (if (outcome.parameter == "-1.0") NirdizatiUtil.localizeText("threshold.avg").toLowerCase()
+                (if (outcome.parameter == AVERAGE) NirdizatiUtil.localizeText("threshold.avg").toLowerCase()
                 else outcome.parameter) + "\n"
         else ""
 
@@ -138,7 +146,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
 
     private fun SimulationJob.generateFileInfo(): Hlayout {
         val fileLabel = Label(NirdizatiUtil.localizeText("attribute.log_file"))
-        fileLabel.style = "font-weight: bold;"
+        fileLabel.sclass = "bold-text"
 
         val file = Label(this.logFile.name)
 
@@ -155,7 +163,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
         btn.sclass = "close-btn"
 
         btn.addEventListener(Events.ON_CLICK, { _ ->
-            val grid: NirdizatiGrid<Job> = this.client.components.first { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
+            val grid: NirdizatiGrid<Job> = this.client.components.firstOrNull { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
             this.kill()
             Executions.schedule(this.client,
                     { _ ->
@@ -165,6 +173,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
                         }
                     },
                     Event("abort_job", null, null))
+            JobManager.removeJob(this)
         })
 
         return btn

@@ -101,7 +101,7 @@ class ValidationController : SelectorComposer<Component>() {
             removeChildren()
 
             val label = Label(Labels.getLabel("validation.select_version"))
-            label.style = "font-weight: bold;"
+            label.sclass = "bold-text"
             comboLayout.appendChild(label)
 
             var itemSet = false
@@ -159,7 +159,7 @@ class ValidationController : SelectorComposer<Component>() {
     private fun Row.generateLabelAndValue(labelCaption: String, valueCaption: String, localizeValue: Boolean = true) {
         val label = Label(Labels.getLabel(labelCaption) + ": ")
         val value = Label(if (localizeValue) Labels.getLabel(valueCaption) else valueCaption)
-        value.style = "font-weight: bold"
+        value.sclass = "bold-text"
 
         val hlayout = Hlayout()
         hlayout.appendChild(label)

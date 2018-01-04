@@ -15,12 +15,12 @@ import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
+import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.event.SelectEvent
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zk.ui.util.Clients
 import org.zkoss.zul.*
 import java.io.File
 
@@ -33,7 +33,8 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         const val BUCKETING = "bucketing"
         const val PREDICTION = "predictiontype"
 
-        const val DEFAULT = 0.1
+        val DEFAULT = MasterConfiguration.defaultValuesConfiguration.minValue
+        val AVERAGE = MasterConfiguration.defaultValuesConfiguration.average.toString()
     }
 
     @Wire
@@ -69,6 +70,10 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
     private fun getLogFileName(): String = FilenameUtils.getBaseName((clientLogs.selectedItem.getValue() as File).name)
 
     private fun initPredictions() {
+        radioGroup.getChildren<Component>().clear()
+        thresholdContainer.getChildren<Component>().clear()
+        thresholdContainer.isVisible = false
+
         predictionType.items.clear()
         log.debug("Cleared prediction type items")
 
@@ -159,7 +164,6 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
             clientLogs.isDisabled = true
         }
 
-        clientLogs.width = "250px"
         clientLogs.isReadonly = true
 
         clientLogs.addEventListener(Events.ON_SELECT, { _ ->
@@ -187,7 +191,11 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         if (!jobParamters.validateParameters()) return
 
         val prediction: ModelParameter = jobParamters[PREDICTION]!!.first()
-        prediction.parameter = (radioGroup.selectedItem.getValue() as Double).toString()
+
+        if (prediction.id == OUTCOME) {
+            val value = (radioGroup.selectedItem.getValue() as Double)
+            prediction.parameter = if (value == -1.0) AVERAGE else value.toString()
+        }
 
         log.debug("Parameters are valid, calling script to train the model")
         val jobThread = Runnable {
@@ -219,12 +227,11 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         }
 
         if (!isValid) {
-            Clients.showNotification(
+            NirdizatiUtil.showNotificationAsync(
                     Labels.getLabel("training.validation_failed", arrayOf(msg)),
-                    "error",
-                    self,
-                    "bottom_center",
-                    -1)
+                    Executions.getCurrent().desktop,
+                    "error"
+            )
         }
 
         return isValid
