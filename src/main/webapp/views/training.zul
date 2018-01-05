@@ -1,0 +1,32 @@
+<vbox hflex="1" vflex="4" align="center" apply="cs.ut.ui.controllers.TrainingController"
+      xmlns="http://www.zkoss.org/2005/zul">
+    <grid hflex="min" sclass="grey-box">
+        <columns>
+            <column hflex="min" align="center"/>
+            <column hflex="min" align="center"/>
+        </columns>
+        <rows>
+            <row>
+                <label hflex="1" value="${labels.training.selected_log}" sclass="label-combo"/>
+                <combobox id="clientLogs" constraint="no empty"/>
+            </row>
+            <row>
+                <label value="${labels.training.prediction_type}" hflex="1"/>
+                <combobox id="predictionType" constraint="no empty"/>
+            </row>
+            <row>
+                <hlayout>
+                    <label value="${labels.training.advanced}" hflex="1"/>
+                    <checkbox id="advancedMode" zclass="toggle" sclass="switch toggle-round-flat" hflex="1"/>
+                </hlayout>
+                <hbox align="center" vflex="1" id="thresholdContainer" visible="false"/>
+            </row>
+        </rows>
+    </grid>
+
+    <vlayout vflex="4" id="gridContainer"/>
+
+    <vbox hflex="1" vflex="1" align="center" pack="center">
+        <button id="startTraining" sclass="n-btn" label="${labels.training.start_training}"/>
+    </vbox>
+</vbox>

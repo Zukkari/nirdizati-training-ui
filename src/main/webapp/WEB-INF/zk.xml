@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<zk>
+	<preference>
+		<name>org.zkoss.zk.ui.WebApp.name</name>
+		<value>nirdizati-training-ui</value>
+	</preference>
+
+	<system-config>
+		<max-upload-size>20480</max-upload-size>
+	</system-config>
+</zk>

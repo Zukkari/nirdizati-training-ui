@@ -1,0 +1,17 @@
+<?link rel="stylesheet" type="text/css" href="/css/main.css" ?>
+<?link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7-1/css/bootstrap-theme.min.css" ?>
+<?meta name="viewport" content="width=device-width, initial-scale=1.0"?>
+<?page title="${labels.header.landing} - Nirdizati" ?>
+<zk>
+    <borderlayout id="mainLayout" vflex="1" hflex="1" apply="cs.ut.ui.controllers.MainPageController">
+        <north vflex="1" border="none">
+            <include src="/views/components/header.zul"/>
+        </north>
+        <center id="center" hflex="1" vflex="1" border="none">
+            <include id="contentInclude" src="/views/landing.zul"/>
+        </center>
+        <east id="trackerEast" vflex="1" border="none" open="false" size="400px">
+            <include src="/views/components/tracker.zul"/>
+        </east>
+    </borderlayout>
+</zk>

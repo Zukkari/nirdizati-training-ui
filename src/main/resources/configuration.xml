@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<configuration>
+
+    <!-- Thread pool configuration -->
+    <threadpool>
+        <!-- Core threadpool size -->
+        <core>10</core>
+        <!-- Maximum threadpool size -->
+        <max>20</max>
+        <!-- How long thread should be kept alive after being idle -->
+        <keepAlive>10</keepAlive>
+        <!-- Queue capacity -->
+        <capacity>1024</capacity>
+    </threadpool>
+
+    <userPreferences>
+        <!-- Whether the simulation process should be run under specific user (root by default) -->
+        <enabled>true</enabled>
+        <userName>zukkari</userName>
+        <userGroup>zukkari</userGroup>
+        <sudo></sudo>
+        <acp>0660</acp>
+    </userPreferences>
+
+    <!-- Configuration for default values in TrainingController-->
+    <defaultConfig>
+        <minValue>0.1</minValue>
+        <average>-1</average>
+    </defaultConfig>
+
+    <!-- Page configuration used for redirects -->
+    <pageConfig>
+        <page>
+            <id>landing</id>
+            <uri>/views/landing.zul</uri>
+        </page>
+        <page>
+            <id>upload</id>
+            <uri>/views/upload_page.zul</uri>
+        </page>
+        <page>
+            <id>training</id>
+            <uri>/views/training.zul</uri>
+        </page>
+        <page>
+            <id>validation</id>
+            <uri>/views/validation.zul</uri>
+        </page>
+    </pageConfig>
+
+    <!-- Paths configuration used for log, model and script storage -->
+    <paths>
+        <!-- Path to python executable -->
+        <python>/home/zukkari/anaconda3/envs/myenv/bin/python</python>
+        <!-- Directory for user log storage -->
+        <userLogDirectory>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/logdata/</userLogDirectory>
+        <!-- Directory for user model storage -->
+        <userModelDirectory>/home/zukkari/git/nirdizati-training-ui/usermodels/</userModelDirectory>
+        <!-- Directory where to look for prediction scripts -->
+        <scriptDirectory>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/</scriptDirectory>
+        <!-- Directory for training parameters relative to script directory -->
+        <trainDirectory>training_params/</trainDirectory>
+        <!-- Directory for data set parameters relative to script directory-->
+        <datasetDirectory>dataset_params/</datasetDirectory>
+        <!-- Results where trained models are located relative to script directory -->
+        <pklDirectory>pkl/</pklDirectory>
+        <!-- Optimized hyperparameter directory location relative to script directory -->
+        <ohpdir>core/optimal_params/</ohpdir>
+        <!-- Detailed log result information path relative to script directory -->
+        <detailedDir>results/detailed/</detailedDir>
+        <!-- Feature importance dir location relative to script dir -->
+        <featureDir>results/feature_importance/</featureDir>
+        <!-- Validation directory relative to script dir -->
+        <validationDir>results/validation/</validationDir>
+        <!-- temporary directory for user log storage -->
+        <tmpDir>/home/zukkari/git/nirdizati-training-ui/tmp/</tmpDir>
+    </paths>
+
+    <!-- Header button configuration for header construction -->
+    <headerConfiguration>
+        <headerItems>
+            <headerItem>
+                <label>header.upload</label>
+                <redirect>upload</redirect>
+                <enabled>true</enabled>
+                <position>0</position>
+                <icon>z-icon-cloud-upload</icon>
+            </headerItem>
+            <headerItem>
+                <label>header.training</label>
+                <redirect>training</redirect>
+                <enabled>true</enabled>
+                <position>1</position>
+                <icon>z-icon-gears</icon>
+            </headerItem>
+            <headerItem>
+                <label>header.validation</label>
+                <redirect>validation</redirect>
+                <enabled>true</enabled>
+                <position>2</position>
+                <icon>z-icon-line-chart</icon>
+            </headerItem>
+        </headerItems>
+    </headerConfiguration>
+
+    <csvConfig>
+        <!-- Columns that need to be specified by user when creating model -->
+        <userCols>
+            <col>case_id_col</col>
+            <col>activity_col</col>
+            <col>timestamp_col</col>
+        </userCols>
+
+        <!-- Values that will be used to search for case id column -->
+        <caseId>
+            <id>caseid</id>
+            <id>case_id</id>
+            <id>case id</id>
+        </caseId>
+
+        <!-- Values that will be used to search for activity column -->
+        <activityId>
+            <id>activity</id>
+            <id>activity_name</id>
+            <id>activity_id</id>
+            <id>event_name</id>
+        </activityId>
+
+        <!-- Values that will be used to search for resource column -->
+        <resourceId>
+            <id>resource</id>
+        </resourceId>
+
+        <!-- Values that will be used for timestamp column identification -->
+        <timestampFormat>
+            <format>\d{4}[-/]\d{1,2}[-/]\d{1,2}[ T]\d{1,2}:\d{1,2}:\d{1,2}</format>
+            <format>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}</format>
+            <format>yyyy-mm-dd'T'hh:mm:ss</format>
+        </timestampFormat>
+
+        <!-- Regexp that is used for csv file splitting -->
+        <splitter>[,;]</splitter>
+
+        <!-- Values that are used to clean columns for categori<ation -->
+        <emptyValues>
+            <id/>
+            <id>EMPTY</id>
+            <id>empty</id>
+        </emptyValues>
+
+        <!-- Threshold that decides whether value is categorical or numerical -->
+        <threshold>20</threshold>
+
+        <!-- Sample size, how many cases should be used for categorization -->
+        <sampleSize>100</sampleSize>
+
+        <!-- extensions allowed for file upload -->
+        <extensions>
+            <ext>xes</ext>
+            <ext>csv</ext>
+        </extensions>
+    </csvConfig>
+
+    <!-- Model training configurations -->
+    <modelConfig>
+        <!-- Types that can be used for model construction -->
+        <types>
+            <type>encoding</type>
+            <type>bucketing</type>
+            <type>learner</type>
+            <type>predictiontype</type>
+        </types>
+
+        <basicParams>
+            <param>zero</param>
+            <param>agg</param>
+            <param>xgb</param>
+        </basicParams>
+
+        <!-- Model parameters that are represented in the menu -->
+        <modelparams>
+            <modelparam>
+                <id>last_state</id>
+                <parameter>laststate</parameter>
+                <type>encoding</type>
+                <enabled>true</enabled>
+            </modelparam>
+            <modelparam>
+                <id>frequency</id>
+                <parameter>agg</parameter>
+                <type>encoding</type>
+                <enabled>true</enabled>
+            </modelparam>
+            <modelparam>
+                <id>combined</id>
+                <parameter>combined</parameter>
+                <type>encoding</type>
+                <enabled>true</enabled>
+            </modelparam>
+            <modelparam>
+                <id>index_based</id>
+                <parameter>index</parameter>
+                <type>encoding</type>
+                <enabled>true</enabled>
+            </modelparam>
+            <modelparam>
+                <id>zero</id>
+                <parameter>zero</parameter>
+                <type>bucketing</type>
+                <enabled>true</enabled>
+            </modelparam>
+            <modelparam>
+                <id>state_based</id>
+                <parameter>state</parameter>
+                <type>bucketing</type>
+                <enabled>true</enabled>
+            </modelparam>
+            <modelparam>
+                <id>clustering</id>
+                <parameter>cluster</parameter>
+                <type>bucketing</type>
+                <enabled>true</enabled>
+                <properties>
+                    <property id="n_clusters" type="org.zkoss.zul.Intbox" maxValue="10" minValue="1">1</property>
+                </properties>
+            </modelparam>
+            <modelparam>
+                <id>prefix_lenght_based</id>
+                <parameter>prefix</parameter>
+                <type>bucketing</type>
+                <enabled>true</enabled>
+            </modelparam>
+
+            <modelparam>
+                <id>random_forest</id>
+                <parameter>rf</parameter>
+                <type>learner</type>
+                <enabled>true</enabled>
+                <properties>
+                    <property id="n_estimators" type="org.zkoss.zul.Intbox" maxValue="400" minValue="1">300</property>
+                    <property id="max_features" type="org.zkoss.zul.Doublebox" minValue="0.01">0.5</property>
+                </properties>
+            </modelparam>
+            <modelparam>
+                <id>gradient_boosting</id>
+                <parameter>gbm</parameter>
+                <type>learner</type>
+                <enabled>true</enabled>
+                <properties>
+                    <property id="n_estimators" type="org.zkoss.zul.Intbox" maxValue="400" minValue="1">300</property>
+                    <property id="max_features" type="org.zkoss.zul.Doublebox" minValue="0.01">0.5</property>
+                    <property id="learning_rate" type="org.zkoss.zul.Doublebox" minValue="0.01">0.1</property>
+                </properties>
+            </modelparam>
+            <modelparam>
+                <id>decision_tree</id>
+                <parameter>dt</parameter>
+                <type>learner</type>
+                <enabled>true</enabled>
+                <properties>
+                    <property id="n_estimators" type="org.zkoss.zul.Intbox" maxValue="400" minValue="1">300</property>
+                    <property id="max_depth" type="org.zkoss.zul.Doublebox" minValue="1">5</property>
+                </properties>
+            </modelparam>
+            <modelparam>
+                <id>xgboost</id>
+                <parameter>xgb</parameter>
+                <type>learner</type>
+                <enabled>true</enabled>
+                <properties>
+                    <property id="n_estimators" type="org.zkoss.zul.Intbox" maxValue="400" minValue="1">300</property>
+                    <property id="learning_rate" type="org.zkoss.zul.Doublebox" minValue="0.01">0.03</property>
+                    <property id="subsample" type="org.zkoss.zul.Doublebox" minValue="0.1">0.7</property>
+                    <property id="colsample_bytree" type="org.zkoss.zul.Doublebox" minValue="0.1">0.7</property>
+                    <property id="max_depth" type="org.zkoss.zul.Intbox" minValue="1">5</property>
+                </properties>
+            </modelparam>
+
+            <modelparam>
+                <id>remaining_time</id>
+                <parameter>remtime</parameter>
+                <type>predictiontype</type>
+                <enabled>true</enabled>
+            </modelparam>
+            <modelparam>
+                <id>next_activity</id>
+                <parameter>next</parameter>
+                <type>predictiontype</type>
+                <enabled>true</enabled>
+            </modelparam>
+            <modelparam>
+                <id>outcome</id>
+                <parameter>-1</parameter>
+                <type>predictiontype</type>
+                <enabled>true</enabled>
+            </modelparam>
+        </modelparams>
+    </modelConfig>
+</configuration>
