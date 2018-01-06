@@ -1,6 +1,7 @@
 package cs.ut.util
 
 import cs.ut.config.MasterConfiguration
+import cs.ut.config.nodes.Dir
 import org.json.JSONObject
 import org.junit.AfterClass
 import org.junit.BeforeClass
@@ -16,8 +17,7 @@ class FileWriterTest {
         var writer by Delegates.notNull<FileWriter>()
         var jsonName = "testJson"
 
-        val dir = MasterConfiguration.directoryPathConfiguration
-                .scriptDirectory + "core/"
+        val dir = MasterConfiguration.dirConfig.dirPath(Dir.CORE_DIR)
 
         @BeforeClass
         @JvmStatic
@@ -44,7 +44,7 @@ class FileWriterTest {
 
         val reader = FileReader(file)
 
-        val jsonData = reader.readLines();
+        val jsonData = reader.readLines()
         assertEquals(json.toString(), jsonData[0])
     }
 }

@@ -1,7 +1,7 @@
 package cs.ut.util
 
 import cs.ut.config.MasterConfiguration
-import cs.ut.business.engine.item.Case
+import cs.ut.engine.item.Case
 import cs.ut.exceptions.NirdizatiRuntimeException
 import org.apache.log4j.Logger
 import java.io.BufferedReader

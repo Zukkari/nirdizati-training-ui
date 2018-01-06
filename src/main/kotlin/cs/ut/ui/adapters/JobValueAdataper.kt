@@ -1,9 +1,9 @@
 package cs.ut.ui.adapters
 
-import cs.ut.business.engine.JobManager
-import cs.ut.business.jobs.Job
-import cs.ut.business.jobs.JobStatus
-import cs.ut.business.jobs.SimulationJob
+import cs.ut.engine.JobManager
+import cs.ut.jobs.Job
+import cs.ut.jobs.JobStatus
+import cs.ut.jobs.SimulationJob
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
 import cs.ut.ui.FieldComponent

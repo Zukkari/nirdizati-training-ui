@@ -16,7 +16,7 @@
 
     <userPreferences>
         <!-- Whether the simulation process should be run under specific user (root by default) -->
-        <enabled>true</enabled>
+        <enabled>false</enabled>
         <userName>zukkari</userName>
         <userGroup>zukkari</userGroup>
         <sudo></sudo>
@@ -49,33 +49,70 @@
         </page>
     </pageConfig>
 
-    <!-- Paths configuration used for log, model and script storage -->
-    <paths>
-        <!-- Path to python executable -->
-        <python>/home/zukkari/anaconda3/envs/myenv/bin/python</python>
-        <!-- Directory for user log storage -->
-        <userLogDirectory>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/logdata/</userLogDirectory>
-        <!-- Directory for user model storage -->
-        <userModelDirectory>/home/zukkari/git/nirdizati-training-ui/usermodels/</userModelDirectory>
-        <!-- Directory where to look for prediction scripts -->
-        <scriptDirectory>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/</scriptDirectory>
-        <!-- Directory for training parameters relative to script directory -->
-        <trainDirectory>training_params/</trainDirectory>
-        <!-- Directory for data set parameters relative to script directory-->
-        <datasetDirectory>dataset_params/</datasetDirectory>
-        <!-- Results where trained models are located relative to script directory -->
-        <pklDirectory>pkl/</pklDirectory>
-        <!-- Optimized hyperparameter directory location relative to script directory -->
-        <ohpdir>core/optimal_params/</ohpdir>
-        <!-- Detailed log result information path relative to script directory -->
-        <detailedDir>results/detailed/</detailedDir>
-        <!-- Feature importance dir location relative to script dir -->
-        <featureDir>results/feature_importance/</featureDir>
-        <!-- Validation directory relative to script dir -->
-        <validationDir>results/validation/</validationDir>
-        <!-- temporary directory for user log storage -->
-        <tmpDir>/home/zukkari/git/nirdizati-training-ui/tmp/</tmpDir>
-    </paths>
+    <dirs>
+        <dir><!-- Path to python executable -->
+            <id>python</id>
+            <path>/home/zukkari/anaconda3/envs/myenv/bin/python</path>
+        </dir>
+        <dir>
+            <!-- Directory for user log storage -->
+            <id>userLogDirectory</id>
+            <path>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/logdata/</path>
+        </dir>
+        <dir>
+            <!-- Directory for user model storage -->
+            <id>userModelDirectory</id>
+            <path>/home/zukkari/git/nirdizati-training-ui/usermodels/</path>
+        </dir>
+        <dir>
+            <!-- Directory where to look for prediction scripts -->
+            <id>scriptDirectory</id>
+            <path>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/</path>
+        </dir>
+        <dir>
+            <id>coreDir</id>
+            <path>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/</path>
+        </dir>
+        <dir>
+            <!-- Directory for training parameters -->
+            <id>trainDirectory</id>
+            <path>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/training_params/</path>
+        </dir>
+        <dir><!-- Directory for data set parameters -->
+            <id>datasetDirectory</id>
+            <path>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/dataset_params/</path>
+        </dir>
+        <dir>
+            <!-- Results where trained models are located -->
+            <id>pklDirectory</id>
+            <path>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/pkl/</path>
+        </dir>
+        <dir>
+            <!-- Optimized hyperparameter directory location -->
+            <id>ohpdir</id>
+            <path>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/optimal_params/</path>
+        </dir>
+        <dir>
+            <!-- Detailed log result information path-->
+            <id>detailedDir</id>
+            <path>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/results/detailed/</path>
+        </dir>
+        <dir>
+            <!-- Feature importance dir location -->
+            <id>featureDir</id>
+            <path>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/results/feature_importance/</path>
+        </dir>
+        <dir>
+            <!-- Validation directory relative to script dir -->
+            <id>validationDir</id>
+            <path>/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/results/validation/</path>
+        </dir>
+        <dir>
+            <!-- temporary directory for user log storage -->
+            <id>tmpDir</id>
+            <path>/home/zukkari/git/nirdizati-training-ui/tmp/</path>
+        </dir>
+    </dirs>
 
     <!-- Header button configuration for header construction -->
     <headerConfiguration>

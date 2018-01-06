@@ -1,7 +1,7 @@
-package cs.ut.business.engine
+package cs.ut.engine
 
-import cs.ut.business.jobs.Job
-import cs.ut.business.jobs.SimulationJob
+import cs.ut.jobs.Job
+import cs.ut.jobs.SimulationJob
 import org.apache.log4j.Logger
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -61,6 +61,7 @@ object JobManager {
     }
 
     fun runServiceJob(job: Job) {
+        log.debug("Running service job $job")
         NirdizatiThreadPool.execute(job)
     }
 

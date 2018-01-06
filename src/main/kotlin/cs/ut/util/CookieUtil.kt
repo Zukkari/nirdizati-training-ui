@@ -1,8 +1,8 @@
 package cs.ut.util
 
-import cs.ut.business.engine.IdProvider
-import cs.ut.business.engine.JobManager
-import cs.ut.business.jobs.Job
+import cs.ut.engine.IdProvider
+import cs.ut.engine.JobManager
+import cs.ut.jobs.Job
 import org.apache.log4j.Logger
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest

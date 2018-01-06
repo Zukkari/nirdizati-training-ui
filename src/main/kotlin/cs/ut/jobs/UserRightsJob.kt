@@ -1,17 +1,14 @@
-package cs.ut.business.jobs
+package cs.ut.jobs
 
 import cs.ut.config.MasterConfiguration
+import cs.ut.config.nodes.Dir
 import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
 import java.io.File
 import java.nio.charset.Charset
-import java.util.*
 
 class UserRightsJob(private val f: File) : Job() {
-    override lateinit var startTime: Date
-    override lateinit var completeTime: Date
-
-    private val conf = MasterConfiguration.directoryPathConfiguration
+    private val conf = MasterConfiguration.dirConfig
 
     override fun execute() {
         log.debug("Starting ACL job for $id")
@@ -22,7 +19,7 @@ class UserRightsJob(private val f: File) : Job() {
         log.debug("Changing rights for training JSON")
         val name: String = FilenameUtils.getBaseName(f.name)
 
-        val path = "${conf.scriptDirectory}core/${conf.datasetDirectory}$name.json"
+        val path = "${conf.dirPath(Dir.DATA_DIR)}$name.json"
         log.debug("Looking for file -> $path")
 
         updateACL(File(path))

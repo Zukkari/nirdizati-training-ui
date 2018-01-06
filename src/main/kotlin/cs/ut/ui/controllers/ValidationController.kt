@@ -3,7 +3,7 @@ package cs.ut.ui.controllers
 import cs.ut.charts.Chart
 import cs.ut.charts.ChartGenerator
 import cs.ut.charts.MAE
-import cs.ut.business.jobs.SimulationJob
+import cs.ut.jobs.SimulationJob
 import cs.ut.ui.adapters.JobValueAdataper
 import cs.ut.util.NirdizatiUtil
 import org.apache.log4j.Logger

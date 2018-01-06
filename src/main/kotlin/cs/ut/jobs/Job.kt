@@ -1,10 +1,8 @@
-package cs.ut.business.jobs
+package cs.ut.jobs
 
-import cs.ut.config.MasterConfiguration
-import cs.ut.business.engine.IdProvider
-import cs.ut.business.engine.JobManager
+import cs.ut.engine.IdProvider
+import cs.ut.engine.JobManager
 import org.apache.log4j.Logger
-import java.util.*
 
 enum class JobStatus {
     PENDING,
@@ -20,19 +18,8 @@ abstract class Job : Runnable {
 
     val id: String = IdProvider.getNextId()
 
-    var createTime: Date = Date()
-    abstract var startTime: Date
-    abstract var completeTime: Date
     var status: JobStatus = JobStatus.PENDING
     protected var stop = false
-
-    val pathProvider = MasterConfiguration.directoryPathConfiguration
-    protected val scriptDir = pathProvider.scriptDirectory
-    protected val userModelDir = pathProvider.userModelDirectory
-    protected val coreDir = scriptDir + "core/"
-    protected val datasetDir = pathProvider.datasetDirectory
-    protected val trainingDir = pathProvider.trainDirectory
-    protected val pklDir = pathProvider.pklDirectory
 
     open fun preProcess() {}
 
@@ -105,7 +92,6 @@ abstract class Job : Runnable {
         }
 
         log.debug("Job $id completed successfully")
-        completeTime = Calendar.getInstance().time
         status = JobStatus.COMPLETED
         updateEvent()
 

@@ -1,9 +1,9 @@
 package cs.ut.ui.controllers
 
-import cs.ut.business.engine.JobManager
-import cs.ut.business.engine.Notifiable
-import cs.ut.business.jobs.Job
-import cs.ut.business.jobs.JobStatus
+import cs.ut.engine.JobManager
+import cs.ut.engine.Notifiable
+import cs.ut.jobs.Job
+import cs.ut.jobs.JobStatus
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.adapters.JobValueAdataper
 import cs.ut.util.CookieUtil

@@ -1,4 +1,4 @@
-package cs.ut.business.engine.item
+package cs.ut.engine.item
 
 data class Case(val id: String) {
 

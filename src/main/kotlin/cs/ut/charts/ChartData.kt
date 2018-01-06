@@ -1,8 +1,8 @@
 package cs.ut.charts
 
 import com.google.gson.Gson
-import cs.ut.business.engine.LogManager
-import cs.ut.business.jobs.SimulationJob
+import cs.ut.engine.LogManager
+import cs.ut.jobs.SimulationJob
 
 class ChartGenerator(val job: SimulationJob) {
     companion object {

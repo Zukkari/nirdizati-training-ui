@@ -3,7 +3,7 @@ package cs.ut.ui.adapters
 import cs.ut.config.items.ModelParameter
 import cs.ut.config.items.Property
 import cs.ut.exceptions.NirdizatiRuntimeException
-import cs.ut.business.jobs.JobStatus
+import cs.ut.jobs.JobStatus
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.util.NirdizatiUtil

@@ -2,8 +2,8 @@ package cs.ut.ui.controllers
 
 import cs.ut.config.ClientInfo
 import cs.ut.ui.controllers.JobTrackerController.Companion.GRID_ID
-import cs.ut.business.engine.JobManager
-import cs.ut.business.jobs.Job
+import cs.ut.engine.JobManager
+import cs.ut.jobs.Job
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.util.CookieUtil
 import cs.ut.util.NAVBAR

@@ -1,10 +1,11 @@
 package cs.ut.ui.controllers.modal
 
 import com.google.common.html.HtmlEscapers
-import cs.ut.business.engine.JobManager
-import cs.ut.business.jobs.DataSetGenerationJob
-import cs.ut.business.jobs.UserRightsJob
 import cs.ut.config.MasterConfiguration
+import cs.ut.config.nodes.Dir
+import cs.ut.engine.JobManager
+import cs.ut.jobs.DataSetGenerationJob
+import cs.ut.jobs.UserRightsJob
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.adapters.ColumnRowValueAdapter
 import cs.ut.ui.adapters.ComboArgument
@@ -135,7 +136,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
                     Executions.getCurrent().desktop)
 
             val target = Files.move(Paths.get(file.absolutePath),
-                    Paths.get(File(MasterConfiguration.directoryPathConfiguration.userLogDirectory + file.name).absolutePath), StandardCopyOption.REPLACE_EXISTING)
+                    Paths.get(File(MasterConfiguration.dirConfig.dirPath(Dir.USER_LOGS) + file.name).absolutePath), StandardCopyOption.REPLACE_EXISTING)
 
             JobManager.runServiceJob(UserRightsJob(target.toFile()))
             modal.detach()

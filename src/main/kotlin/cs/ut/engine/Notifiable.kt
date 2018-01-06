@@ -1,6 +1,6 @@
-package cs.ut.business.engine
+package cs.ut.engine
 
-import cs.ut.business.jobs.Job
+import cs.ut.jobs.Job
 
 interface Notifiable {
     fun onUpdate(key: String, job: Job)

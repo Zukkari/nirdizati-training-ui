@@ -1,8 +1,9 @@
-package cs.ut.business.engine
+package cs.ut.engine
 
 import cs.ut.config.MasterConfiguration
+import cs.ut.config.nodes.Dir
 import cs.ut.exceptions.NirdizatiRuntimeException
-import cs.ut.business.jobs.SimulationJob
+import cs.ut.jobs.SimulationJob
 import cs.ut.util.PREFIX
 import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
@@ -18,7 +19,6 @@ object LogManager {
 
     private val allowedExtensions: List<String>
 
-    private val scriptDir: String
     private val logDirectory: String
     private val validationDir: String
     private val featureImportanceDir: String
@@ -26,21 +26,19 @@ object LogManager {
 
     init {
         log.debug("Initializing $this")
-        val conf = MasterConfiguration.directoryPathConfiguration
-        scriptDir = conf.scriptDirectory
-        log.debug("Script directory -> ${scriptDir}")
+        val conf = MasterConfiguration.dirConfig
 
-        logDirectory = conf.userLogDirectory
-        log.debug("User log directory -> ${logDirectory}")
+        logDirectory = conf.dirPath(Dir.USER_LOGS)
+        log.debug("User log directory -> $logDirectory")
 
-        validationDir = conf.validationDir
-        log.debug("Validation directory -> ${validationDir}")
+        validationDir = conf.dirPath(Dir.VALIDATION_DIR)
+        log.debug("Validation directory -> $validationDir")
 
-        featureImportanceDir = conf.featureDir
-        log.debug("Feature importance directory -> ${featureImportanceDir}")
+        featureImportanceDir = conf.dirPath(Dir.FEATURE_DIR)
+        log.debug("Feature importance directory -> $featureImportanceDir")
 
-        detailedDir = conf.detailedDir
-        log.debug("Detailed log directory -> ${detailedDir}")
+        detailedDir = conf.dirPath(Dir.DETAIL_DIR)
+        log.debug("Detailed log directory -> $detailedDir")
 
         allowedExtensions = MasterConfiguration.csvConfiguration.extensions
     }
@@ -100,7 +98,7 @@ object LogManager {
     }
 
     private fun getFile(fileName: String): File {
-        val file = File(scriptDir + fileName + ".csv")
+        val file = File( fileName + ".csv")
         log.debug("Looking for file with name ${file.name}")
 
         if (!file.exists()) {

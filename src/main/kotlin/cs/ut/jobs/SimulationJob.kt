@@ -1,10 +1,11 @@
-package cs.ut.business.jobs
+package cs.ut.jobs
 
-import cs.ut.business.jobs.UserRightsJob.Companion.updateACL
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
+import cs.ut.config.nodes.Dir
 import cs.ut.config.nodes.UserPreferences
 import cs.ut.exceptions.NirdizatiRuntimeException
+import cs.ut.jobs.UserRightsJob.Companion.updateACL
 import cs.ut.util.FileWriter
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PREFIX
@@ -12,7 +13,6 @@ import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
-import java.util.*
 
 class SimulationJob(
         val encoding: ModelParameter,
@@ -22,10 +22,8 @@ class SimulationJob(
         val isClassification: Boolean,
         val logFile: File) : Job() {
 
-    override var startTime = Date()
-    override var completeTime = Date()
-
     private var process: Process? = null
+    private val dirConfig = MasterConfiguration.dirConfig
 
     override fun preProcess() {
         log.debug("Generating training parameters for job $this")
@@ -51,14 +49,14 @@ class SimulationJob(
 
         val writer = FileWriter()
         val f = writer.writeJsonToDisk(json, FilenameUtils.getBaseName(logFile.name),
-                MasterConfiguration.directoryPathConfiguration.trainDirectory)
+                dirConfig.dirPath(Dir.TRAIN_DIR))
 
         updateACL(f)
     }
 
     override fun execute() {
         val prefs: UserPreferences = MasterConfiguration.userPreferences
-        val python: String = MasterConfiguration.directoryPathConfiguration.python
+        val python: String = dirConfig.dirPath(Dir.PYTHON)
 
         try {
             val pb =
@@ -84,11 +82,11 @@ class SimulationJob(
                             outcome.parameter
                     )
 
-            pb.directory(File(coreDir))
+            pb.directory(dirConfig.dirByName(Dir.CORE_DIR))
             pb.inheritIO()
 
             val env = pb.environment()
-            env.put("PYTHONPATH", scriptDir)
+            env.put("PYTHONPATH", dirConfig.dirPath(Dir.SCRIPT_DIR))
 
             log.debug("Script call: ${pb.command()}")
             process = pb.start()
@@ -103,7 +101,7 @@ class SimulationJob(
             process!!.waitFor()
             log.debug("Script finished running...")
 
-            val file = File(scriptDir + pklDir + this.toString())
+            val file = File(dirConfig.dirPath(Dir.PKL_DIR) + this.toString())
             log.debug(file)
 
             if (!file.exists()) {

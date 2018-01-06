@@ -1,4 +1,4 @@
-package cs.ut.business.engine
+package cs.ut.engine
 
 import org.apache.commons.codec.binary.Hex
 import org.apache.log4j.Logger

@@ -1,10 +1,10 @@
 package cs.ut.ui.controllers
 
 import com.google.common.html.HtmlEscapers
-import cs.ut.business.engine.JobManager
-import cs.ut.business.engine.LogManager
-import cs.ut.business.jobs.Job
-import cs.ut.business.jobs.SimulationJob
+import cs.ut.engine.JobManager
+import cs.ut.engine.LogManager
+import cs.ut.jobs.Job
+import cs.ut.jobs.SimulationJob
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
 import cs.ut.ui.controllers.training.AdvancedModeController

@@ -1,4 +1,4 @@
-package cs.ut.business.engine
+package cs.ut.engine
 
 import cs.ut.config.MasterConfiguration
 import java.util.concurrent.ArrayBlockingQueue
