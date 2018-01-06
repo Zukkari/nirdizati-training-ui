@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement
 class DirectoryConfiguration {
 
     @XmlElement(name = "dir")
-    val dirs: MutableList<Directory> = mutableListOf()
+    private val dirs: MutableList<Directory> = mutableListOf()
 
     fun dirByName(dir: Dir): File = File(dirs.first { it.id == dir.value() }.path)
 
