@@ -109,7 +109,7 @@ function plot_bar(payload, chart_label, labels) {
 function plot_pie(payload) {
     const ctx = destroyPlot();
     chart = new Chart(ctx, {
-        type: 'pie',
+        type: 'polarArea',
         data: {
             datasets: [{
                 data : JSON.parse(payload),
@@ -126,7 +126,14 @@ function plot_pie(payload) {
         options: {
             responsive: true,
             title: {
-                display: false
+                display: true,
+                text: 'Classification accuracy'
+            },
+            scale: {
+                ticks: {
+                    beginAtZero: true
+                },
+                reverse: false
             },
             animation: {
                 animateRotate: true,

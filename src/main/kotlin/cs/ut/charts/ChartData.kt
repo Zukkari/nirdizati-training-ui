@@ -15,7 +15,6 @@ class ChartGenerator(val job: SimulationJob) {
         val charts = mutableListOf<Chart>()
 
         if (job.isClassification) {
-            charts.addAll(generatePieChart())
             charts.addAll(generateLineCharts())
             charts.addAll(generateBarCharts())
         } else {
@@ -48,17 +47,6 @@ class ChartGenerator(val job: SimulationJob) {
             charts.add(BarChart(it.first.toString(), gson.toJson(payload.map { it.value }), gson.toJson(payload.map { it.label })))
         }
 
-        return charts.toList()
-    }
-
-    private fun generatePieChart(): List<PieChart> {
-        val file = LogManager.getDetailedFile(job)
-        val charts = mutableListOf<PieChart>()
-
-        val payload: List<PieChartData> = getPieChartPayload(file)
-        payload.forEach {
-            charts.add(PieChart(it.events.toString(), gson.toJson(arrayOf(it.correct, it.miss))))
-        }
         return charts.toList()
     }
 }
