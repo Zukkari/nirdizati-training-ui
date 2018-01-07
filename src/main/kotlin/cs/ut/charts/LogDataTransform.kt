@@ -63,3 +63,9 @@ fun getBarChartPayload(file: File): List<BarChartData> {
 
     return dataSet
 }
+
+class PieChartData(val events: Int, val correct: Int, val miss: Int)
+
+fun getPieChartPayload(file: File): List<PieChartData> {
+    return listOf(PieChartData(15, 40, 10), PieChartData(14, 10, 36))
+}
