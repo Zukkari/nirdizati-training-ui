@@ -16,7 +16,7 @@
 
     <userPreferences>
         <!-- Whether the simulation process should be run under specific user (root by default) -->
-        <enabled>true</enabled>
+        <enabled>false</enabled>
         <userName>zukkari</userName>
         <userGroup>zukkari</userGroup>
         <sudo></sudo>

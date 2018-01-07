@@ -1,9 +1,9 @@
 package cs.ut.engine
 
-import cs.ut.jobs.Job
+import cs.ut.engine.events.NirdizatiEvent
 
 interface Notifiable {
-    fun onUpdate(key: String, job: Job)
+    fun onUpdate(event: NirdizatiEvent)
 
-    fun onDeploy(key: String, jobs: List<Job>) = Unit
+    fun isAlive(): Boolean
 }

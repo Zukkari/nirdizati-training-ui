@@ -1,44 +1,59 @@
 package cs.ut.engine
 
+import cs.ut.engine.events.DeployEvent
+import cs.ut.engine.events.NirdizatiEvent
+import cs.ut.engine.events.StatusUpdateEvent
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
 import org.apache.log4j.Logger
-import java.util.concurrent.CopyOnWriteArrayList
 
 
 object JobManager {
     val log: Logger = Logger.getLogger(JobManager::class.java)!!
 
     private val executedJobs: MutableMap<String, MutableList<Job>> = mutableMapOf()
+    private val subscribers: MutableList<Notifiable> = mutableListOf()
 
-    private val subscribers: CopyOnWriteArrayList<Notifiable> = CopyOnWriteArrayList()
-
-    @Synchronized
     fun subscribeForUpdates(caller: Notifiable) {
-        log.debug("New subscriber for updates -> ${caller::class.java}")
-        subscribers.add(caller)
+        synchronized(subscribers) {
+            log.debug("New subscriber for updates -> ${caller::class.java}")
+            subscribers.add(caller)
+        }
     }
 
-    @Synchronized
     fun unsubscribeFromUpdates(caller: Notifiable) {
-        log.debug("Removing subscriber ${caller::class.java}")
-        subscribers.remove(caller)
+        synchronized(subscribers) {
+            log.debug("Removing subscriber ${caller::class.java}")
+            subscribers.remove(caller)
+        }
     }
 
     internal fun statusUpdated(job: Job) {
         log.debug("Update event: ${job.id} -> notifying subscribers")
-        subscribers.forEach {
-            it.onUpdate(executedJobs.entries.firstOrNull { it.value.contains(job) }?.key ?: "", job)
+        handleEvent(StatusUpdateEvent(executedJobs.entries.firstOrNull { it.value.contains(job) }?.key ?: "", job))
+    }
+
+    private fun handleEvent(event: NirdizatiEvent) {
+        val deadSubs = mutableListOf<Notifiable>()
+        synchronized(subscribers) {
+            subscribers.forEach {
+                if (it.isAlive()) {
+                    it.onUpdate(event)
+                } else {
+                    deadSubs.add(it)
+                }
+            }
+        }
+        deadSubs.cleanSubscribers()
+    }
+
+    private fun List<Notifiable>.cleanSubscribers() {
+        log.debug("Received ${this.size} to remove from subscribers")
+        this.forEach {
+            unsubscribeFromUpdates(it)
         }
     }
 
-    private fun jobsDeployed(key: String, jobs: List<Job>) {
-        subscribers.forEach {
-            it.onDeploy(key, jobs)
-        }
-    }
-
-    @Synchronized
     fun deployJobs(key: String, jobs: List<Job>) {
         log.debug("Jobs to be executed for client $key -> $jobs")
 
@@ -57,7 +72,7 @@ object JobManager {
 
 
         log.debug("Successfully deployed all jobs to worker")
-        jobsDeployed(key, jobs)
+        handleEvent(DeployEvent(key, jobs))
     }
 
     fun runServiceJob(job: Job) {
@@ -67,9 +82,10 @@ object JobManager {
 
     fun getJobsForKey(key: String) = executedJobs[key]
 
-    @Synchronized
     fun removeJob(key: String, simulationJob: SimulationJob) {
-        log.debug("Removing job $simulationJob for client $key")
-        executedJobs[key]?.remove(simulationJob)
+        synchronized(executedJobs) {
+            log.debug("Removing job $simulationJob for client $key")
+            executedJobs[key]?.remove(simulationJob)
+        }
     }
 }

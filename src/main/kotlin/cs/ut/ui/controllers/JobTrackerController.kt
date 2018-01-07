@@ -2,6 +2,9 @@ package cs.ut.ui.controllers
 
 import cs.ut.engine.JobManager
 import cs.ut.engine.Notifiable
+import cs.ut.engine.events.DeployEvent
+import cs.ut.engine.events.NirdizatiEvent
+import cs.ut.engine.events.StatusUpdateEvent
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.ui.NirdizatiGrid
@@ -41,20 +44,44 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable, Notifi
         jobTracker.appendChild(jobGrid)
     }
 
-    override fun onUpdate(key: String, job: Job) {
-        if (self.desktop == null || !self.desktop.isAlive) {
-            JobManager.unsubscribeFromUpdates(this)
-        } else {
-            Executions.schedule(self.desktop,
-                    { _ ->
-                        val subKey: String = CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
-                        if (subKey == key) {
-                            val grid = Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
-                            job.updateJobStatus(grid.rows.getChildren())
-                        }
-                    },
-                    Event("job_update"))
+    override fun onUpdate(event: NirdizatiEvent) {
+        when (event) {
+            is StatusUpdateEvent -> event.updateJobStatus()
+            is DeployEvent -> event.updateDeployment()
         }
+    }
+
+    private fun StatusUpdateEvent.updateJobStatus() {
+        Executions.schedule(self.desktop,
+                { _ ->
+                    val subKey: String = CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
+                    if (subKey == this.target) {
+                        val grid = Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
+                        this.data.updateJobStatus(grid.rows.getChildren())
+                    }
+                },
+                Event("job_update"))
+    }
+
+    private fun DeployEvent.updateDeployment() {
+        Executions.schedule(self.desktop,
+                { _ ->
+                    val subKey: String = CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
+                    if (subKey == this.target) {
+
+                        val comps = Executions.getCurrent().desktop.components
+                        val tracker = comps.first { it.id == TRACKER_EAST }
+                        tracker.isVisible = true
+
+                        val grid = comps.first { it.id == GRID_ID } as NirdizatiGrid<Job>
+                        grid.generate(this.data, false)
+                    }
+                },
+                Event("deployment"))
+    }
+
+    override fun isAlive(): Boolean {
+        return self.desktop != null && self.desktop.isAlive
     }
 
     tailrec private fun Job.updateJobStatus(rows: List<Row>) {
@@ -75,27 +102,6 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable, Notifi
             } else {
                 updateJobStatus(rows.drop(1))
             }
-        }
-    }
-
-    override fun onDeploy(key: String, jobs: List<Job>) {
-        if (self.desktop == null || !self.desktop.isAlive) {
-            JobManager.unsubscribeFromUpdates(this)
-        } else {
-            Executions.schedule(self.desktop,
-                    { _ ->
-                        val subKey: String = CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
-                        if (subKey == key) {
-
-                            val comps = Executions.getCurrent().desktop.components
-                            val tracker = comps.first { it.id == TRACKER_EAST }
-                            tracker.isVisible = true
-
-                            val grid = comps.first { it.id == GRID_ID } as NirdizatiGrid<Job>
-                            grid.generate(jobs, false)
-                        }
-                    },
-                    Event("deployment"))
         }
     }
 }

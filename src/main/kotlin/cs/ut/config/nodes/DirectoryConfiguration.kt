@@ -19,7 +19,7 @@ class DirectoryConfiguration {
     fun dirPath(dir: Dir): String = dirs.first { it.id == dir.value() }.path
 }
 
-enum class Dir(val id: String) {
+enum class Dir(private val id: String) {
     PYTHON("python"),
     USER_LOGS("userLogDirectory"),
     USER_MODEL("userModelDirectory"),
