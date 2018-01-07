@@ -1,15 +1,10 @@
-let chart = null;
+var chart = null;
 Chart.defaults.global.legend.display = false;
 
-function destroyPlot() {
-    const canvas = document.getElementById('chart_canvas');
-    const ctx = canvas.getContext('2d');
-    if (chart != null) chart.destroy();
-    return ctx;
-}
-
 function plot_scatter(payload, chart_label) {
-    const ctx = destroyPlot();
+    var canvas = document.getElementById('chart_canvas');
+    var ctx = canvas.getContext('2d');
+    if (chart != null) chart.destroy();
     chart = Chart.Scatter(ctx, {
         data: {
             datasets: getLinearDatasetData(payload, chart_label)
@@ -61,7 +56,9 @@ function getScalesData(xLabel, yLabel) {
 }
 
 function plot_line(payload, chart_label, n_of_events, axis_label) {
-    const ctx = destroyPlot();
+    var canvas = document.getElementById('chart_canvas');
+    var ctx = canvas.getContext('2d');
+    if (chart != null) chart.destroy();
     chart = Chart.Line(ctx, {
         data: {
             datasets: getLinearDatasetData(payload, chart_label),
@@ -79,7 +76,12 @@ function plot_line(payload, chart_label, n_of_events, axis_label) {
 }
 
 function plot_bar(payload, chart_label, labels) {
-    const ctx = destroyPlot();
+    var canvas = document.getElementById('chart_canvas');
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (chart != null) chart.destroy();
+
     chart = new Chart(ctx, {
         type: 'horizontalBar',
         data: {
@@ -102,43 +104,6 @@ function plot_bar(payload, chart_label, labels) {
                 }
             },
             reponsive: true
-        }
-    })
-}
-
-function plot_pie(payload) {
-    const ctx = destroyPlot();
-    chart = new Chart(ctx, {
-        type: 'polarArea',
-        data: {
-            datasets: [{
-                data : JSON.parse(payload),
-                backgroundColor: [
-                    'rgba(0, 147, 249, 0.4)',
-                    'rgba(255, 102, 102, 0.7)'
-                ]
-            }],
-            labels: [
-                'Correct prediction',
-                'Wrong prediction'
-            ]
-        },
-        options: {
-            responsive: true,
-            title: {
-                display: true,
-                text: 'Classification accuracy'
-            },
-            scale: {
-                ticks: {
-                    beginAtZero: true
-                },
-                reverse: false
-            },
-            animation: {
-                animateRotate: true,
-                animateScale: true
-            }
         }
     })
 }
