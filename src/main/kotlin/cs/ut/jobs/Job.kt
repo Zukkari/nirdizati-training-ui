@@ -1,8 +1,10 @@
 package cs.ut.jobs
 
+
 import cs.ut.engine.IdProvider
 import cs.ut.engine.JobManager
 import org.apache.log4j.Logger
+
 
 enum class JobStatus {
     PENDING,
@@ -48,6 +50,7 @@ abstract class Job : Runnable {
         } catch (e: Exception) {
             log.debug("Job $id failed in preprocess stage", e)
             status = JobStatus.FAILED
+
             updateEvent()
             return
         }
@@ -84,6 +87,7 @@ abstract class Job : Runnable {
             }
 
             updateEvent()
+
             postExecute()
         } catch (e: Exception) {
             log.debug("Job $id failed in post execute step")
@@ -94,6 +98,7 @@ abstract class Job : Runnable {
         log.debug("Job $id completed successfully")
         status = JobStatus.COMPLETED
         updateEvent()
+
 
         if (stop) {
             log.debug("Job $this has been stopped by the user")
@@ -108,6 +113,4 @@ abstract class Job : Runnable {
     open fun kill() {
         stop = true
     }
-
-
 }

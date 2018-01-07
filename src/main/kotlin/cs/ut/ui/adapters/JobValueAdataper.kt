@@ -28,6 +28,7 @@ import org.zkoss.zul.Row
 import org.zkoss.zul.Vlayout
 import javax.servlet.http.HttpServletRequest
 
+
 class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
     companion object {
         const val jobArg = "JOB"

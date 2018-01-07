@@ -2,17 +2,21 @@ package cs.ut.jobs
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
+
 import cs.ut.config.nodes.Dir
 import cs.ut.config.nodes.UserPreferences
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.UserRightsJob.Companion.updateACL
+
 import cs.ut.util.FileWriter
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PREFIX
 import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
+
 import java.io.File
 import java.io.IOException
+
 
 class SimulationJob(
         val encoding: ModelParameter,
@@ -20,10 +24,12 @@ class SimulationJob(
         val learner: ModelParameter,
         val outcome: ModelParameter,
         val isClassification: Boolean,
+
         val logFile: File) : Job() {
 
     private var process: Process? = null
     private val dirConfig = MasterConfiguration.dirConfig
+
 
     override fun preProcess() {
         log.debug("Generating training parameters for job $this")
@@ -57,7 +63,6 @@ class SimulationJob(
     override fun execute() {
         val prefs: UserPreferences = MasterConfiguration.userPreferences
         val python: String = dirConfig.dirPath(Dir.PYTHON)
-
         try {
             val pb =
                     if (prefs.enabled) ProcessBuilder(

@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
 
-internal object NirdizatiThreadPool {
+object NirdizatiThreadPool {
     private val threadPool: ThreadPoolExecutor
 
     init {

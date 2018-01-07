@@ -7,7 +7,6 @@ import cs.ut.jobs.SimulationJob
 import cs.ut.util.PREFIX
 import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
-import org.zkoss.zk.ui.Desktop
 import java.io.File
 
 object LogManager {
