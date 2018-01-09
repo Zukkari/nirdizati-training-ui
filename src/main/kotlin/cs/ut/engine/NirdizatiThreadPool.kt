@@ -2,6 +2,7 @@ package cs.ut.engine
 
 import cs.ut.config.MasterConfiguration
 import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.Future
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
@@ -20,7 +21,5 @@ object NirdizatiThreadPool {
         )
     }
 
-    fun execute(runnable: Runnable) {
-        threadPool.execute(runnable)
-    }
+    fun execute(runnable: Runnable): Future<*> = threadPool.submit(runnable)
 }

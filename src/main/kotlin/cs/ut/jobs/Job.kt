@@ -21,7 +21,6 @@ abstract class Job : Runnable {
     val id: String = IdProvider.getNextId()
 
     var status: JobStatus = JobStatus.PENDING
-    protected var stop = false
 
     open fun preProcess() {}
 
@@ -33,17 +32,14 @@ abstract class Job : Runnable {
 
     open fun getNotificationMessage() = ""
 
+    open fun beforeInterrupt() = Unit
+
     override fun run() {
         log.debug("Started job execution: $this")
 
         try {
             log.debug("Stared preprocess stage")
             status = JobStatus.PREPARING
-
-            if (stop) {
-                log.debug("Job $id has been stopped by the user")
-                return
-            }
 
             updateEvent()
             preProcess()
@@ -61,11 +57,6 @@ abstract class Job : Runnable {
             log.debug("Job $id started execute stage")
             status = JobStatus.RUNNING
 
-            if (stop) {
-                log.debug("Job $id has been stopped by the user")
-                return
-            }
-
             updateEvent()
             execute()
         } catch (e: Exception) {
@@ -81,11 +72,6 @@ abstract class Job : Runnable {
             log.debug("Job $id started post execute step")
             status = JobStatus.FINISHING
 
-            if (stop) {
-                log.debug("Job $id has been stopped by the user")
-                return
-            }
-
             updateEvent()
 
             postExecute()
@@ -98,19 +84,9 @@ abstract class Job : Runnable {
         log.debug("Job $id completed successfully")
         status = JobStatus.COMPLETED
         updateEvent()
-
-
-        if (stop) {
-            log.debug("Job $this has been stopped by the user")
-            return
-        }
     }
 
     private fun updateEvent() {
         JobManager.statusUpdated(this)
-    }
-
-    open fun kill() {
-        stop = true
     }
 }

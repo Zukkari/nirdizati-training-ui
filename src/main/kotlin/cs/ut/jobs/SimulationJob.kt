@@ -95,12 +95,6 @@ class SimulationJob(
 
             log.debug("Script call: ${pb.command()}")
             process = pb.start()
-            if (stop) {
-                status = JobStatus.FAILED
-                process!!.destroy()
-                log.debug("Stopping script -> stop: $stop")
-                return
-            }
 
             log.debug("Waiting for process completion")
             process!!.waitFor()
@@ -123,9 +117,9 @@ class SimulationJob(
         }
     }
 
-    override fun kill() {
+    override fun beforeInterrupt() {
+        log.debug("Process ${super.id} has been stopped by the user")
         process?.destroy()
-        stop = true
     }
 
     override fun isNotificationRequired() = true

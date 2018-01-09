@@ -6,6 +6,7 @@ import cs.ut.engine.events.StatusUpdateEvent
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
 import org.apache.log4j.Logger
+import java.util.concurrent.Future
 
 
 object JobManager {
@@ -13,6 +14,7 @@ object JobManager {
 
     private val executedJobs: MutableMap<String, MutableList<Job>> = mutableMapOf()
     private val subscribers: MutableList<Notifiable> = mutableListOf()
+    private val jobStatus: MutableMap<Job, Future<*>> = mutableMapOf()
 
     fun subscribeForUpdates(caller: Notifiable) {
         synchronized(subscribers) {
@@ -61,9 +63,11 @@ object JobManager {
         log.debug("Client $key has ${deployed.size} completed jobs")
         log.debug("Deploying ${jobs.size} jobs")
 
-        jobs.forEach {
-            NirdizatiThreadPool.execute(it)
-            deployed.add(it)
+        synchronized(jobStatus) {
+            jobs.forEach {
+                jobStatus[it] = NirdizatiThreadPool.execute(it)
+                deployed.add(it)
+            }
         }
 
         log.debug("Updating completed job status for $key")
@@ -73,6 +77,14 @@ object JobManager {
 
         log.debug("Successfully deployed all jobs to worker")
         handleEvent(DeployEvent(key, jobs))
+    }
+
+    fun stopJob(job: Job) {
+        log.debug("Stopping job ${job.id}")
+        job.beforeInterrupt()
+        log.debug("Completed before interrupt")
+        jobStatus[job]?.cancel(true)
+        log.debug("Job thread ${job.id} successfully interrupted")
     }
 
     fun runServiceJob(job: Job) {

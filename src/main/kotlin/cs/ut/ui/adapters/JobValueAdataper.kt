@@ -1,11 +1,11 @@
 package cs.ut.ui.adapters
 
+import cs.ut.config.MasterConfiguration
+import cs.ut.config.items.ModelParameter
 import cs.ut.engine.JobManager
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
-import cs.ut.config.MasterConfiguration
-import cs.ut.config.items.ModelParameter
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.ui.NirdizatiGrid
@@ -167,7 +167,8 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
         val client = Executions.getCurrent().desktop
         btn.addEventListener(Events.ON_CLICK, { _ ->
             val grid: NirdizatiGrid<Job> = client.components.firstOrNull { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
-            this.kill()
+
+            JobManager.stopJob(this)
             Executions.schedule(client,
                     { _ ->
                         row.detach()
