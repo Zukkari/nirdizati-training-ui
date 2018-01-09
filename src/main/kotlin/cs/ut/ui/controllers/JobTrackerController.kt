@@ -1,9 +1,9 @@
 package cs.ut.ui.controllers
 
+import cs.ut.engine.events.AliveCheck
+import cs.ut.engine.events.Callback
 import cs.ut.engine.JobManager
-import cs.ut.engine.Notifiable
 import cs.ut.engine.events.DeployEvent
-import cs.ut.engine.events.NirdizatiEvent
 import cs.ut.engine.events.StatusUpdateEvent
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
@@ -23,7 +23,7 @@ import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import javax.servlet.http.HttpServletRequest
 
-class JobTrackerController : SelectorComposer<Component>(), Redirectable, Notifiable {
+class JobTrackerController : SelectorComposer<Component>(), Redirectable {
     @Wire
     private lateinit var jobTracker: Hbox
 
@@ -44,43 +44,39 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable, Notifi
         jobTracker.appendChild(jobGrid)
     }
 
-    override fun onUpdate(event: NirdizatiEvent) {
-        when (event) {
-            is StatusUpdateEvent -> event.updateJobStatus()
-            is DeployEvent -> event.updateDeployment()
-        }
-    }
-
-    private fun StatusUpdateEvent.updateJobStatus() {
+    @Callback(StatusUpdateEvent::class)
+    fun updateJobStatus(event: StatusUpdateEvent) {
         Executions.schedule(self.desktop,
                 { _ ->
                     val subKey: String = CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
-                    if (subKey == this.target) {
+                    if (subKey == event.target) {
                         val grid = Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
-                        this.data.updateJobStatus(grid.rows.getChildren())
+                        event.data.updateJobStatus(grid.rows.getChildren())
                     }
                 },
                 Event("job_update"))
     }
 
-    private fun DeployEvent.updateDeployment() {
+    @Callback(DeployEvent::class)
+    fun updateDeployment(event: DeployEvent) {
         Executions.schedule(self.desktop,
                 { _ ->
                     val subKey: String = CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
-                    if (subKey == this.target) {
+                    if (subKey == event.target) {
 
                         val comps = Executions.getCurrent().desktop.components
                         val tracker = comps.first { it.id == TRACKER_EAST }
                         tracker.isVisible = true
 
                         val grid = comps.first { it.id == GRID_ID } as NirdizatiGrid<Job>
-                        grid.generate(this.data, false)
+                        grid.generate(event.data, false)
                     }
                 },
                 Event("deployment"))
     }
 
-    override fun isAlive(): Boolean {
+    @AliveCheck
+    fun isAlive(): Boolean {
         return self.desktop != null && self.desktop.isAlive
     }
 

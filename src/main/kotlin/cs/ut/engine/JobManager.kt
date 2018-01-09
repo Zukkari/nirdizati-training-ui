@@ -3,9 +3,12 @@ package cs.ut.engine
 import cs.ut.engine.events.DeployEvent
 import cs.ut.engine.events.NirdizatiEvent
 import cs.ut.engine.events.StatusUpdateEvent
+import cs.ut.engine.events.findAliveCheck
+import cs.ut.engine.events.findCallback
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
 import org.apache.log4j.Logger
+import org.zkoss.zk.ui.select.SelectorComposer
 import java.util.concurrent.Future
 
 
@@ -13,17 +16,17 @@ object JobManager {
     val log: Logger = Logger.getLogger(JobManager::class.java)!!
 
     private val executedJobs: MutableMap<String, MutableList<Job>> = mutableMapOf()
-    private val subscribers: MutableList<Notifiable> = mutableListOf()
+    private val subscribers: MutableList<Any> = mutableListOf()
     private val jobStatus: MutableMap<Job, Future<*>> = mutableMapOf()
 
-    fun subscribeForUpdates(caller: Notifiable) {
+    fun subscribeForUpdates(caller: Any) {
         synchronized(subscribers) {
             log.debug("New subscriber for updates -> ${caller::class.java}")
             subscribers.add(caller)
         }
     }
 
-    fun unsubscribeFromUpdates(caller: Notifiable) {
+    fun unsubscribeFromUpdates(caller: Any) {
         synchronized(subscribers) {
             log.debug("Removing subscriber ${caller::class.java}")
             subscribers.remove(caller)
@@ -36,20 +39,33 @@ object JobManager {
     }
 
     private fun handleEvent(event: NirdizatiEvent) {
-        val deadSubs = mutableListOf<Notifiable>()
+        val deadSubs = mutableListOf<Any>()
         synchronized(subscribers) {
             subscribers.forEach {
-                if (it.isAlive()) {
-                    it.onUpdate(event)
-                } else {
-                    deadSubs.add(it)
+                when (it) {
+                    is SelectorComposer<*> -> {
+                        if (isAlive(it)) {
+                            notify(it, event)
+                        } else {
+                            deadSubs.add(it)
+                        }
+                    }
+                    else -> deadSubs.add(it)
                 }
             }
         }
         deadSubs.cleanSubscribers()
     }
 
-    private fun List<Notifiable>.cleanSubscribers() {
+    private fun isAlive(obj: Any): Boolean {
+        return findAliveCheck(obj::class.java).invoke(obj) as Boolean
+    }
+
+    private fun notify(obj: Any, event: NirdizatiEvent) {
+        findCallback(obj::class.java, event::class).invoke(obj, event)
+    }
+
+    private fun List<Any>.cleanSubscribers() {
         log.debug("Received ${this.size} to remove from subscribers")
         this.forEach {
             unsubscribeFromUpdates(it)
