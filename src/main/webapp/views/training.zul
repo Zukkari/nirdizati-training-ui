@@ -1,6 +1,6 @@
 <vbox hflex="1" vflex="4" align="center" apply="cs.ut.ui.controllers.TrainingController"
       xmlns="http://www.zkoss.org/2005/zul">
-    <grid hflex="min" sclass="grey-box">
+    <grid hflex="min" sclass="max-height max-width">
         <columns>
             <column hflex="min" align="center"/>
             <column hflex="min" align="center"/>
@@ -24,7 +24,7 @@
         </rows>
     </grid>
 
-    <vlayout vflex="4" id="gridContainer"/>
+    <vlayout vflex="4" id="gridContainer" sclass="max-height max-width"/>
 
     <vbox hflex="1" vflex="1" align="center" pack="center">
         <button id="startTraining" sclass="n-btn" label="${labels.training.start_training}"/>

@@ -9,21 +9,23 @@ $min-width: 680px
     white-space: normal
     word-wrap: break-word
     border-radius: 40px
-
-  .n-btn
-    @extend %big-btn
     width: 160px
     height: 50px
+    background: linear-gradient(53deg, $blue, $dark-blue)
+    background-size: 400% 400%
+    animation: btn-gradient 5s ease alternate infinite
 
-
-  .n-upload-btn
+  .n-btn, .n-upload-btn
     @extend %big-btn
-    width: 100%
 
   .n-proceed
     @extend %big-btn
     margin:
       top: 100px
+
+  .n-block-btn
+    @extend %big-btn
+    display: inline-block
 
 @media screen and (max-width: $min-width)
   %small-btn
@@ -39,3 +41,17 @@ $min-width: 680px
   @each $style in $buttons
     .n-#{$style}
       @extend %small-btn
+
+@keyframes btn-gradient
+  0%
+    background-position:
+      x: 0
+      y: 50%
+  50%
+    background-position:
+      x: 50%
+      y: 50%
+  100%
+    background-position:
+      x: 100%
+      y: 50%

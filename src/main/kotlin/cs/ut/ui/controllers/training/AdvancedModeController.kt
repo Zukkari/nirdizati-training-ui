@@ -34,6 +34,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
         gridContainer.appendChild(grid)
         gridContainer.appendChild(hyperParamsContainer)
         grid.fields.forEach { it.generateListener() }
+        grid.sclass = "max-height max-width"
         grid.hflex = "min"
         log.debug("Finished grid initialization")
     }

@@ -187,6 +187,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
 
     private fun SimulationJob.getVisualizeBtn(): Button {
         val visualize = Button(NirdizatiUtil.localizeText("job_tracker.visiualize"))
+        visualize.sclass = "n-btn"
         visualize.hflex = "1"
         visualize.isDisabled = !(JobStatus.COMPLETED == this.status || JobStatus.FINISHING == this.status)
 
@@ -201,8 +202,9 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
     private fun getDeployBtn(): Button {
         val deploy = Button(NirdizatiUtil.localizeText("job_tracker.deploy_to_runtime"))
         deploy.isDisabled = true
-        deploy.hflex = "1"
+        deploy.sclass = "n-btn"
         deploy.vflex = "min"
+        deploy.hflex = "1"
 
         return deploy
     }
