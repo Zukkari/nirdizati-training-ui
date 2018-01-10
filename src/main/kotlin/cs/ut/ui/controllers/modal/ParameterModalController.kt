@@ -56,6 +56,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
     companion object {
         const val IGNORE_COL = "ignore"
+        const val FUTURE_DATA = "future_values"
     }
 
     override fun doAfterCompose(comp: Component?) {
@@ -151,7 +152,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
             val cols = params[key]!!
 
             cols.forEach {
-                args += ComboArgument(escaper.escape(it), changeable + IGNORE_COL, key)
+                args += ComboArgument(escaper.escape(it), changeable + IGNORE_COL + FUTURE_DATA, key)
             }
         }
 
