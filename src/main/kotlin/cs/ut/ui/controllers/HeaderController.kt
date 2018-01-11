@@ -1,4 +1,4 @@
-package cs.ut.controllers
+package cs.ut.ui.controllers
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.HeaderItem

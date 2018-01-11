@@ -47,12 +47,14 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
 
     fun setColumns(properties: Map<String, String>) {
         val cols = Columns()
-        cols.vflex = "1"
+        cols.vflex = "min"
         appendChild(cols)
         properties.entries.forEach {
             val column = Column(NirdizatiUtil.localizeText(it.key))
             column.id = it.key
-            column.hflex = it.value
+            if (it.value.isNotEmpty()) {
+                column.hflex = it.value
+            }
             columns.appendChild(column)
         }
     }

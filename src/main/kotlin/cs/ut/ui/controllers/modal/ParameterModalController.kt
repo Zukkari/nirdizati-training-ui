@@ -1,15 +1,16 @@
-package cs.ut.controllers.modal
+package cs.ut.ui.controllers.modal
 
 import com.google.common.html.HtmlEscapers
 import cs.ut.config.MasterConfiguration
-import cs.ut.controllers.Redirectable
+import cs.ut.config.nodes.Dir
 import cs.ut.engine.JobManager
-import cs.ut.engine.NirdizatiThreadPool
 import cs.ut.jobs.DataSetGenerationJob
+import cs.ut.jobs.UserRightsJob
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.adapters.ColumnRowValueAdapter
 import cs.ut.ui.adapters.ComboArgument
 import cs.ut.ui.adapters.ComboProvider
+import cs.ut.ui.controllers.Redirectable
 import cs.ut.util.CsvReader
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.TIMESTAMP_COL
@@ -55,6 +56,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
     companion object {
         const val IGNORE_COL = "ignore"
+        const val FUTURE_DATA = "future_values"
     }
 
     override fun doAfterCompose(comp: Component?) {
@@ -81,6 +83,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         val grid = NirdizatiGrid(provider)
         grid.hflex = "min"
         grid.vflex = "1"
+        grid.sclass = "max-width max-height"
 
         grid.generate(cols)
 
@@ -128,13 +131,16 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
                     params[v] = mutableListOf(k)
                 }
             }
-            NirdizatiThreadPool.execute(DataSetGenerationJob(params, file, execution.desktop))
+
+            JobManager.runServiceJob(DataSetGenerationJob(params, file))
             NirdizatiUtil.showNotificationAsync(
                     Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))),
                     Executions.getCurrent().desktop)
 
-            Files.move(Paths.get(file.absolutePath),
-                    Paths.get(File(MasterConfiguration.directoryPathConfiguration.userLogDirectory + file.name).absolutePath), StandardCopyOption.REPLACE_EXISTING)
+            val target = Files.move(Paths.get(file.absolutePath),
+                    Paths.get(File(MasterConfiguration.dirConfig.dirPath(Dir.USER_LOGS) + file.name).absolutePath), StandardCopyOption.REPLACE_EXISTING)
+
+            JobManager.runServiceJob(UserRightsJob(target.toFile()))
             modal.detach()
             setContent("training", getPage(), 2000, Executions.getCurrent().desktop)
         }
@@ -147,7 +153,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
             val cols = params[key]!!
 
             cols.forEach {
-                args += ComboArgument(escaper.escape(it), changeable + IGNORE_COL, key)
+                args += ComboArgument(escaper.escape(it), changeable + IGNORE_COL + FUTURE_DATA, key)
             }
         }
 
@@ -159,11 +165,12 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         gridSlot.getChildren<Component>().clear()
         gridSlot.getChildren<Component>().add(grid)
 
-        grid.setColumns(mapOf("param.modal.name" to "1", "param.modal.control" to "2"))
+        grid.setColumns(mapOf("param.modal.name" to "", "param.modal.control" to ""))
         grid.mold = "paging"
         grid.pageSize = 10
         grid.hflex = "min"
         grid.vflex = "1"
+        grid.sclass = "max-width max-height no-hor-overflow"
 
         return grid
     }
@@ -177,8 +184,6 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
                     Executions.getCurrent().desktop,
                     "error"
             )
-
-            JobManager.flushJobs()
             modal.detach()
             return true
         }

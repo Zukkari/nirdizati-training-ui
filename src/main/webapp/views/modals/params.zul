@@ -1,13 +1,13 @@
 <window id="modal" title="${labels.modals.window_title}"
-        apply="cs.ut.controllers.modal.ParameterModalController"
+        apply="cs.ut.ui.controllers.modal.ParameterModalController"
         closable="false"
         position="center, center"
         draggable="false"
-        sclass="param-modal">
+        sclass="max-width max-height">
 
-    <hlayout id="gridSlot"/>
+    <hlayout id="gridSlot" sclass="max-width"/>
 
-    <hlayout>
+    <hlayout sclass="margin-top-7px text-align-center">
         <button id="cancelBtn" hflex="1" label="${labels.modals.cancel}"/>
         <button id="okBtn" hflex="1" label="${labels.modals.ok}"/>
     </hlayout>

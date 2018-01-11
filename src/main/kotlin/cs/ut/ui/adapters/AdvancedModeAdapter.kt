@@ -15,7 +15,7 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
         val row = Row()
 
         val label = Label(NirdizatiUtil.localizeText(data.id))
-        label.sclass = "bold-text"
+        label.sclass = "param-label"
         label.setAttribute(COMP_ID, data.params.first().type)
         row.appendChild(label)
 

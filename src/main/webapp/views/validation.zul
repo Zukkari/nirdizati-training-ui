@@ -1,4 +1,4 @@
-<vbox vflex="1" hflex="1" apply="cs.ut.controllers.ValidationController">
+<vbox vflex="1" hflex="1" apply="cs.ut.ui.controllers.ValidationController">
     <grid hflex="1" vflex="min">
         <rows id="metadataRows" hflex="1" vflex="1"/>
     </grid>

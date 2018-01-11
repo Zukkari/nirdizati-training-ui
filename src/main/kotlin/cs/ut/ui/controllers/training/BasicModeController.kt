@@ -1,4 +1,4 @@
-package cs.ut.controllers.training
+package cs.ut.ui.controllers.training
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter

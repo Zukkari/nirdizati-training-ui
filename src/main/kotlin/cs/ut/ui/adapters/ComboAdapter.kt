@@ -16,12 +16,10 @@ class ComboProvider : GridValueProvider<ComboArgument, Row> {
     override fun provide(data: ComboArgument): Row {
         val label = Label(data.caption)
         label.setAttribute(COMP_ID, data.caption)
-        label.sclass = "param-modal-label"
-        label.hflex = "1"
+        label.sclass = "display-block"
 
         val combobox = Combobox()
-        combobox.sclass = "param-modal-combo"
-        combobox.hflex = "1"
+        combobox.sclass = "max-width max-height"
         data.values.forEach {
             val item = combobox.appendItem(NirdizatiUtil.localizeText("params." + it))
             item.setValue(it)

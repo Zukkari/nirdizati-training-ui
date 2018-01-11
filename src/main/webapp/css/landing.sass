@@ -4,6 +4,7 @@
 
 @mixin font($size)
   font-size: $size
+  color: rgba(0,0,0,0.54)
 
 .c-cont
   @extend %centered
@@ -11,4 +12,10 @@
     weight: bold
 
 .s-text
-  @include font(25px)
+  @include font(20px)
+
+.v-cent-cont
+  @media screen and (min-width: 440px)
+    padding-top: 200%
+  @media screen and (max-width: 440px)
+    padding-top: 130%

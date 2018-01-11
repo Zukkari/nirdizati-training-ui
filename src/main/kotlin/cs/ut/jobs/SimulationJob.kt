@@ -2,18 +2,21 @@ package cs.ut.jobs
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
+
+import cs.ut.config.nodes.Dir
 import cs.ut.config.nodes.UserPreferences
 import cs.ut.exceptions.NirdizatiRuntimeException
+import cs.ut.jobs.UserRightsJob.Companion.updateACL
+
 import cs.ut.util.FileWriter
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PREFIX
 import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
-import org.zkoss.zk.ui.Desktop
+
 import java.io.File
 import java.io.IOException
-import java.util.*
-import java.util.concurrent.TimeUnit
+
 
 class SimulationJob(
         val encoding: ModelParameter,
@@ -21,13 +24,12 @@ class SimulationJob(
         val learner: ModelParameter,
         val outcome: ModelParameter,
         val isClassification: Boolean,
-        val logFile: File,
-        client: Desktop) : Job(client) {
 
-    override var startTime = Date()
-    override var completeTime = Date()
+        val logFile: File) : Job() {
 
     private var process: Process? = null
+    private val dirConfig = MasterConfiguration.dirConfig
+
 
     override fun preProcess() {
         log.debug("Generating training parameters for job $this")
@@ -52,14 +54,15 @@ class SimulationJob(
         )
 
         val writer = FileWriter()
-        writer.writeJsonToDisk(json, FilenameUtils.getBaseName(logFile.name),
-                MasterConfiguration.directoryPathConfiguration.trainDirectory)
+        val f = writer.writeJsonToDisk(json, FilenameUtils.getBaseName(logFile.name),
+                dirConfig.dirPath(Dir.TRAIN_DIR))
+
+        updateACL(f)
     }
 
     override fun execute() {
         val prefs: UserPreferences = MasterConfiguration.userPreferences
-        val python: String = MasterConfiguration.directoryPathConfiguration.python
-
+        val python: String = dirConfig.dirPath(Dir.PYTHON)
         try {
             val pb =
                     if (prefs.enabled) ProcessBuilder(
@@ -84,24 +87,20 @@ class SimulationJob(
                             outcome.parameter
                     )
 
-            pb.directory(File(coreDir))
+            pb.directory(dirConfig.dirByName(Dir.CORE_DIR))
             pb.inheritIO()
 
             val env = pb.environment()
-            env.put("PYTHONPATH", scriptDir)
+            env.put("PYTHONPATH", dirConfig.dirPath(Dir.SCRIPT_DIR))
 
             log.debug("Script call: ${pb.command()}")
             process = pb.start()
-            if (!process!!.waitFor(180, TimeUnit.SECONDS) || stop) {
-                status = JobStatus.FAILED
-                process!!.destroy()
-                log.debug("Stopping script -> stop: $stop")
-                return
-            }
 
+            log.debug("Waiting for process completion")
+            process!!.waitFor()
             log.debug("Script finished running...")
 
-            val file = File(scriptDir + pklDir + this.toString())
+            val file = File(dirConfig.dirPath(Dir.PKL_DIR) + this.toString())
             log.debug(file)
 
             if (!file.exists()) {
@@ -109,6 +108,7 @@ class SimulationJob(
                 throw NirdizatiRuntimeException("Script failed to write model to disk, job failed")
             } else {
                 log.debug("Script exited successfully")
+                process?.destroy()
             }
         } catch (e: IOException) {
             throw NirdizatiRuntimeException("Script execution failed", e)
@@ -117,9 +117,9 @@ class SimulationJob(
         }
     }
 
-    override fun kill() {
+    override fun beforeInterrupt() {
+        log.debug("Process ${super.id} has been stopped by the user")
         process?.destroy()
-        stop = true
     }
 
     override fun isNotificationRequired() = true

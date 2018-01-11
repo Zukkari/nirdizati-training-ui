@@ -1,15 +1,19 @@
-package cs.ut.controllers
+package cs.ut.ui.controllers
 
 import com.google.common.html.HtmlEscapers
-import cs.ut.config.MasterConfiguration
-import cs.ut.config.items.ModelParameter
-import cs.ut.controllers.training.AdvancedModeController
-import cs.ut.controllers.training.BasicModeController
-import cs.ut.controllers.training.ModeController
 import cs.ut.engine.JobManager
 import cs.ut.engine.LogManager
+import cs.ut.jobs.Job
+import cs.ut.jobs.SimulationJob
+import cs.ut.config.MasterConfiguration
+import cs.ut.config.items.ModelParameter
+import cs.ut.ui.controllers.training.AdvancedModeController
+import cs.ut.ui.controllers.training.BasicModeController
+import cs.ut.ui.controllers.training.ModeController
+import cs.ut.util.CookieUtil
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.OUTCOME
+import cs.ut.util.isColumnStatic
 import cs.ut.util.readLogColumns
 import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
@@ -21,8 +25,15 @@ import org.zkoss.zk.ui.event.SelectEvent
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zul.*
+import org.zkoss.zul.Checkbox
+import org.zkoss.zul.Combobox
+import org.zkoss.zul.Comboitem
+import org.zkoss.zul.Doublebox
+import org.zkoss.zul.Hbox
+import org.zkoss.zul.Radiogroup
+import org.zkoss.zul.Vlayout
 import java.io.File
+import javax.servlet.http.HttpServletRequest
 
 class TrainingController : SelectorComposer<Component>(), Redirectable {
     private val log: Logger = Logger.getLogger(TrainingController::class.java)!!
@@ -184,13 +195,13 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
     fun startTraining() {
         if (!gridController.isValid()) return
 
-        val jobParamters = mutableMapOf<String, List<ModelParameter>>()
-        jobParamters.put(PREDICTION, listOf(predictionType.selectedItem.getValue()))
-        jobParamters.putAll(gridController.gatherValues())
+        val jobParameters = mutableMapOf<String, List<ModelParameter>>()
+        jobParameters.put(PREDICTION, listOf(predictionType.selectedItem.getValue()))
+        jobParameters.putAll(gridController.gatherValues())
 
-        if (!jobParamters.validateParameters()) return
+        if (!jobParameters.validateParameters()) return
 
-        val prediction: ModelParameter = jobParamters[PREDICTION]!!.first()
+        val prediction: ModelParameter = jobParameters[PREDICTION]!!.first()
 
         if (prediction.id == OUTCOME) {
             val value = (radioGroup.selectedItem.getValue() as Double)
@@ -199,12 +210,40 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
 
         log.debug("Parameters are valid, calling script to train the model")
         val jobThread = Runnable {
-            JobManager.logFile = clientLogs.selectedItem.getValue()
-            JobManager.generateJobs(jobParamters)
-            JobManager.deployJobs()
+            passJobs(jobParameters)
         }
         jobThread.run()
         log.debug("Job generation thread started")
+    }
+
+    private fun passJobs(jobParameters: MutableMap<String, List<ModelParameter>>) {
+        log.debug("Generating jobs -> $jobParameters")
+        val encodings = jobParameters[ENCODING]!!
+        val bucketings = jobParameters[BUCKETING]!!
+        val predictionTypes = jobParameters[PREDICTION]!!
+        val learners = jobParameters[LEARNER]!!
+
+        val f: File = clientLogs.selectedItem.getValue()
+        val jobs: MutableList<Job> = mutableListOf()
+        encodings.forEach { encoding ->
+            bucketings.forEach { bucketing ->
+                learners.forEach { learner ->
+                    predictionTypes.forEach { pred ->
+                        jobs.add(SimulationJob(
+                                encoding,
+                                bucketing,
+                                learner,
+                                pred,
+                                isColumnStatic(pred.parameter, FilenameUtils.getBaseName(f.name)),
+                                clientLogs.selectedItem.getValue()))
+                    }
+                }
+            }
+        }
+        log.debug("Generated ${jobs.size} jobs")
+        JobManager.deployJobs(
+                CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest),
+                jobs)
     }
 
     private fun Map<String, List<ModelParameter>>.validateParameters(): Boolean {
@@ -217,12 +256,12 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         }
 
         if (this[BUCKETING] == null) {
-            msg += if (msg == "") BUCKETING else ", $BUCKETING"
+            msg += if (msg == "") BUCKETING else ", ${BUCKETING}"
             isValid = false
         }
 
         if (this[LEARNER] == null) {
-            msg += if (msg == "") LEARNER else ", $LEARNER"
+            msg += if (msg == "") LEARNER else ", ${LEARNER}"
             isValid = false
         }
 

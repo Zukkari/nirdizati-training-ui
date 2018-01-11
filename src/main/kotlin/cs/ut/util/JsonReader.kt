@@ -6,7 +6,8 @@ import cs.ut.config.MasterConfiguration
 import cs.ut.config.TrainingData
 import cs.ut.config.items.ModelParameter
 import cs.ut.config.items.Property
-import cs.ut.config.nodes.DirectoryPathConfiguration
+import cs.ut.config.nodes.Dir
+import cs.ut.config.nodes.DirectoryConfiguration
 import cs.ut.exceptions.NirdizatiRuntimeException
 import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
@@ -28,8 +29,8 @@ fun readLogColumns(logName: String): List<String> {
 }
 
 private fun readTrainingData(logName: String): TrainingData {
-    val config: DirectoryPathConfiguration = MasterConfiguration.directoryPathConfiguration
-    val path: String = config.scriptDirectory + "core/" + config.datasetDirectory
+    val config: DirectoryConfiguration = MasterConfiguration.dirConfig
+    val path: String = config.dirPath(Dir.DATA_DIR)
 
     val file = File(path + logName + ".json")
     val jsonReader = JsonReader(FileReader(file))
@@ -40,7 +41,7 @@ private fun readTrainingData(logName: String): TrainingData {
 
 fun isColumnStatic(colName: String, logName: String): Boolean {
     val data = readTrainingData(logName)
-    return data.isColumnStatic(colName)
+    return data.isClassification(colName)
 }
 
 private fun mapTypes(modelsParams: Map<String, List<ModelParameter>>) {
@@ -54,7 +55,7 @@ private fun mapTypes(modelsParams: Map<String, List<ModelParameter>>) {
 
 
 private fun readFilesFromDir(): List<File> {
-    val path = MasterConfiguration.directoryPathConfiguration.scriptDirectory + MasterConfiguration.directoryPathConfiguration.ohpdir
+    val path = MasterConfiguration.dirConfig.dirPath(Dir.OHP_DIR)
 
     val dir = File(path)
     if (!dir.exists() && dir.isDirectory) throw NirdizatiRuntimeException("Optimized hyperparameter directory does not exist")

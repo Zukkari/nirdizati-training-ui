@@ -1,8 +1,8 @@
-package cs.ut.controllers.training
+package cs.ut.ui.controllers.training
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
-import cs.ut.controllers.TrainingController
+import cs.ut.ui.controllers.TrainingController
 import org.zkoss.zul.Vlayout
 
 abstract class AbstractModeController(protected val gridContrainer: Vlayout) {

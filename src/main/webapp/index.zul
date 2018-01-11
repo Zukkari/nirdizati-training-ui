@@ -3,7 +3,7 @@
 <?meta name="viewport" content="width=device-width, initial-scale=1.0"?>
 <?page title="${labels.header.landing} - Nirdizati" ?>
 <zk>
-    <borderlayout id="mainLayout" vflex="1" hflex="1" apply="cs.ut.controllers.MainPageController">
+    <borderlayout id="mainLayout" vflex="1" hflex="1" apply="cs.ut.ui.controllers.MainPageController">
         <north vflex="1" border="none">
             <include src="/views/components/header.zul"/>
         </north>

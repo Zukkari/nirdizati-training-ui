@@ -1,7 +1,7 @@
-package cs.ut.controllers
+package cs.ut.ui.controllers
 
 import cs.ut.config.ClientInfo
-import cs.ut.controllers.JobTrackerController.Companion.GRID_ID
+import cs.ut.ui.controllers.JobTrackerController.Companion.GRID_ID
 import cs.ut.engine.JobManager
 import cs.ut.jobs.Job
 import cs.ut.ui.NirdizatiGrid
@@ -79,7 +79,6 @@ class MainPageController : SelectorComposer<Component>(), Redirectable {
             val jobGrid: NirdizatiGrid<Job> = Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
             val jobs: List<Job> = cookieUtil.getJobsByCookie(request)
             if (jobs.isNotEmpty()) {
-                JobManager.updateJobs(cookieKey, Executions.getCurrent().desktop)
                 jobGrid.generate(jobs)
                 trackerEast.isVisible = true
             }

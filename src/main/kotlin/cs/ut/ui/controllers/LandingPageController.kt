@@ -1,4 +1,4 @@
-package cs.ut.controllers
+package cs.ut.ui.controllers
 
 import cs.ut.util.PAGE_TRAINING
 import cs.ut.util.PAGE_UPLOAD
@@ -21,7 +21,6 @@ class LandingPageController : SelectorComposer<Component>(), Redirectable {
 
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
-
         wireButtons()
     }
 

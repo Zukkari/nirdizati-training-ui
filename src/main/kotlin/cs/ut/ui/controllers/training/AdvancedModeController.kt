@@ -1,8 +1,8 @@
-package cs.ut.controllers.training
+package cs.ut.ui.controllers.training
 
 import cs.ut.config.items.ModelParameter
 import cs.ut.config.items.Property
-import cs.ut.controllers.TrainingController
+import cs.ut.ui.controllers.TrainingController
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.adapters.AdvancedModeAdapter
@@ -34,6 +34,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
         gridContainer.appendChild(grid)
         gridContainer.appendChild(hyperParamsContainer)
         grid.fields.forEach { it.generateListener() }
+        grid.sclass = "max-height max-width"
         grid.hflex = "min"
         log.debug("Finished grid initialization")
     }

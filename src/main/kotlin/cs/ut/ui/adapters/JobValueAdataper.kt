@@ -2,8 +2,6 @@ package cs.ut.ui.adapters
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
-import cs.ut.controllers.JobTrackerController
-import cs.ut.controllers.Redirectable
 import cs.ut.engine.JobManager
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
@@ -11,6 +9,9 @@ import cs.ut.jobs.SimulationJob
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.ui.NirdizatiGrid
+import cs.ut.ui.controllers.JobTrackerController
+import cs.ut.ui.controllers.Redirectable
+import cs.ut.util.CookieUtil
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.OUTCOME
 import cs.ut.util.PAGE_VALIDATION
@@ -25,6 +26,8 @@ import org.zkoss.zul.Hlayout
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import org.zkoss.zul.Vlayout
+import javax.servlet.http.HttpServletRequest
+
 
 class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
     companion object {
@@ -52,7 +55,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
 
     private fun Job.identifierLabel(): Label {
         val label = Label(this.id)
-        label.style = "font-size: 8px"
+        label.sclass = "extra-small"
         return label
     }
 
@@ -60,7 +63,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
         val hlayout = Hlayout()
 
         val label = Label(NirdizatiUtil.localizeText("property.outcome"))
-        label.sclass = "bold-text"
+        label.sclass = "param-label"
 
         val outcome = Label(NirdizatiUtil.localizeText(if (this.translate) this.getTranslateName() else this.id))
         hlayout.appendChild(label)
@@ -82,7 +85,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
                 NirdizatiUtil.localizeText(learner.type + "." + learner.id)
         )
         label.isPre = true
-        label.sclass = "bold-text"
+        label.sclass = "param-label"
 
         val outcomeText = "" + if (outcome.id == OUTCOME) NirdizatiUtil.localizeText("threshold.threshold_msg") + ": " +
                 (if (outcome.parameter == AVERAGE) NirdizatiUtil.localizeText("threshold.avg").toLowerCase()
@@ -146,7 +149,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
 
     private fun SimulationJob.generateFileInfo(): Hlayout {
         val fileLabel = Label(NirdizatiUtil.localizeText("attribute.log_file"))
-        fileLabel.sclass = "bold-text"
+        fileLabel.sclass = "param-label"
 
         val file = Label(this.logFile.name)
 
@@ -160,20 +163,23 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
         val btn = Button("x")
         btn.vflex = "min"
         btn.hflex = "min"
-        btn.sclass = "close-btn"
 
+        val client = Executions.getCurrent().desktop
         btn.addEventListener(Events.ON_CLICK, { _ ->
-            val grid: NirdizatiGrid<Job> = this.client.components.firstOrNull { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
-            this.kill()
-            Executions.schedule(this.client,
+            val grid: NirdizatiGrid<Job> = client.components.firstOrNull { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
+
+            JobManager.stopJob(this)
+            Executions.schedule(client,
                     { _ ->
                         row.detach()
                         if (grid.rows.getChildren<Component>().isEmpty()) {
-                            this.client.components.first { it.id == TRACKER_EAST }.isVisible = false
+                            client.components.first { it.id == TRACKER_EAST }.isVisible = false
                         }
                     },
                     Event("abort_job", null, null))
-            JobManager.removeJob(this)
+            JobManager.removeJob(
+                    CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest),
+                    this)
         })
 
         return btn
@@ -181,6 +187,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
 
     private fun SimulationJob.getVisualizeBtn(): Button {
         val visualize = Button(NirdizatiUtil.localizeText("job_tracker.visiualize"))
+        visualize.sclass = "n-btn"
         visualize.hflex = "1"
         visualize.isDisabled = !(JobStatus.COMPLETED == this.status || JobStatus.FINISHING == this.status)
 
@@ -195,8 +202,9 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
     private fun getDeployBtn(): Button {
         val deploy = Button(NirdizatiUtil.localizeText("job_tracker.deploy_to_runtime"))
         deploy.isDisabled = true
-        deploy.hflex = "1"
+        deploy.sclass = "n-btn"
         deploy.vflex = "min"
+        deploy.hflex = "1"
 
         return deploy
     }
@@ -211,7 +219,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
         }
 
         val res = Label(label)
-        res.style = "font-size: 10px"
+        res.sclass = "small-font"
         res.isMultiline = true
         res.isPre = true
         return res

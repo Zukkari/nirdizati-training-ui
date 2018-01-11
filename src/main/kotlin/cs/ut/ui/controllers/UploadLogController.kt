@@ -1,6 +1,7 @@
-package cs.ut.controllers
+package cs.ut.ui.controllers
 
 import cs.ut.config.MasterConfiguration
+import cs.ut.config.nodes.Dir
 import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
 import org.zkoss.util.media.Media
@@ -67,7 +68,7 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable {
     @Listen("onClick = #upload")
     fun processLog() {
         val runnable = Runnable {
-            val tmpDir = MasterConfiguration.directoryPathConfiguration.tmpDir
+            val tmpDir = MasterConfiguration.dirConfig.dirPath(Dir.TMP_DIR)
             val file = File(tmpDir + media.name)
             log.debug("Creating file: ${file.absolutePath}")
             file.createNewFile()

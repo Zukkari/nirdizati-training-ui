@@ -1,4 +1,4 @@
-package cs.ut.controllers
+package cs.ut.ui.controllers
 
 import cs.ut.charts.Chart
 import cs.ut.charts.ChartGenerator
@@ -101,7 +101,7 @@ class ValidationController : SelectorComposer<Component>() {
             removeChildren()
 
             val label = Label(Labels.getLabel("validation.select_version"))
-            label.sclass = "bold-text"
+            label.sclass = "param-label"
             comboLayout.appendChild(label)
 
             var itemSet = false
@@ -159,7 +159,7 @@ class ValidationController : SelectorComposer<Component>() {
     private fun Row.generateLabelAndValue(labelCaption: String, valueCaption: String, localizeValue: Boolean = true) {
         val label = Label(Labels.getLabel(labelCaption) + ": ")
         val value = Label(if (localizeValue) Labels.getLabel(valueCaption) else valueCaption)
-        value.sclass = "bold-text"
+        value.sclass = "param-label"
 
         val hlayout = Hlayout()
         hlayout.appendChild(label)
