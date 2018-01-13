@@ -141,7 +141,7 @@ const textStyle = () => {
 const labelsConfig = () => {
     return {
         style: {
-            fontSize: '15px'
+            fontSize: '16px'
         }
     }
 };
