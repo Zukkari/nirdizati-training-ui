@@ -25,7 +25,7 @@ class StartUpJob : Job() {
         log.debug("Preparing ${this.absolutePath}")
         if (!this.exists()) {
             log.debug("$this does not exist, creating directory")
-            if (!this.mkdir()) {
+            if (!this.mkdirs()) {
                 log.error("No rights to create dir")
                 throw NirdizatiRuntimeException("Cannot create dir. Am I run as root?")
             }
