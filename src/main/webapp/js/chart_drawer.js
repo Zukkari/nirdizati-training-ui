@@ -5,10 +5,12 @@ const canvas = "chart_canvas";
 
 function prepareGraphContainer(isHeatMap) {
     let container = document.getElementById(graphContainer);
-    if (isHeatMap) {
-        let canvas = document.getElementById(canvas);
-        container.removeChild(canvas);
-    } else {
+    container.className = "padding-top";
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+    if (!isHeatMap) {
+        container.className = '';
         let c = document.createElement("canvas");
         c.setAttribute("id", canvas);
         container.appendChild(c);
@@ -129,6 +131,21 @@ function barChart(payload, chart_label, labels) {
     })
 }
 
+const textStyle = () => {
+    return {
+        fontSize: '21px',
+        fontWeight: 'bold'
+    }
+};
+
+const labelsConfig = () => {
+    return {
+        style: {
+            fontSize: '15px'
+        }
+    }
+};
+
 function heatMap(payload, title, xLabels, yLabels) {
     prepareGraphContainer(true);
     Highcharts.chart(graphContainer, {
@@ -138,16 +155,25 @@ function heatMap(payload, title, xLabels, yLabels) {
         },
 
         title: {
-            text: title
+            text: null,
         },
 
         xAxis: {
-            categories: JSON.parse(xLabels)
+            categories: JSON.parse(xLabels),
+            labels: labelsConfig(),
+            title: {
+                text: 'Predicted',
+                style: textStyle()
+            }
         },
 
         yAxis: {
             categories: JSON.parse(yLabels),
-            title: null
+            labels: labelsConfig(),
+            title: {
+                text: 'Actual',
+                style: textStyle()
+            }
         },
 
         colorAxis: {
@@ -166,8 +192,8 @@ function heatMap(payload, title, xLabels, yLabels) {
         },
 
         tooltip: {
-            formatter: () => {
-                `Predicted <b>${this.series.xAxis.categories[this.point.x]} ${this.point.x}</b> times when correct category was <b>${this.series.yAxis.categories[this.point.y]}</b>`
+            formatter: function () {
+                return `actual <b>${this.series.yAxis.categories[this.point.y]}</b><br/>predicted <b>${this.series.yAxis.categories[this.point.y]}</b><br/><b>${this.point.value}</b> times`
             }
         },
 
@@ -177,7 +203,15 @@ function heatMap(payload, title, xLabels, yLabels) {
             data: JSON.parse(payload),
             dataLabels: {
                 enabled: true,
-                color: '#000'
+                color: '#000',
+                style: {
+                    fontSize: '19px'
+                }
+            },
+            states: {
+                hover: {
+                    enabled: false
+                }
             }
         }]
     });

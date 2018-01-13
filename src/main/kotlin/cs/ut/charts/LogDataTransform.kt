@@ -63,3 +63,30 @@ fun getBarChartPayload(file: File): List<BarChartData> {
 
     return dataSet
 }
+
+data class HeatMapDataset(val x: Int, val y: Int, val value: Int)
+
+data class HeatMapData(val xLabels: List<String>,
+                       val yLabels: List<String>,
+                       val data: List<HeatMapDataset>)
+
+fun getHeatMapPayload(file: File): HeatMapData {
+    var rows: List<String> = BufferedReader(FileReader(file)).lineSequence().toList()
+    var xLabels = rows[0].split(delim)
+    xLabels -= xLabels[0]
+    rows -= rows[0]
+
+    var yLabels: List<String> = listOf()
+    var data: List<HeatMapDataset> = listOf()
+
+    for ((y, row) in rows.asReversed().withIndex()) {
+        var tokens: List<String> = row.split(delim)
+        yLabels += tokens[0]
+        tokens -= tokens[0]
+
+        for ((x, token) in tokens.withIndex()) {
+            data += HeatMapDataset(x, y, token.toInt())
+        }
+    }
+    return HeatMapData(xLabels, yLabels, data)
+}

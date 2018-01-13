@@ -1,5 +1,9 @@
 $min-width: 680px
 
+@mixin active
+  background: linear-gradient(53deg, $blue, $dark-blue)
+  background-size: 400% 400%
+
 @media screen and (min-width: $min-width)
   %big-btn
     min-width: 48px
@@ -11,21 +15,22 @@ $min-width: 680px
     border-radius: 40px
     width: 160px
     height: 50px
-    background: linear-gradient(53deg, $blue, $dark-blue)
-    background-size: 400% 400%
     animation: btn-gradient 5s ease alternate infinite
 
   .n-btn, .n-upload-btn
     @extend %big-btn
+    @include active
 
   .n-proceed
     @extend %big-btn
     margin:
       top: 100px
+    @include active
 
   .n-block-btn
     @extend %big-btn
     display: inline-block
+    @include active
 
 @media screen and (max-width: $min-width)
   %small-btn
@@ -41,6 +46,7 @@ $min-width: 680px
   @each $style in $buttons
     .n-#{$style}
       @extend %small-btn
+      @include active
 
 @keyframes btn-gradient
   0%

@@ -15,6 +15,7 @@ class ChartGenerator(val job: SimulationJob) {
         val charts = mutableListOf<Chart>()
 
         if (job.isClassification) {
+            charts.add(generateHeatMap())
             charts.addAll(generateLineCharts())
             charts.addAll(generateBarCharts())
         } else {
@@ -48,5 +49,15 @@ class ChartGenerator(val job: SimulationJob) {
         }
 
         return charts.toList()
+    }
+
+    private fun generateHeatMap(): HeatMap {
+        val file = LogManager.getDetailedFile(job)
+        val heatMap = getHeatMapPayload(file)
+
+        return HeatMap(TRUE_VS_PREDICTED,
+                gson.toJson(heatMap.data.map { arrayOf(it.x, it.y, it.value) }),
+                gson.toJson(heatMap.xLabels),
+                gson.toJson(heatMap.yLabels))
     }
 }

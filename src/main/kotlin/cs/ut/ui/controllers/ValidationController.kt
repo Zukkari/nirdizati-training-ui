@@ -71,7 +71,7 @@ class ValidationController : SelectorComposer<Component>() {
 
     private fun Row.generateCell(entry: Map.Entry<String, List<Chart>>) {
         val cell = Cell()
-        val label = Label(Labels.getLabel(entry.key))
+        val label = Label(NirdizatiUtil.localizeText(entry.key))
         cell.id = entry.key
         cell.align = "center"
         cell.valign = "center"
