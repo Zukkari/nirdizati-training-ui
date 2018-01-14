@@ -52,7 +52,7 @@
     <dirs>
         <dir><!-- Path to python executable -->
             <id>python</id>
-            <path>/home/zukkari/anaconda3/envs/myenv/bin/python</path>
+            <path>/usr/bin/python3</path>
         </dir>
         <dir>
             <!-- Directory for user log storage -->

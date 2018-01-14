@@ -8,11 +8,11 @@
         <rows>
             <row>
                 <label hflex="1" value="${labels.training.selected_log}" sclass="label-combo"/>
-                <combobox id="clientLogs" constraint="no empty"/>
+                <combobox id="clientLogs"/>
             </row>
             <row>
                 <label value="${labels.training.prediction_type}" hflex="1"/>
-                <combobox id="predictionType" constraint="no empty"/>
+                <combobox id="predictionType"/>
             </row>
             <row>
                 <hlayout>

@@ -1,20 +1,16 @@
 package cs.ut.ui.controllers
 
 import com.google.common.html.HtmlEscapers
+import cs.ut.config.MasterConfiguration
+import cs.ut.config.items.ModelParameter
 import cs.ut.engine.JobManager
 import cs.ut.engine.LogManager
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
-import cs.ut.config.MasterConfiguration
-import cs.ut.config.items.ModelParameter
 import cs.ut.ui.controllers.training.AdvancedModeController
 import cs.ut.ui.controllers.training.BasicModeController
 import cs.ut.ui.controllers.training.ModeController
-import cs.ut.util.CookieUtil
-import cs.ut.util.NirdizatiUtil
-import cs.ut.util.OUTCOME
-import cs.ut.util.isColumnStatic
-import cs.ut.util.readLogColumns
+import cs.ut.util.*
 import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
@@ -25,13 +21,7 @@ import org.zkoss.zk.ui.event.SelectEvent
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zul.Checkbox
-import org.zkoss.zul.Combobox
-import org.zkoss.zul.Comboitem
-import org.zkoss.zul.Doublebox
-import org.zkoss.zul.Hbox
-import org.zkoss.zul.Radiogroup
-import org.zkoss.zul.Vlayout
+import org.zkoss.zul.*
 import java.io.File
 import javax.servlet.http.HttpServletRequest
 
@@ -46,6 +36,8 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
 
         val DEFAULT = MasterConfiguration.defaultValuesConfiguration.minValue
         val AVERAGE = MasterConfiguration.defaultValuesConfiguration.average.toString()
+
+        const val START_TRAINING = "startTraining"
     }
 
     @Wire
@@ -73,14 +65,14 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         radioGroup = Radiogroup()
 
         initClientLogs()
-        initPredictions()
-
-        gridController = BasicModeController(gridContainer, getLogFileName())
+        if (initPredictions()) {
+            gridController = BasicModeController(gridContainer, getLogFileName())
+        }
     }
 
     private fun getLogFileName(): String = FilenameUtils.getBaseName((clientLogs.selectedItem.getValue() as File).name)
 
-    private fun initPredictions() {
+    private fun initPredictions(): Boolean {
         radioGroup.getChildren<Component>().clear()
         thresholdContainer.getChildren<Component>().clear()
         thresholdContainer.isVisible = false
@@ -91,7 +83,12 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         val params: List<ModelParameter> = MasterConfiguration.modelConfiguration.properties[PREDICTION]!!
         log.debug("Received ${params.size} prediciton types")
 
-        val logFile: File = clientLogs.selectedItem.getValue<File>() ?: return
+        if (clientLogs.itemCount == 0) {
+            predictionType.isDisabled = true
+            return false
+        }
+
+        val logFile: File = clientLogs.selectedItem.getValue<File>() ?: return false
 
         val dataSetColumns: List<String> = readLogColumns(FilenameUtils.getBaseName(logFile.name))
 
@@ -127,6 +124,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
 
         predictionType.selectedItem = predictionType.items[0]
         predictionType.isReadonly = true
+        return true
     }
 
     private fun ModelParameter.setUpRadioButtons() {
@@ -181,6 +179,16 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
             switchMode()
             initPredictions()
         })
+
+        // Disable start button if logs are not found so simulation can not be started
+        val startButton = Executions.getCurrent().desktop.components.firstOrNull { it.id == START_TRAINING }
+        startButton?.let {
+            startButton as Button
+            if (files.isEmpty()) {
+                startButton.isDisabled = true
+                advancedMode.isDisabled = true
+            }
+        }
     }
 
     @Listen("onCheck = #advancedMode")

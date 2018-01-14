@@ -1,28 +1,28 @@
-var chart = null;
 Chart.defaults.global.legend.display = false;
 
-function plot_scatter(payload, chart_label) {
-    var canvas = document.getElementById('chart_canvas');
-    var ctx = canvas.getContext('2d');
-    if (chart != null) chart.destroy();
-    chart = Chart.Scatter(ctx, {
-        data: {
-            datasets: getLinearDatasetData(payload, chart_label)
-        },
-        options: {
-            scales: getScalesData('Actual', 'Predicted'),
-            tooltips: {
-                callbacks: {
-                    label: function (tooltipItem, chart) {
-                        return 'Difference: ' + (tooltipItem.xLabel - tooltipItem.yLabel)
-                    }
-                }
-            }
-        }
-    });
+const graphContainer = "graph-container";
+const canvas = "chart_canvas";
+
+function prepareGraphContainer(isHeatMap) {
+    let container = document.getElementById(graphContainer);
+    container.className = "padding-top";
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+    if (!isHeatMap) {
+        container.className = '';
+        let c = document.createElement("canvas");
+        c.setAttribute("id", canvas);
+        container.appendChild(c);
+    }
 }
 
-function getLinearDatasetData(payload, chart_label, labels) {
+const getCanvasContext = () => {
+    let canvas = document.getElementById('chart_canvas');
+    return canvas.getContext('2d');
+};
+
+const linerDataSetData = (payload, chart_label) => {
     return [{
         label: chart_label,
         data: JSON.parse(payload),
@@ -30,9 +30,9 @@ function getLinearDatasetData(payload, chart_label, labels) {
         backgroundColor: 'rgba(0, 147, 249, 0.2)',
         fill: false
     }]
-}
+};
 
-function getScalesData(xLabel, yLabel) {
+const scalesData = (xLabel, yLabel) => {
     return {
         xAxes: [{
             display: true,
@@ -53,15 +53,42 @@ function getScalesData(xLabel, yLabel) {
             }
         }]
     }
+};
+
+const generateLabels = (n_of_events) => {
+    let labels = [];
+    for (let i = 1; i <= n_of_events; i++) {
+        labels.push(i.toString())
+    }
+    return labels
+};
+
+function scatterPlot(payload, chart_label) {
+    prepareGraphContainer(false);
+    let ctx = getCanvasContext();
+    Chart.Scatter(ctx, {
+        data: {
+            datasets: linerDataSetData(payload, chart_label)
+        },
+        options: {
+            scales: scalesData('Actual', 'Predicted'),
+            tooltips: {
+                callbacks: {
+                    label: function (tooltipItem, chart) {
+                        return 'Difference: ' + (tooltipItem.xLabel - tooltipItem.yLabel)
+                    }
+                }
+            }
+        }
+    });
 }
 
-function plot_line(payload, chart_label, n_of_events, axis_label) {
-    var canvas = document.getElementById('chart_canvas');
-    var ctx = canvas.getContext('2d');
-    if (chart != null) chart.destroy();
-    chart = Chart.Line(ctx, {
+function lineChart(payload, chart_label, n_of_events, axis_label) {
+    prepareGraphContainer(false);
+    let ctx = getCanvasContext();
+    Chart.Line(ctx, {
         data: {
-            datasets: getLinearDatasetData(payload, chart_label),
+            datasets: linerDataSetData(payload, chart_label),
             labels: generateLabels(n_of_events)
         },
         options: {
@@ -70,19 +97,15 @@ function plot_line(payload, chart_label, n_of_events, axis_label) {
                     tension: 0
                 }
             },
-            scales: getScalesData('Number of events', axis_label)
+            scales: scalesData('Number of events', axis_label)
         }
     })
 }
 
-function plot_bar(payload, chart_label, labels) {
-    var canvas = document.getElementById('chart_canvas');
-    var ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    if (chart != null) chart.destroy();
-
-    chart = new Chart(ctx, {
+function barChart(payload, chart_label, labels) {
+    prepareGraphContainer(false);
+    let ctx = getCanvasContext();
+    new Chart(ctx, {
         type: 'horizontalBar',
         data: {
             labels: JSON.parse(labels),
@@ -103,15 +126,93 @@ function plot_bar(payload, chart_label, labels) {
                     borderWidth: 2
                 }
             },
-            reponsive: true
+            responsive: true
         }
     })
 }
 
-function generateLabels(n_of_events) {
-    var labels = [];
-    for (var i = 1; i <= n_of_events; i++) {
-        labels.push(i.toString())
+const textStyle = () => {
+    return {
+        fontSize: '21px',
+        fontWeight: 'bold'
     }
-    return labels
+};
+
+const labelsConfig = () => {
+    return {
+        style: {
+            fontSize: '16px'
+        }
+    }
+};
+
+function heatMap(payload, title, xLabels, yLabels) {
+    prepareGraphContainer(true);
+    Highcharts.chart(graphContainer, {
+        chart: {
+            type: 'heatmap',
+            plotBorderWidth: 1
+        },
+
+        title: {
+            text: null,
+        },
+
+        xAxis: {
+            categories: JSON.parse(xLabels),
+            labels: labelsConfig(),
+            title: {
+                text: 'Predicted',
+                style: textStyle()
+            }
+        },
+
+        yAxis: {
+            categories: JSON.parse(yLabels),
+            labels: labelsConfig(),
+            title: {
+                text: 'Actual',
+                style: textStyle()
+            }
+        },
+
+        colorAxis: {
+            min: 0,
+            minColor: '#FFFFFF',
+            maxColor: Highcharts.getOptions().colors[0]
+        },
+
+        legend: {
+            align: 'right',
+            layout: 'vertical',
+            margin: 0,
+            verticalAlign: 'top',
+            y: 25,
+            symbolHeight: 280
+        },
+
+        tooltip: {
+            formatter: function () {
+                return `actual <b>${this.series.yAxis.categories[this.point.y]}</b><br/>predicted <b>${this.series.yAxis.categories[this.point.y]}</b><br/><b>${this.point.value}</b> times`
+            }
+        },
+
+        series: [{
+            name: title,
+            borderWidth: 1,
+            data: JSON.parse(payload),
+            dataLabels: {
+                enabled: true,
+                color: '#000',
+                style: {
+                    fontSize: '19px'
+                }
+            },
+            states: {
+                hover: {
+                    enabled: false
+                }
+            }
+        }]
+    });
 }
