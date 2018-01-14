@@ -193,7 +193,7 @@ function heatMap(payload, title, xLabels, yLabels) {
 
         tooltip: {
             formatter: function () {
-                return `actual <b>${this.series.yAxis.categories[this.point.y]}</b><br/>predicted <b>${this.series.yAxis.categories[this.point.y]}</b><br/><b>${this.point.value}</b> times`
+                return `actual <b>${this.series.xAxis.categories[this.point.x]}</b><br/>predicted <b>${this.series.yAxis.categories[this.point.y]}</b><br/><b>${this.point.value}</b> times`
             }
         },
 
