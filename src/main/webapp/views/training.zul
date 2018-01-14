@@ -15,6 +15,10 @@
                 <combobox id="predictionType"/>
             </row>
             <row>
+                <label value="${labels.training.gen_dataset_para}"/>
+                <button id="genDataSetParam" sclass="n-btn" label="${labels.training.generate}" onClick="generateNewDatasetParams" disabled="true"/>
+            </row>
+            <row>
                 <hlayout>
                     <label value="${labels.training.advanced}" hflex="1"/>
                     <checkbox id="advancedMode" zclass="toggle" sclass="switch toggle-round-flat" hflex="1"/>
