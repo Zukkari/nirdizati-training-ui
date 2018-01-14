@@ -138,15 +138,25 @@ const textStyle = () => {
     }
 };
 
-const labelsConfig = () => {
+const labelsConfig = (datalenght) => {
+    let fontSize;
+    if (datalenght <= 10) {
+        fontSize = '16px'
+    } else if (datalenght <= 20) {
+        fontSize = '12px'
+    } else {
+        fontSize = '8px'
+    }
+
     return {
         style: {
-            fontSize: '16px'
+            fontSize: fontSize
         }
     }
 };
 
 function heatMap(payload, title, xLabels, yLabels) {
+    const data = JSON.parse(payload);
     prepareGraphContainer(true);
     Highcharts.chart(graphContainer, {
         chart: {
@@ -160,7 +170,7 @@ function heatMap(payload, title, xLabels, yLabels) {
 
         xAxis: {
             categories: JSON.parse(xLabels),
-            labels: labelsConfig(),
+            labels: labelsConfig(data.length),
             title: {
                 text: 'Predicted',
                 style: textStyle()
@@ -169,7 +179,7 @@ function heatMap(payload, title, xLabels, yLabels) {
 
         yAxis: {
             categories: JSON.parse(yLabels),
-            labels: labelsConfig(),
+            labels: labelsConfig(data.length),
             title: {
                 text: 'Actual',
                 style: textStyle()
@@ -200,7 +210,7 @@ function heatMap(payload, title, xLabels, yLabels) {
         series: [{
             name: title,
             borderWidth: 1,
-            data: JSON.parse(payload),
+            data: data,
             dataLabels: {
                 enabled: true,
                 color: '#000',
