@@ -7,6 +7,8 @@ import cs.ut.engine.JobManager
 import cs.ut.engine.LogManager
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
+import cs.ut.ui.controllers.modal.ParameterModalController.Companion.FILE
+import cs.ut.ui.controllers.modal.ParameterModalController.Companion.IS_RECREATION
 import cs.ut.ui.controllers.training.AdvancedModeController
 import cs.ut.ui.controllers.training.BasicModeController
 import cs.ut.ui.controllers.training.ModeController
@@ -55,6 +57,9 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
     @Wire
     private lateinit var thresholdContainer: Hbox
 
+    @Wire
+    private lateinit var genDataSetParam: Button
+
     private lateinit var radioGroup: Radiogroup
 
     private lateinit var gridController: ModeController
@@ -66,6 +71,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
 
         initClientLogs()
         if (initPredictions()) {
+            genDataSetParam.isDisabled = false
             gridController = BasicModeController(gridContainer, getLogFileName())
         }
     }
@@ -282,5 +288,19 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         }
 
         return isValid
+    }
+
+    @Listen("onClick = #genDataSetParam")
+    fun generateNewDatasetParams() {
+        log.debug("Started new dataset parameter generation for -> ${clientLogs.value}")
+        val args = mapOf<String, Any>(FILE to clientLogs.selectedItem.getValue(), IS_RECREATION to true)
+        val window: Window = Executions.createComponents(
+                "/views/modals/params.zul",
+                self,
+                args
+        ) as Window
+        if (self.getChildren<Component>().contains(window)) {
+            window.doModal()
+        }
     }
 }

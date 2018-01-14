@@ -54,9 +54,13 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
     private lateinit var csvReader: CsvReader
 
+    private var isRecreation: Boolean = false
+
     companion object {
         const val IGNORE_COL = "ignore"
         const val FUTURE_DATA = "future_values"
+        const val FILE = "file"
+        const val IS_RECREATION = "isRecreation"
     }
 
     override fun doAfterCompose(comp: Component?) {
@@ -65,7 +69,9 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         cols = MasterConfiguration.csvConfiguration.userCols
         log.debug("Read columns from master config: $cols")
 
-        this.file = arg["file"] as File
+        this.file = arg[FILE] as File
+        this.isRecreation = arg[IS_RECREATION] as Boolean? ?: false
+
         csvReader = CsvReader(file)
 
         log.debug("Received file with name ${file.name}")
@@ -88,10 +94,12 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         grid.generate(cols)
 
         cancelBtn.addEventListener(Events.ON_CLICK, { _ ->
-            Files.delete(Paths.get(file.absolutePath))
-            Executions.getCurrent().desktop.components.firstOrNull { it.id == "upload" }?.let {
-                it as Button
-                it.isDisabled = false
+            if (!isRecreation) {
+                Files.delete(Paths.get(file.absolutePath))
+                Executions.getCurrent().desktop.components.firstOrNull { it.id == "upload" }?.let {
+                    it as Button
+                    it.isDisabled = false
+                }
             }
             modal.detach()
         })
@@ -133,16 +141,22 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
             }
 
             JobManager.runServiceJob(DataSetGenerationJob(params, file))
-            NirdizatiUtil.showNotificationAsync(
-                    Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))),
-                    Executions.getCurrent().desktop)
 
-            val target = Files.move(Paths.get(file.absolutePath),
-                    Paths.get(File(MasterConfiguration.dirConfig.dirPath(Dir.USER_LOGS) + file.name).absolutePath), StandardCopyOption.REPLACE_EXISTING)
+            if (!isRecreation) {
+                NirdizatiUtil.showNotificationAsync(
+                        Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))),
+                        Executions.getCurrent().desktop)
 
-            JobManager.runServiceJob(UserRightsJob(target.toFile()))
+                val target = Files.move(Paths.get(file.absolutePath),
+                        Paths.get(File(MasterConfiguration.dirConfig.dirPath(Dir.USER_LOGS) + file.name).absolutePath), StandardCopyOption.REPLACE_EXISTING)
+
+                JobManager.runServiceJob(UserRightsJob(target.toFile()))
+                setContent("training", getPage(), 2000, Executions.getCurrent().desktop)
+            } else {
+                NirdizatiUtil.showNotificationAsync(
+                        NirdizatiUtil.localizeText("param.modal.generated"), Executions.getCurrent().desktop)
+            }
             modal.detach()
-            setContent("training", getPage(), 2000, Executions.getCurrent().desktop)
         }
         okBtn.addEventListener(Events.ON_CLICK, okBtnListener)
 

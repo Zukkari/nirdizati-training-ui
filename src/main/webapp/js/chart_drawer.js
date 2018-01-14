@@ -138,15 +138,25 @@ const textStyle = () => {
     }
 };
 
-const labelsConfig = () => {
+const labelsConfig = (datalenght) => {
+    let fontSize;
+    if (datalenght <= 10) {
+        fontSize = '16px'
+    } else if (datalenght <= 20) {
+        fontSize = '12px'
+    } else {
+        fontSize = '8px'
+    }
+
     return {
         style: {
-            fontSize: '16px'
+            fontSize: fontSize
         }
     }
 };
 
 function heatMap(payload, title, xLabels, yLabels) {
+    const data = JSON.parse(payload);
     prepareGraphContainer(true);
     Highcharts.chart(graphContainer, {
         chart: {
@@ -160,7 +170,7 @@ function heatMap(payload, title, xLabels, yLabels) {
 
         xAxis: {
             categories: JSON.parse(xLabels),
-            labels: labelsConfig(),
+            labels: labelsConfig(data.length),
             title: {
                 text: 'Predicted',
                 style: textStyle()
@@ -169,7 +179,7 @@ function heatMap(payload, title, xLabels, yLabels) {
 
         yAxis: {
             categories: JSON.parse(yLabels),
-            labels: labelsConfig(),
+            labels: labelsConfig(data.length),
             title: {
                 text: 'Actual',
                 style: textStyle()
@@ -193,14 +203,14 @@ function heatMap(payload, title, xLabels, yLabels) {
 
         tooltip: {
             formatter: function () {
-                return `actual <b>${this.series.yAxis.categories[this.point.y]}</b><br/>predicted <b>${this.series.yAxis.categories[this.point.y]}</b><br/><b>${this.point.value}</b> times`
+                return `actual <b>${this.series.xAxis.categories[this.point.x]}</b><br/>predicted <b>${this.series.yAxis.categories[this.point.y]}</b><br/><b>${this.point.value}</b> times`
             }
         },
 
         series: [{
             name: title,
             borderWidth: 1,
-            data: JSON.parse(payload),
+            data: data,
             dataLabels: {
                 enabled: true,
                 color: '#000',

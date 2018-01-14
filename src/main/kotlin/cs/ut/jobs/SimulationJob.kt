@@ -29,6 +29,7 @@ class SimulationJob(
 
     private var process: Process? = null
     private val dirConfig = MasterConfiguration.dirConfig
+    private val useId: Boolean = MasterConfiguration.userPreferences.useId
 
 
     override fun preProcess() {
@@ -54,7 +55,7 @@ class SimulationJob(
         )
 
         val writer = FileWriter()
-        val f = writer.writeJsonToDisk(json, FilenameUtils.getBaseName(logFile.name),
+        val f = writer.writeJsonToDisk(json, if (useId) id else FilenameUtils.getBaseName(logFile.name),
                 dirConfig.dirPath(Dir.TRAIN_DIR))
 
         updateACL(f)
@@ -63,29 +64,23 @@ class SimulationJob(
     override fun execute() {
         val prefs: UserPreferences = MasterConfiguration.userPreferences
         val python: String = dirConfig.dirPath(Dir.PYTHON)
+        val parameters = mutableListOf<String>()
+        if (prefs.enabled) {
+            parameters.add("sudo")
+            parameters.add("-u")
+            parameters.add(prefs.userName)
+        }
+
+        parameters.add(python)
+
+        if (useId) {
+            parameters.add(id)
+        } else {
+            parameters.addAll(listOf(TRAIN_PY, logFile.name, bucketing.parameter, encoding.parameter, learner.parameter, outcome.parameter))
+        }
+
         try {
-            val pb =
-                    if (prefs.enabled) ProcessBuilder(
-                            "sudo",
-                            "-u",
-                            prefs.userName,
-                            python,
-                            "train.py",
-                            logFile.name,
-                            bucketing.parameter,
-                            encoding.parameter,
-                            learner.parameter,
-                            outcome.parameter
-                    )
-                    else ProcessBuilder(
-                            python,
-                            "train.py",
-                            logFile.name,
-                            bucketing.parameter,
-                            encoding.parameter,
-                            learner.parameter,
-                            outcome.parameter
-                    )
+            val pb = ProcessBuilder(parameters)
 
             pb.directory(dirConfig.dirByName(Dir.CORE_DIR))
             pb.inheritIO()
@@ -100,7 +95,7 @@ class SimulationJob(
             process!!.waitFor()
             log.debug("Script finished running...")
 
-            val file = File(dirConfig.dirPath(Dir.PKL_DIR) + this.toString())
+            val file = File(dirConfig.dirPath(Dir.PKL_DIR) + if (useId) id + ".pkl" else this.toString())
             log.debug(file)
 
             if (!file.exists()) {
@@ -144,4 +139,8 @@ class SimulationJob(
             } catch (e: NumberFormatException) {
                 value.toDouble()
             }
+
+    companion object {
+        const val TRAIN_PY = "train.py"
+    }
 }

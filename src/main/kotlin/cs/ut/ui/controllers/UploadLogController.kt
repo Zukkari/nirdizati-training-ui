@@ -2,6 +2,7 @@ package cs.ut.ui.controllers
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.nodes.Dir
+import cs.ut.ui.controllers.modal.ParameterModalController.Companion.FILE
 import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
 import org.zkoss.util.media.Media
@@ -77,7 +78,7 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable {
                 it.write(media.stringData.replace("/", "-").toByteArray(Charset.forName("UTF-8")))
             }
 
-            val args = mapOf("file" to file)
+            val args = mapOf(FILE to file)
             val window: Window = Executions.createComponents(
                     "/views/modals/params.zul",
                     self,

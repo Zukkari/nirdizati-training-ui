@@ -1,6 +1,10 @@
 <?link rel="stylesheet" type="text/css" href="/css/main.css" ?>
 <?meta name="viewport" content="width=device-width, initial-scale=1.0"?>
 <?page title="${labels.header.landing} - Nirdizati" ?>
+<?script src="webjars/chartjs/2.7.0/Chart.js" ?>
+<?script src="https://code.highcharts.com/maps/highmaps.src.js"?>
+<?script src="https://code.highcharts.com/maps/modules/heatmap.js"?>
+<?script src="/js/chart_drawer.js"?>
 <zk>
     <borderlayout id="mainLayout" vflex="1" hflex="1" apply="cs.ut.ui.controllers.MainPageController">
         <north vflex="1" border="none">
