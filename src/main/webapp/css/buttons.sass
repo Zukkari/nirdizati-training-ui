@@ -7,7 +7,7 @@ $min-width: 680px
 @mixin disabled
   &[disabled]
     background: linear-gradient(53deg, $light-grey, $dark-grey)
-    background-size: 400% 400%
+    background-size: 600% 600%
 
 @media screen and (min-width: $min-width)
   %big-btn
@@ -20,7 +20,7 @@ $min-width: 680px
     border-radius: 40px
     width: 160px
     height: 50px
-    animation: btn-gradient 5s ease alternate infinite
+    animation: btn-gradient 15s ease alternate infinite
 
   .n-btn, .n-upload-btn
     @extend %big-btn

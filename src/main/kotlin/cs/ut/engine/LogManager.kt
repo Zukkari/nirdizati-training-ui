@@ -23,6 +23,8 @@ object LogManager {
     private val featureImportanceDir: String
     private val detailedDir: String
 
+    private val useId: Boolean = MasterConfiguration.userPreferences.useId
+
     init {
         log.debug("Initializing $this")
         val conf = MasterConfiguration.dirConfig
@@ -58,7 +60,7 @@ object LogManager {
      */
     fun getDetailedFile(job: SimulationJob): File {
         log.debug("Getting detailed log information for job '$job'")
-        val fileName = DETAILED + FilenameUtils.getBaseName(job.toString())
+        val fileName = DETAILED + if (useId) job.id else FilenameUtils.getBaseName(job.toString())
         return getFile(detailedDir + fileName)
     }
 
@@ -70,7 +72,7 @@ object LogManager {
      */
     fun getValidationFile(job: SimulationJob): File {
         log.debug("Getting validation log file for job '$job'")
-        val fileName = VALIDATION + FilenameUtils.getBaseName(job.toString())
+        val fileName = VALIDATION + if (useId) job.id else FilenameUtils.getBaseName(job.toString())
         return getFile(validationDir + fileName)
     }
 
@@ -81,7 +83,7 @@ object LogManager {
 
             val files = mutableListOf<File>()
             (1..15).forEach { i ->
-                val fileName = featureImportanceDir + FEATURE + FilenameUtils.getBaseName(job.toString()) + "_$i"
+                val fileName = featureImportanceDir + FEATURE + (if (useId) job.id else FilenameUtils.getBaseName(job.toString())) + "_$i"
                 try {
                     files.add(getFile(fileName))
                 } catch (e: Exception) {
@@ -92,12 +94,12 @@ object LogManager {
             log.debug("Found ${files.size} files for job: $job")
             return files
         } else {
-            return listOf(getFile(featureImportanceDir + FEATURE + FilenameUtils.getBaseName(job.toString()) + "_1"))
+            return listOf(getFile(featureImportanceDir + FEATURE + (if (useId) job.id else FilenameUtils.getBaseName(job.toString())) + "_1"))
         }
     }
 
     private fun getFile(fileName: String): File {
-        val file = File( fileName + ".csv")
+        val file = File(fileName + ".csv")
         log.debug("Looking for file with name ${file.name}")
 
         if (!file.exists()) {

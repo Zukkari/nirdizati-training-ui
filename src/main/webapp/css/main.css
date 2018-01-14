@@ -106,14 +106,14 @@
     border-radius: 40px;
     width: 160px;
     height: 50px;
-    animation: btn-gradient 5s ease alternate infinite; }
+    animation: btn-gradient 15s ease alternate infinite; }
 
   .n-btn, .n-upload-btn {
     background: linear-gradient(53deg, #0093f9, #0068b3);
     background-size: 400% 400%; }
     .n-btn[disabled], .n-upload-btn[disabled] {
       background: linear-gradient(53deg, #e6e6e6, #bbbbbb);
-      background-size: 400% 400%; }
+      background-size: 600% 600%; }
 
   .n-proceed {
     margin-top: 100px;
@@ -121,7 +121,7 @@
     background-size: 400% 400%; }
     .n-proceed[disabled] {
       background: linear-gradient(53deg, #e6e6e6, #bbbbbb);
-      background-size: 400% 400%; }
+      background-size: 600% 600%; }
 
   .n-block-btn {
     display: inline-block;
@@ -129,7 +129,7 @@
     background-size: 400% 400%; }
     .n-block-btn[disabled] {
       background: linear-gradient(53deg, #e6e6e6, #bbbbbb);
-      background-size: 400% 400%; } }
+      background-size: 600% 600%; } }
 @media screen and (max-width: 680px) {
   .n-btn, .n-upload-btn, .n-proceed {
     min-width: 48px;
@@ -145,21 +145,21 @@
     background-size: 400% 400%; }
     .n-btn[disabled] {
       background: linear-gradient(53deg, #e6e6e6, #bbbbbb);
-      background-size: 400% 400%; }
+      background-size: 600% 600%; }
 
   .n-upload-btn {
     background: linear-gradient(53deg, #0093f9, #0068b3);
     background-size: 400% 400%; }
     .n-upload-btn[disabled] {
       background: linear-gradient(53deg, #e6e6e6, #bbbbbb);
-      background-size: 400% 400%; }
+      background-size: 600% 600%; }
 
   .n-proceed {
     background: linear-gradient(53deg, #0093f9, #0068b3);
     background-size: 400% 400%; }
     .n-proceed[disabled] {
       background: linear-gradient(53deg, #e6e6e6, #bbbbbb);
-      background-size: 400% 400%; } }
+      background-size: 600% 600%; } }
 @keyframes btn-gradient {
   0% {
     background-position-x: 0;
@@ -233,7 +233,6 @@
   word-break: break-all; }
 
 .no-hor-overflow {
-  overflow-x: hidden;
-  overflow-y: scroll; }
+  overflow-x: hidden; }
 
 /*# sourceMappingURL=main.css.map */
