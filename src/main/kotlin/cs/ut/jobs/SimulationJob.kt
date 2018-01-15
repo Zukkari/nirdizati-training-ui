@@ -23,14 +23,10 @@ class SimulationJob(
         val bucketing: ModelParameter,
         val learner: ModelParameter,
         val outcome: ModelParameter,
-        val isClassification: Boolean,
-
         val logFile: File) : Job() {
 
     private var process: Process? = null
     private val dirConfig = MasterConfiguration.dirConfig
-    private val useId: Boolean = MasterConfiguration.userPreferences.useId
-
 
     override fun preProcess() {
         log.debug("Generating training parameters for job $this")
@@ -55,7 +51,7 @@ class SimulationJob(
         )
 
         val writer = FileWriter()
-        val f = writer.writeJsonToDisk(json, if (useId) id else FilenameUtils.getBaseName(logFile.name),
+        val f = writer.writeJsonToDisk(json, id,
                 dirConfig.dirPath(Dir.TRAIN_DIR))
 
         updateACL(f)
@@ -72,12 +68,8 @@ class SimulationJob(
         }
 
         parameters.add(python)
-
-        if (useId) {
-            parameters.add(id)
-        } else {
-            parameters.addAll(listOf(TRAIN_PY, logFile.name, bucketing.parameter, encoding.parameter, learner.parameter, outcome.parameter))
-        }
+        parameters.add(logFile.absolutePath)
+        parameters.add(id)
 
         try {
             val pb = ProcessBuilder(parameters)
@@ -95,7 +87,7 @@ class SimulationJob(
             process!!.waitFor()
             log.debug("Script finished running...")
 
-            val file = File(dirConfig.dirPath(Dir.PKL_DIR) + if (useId) id + ".pkl" else this.toString())
+            val file = File(dirConfig.dirPath(Dir.PKL_DIR) + id + ".pkl")
             log.debug(file)
 
             if (!file.exists()) {

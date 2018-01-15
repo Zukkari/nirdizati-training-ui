@@ -12,9 +12,8 @@ import java.io.File
 object LogManager {
     private val log: Logger = Logger.getLogger(LogManager::class.java)!!
 
-    private const val VALIDATION = "validation_"
-    private const val FEATURE = "feat_importance_"
-    private const val DETAILED = "detailed_"
+    private const val REGRESSION = "_regr"
+    private const val CLASSIFICATION = "_class"
 
     private val allowedExtensions: List<String>
 
@@ -22,8 +21,6 @@ object LogManager {
     private val validationDir: String
     private val featureImportanceDir: String
     private val detailedDir: String
-
-    private val useId: Boolean = MasterConfiguration.userPreferences.useId
 
     init {
         log.debug("Initializing $this")
@@ -60,8 +57,7 @@ object LogManager {
      */
     fun getDetailedFile(job: SimulationJob): File {
         log.debug("Getting detailed log information for job '$job'")
-        val fileName = DETAILED + if (useId) job.id else FilenameUtils.getBaseName(job.toString())
-        return getFile(detailedDir + fileName)
+        return getFile(detailedDir + job.id)
     }
 
     /**
@@ -72,8 +68,7 @@ object LogManager {
      */
     fun getValidationFile(job: SimulationJob): File {
         log.debug("Getting validation log file for job '$job'")
-        val fileName = VALIDATION + if (useId) job.id else FilenameUtils.getBaseName(job.toString())
-        return getFile(validationDir + fileName)
+        return getFile(validationDir + job.id)
     }
 
     fun getFeatureImportanceFiles(job: SimulationJob): List<File> {
@@ -82,10 +77,9 @@ object LogManager {
             log.debug("Prefix job, looking for all possible files for this job")
 
             val files = mutableListOf<File>()
-            (1..15).forEach { i ->
-                val fileName = featureImportanceDir + FEATURE + (if (useId) job.id else FilenameUtils.getBaseName(job.toString())) + "_$i"
+            (1..15).forEach { _ ->
                 try {
-                    files.add(getFile(fileName))
+                    files.add(getFile(job.id))
                 } catch (e: Exception) {
                     log.debug("Found ${files.size} files for job: $job")
                     return files
@@ -94,7 +88,7 @@ object LogManager {
             log.debug("Found ${files.size} files for job: $job")
             return files
         } else {
-            return listOf(getFile(featureImportanceDir + FEATURE + (if (useId) job.id else FilenameUtils.getBaseName(job.toString())) + "_1"))
+            return listOf(getFile(featureImportanceDir + job.id))
         }
     }
 
@@ -109,4 +103,10 @@ object LogManager {
         log.debug("Successfully found result file with name $fileName")
         return file
     }
+
+    /**
+     * Returns whether given job is classification or regression
+     * @param job that needs to be categorized
+     */
+    fun isClassification(job: SimulationJob): Boolean = FilenameUtils.getBaseName(getDetailedFile(job).name).endsWith(CLASSIFICATION)
 }

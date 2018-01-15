@@ -39,11 +39,6 @@ private fun readTrainingData(logName: String): TrainingData {
     return json
 }
 
-fun isColumnStatic(colName: String, logName: String): Boolean {
-    val data = readTrainingData(logName)
-    return data.isClassification(colName)
-}
-
 private fun mapTypes(modelsParams: Map<String, List<ModelParameter>>) {
     val allProperties = MasterConfiguration.modelConfiguration.getAllProperties()
 

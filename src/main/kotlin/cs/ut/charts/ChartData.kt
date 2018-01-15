@@ -14,7 +14,7 @@ class ChartGenerator(val job: SimulationJob) {
     fun getCharts(): List<Chart> {
         val charts = mutableListOf<Chart>()
 
-        if (job.isClassification) {
+        if (LogManager.isClassification(job)) {
             charts.add(generateHeatMap())
             charts.addAll(generateLineCharts())
             charts.addAll(generateBarCharts())

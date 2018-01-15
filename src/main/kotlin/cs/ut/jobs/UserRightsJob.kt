@@ -34,6 +34,7 @@ class UserRightsJob(private val f: File) : Job() {
 
         fun updateACL(f: File) {
             if (!prefs.enabled) {
+                log.debug("ACL updating is disabled -> skipping")
                 return
             }
 

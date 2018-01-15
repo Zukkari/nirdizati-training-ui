@@ -21,7 +21,6 @@
         <userGroup>zukkari</userGroup>
         <sudo/>
         <acp>0660</acp>
-        <useId>false</useId>
     </userPreferences>
 
     <!-- Configuration for default values in TrainingController-->

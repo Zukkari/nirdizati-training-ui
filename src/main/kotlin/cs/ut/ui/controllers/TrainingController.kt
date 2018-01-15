@@ -237,7 +237,6 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         val predictionTypes = jobParameters[PREDICTION]!!
         val learners = jobParameters[LEARNER]!!
 
-        val f: File = clientLogs.selectedItem.getValue()
         val jobs: MutableList<Job> = mutableListOf()
         encodings.forEach { encoding ->
             bucketings.forEach { bucketing ->
@@ -248,7 +247,6 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
                                 bucketing,
                                 learner,
                                 pred,
-                                isColumnStatic(pred.parameter, FilenameUtils.getBaseName(f.name)),
                                 clientLogs.selectedItem.getValue()))
                     }
                 }
