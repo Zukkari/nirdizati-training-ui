@@ -11,6 +11,7 @@ import cs.ut.ui.adapters.ColumnRowValueAdapter
 import cs.ut.ui.adapters.ComboArgument
 import cs.ut.ui.adapters.ComboProvider
 import cs.ut.ui.controllers.Redirectable
+import cs.ut.ui.controllers.TrainingController.Companion.GENERATE_DATASET
 import cs.ut.util.CsvReader
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.TIMESTAMP_COL
@@ -101,6 +102,8 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
                     it.isDisabled = false
                 }
             }
+
+            enableGenerateButton()
             modal.detach()
         })
 
@@ -113,6 +116,13 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
         gridSlot.appendChild(grid)
         log.debug("Log parsing successful, showing modal")
+    }
+
+    private fun enableGenerateButton() {
+        Executions.getCurrent().desktop.components.firstOrNull { it.id == GENERATE_DATASET }?.let {
+            it as Button
+            it.isDisabled = false
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -156,6 +166,8 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
                 NirdizatiUtil.showNotificationAsync(
                         NirdizatiUtil.localizeText("param.modal.generated"), Executions.getCurrent().desktop)
             }
+
+            enableGenerateButton()
             modal.detach()
         }
         okBtn.addEventListener(Events.ON_CLICK, okBtnListener)

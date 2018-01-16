@@ -40,6 +40,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         val AVERAGE = MasterConfiguration.defaultValuesConfiguration.average.toString()
 
         const val START_TRAINING = "startTraining"
+        const val GENERATE_DATASET = "genDataSetParam"
     }
 
     @Wire
@@ -290,6 +291,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
 
     @Listen("onClick = #genDataSetParam")
     fun generateNewDatasetParams() {
+        genDataSetParam.isDisabled = true
         log.debug("Started new dataset parameter generation for -> ${clientLogs.value}")
         val args = mapOf<String, Any>(FILE to clientLogs.selectedItem.getValue(), IS_RECREATION to true)
         val window: Window = Executions.createComponents(
