@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlElement
 import javax.xml.bind.annotation.XmlType
 
-@XmlType(propOrder = ["enabled", "userName", "userGroup", "sudo", "acp", "useId"])
+@XmlType(propOrder = ["enabled", "userName", "userGroup", "sudo", "acp"])
 @XmlAccessorType(XmlAccessType.FIELD)
 class UserPreferences(
         @XmlElement
@@ -21,10 +21,7 @@ class UserPreferences(
         val sudo: String,
 
         @XmlElement
-        val acp: String,
-
-        @XmlElement
-        val useId: Boolean
+        val acp: String
 ) {
-    constructor() : this(false, "", "", "", "", false)
+    constructor() : this(false, "", "", "", "")
 }
