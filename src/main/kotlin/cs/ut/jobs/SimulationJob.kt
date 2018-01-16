@@ -68,7 +68,8 @@ class SimulationJob(
         }
 
         parameters.add(python)
-        parameters.add(logFile.absolutePath)
+        parameters.add(TRAIN_PY)
+        parameters.add(logFile.name)
         parameters.add(id)
 
         try {
@@ -87,7 +88,7 @@ class SimulationJob(
             process!!.waitFor()
             log.debug("Script finished running...")
 
-            val file = File(dirConfig.dirPath(Dir.PKL_DIR) + id + ".pkl")
+            val file = File(dirConfig.dirPath(Dir.PKL_DIR) + toString())
             log.debug(file)
 
             if (!file.exists()) {
