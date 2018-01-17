@@ -34,7 +34,6 @@ $min-width: 680px
     @include active
     @include disabled
 
-
   .n-block-btn
     @extend %big-btn
     display: inline-block
@@ -71,3 +70,18 @@ $min-width: 680px
     background-position:
       x: 100%
       y: 50%
+
+.selected-option
+  animation: cell-select 1s
+  background: $blue !important
+  color: white !important
+
+@keyframes cell-select
+  0%
+    opacity: 0.3
+    background: $blue !important
+    color: rgba(0, 0, 0, 0.57)
+  25%
+    color: white !important
+  100%
+    background: $blue !important
