@@ -36,10 +36,12 @@ fun getLinearPayload(file: File, mode: Mode): List<LinearData> {
         } else {
             val items = it.split(delim)
             dataSet.add(
-                    LinearData(
-                            x = items[indexes.first].toFloat(),
-                            y = items[indexes.second].toFloat(),
-                            dataType = if (Mode.SCATTER == mode) "" else items[indexOfMetric]))
+                LinearData(
+                    x = items[indexes.first].toFloat(),
+                    y = items[indexes.second].toFloat(),
+                    dataType = if (Mode.SCATTER == mode) "" else items[indexOfMetric]
+                )
+            )
         }
     }
     return dataSet.sortedBy { it.dataType }
@@ -66,9 +68,11 @@ fun getBarChartPayload(file: File): List<BarChartData> {
 
 data class HeatMapDataset(val x: Int, val y: Int, val value: Int)
 
-data class HeatMapData(val xLabels: List<String>,
-                       val yLabels: List<String>,
-                       val data: List<HeatMapDataset>)
+data class HeatMapData(
+    val xLabels: List<String>,
+    val yLabels: List<String>,
+    val data: List<HeatMapDataset>
+)
 
 fun getHeatMapPayload(file: File): HeatMapData {
     var rows: List<String> = BufferedReader(FileReader(file)).lineSequence().toList()

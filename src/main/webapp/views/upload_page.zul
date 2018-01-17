@@ -8,7 +8,8 @@
         </vbox>
         <vlayout vflex="3">
             <vlayout>
-                <fileupload sclass="n-upload-btn" id="chooseFile" upload="true">${labels.upload.choose.file}</fileupload>
+                <fileupload sclass="n-upload-btn" id="chooseFile" upload="true">${labels.upload.choose.file}
+                </fileupload>
             </vlayout>
             <vlayout style="margin-top: 40px">
                 <label sclass="upload-label param-label">${labels.upload.log_support}</label>

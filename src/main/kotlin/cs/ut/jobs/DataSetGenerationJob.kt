@@ -13,8 +13,9 @@ import org.json.JSONObject
 import java.io.File
 
 class DataSetGenerationJob(
-        val parameters: MutableMap<String, MutableList<String>>,
-        currentFile: File) : Job() {
+    val parameters: MutableMap<String, MutableList<String>>,
+    currentFile: File
+) : Job() {
 
     private var json: JSONObject = JSONObject()
     private var fileName = FilenameUtils.getBaseName(currentFile.name)

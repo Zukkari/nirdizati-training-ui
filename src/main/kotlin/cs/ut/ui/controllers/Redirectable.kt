@@ -33,11 +33,13 @@ interface Redirectable {
 
     fun setContent(dest: String, page: Page, delay: Int, desktop: Desktop) {
         Timer().schedule(timerTask {
-            Executions.schedule(desktop,
-                    { _ ->
-                        setContent(dest, page)
-                    },
-                    Event("content change"))
+            Executions.schedule(
+                desktop,
+                { _ ->
+                    setContent(dest, page)
+                },
+                Event("content change")
+            )
         }, delay.toLong())
     }
 

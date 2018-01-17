@@ -8,7 +8,8 @@ import org.zkoss.zul.Combobox
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 
-class ColumnRowValueAdapter(private val valueList: List<String>, private val identifiedCols: Map<String, String>) : GridValueProvider<String, Row> {
+class ColumnRowValueAdapter(private val valueList: List<String>, private val identifiedCols: Map<String, String>) :
+    GridValueProvider<String, Row> {
     override var fields: MutableList<FieldComponent> = mutableListOf()
 
     override fun provide(data: String): Row {

@@ -1,8 +1,8 @@
 package cs.ut.ui.controllers
 
+import cs.ut.engine.JobManager
 import cs.ut.engine.events.AliveCheck
 import cs.ut.engine.events.Callback
-import cs.ut.engine.JobManager
 import cs.ut.engine.events.DeployEvent
 import cs.ut.engine.events.StatusUpdateEvent
 import cs.ut.jobs.Job
@@ -46,33 +46,40 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
 
     @Callback(StatusUpdateEvent::class)
     fun updateJobStatus(event: StatusUpdateEvent) {
-        Executions.schedule(self.desktop,
-                { _ ->
-                    val subKey: String = CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
-                    if (subKey == event.target) {
-                        val grid = Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
-                        event.data.updateJobStatus(grid.rows.getChildren())
-                    }
-                },
-                Event("job_update"))
+        Executions.schedule(
+            self.desktop,
+            { _ ->
+                val subKey: String =
+                    CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
+                if (subKey == event.target) {
+                    val grid =
+                        Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
+                    event.data.updateJobStatus(grid.rows.getChildren())
+                }
+            },
+            Event("job_update")
+        )
     }
 
     @Callback(DeployEvent::class)
     fun updateDeployment(event: DeployEvent) {
-        Executions.schedule(self.desktop,
-                { _ ->
-                    val subKey: String = CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
-                    if (subKey == event.target) {
+        Executions.schedule(
+            self.desktop,
+            { _ ->
+                val subKey: String =
+                    CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
+                if (subKey == event.target) {
 
-                        val comps = Executions.getCurrent().desktop.components
-                        val tracker = comps.first { it.id == TRACKER_EAST }
-                        tracker.isVisible = true
+                    val comps = Executions.getCurrent().desktop.components
+                    val tracker = comps.first { it.id == TRACKER_EAST }
+                    tracker.isVisible = true
 
-                        val grid = comps.first { it.id == GRID_ID } as NirdizatiGrid<Job>
-                        grid.generate(event.data, false)
-                    }
-                },
-                Event("deployment"))
+                    val grid = comps.first { it.id == GRID_ID } as NirdizatiGrid<Job>
+                    grid.generate(event.data, false)
+                }
+            },
+            Event("deployment")
+        )
     }
 
     @AliveCheck
@@ -92,8 +99,9 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
 
                 if (this.status == JobStatus.COMPLETED) {
                     NirdizatiUtil.showNotificationAsync(
-                            NirdizatiUtil.localizeText("job.completed.simulation", this),
-                            Executions.getCurrent().desktop)
+                        NirdizatiUtil.localizeText("job.completed.simulation", this),
+                        Executions.getCurrent().desktop
+                    )
                 }
             } else {
                 updateJobStatus(rows.drop(1))

@@ -11,21 +11,12 @@ import cs.ut.ui.GridValueProvider
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.controllers.JobTrackerController
 import cs.ut.ui.controllers.Redirectable
-import cs.ut.util.CookieUtil
-import cs.ut.util.NirdizatiUtil
-import cs.ut.util.OUTCOME
-import cs.ut.util.PAGE_VALIDATION
-import cs.ut.util.TRACKER_EAST
+import cs.ut.util.*
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.event.Events
-import org.zkoss.zul.Button
-import org.zkoss.zul.Hbox
-import org.zkoss.zul.Hlayout
-import org.zkoss.zul.Label
-import org.zkoss.zul.Row
-import org.zkoss.zul.Vlayout
+import org.zkoss.zul.*
 import javax.servlet.http.HttpServletRequest
 
 
@@ -80,9 +71,10 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
         val learner = job.learner
         val outcome = job.outcome
 
-        val label = Label(NirdizatiUtil.localizeText(encoding.type + "." + encoding.id) + "\n" +
-                NirdizatiUtil.localizeText(bucketing.type + "." + bucketing.id) + "\n" +
-                NirdizatiUtil.localizeText(learner.type + "." + learner.id)
+        val label = Label(
+            NirdizatiUtil.localizeText(encoding.type + "." + encoding.id) + "\n" +
+                    NirdizatiUtil.localizeText(bucketing.type + "." + bucketing.id) + "\n" +
+                    NirdizatiUtil.localizeText(learner.type + "." + learner.id)
         )
         label.isPre = true
         label.sclass = "param-label"
@@ -166,20 +158,24 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
 
         val client = Executions.getCurrent().desktop
         btn.addEventListener(Events.ON_CLICK, { _ ->
-            val grid: NirdizatiGrid<Job> = client.components.firstOrNull { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
+            val grid: NirdizatiGrid<Job> =
+                client.components.firstOrNull { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
 
             JobManager.stopJob(this)
-            Executions.schedule(client,
-                    { _ ->
-                        row.detach()
-                        if (grid.rows.getChildren<Component>().isEmpty()) {
-                            client.components.first { it.id == TRACKER_EAST }.isVisible = false
-                        }
-                    },
-                    Event("abort_job", null, null))
+            Executions.schedule(
+                client,
+                { _ ->
+                    row.detach()
+                    if (grid.rows.getChildren<Component>().isEmpty()) {
+                        client.components.first { it.id == TRACKER_EAST }.isVisible = false
+                    }
+                },
+                Event("abort_job", null, null)
+            )
             JobManager.removeJob(
-                    CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest),
-                    this)
+                CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest),
+                this
+            )
         })
 
         return btn

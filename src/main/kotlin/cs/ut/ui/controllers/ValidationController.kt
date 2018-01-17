@@ -16,19 +16,14 @@ import org.zkoss.zk.ui.event.SelectEvent
 import org.zkoss.zk.ui.event.SerializableEventListener
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zul.Cell
-import org.zkoss.zul.Combobox
-import org.zkoss.zul.Comboitem
-import org.zkoss.zul.Hlayout
-import org.zkoss.zul.Label
-import org.zkoss.zul.Row
-import org.zkoss.zul.Rows
-import org.zkoss.zul.Vbox
+import org.zkoss.zul.*
 
 class ValidationController : SelectorComposer<Component>() {
     private val log = Logger.getLogger(ValidationController::class.java)
     private var job: SimulationJob? = null
-    private val charts: Map<String, List<Chart>> by lazy { ChartGenerator(job as SimulationJob).getCharts().groupBy { it.javaClass.name } }
+    private val charts: Map<String, List<Chart>> by lazy {
+        ChartGenerator(job as SimulationJob).getCharts().groupBy { it.javaClass.name }
+    }
 
     @Wire
     lateinit private var metadataRows: Rows
@@ -75,8 +70,10 @@ class ValidationController : SelectorComposer<Component>() {
         cell.id = entry.key
         cell.align = "center"
         cell.valign = "center"
-        cell.addEventListener(Events.ON_CLICK,
-                if (entry.value.size == 1) entry.value.first().generateListenerForOne() else entry.value.generateListenerForMany())
+        cell.addEventListener(
+            Events.ON_CLICK,
+            if (entry.value.size == 1) entry.value.first().generateListenerForOne() else entry.value.generateListenerForMany()
+        )
         cell.addEventListener(Events.ON_CLICK, { _ ->
             selectionRows.getChildren<Row>().first().getChildren<Cell>().forEach { it.sclass = "" }
             cell.sclass = "selected-option"
@@ -123,7 +120,9 @@ class ValidationController : SelectorComposer<Component>() {
             (combobox.selectedItem.getValue() as Chart).render()
             combobox.width = "330px"
 
-            combobox.addEventListener(Events.ON_SELECT, { e -> (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).render() })
+            combobox.addEventListener(
+                Events.ON_SELECT,
+                { e -> (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).render() })
             comboLayout.appendChild(combobox)
         }
     }

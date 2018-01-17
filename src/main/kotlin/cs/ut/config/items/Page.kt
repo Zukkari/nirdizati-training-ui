@@ -5,11 +5,12 @@ import javax.xml.bind.annotation.XmlType
 
 @XmlType(propOrder = arrayOf("id", "uri"))
 data class Page(
-        @XmlElement(name = "id")
-        var id: String,
+    @XmlElement(name = "id")
+    var id: String,
 
-        @XmlElement(name = "uri")
-        var uri: String) {
+    @XmlElement(name = "uri")
+    var uri: String
+) {
 
-        constructor() : this("", "")
+    constructor() : this("", "")
 }

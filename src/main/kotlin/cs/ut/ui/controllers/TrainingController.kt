@@ -12,7 +12,10 @@ import cs.ut.ui.controllers.modal.ParameterModalController.Companion.IS_RECREATI
 import cs.ut.ui.controllers.training.AdvancedModeController
 import cs.ut.ui.controllers.training.BasicModeController
 import cs.ut.ui.controllers.training.ModeController
-import cs.ut.util.*
+import cs.ut.util.CookieUtil
+import cs.ut.util.NirdizatiUtil
+import cs.ut.util.OUTCOME
+import cs.ut.util.readLogColumns
 import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
@@ -243,20 +246,24 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
             bucketings.forEach { bucketing ->
                 learners.forEach { learner ->
                     predictionTypes.forEach { pred ->
-                        jobs.add(SimulationJob(
+                        jobs.add(
+                            SimulationJob(
                                 encoding,
                                 bucketing,
                                 learner,
                                 pred,
-                                clientLogs.selectedItem.getValue()))
+                                clientLogs.selectedItem.getValue()
+                            )
+                        )
                     }
                 }
             }
         }
         log.debug("Generated ${jobs.size} jobs")
         JobManager.deployJobs(
-                CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest),
-                jobs)
+            CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest),
+            jobs
+        )
     }
 
     private fun Map<String, List<ModelParameter>>.validateParameters(): Boolean {
@@ -280,9 +287,9 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
 
         if (!isValid) {
             NirdizatiUtil.showNotificationAsync(
-                    Labels.getLabel("training.validation_failed", arrayOf(msg)),
-                    Executions.getCurrent().desktop,
-                    "error"
+                Labels.getLabel("training.validation_failed", arrayOf(msg)),
+                Executions.getCurrent().desktop,
+                "error"
             )
         }
 
@@ -295,9 +302,9 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         log.debug("Started new dataset parameter generation for -> ${clientLogs.value}")
         val args = mapOf<String, Any>(FILE to clientLogs.selectedItem.getValue(), IS_RECREATION to true)
         val window: Window = Executions.createComponents(
-                "/views/modals/params.zul",
-                self,
-                args
+            "/views/modals/params.zul",
+            self,
+            args
         ) as Window
         if (self.getChildren<Component>().contains(window)) {
             window.doModal()

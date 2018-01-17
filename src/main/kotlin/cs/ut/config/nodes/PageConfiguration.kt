@@ -9,8 +9,8 @@ import javax.xml.bind.annotation.XmlRootElement
 @XmlRootElement(name = "pageConfig")
 @XmlAccessorType(XmlAccessType.FIELD)
 data class PageConfiguration(
-        @XmlElement(name = "page")
-        var page: MutableList<Page>
+    @XmlElement(name = "page")
+    var page: MutableList<Page>
 ) {
     constructor() : this(mutableListOf())
 

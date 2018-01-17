@@ -8,11 +8,11 @@ import javax.xml.bind.annotation.XmlRootElement
 @XmlRootElement(name = "defaultConfig")
 @XmlAccessorType(XmlAccessType.FIELD)
 class DefaultValuesConfiguration(
-        @XmlElement(name = "minValue")
-        var minValue: Double,
+    @XmlElement(name = "minValue")
+    var minValue: Double,
 
-        @XmlElement(name = "average")
-        var average: Int
+    @XmlElement(name = "average")
+    var average: Int
 ) {
     constructor() : this(-1.0, -1)
 }

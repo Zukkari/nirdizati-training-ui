@@ -154,17 +154,22 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
             if (!isRecreation) {
                 NirdizatiUtil.showNotificationAsync(
-                        Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))),
-                        Executions.getCurrent().desktop)
+                    Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))),
+                    Executions.getCurrent().desktop
+                )
 
-                val target = Files.move(Paths.get(file.absolutePath),
-                        Paths.get(File(MasterConfiguration.dirConfig.dirPath(Dir.USER_LOGS) + file.name).absolutePath), StandardCopyOption.REPLACE_EXISTING)
+                val target = Files.move(
+                    Paths.get(file.absolutePath),
+                    Paths.get(File(MasterConfiguration.dirConfig.dirPath(Dir.USER_LOGS) + file.name).absolutePath),
+                    StandardCopyOption.REPLACE_EXISTING
+                )
 
                 JobManager.runServiceJob(UserRightsJob(target.toFile()))
                 setContent("training", getPage(), 2000, Executions.getCurrent().desktop)
             } else {
                 NirdizatiUtil.showNotificationAsync(
-                        NirdizatiUtil.localizeText("param.modal.generated"), Executions.getCurrent().desktop)
+                    NirdizatiUtil.localizeText("param.modal.generated"), Executions.getCurrent().desktop
+                )
             }
 
             enableGenerateButton()
@@ -205,10 +210,12 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
     private fun validateDataPresent(header: List<String>): Boolean {
         if (header.isEmpty()) {
             NirdizatiUtil.showNotificationAsync(
-                    Labels.getLabel("modals.unknown_separator",
-                            arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))),
-                    Executions.getCurrent().desktop,
-                    "error"
+                Labels.getLabel(
+                    "modals.unknown_separator",
+                    arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))
+                ),
+                Executions.getCurrent().desktop,
+                "error"
             )
             modal.detach()
             return true
