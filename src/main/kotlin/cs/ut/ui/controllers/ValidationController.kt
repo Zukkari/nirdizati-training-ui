@@ -78,8 +78,8 @@ class ValidationController : SelectorComposer<Component>() {
         cell.addEventListener(Events.ON_CLICK,
                 if (entry.value.size == 1) entry.value.first().generateListenerForOne() else entry.value.generateListenerForMany())
         cell.addEventListener(Events.ON_CLICK, { _ ->
-            selectionRows.getChildren<Row>().first().getChildren<Cell>().forEach { it.setClass("") }
-            cell.setClass("selected-option")
+            selectionRows.getChildren<Row>().first().getChildren<Cell>().forEach { it.sclass = "" }
+            cell.sclass = "selected-option"
         })
         cell.appendChild(label)
         this.appendChild(cell)
