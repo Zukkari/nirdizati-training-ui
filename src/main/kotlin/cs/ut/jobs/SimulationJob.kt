@@ -7,10 +7,8 @@ import cs.ut.config.nodes.Dir
 import cs.ut.config.nodes.UserPreferences
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.UserRightsJob.Companion.updateACL
+import cs.ut.util.*
 
-import cs.ut.util.FileWriter
-import cs.ut.util.NirdizatiUtil
-import cs.ut.util.PREFIX
 import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
 
@@ -23,7 +21,8 @@ class SimulationJob(
     val bucketing: ModelParameter,
     val learner: ModelParameter,
     val outcome: ModelParameter,
-    val logFile: File
+    val logFile: File,
+    val owner: String
 ) : Job() {
 
     private var process: Process? = null
@@ -52,7 +51,8 @@ class SimulationJob(
                 JSONObject().put(learner.parameter, params)
             )
         )
-
+        json.put(OWNER, owner)
+        
         val writer = FileWriter()
         val f = writer.writeJsonToDisk(
             json, id,

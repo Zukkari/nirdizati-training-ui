@@ -252,7 +252,8 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
                                 bucketing,
                                 learner,
                                 pred,
-                                clientLogs.selectedItem.getValue()
+                                clientLogs.selectedItem.getValue(),
+                                CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
                             )
                         )
                     }

@@ -1,4 +1,4 @@
-<?link rel="stylesheet" type="text/css" href="/css/main.css" ?>
+<?link rel="stylesheet" type="text/css" href="css/main.css" ?>
 <?meta name="viewport" content="width=device-width, initial-scale=1.0"?>
 <?page title="${labels.header.landing} - Nirdizati" ?>
 <?script src="webjars/chartjs/2.7.0/Chart.js" ?>
