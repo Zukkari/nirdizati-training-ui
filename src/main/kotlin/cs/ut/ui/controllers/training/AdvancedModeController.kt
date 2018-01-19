@@ -2,12 +2,12 @@ package cs.ut.ui.controllers.training
 
 import cs.ut.config.items.ModelParameter
 import cs.ut.config.items.Property
-import cs.ut.ui.controllers.TrainingController
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.adapters.AdvancedModeAdapter
 import cs.ut.ui.adapters.GeneratorArgument
 import cs.ut.ui.adapters.PropertyValueAdapter
+import cs.ut.ui.controllers.TrainingController
 import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.event.CheckEvent

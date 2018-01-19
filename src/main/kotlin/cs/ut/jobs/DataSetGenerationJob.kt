@@ -7,9 +7,7 @@ import cs.ut.util.ACTIVITY_COL
 import cs.ut.util.CASE_ID_COL
 import cs.ut.util.FileWriter
 import cs.ut.util.TIMESTAMP_COL
-import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
-
 import java.io.File
 
 class DataSetGenerationJob(
@@ -18,7 +16,7 @@ class DataSetGenerationJob(
 ) : Job() {
 
     private var json: JSONObject = JSONObject()
-    private var fileName = FilenameUtils.getBaseName(currentFile.name)
+    private var fileName = currentFile.nameWithoutExtension
 
     override fun preProcess() {
         json.put(CASE_ID_COL, parameters.remove(CASE_ID_COL)!![0])

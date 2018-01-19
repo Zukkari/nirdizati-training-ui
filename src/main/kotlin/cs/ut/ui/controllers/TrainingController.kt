@@ -16,7 +16,6 @@ import cs.ut.util.CookieUtil
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.OUTCOME
 import cs.ut.util.readLogColumns
-import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -80,7 +79,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         }
     }
 
-    private fun getLogFileName(): String = FilenameUtils.getBaseName((clientLogs.selectedItem.getValue() as File).name)
+    private fun getLogFileName(): String = (clientLogs.selectedItem.getValue() as File).nameWithoutExtension
 
     private fun initPredictions(): Boolean {
         radioGroup.getChildren<Component>().clear()
@@ -100,7 +99,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
 
         val logFile: File = clientLogs.selectedItem.getValue<File>() ?: return false
 
-        val dataSetColumns: List<String> = readLogColumns(FilenameUtils.getBaseName(logFile.name))
+        val dataSetColumns: List<String> = readLogColumns(logFile.nameWithoutExtension)
 
         params.forEach {
             val item: Comboitem = predictionType.appendItem(NirdizatiUtil.localizeText("${it.type}.${it.id}"))
@@ -247,14 +246,14 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
                 learners.forEach { learner ->
                     predictionTypes.forEach { pred ->
                         jobs.add(
-                            SimulationJob(
-                                encoding,
-                                bucketing,
-                                learner,
-                                pred,
-                                clientLogs.selectedItem.getValue(),
-                                CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
-                            )
+                                SimulationJob(
+                                        encoding,
+                                        bucketing,
+                                        learner,
+                                        pred,
+                                        clientLogs.selectedItem.getValue(),
+                                        CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
+                                )
                         )
                     }
                 }
@@ -262,8 +261,8 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         }
         log.debug("Generated ${jobs.size} jobs")
         JobManager.deployJobs(
-            CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest),
-            jobs
+                CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest),
+                jobs
         )
     }
 
@@ -288,9 +287,9 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
 
         if (!isValid) {
             NirdizatiUtil.showNotificationAsync(
-                Labels.getLabel("training.validation_failed", arrayOf(msg)),
-                Executions.getCurrent().desktop,
-                "error"
+                    Labels.getLabel("training.validation_failed", arrayOf(msg)),
+                    Executions.getCurrent().desktop,
+                    "error"
             )
         }
 
@@ -303,9 +302,9 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         log.debug("Started new dataset parameter generation for -> ${clientLogs.value}")
         val args = mapOf<String, Any>(FILE to clientLogs.selectedItem.getValue(), IS_RECREATION to true)
         val window: Window = Executions.createComponents(
-            "/views/modals/params.zul",
-            self,
-            args
+                "/views/modals/params.zul",
+                self,
+                args
         ) as Window
         if (self.getChildren<Component>().contains(window)) {
             window.doModal()

@@ -2,27 +2,23 @@ package cs.ut.jobs
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
-
 import cs.ut.config.nodes.Dir
 import cs.ut.config.nodes.UserPreferences
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.UserRightsJob.Companion.updateACL
 import cs.ut.util.*
-
-import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
-
 import java.io.File
 import java.io.IOException
 
 
 class SimulationJob(
-    val encoding: ModelParameter,
-    val bucketing: ModelParameter,
-    val learner: ModelParameter,
-    val outcome: ModelParameter,
-    val logFile: File,
-    val owner: String
+        val encoding: ModelParameter,
+        val bucketing: ModelParameter,
+        val learner: ModelParameter,
+        val outcome: ModelParameter,
+        val logFile: File,
+        val owner: String
 ) : Job() {
 
     private var process: Process? = null
@@ -45,18 +41,18 @@ class SimulationJob(
         }
 
         json.put(
-            outcome.parameter,
-            JSONObject().put(
-                bucketing.parameter + "_" + encoding.parameter,
-                JSONObject().put(learner.parameter, params)
-            )
+                outcome.parameter,
+                JSONObject().put(
+                        bucketing.parameter + "_" + encoding.parameter,
+                        JSONObject().put(learner.parameter, params)
+                )
         )
-        json.put(OWNER, owner)
-        
+        json.put(UI_DATA, JSONObject().put(OWNER, owner))
+
         val writer = FileWriter()
         val f = writer.writeJsonToDisk(
-            json, id,
-            dirConfig.dirPath(Dir.TRAIN_DIR)
+                json, id,
+                dirConfig.dirPath(Dir.TRAIN_DIR)
         )
 
         updateACL(f)
@@ -119,7 +115,7 @@ class SimulationJob(
     override fun getNotificationMessage() = NirdizatiUtil.localizeText("job.completed.simulation", this.toString())
 
     override fun toString(): String {
-        return FilenameUtils.getBaseName(logFile.name) +
+        return logFile.nameWithoutExtension +
                 "_" +
                 bucketing.parameter +
                 "_" +
@@ -132,11 +128,11 @@ class SimulationJob(
     }
 
     private fun convertToNumber(value: String): Number =
-        try {
-            value.toInt()
-        } catch (e: NumberFormatException) {
-            value.toDouble()
-        }
+            try {
+                value.toInt()
+            } catch (e: NumberFormatException) {
+                value.toDouble()
+            }
 
     companion object {
         const val TRAIN_PY = "train.py"

@@ -9,7 +9,6 @@ import cs.ut.config.items.Property
 import cs.ut.config.nodes.Dir
 import cs.ut.config.nodes.DirectoryConfiguration
 import cs.ut.exceptions.NirdizatiRuntimeException
-import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.File
@@ -35,8 +34,7 @@ private fun readTrainingData(logName: String): TrainingData {
     val file = File(path + logName + ".json")
     val jsonReader = JsonReader(FileReader(file))
 
-    val json: TrainingData = Gson().fromJson<TrainingData>(jsonReader, TrainingData::class.java)
-    return json
+    return Gson().fromJson(jsonReader, TrainingData::class.java)
 }
 
 private fun mapTypes(modelsParams: Map<String, List<ModelParameter>>) {
@@ -71,7 +69,7 @@ private fun readJsonFiles(files: List<File>): Map<String, String> {
     return jsons
 }
 
-tailrec private fun readJson(files: List<File>, jsons: MutableMap<String, String>) {
+private tailrec fun readJson(files: List<File>, jsons: MutableMap<String, String>) {
     if (files.isNotEmpty()) {
         val file = files.first()
         try {
@@ -79,7 +77,7 @@ tailrec private fun readJson(files: List<File>, jsons: MutableMap<String, String
             BufferedReader(FileReader(file)).use {
                 it.lines().forEach { sb.append(it) }
             }
-            jsons[FilenameUtils.getBaseName(file.name)] = sb.toString()
+            jsons[file.nameWithoutExtension] = sb.toString()
         } catch (e: IOException) {
             throw NirdizatiRuntimeException("Could not read file $file")
         }
@@ -88,7 +86,7 @@ tailrec private fun readJson(files: List<File>, jsons: MutableMap<String, String
 }
 
 
-tailrec private fun parseJson(jsons: MutableMap<String, String>, map: MutableMap<String, List<ModelParameter>>) {
+private tailrec fun parseJson(jsons: MutableMap<String, String>, map: MutableMap<String, List<ModelParameter>>) {
     if (jsons.isNotEmpty()) {
         val key = jsons.keys.first()
         val entry = jsons.remove(key)

@@ -112,4 +112,11 @@ object JobManager {
             executedJobs[key]?.remove(simulationJob)
         }
     }
+
+    fun loadJobsFromStorage(key: String): List<SimulationJob> {
+        val jobs = mutableListOf<SimulationJob>()
+        LogManager.loadJobIds(key).forEach {
+        }
+        TODO()
+    }
 }

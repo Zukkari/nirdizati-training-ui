@@ -2,7 +2,6 @@ package cs.ut.jobs
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.nodes.Dir
-import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
 import java.io.File
 import java.nio.charset.Charset
@@ -17,7 +16,7 @@ class UserRightsJob(private val f: File) : Job() {
         updateACL(f)
 
         log.debug("Changing rights for training JSON")
-        val name: String = FilenameUtils.getBaseName(f.name)
+        val name: String = f.nameWithoutExtension
 
         val path = "${conf.dirPath(Dir.DATA_DIR)}$name.json"
         log.debug("Looking for file -> $path")
