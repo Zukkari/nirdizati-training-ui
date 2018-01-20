@@ -137,9 +137,4 @@ object JobManager {
                 }
         return jobs
     }
-
-    @JvmStatic
-    fun main(args: Array<String>) {
-        loadJobsFromStorage("051d3ed4bfadba36f30412211809ca53")
-    }
 }
