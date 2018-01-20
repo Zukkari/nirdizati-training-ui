@@ -6,7 +6,6 @@ import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
 import cs.ut.util.*
 import org.apache.log4j.Logger
-import org.zkoss.zk.ui.select.SelectorComposer
 import java.io.File
 import java.util.concurrent.Future
 
@@ -41,15 +40,10 @@ object JobManager {
         val deadSubs = mutableListOf<Any>()
         synchronized(subscribers) {
             subscribers.forEach {
-                when (it) {
-                    is SelectorComposer<*> -> {
-                        if (isAlive(it)) {
-                            notify(it, event)
-                        } else {
-                            deadSubs.add(it)
-                        }
-                    }
-                    else -> deadSubs.add(it)
+                if (isAlive(it)) {
+                    notify(it, event)
+                } else {
+                    deadSubs.add(it)
                 }
             }
         }
