@@ -47,7 +47,9 @@ class SimulationJob(
                         JSONObject().put(learner.parameter, params)
                 )
         )
-        json.put(UI_DATA, JSONObject().put(OWNER, owner))
+        json.put(UI_DATA, JSONObject()
+                .put(OWNER, owner)
+                .put(LOG_FILE, logFile.absoluteFile))
 
         val writer = FileWriter()
         val f = writer.writeJsonToDisk(

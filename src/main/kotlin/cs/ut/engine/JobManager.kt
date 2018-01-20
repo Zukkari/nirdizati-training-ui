@@ -2,9 +2,12 @@ package cs.ut.engine
 
 import cs.ut.engine.events.*
 import cs.ut.jobs.Job
+import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
+import cs.ut.util.*
 import org.apache.log4j.Logger
 import org.zkoss.zk.ui.select.SelectorComposer
+import java.io.File
 import java.util.concurrent.Future
 
 
@@ -115,8 +118,28 @@ object JobManager {
 
     fun loadJobsFromStorage(key: String): List<SimulationJob> {
         val jobs = mutableListOf<SimulationJob>()
-        LogManager.loadJobIds(key).forEach {
-        }
-        TODO()
+        LogManager.loadJobIds(key)
+                .filter { id ->
+                    val sessionJobs = executedJobs[key] ?: listOf<Job>()
+                    id !in sessionJobs.map { it.id }
+                            || sessionJobs.firstOrNull { it.id == id }?.status == JobStatus.COMPLETED
+                }
+                .forEach {
+                    val params = readTrainingJson(it).flatMap { it.value }
+                    jobs.add(SimulationJob(
+                            params.first { it.type == ENCODING },
+                            params.first { it.type == BUCKETING },
+                            params.first { it.type == LEARNER },
+                            params.first { it.type == PREDICTIONTYPE },
+                            File(readLogFile(it)),
+                            key
+                    ).also { it.status = JobStatus.COMPLETED })
+                }
+        return jobs
+    }
+
+    @JvmStatic
+    fun main(args: Array<String>) {
+        loadJobsFromStorage("051d3ed4bfadba36f30412211809ca53")
     }
 }

@@ -55,7 +55,7 @@ object LogManager {
      * @return List of all available file names contained in user log directory
      */
     fun getAllAvailableLogs(): List<File> =
-            File(logDirectory).listFiles().filter { it.nameWithoutExtension in allowedExtensions }
+            File(logDirectory).listFiles().filter { it.extension in allowedExtensions }
 
 
     /**
@@ -130,10 +130,12 @@ object LogManager {
         val ids = mutableListOf<String>()
         val files = loadTrainingFiles()
         files.forEach {
-            val json = JSONObject(readFileContent(it))
-            val uiJson: JSONObject = json.getJSONObject(UI_DATA)
-            val owner = uiJson[OWNER]
-            if (owner == key) ids.add(it.nameWithoutExtension)
+            val owner = JSONObject(readFileContent(it)).let {
+                it.getJSONObject(UI_DATA)[OWNER]
+            }
+            if (owner == key) {
+                ids.add(it.nameWithoutExtension)
+            }
         }
         return ids
     }
