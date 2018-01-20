@@ -1,9 +1,11 @@
 package cs.ut.engine
 
 import cs.ut.config.MasterConfiguration
+import cs.ut.config.UiData
 import cs.ut.config.nodes.Dir
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.SimulationJob
+import cs.ut.util.LOG_FILE
 import cs.ut.util.OWNER
 import cs.ut.util.PREFIX
 import cs.ut.util.UI_DATA
@@ -126,18 +128,15 @@ object LogManager {
             else
                 dir + this.logFile.nameWithoutExtension + "_" + this.id + if (isClassification(this)) CLASSIFICATION else REGRESSION
 
-    fun loadJobIds(key: String): List<String> {
-        val ids = mutableListOf<String>()
-        val files = loadTrainingFiles()
-        files.forEach {
-            val owner = JSONObject(readFileContent(it)).let {
-                it.getJSONObject(UI_DATA)[OWNER]
-            }
-            if (owner == key) {
-                ids.add(it.nameWithoutExtension)
+    fun loadJobIds(key: String): List<UiData> {
+        return mutableListOf<UiData>().also { c ->
+            loadTrainingFiles().forEach {
+                val uiData = JSONObject(readFileContent(it)).getJSONObject(UI_DATA)
+                if (uiData[OWNER] == key) {
+                    c.add(UiData(it.nameWithoutExtension, uiData[LOG_FILE] as String))
+                }
             }
         }
-        return ids
     }
 
     private fun readFileContent(f: File): String = BufferedReader(FileReader(f)).readLines().joinToString()

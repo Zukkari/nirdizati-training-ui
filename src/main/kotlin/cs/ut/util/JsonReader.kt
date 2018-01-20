@@ -32,13 +32,6 @@ fun readTrainingJson(key: String): Map<String, List<ModelParameter>> =
                 MasterConfiguration.dirConfig.dirPath(Dir.TRAIN_DIR) + "$key.json")))
                 .apply { mapTypes(this) }
 
-fun readLogFile(key: String): String {
-    val json = JSONObject(readJsonFiles(listOf(
-            File(MasterConfiguration.dirConfig.dirPath(Dir.TRAIN_DIR) + "$key.json"))).values.first())
-
-    return json.getJSONObject(UI_DATA).let { it[LOG_FILE] as String }
-}
-
 private fun readTrainingData(logName: String): TrainingData {
     val config: DirectoryConfiguration = MasterConfiguration.dirConfig
     val path: String = config.dirPath(Dir.DATA_DIR)
