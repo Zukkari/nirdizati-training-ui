@@ -1,4 +1,5 @@
 <vbox vflex="1" hflex="1" apply="cs.ut.ui.controllers.ValidationController">
+    <grid id="logSelectionGrid" hflex="1" vflex="min" visible="false"/>
     <grid hflex="1" vflex="min">
         <rows id="metadataRows" hflex="1" vflex="1"/>
     </grid>

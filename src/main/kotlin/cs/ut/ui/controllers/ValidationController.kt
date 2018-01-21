@@ -21,21 +21,22 @@ import org.zkoss.zul.*
 class ValidationController : SelectorComposer<Component>() {
     private val log = Logger.getLogger(ValidationController::class.java)
     private var job: SimulationJob? = null
-    private val charts: Map<String, List<Chart>> by lazy {
-        ChartGenerator(job as SimulationJob).getCharts().groupBy { it.javaClass.name }
-    }
+    private lateinit var charts: Map<String, List<Chart>>
 
     @Wire
-    lateinit private var metadataRows: Rows
+    private lateinit var metadataRows: Rows
 
     @Wire
-    lateinit private var selectionRows: Rows
+    private lateinit var selectionRows: Rows
 
     @Wire
-    lateinit private var propertyRows: Rows
+    private lateinit var propertyRows: Rows
 
     @Wire
-    lateinit private var comboLayout: Vbox
+    private lateinit var comboLayout: Vbox
+
+    @Wire
+    private lateinit var logSelectionGrid: Grid
 
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
@@ -43,11 +44,37 @@ class ValidationController : SelectorComposer<Component>() {
         job = Executions.getCurrent().getAttribute(JobValueAdataper.jobArg) as SimulationJob?
         job?.let {
             log.debug("Received job argument $job, initializing in read only mode")
+            charts = ChartGenerator(job as SimulationJob).getCharts().groupBy { it.javaClass.name }
             generateReadOnlyMode()
             return
         }
 
-        TODO("Validation without context not implemented yet")
+        log.debug("Inital job not found -> initializing valdiation mdoe withtout context")
+        logSelectionGrid.isVisible = true
+        generateCombo()
+    }
+
+    private fun generateCombo() {
+        val combo: Combobox = Rows().let {
+            logSelectionGrid.appendChild(it)
+            val combo = Combobox()
+            it.appendChild(Row().also {
+                it.align = "center"
+                it.appendChild(Hlayout().also {
+                    it.appendChild(Label(NirdizatiUtil.localizeText("validation.select_completed")).also { it.sclass = "param-label" })
+                    it.appendChild(combo)
+                })
+            })
+            combo
+        }
+        log.debug("Generated layout for no context mode")
+
+        combo.addEventListener(Events.ON_SELECT, { e ->
+            log.debug("Generating layout for new job -> ${e.data}")
+            job = e.data as SimulationJob
+            charts = ChartGenerator(job!!).getCharts().groupBy { it.javaClass.name }
+            generateReadOnlyMode()
+        })
     }
 
     private fun generateReadOnlyMode() {
@@ -71,8 +98,8 @@ class ValidationController : SelectorComposer<Component>() {
         cell.align = "center"
         cell.valign = "center"
         cell.addEventListener(
-            Events.ON_CLICK,
-            if (entry.value.size == 1) entry.value.first().generateListenerForOne() else entry.value.generateListenerForMany()
+                Events.ON_CLICK,
+                if (entry.value.size == 1) entry.value.first().generateListenerForOne() else entry.value.generateListenerForMany()
         )
         cell.addEventListener(Events.ON_CLICK, { _ ->
             selectionRows.getChildren<Row>().first().getChildren<Cell>().forEach { it.sclass = "" }
@@ -121,8 +148,8 @@ class ValidationController : SelectorComposer<Component>() {
             combobox.width = "330px"
 
             combobox.addEventListener(
-                Events.ON_SELECT,
-                { e -> (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).render() })
+                    Events.ON_SELECT,
+                    { e -> (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).render() })
             comboLayout.appendChild(combobox)
         }
     }
