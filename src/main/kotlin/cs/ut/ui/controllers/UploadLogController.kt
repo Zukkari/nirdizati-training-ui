@@ -37,7 +37,6 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable {
 
     private val allowedExtensions = MasterConfiguration.csvConfiguration.extensions
 
-
     /**
      * Method that analyzes uploaded file. Checks that the file has required extension.
      *
@@ -54,7 +53,7 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable {
             fileNameCont.sclass = "file-upload"
             fileName.value = uploaded.name
             media = uploaded
-            upload.isVisible = true
+            upload.isDisabled = false
         } else {
             log.debug("Log is not in allowed format -> showing error")
             fileNameCont.sclass = "file-upload-err"
@@ -62,9 +61,9 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable {
                 "upload.wrong.format",
                 arrayOf(uploaded.name, FilenameUtils.getExtension(uploaded.name))
             )
-            upload.isVisible = false
+            upload.isDisabled = true
         }
-    }
+     }
 
     @Listen("onClick = #upload")
     fun processLog() {

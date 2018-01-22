@@ -8,19 +8,64 @@ $min-width: 680px
   &[disabled]
     background: linear-gradient(53deg, $light-grey, $dark-grey)
     background-size: 600% 600%
+  &[disabled]:hover::before
+    display: none
+  &[disabled]:hover
+    color: rgba(0, 0, 0, 0.34)
+
+.z-hlayout-inner
+  z-index: 3
+
+$animation_lenght: 0.34s
+$bradius: 40px
+$min-width: 48px
+$min-height: 48px
+$width: 160px
+$height: 50px
+
+@mixin btn-props
+  min-width: $min-width
+  min-height: $min-height
+  max-width: 100%
+  max-height: 100%
+  white-space: normal
+  word-wrap: break-word
+  border-radius: $bradius
+  width: $width
+  height: $height
 
 @media screen and (min-width: $min-width)
   %big-btn
-    min-width: 48px
-    min-height: 48px
-    max-width: 100%
-    max-height: 100%
-    white-space: normal
-    word-wrap: break-word
-    border-radius: 40px
-    width: 160px
-    height: 50px
+    z-index: 1
+    @include btn-props
     animation: btn-gradient 15s ease alternate infinite
+
+    &:hover
+      background: transparent
+      color: $dark-blue
+      transition: all $animation_lenght ease-in-out
+
+    &::before
+      z-index: -1
+      content: ''
+      position: absolute
+      top: 100%
+      bottom: 100%
+      left: 100%
+      right: 100%
+      background-color: $dark-blue
+
+    &:hover::before
+      max-height: 100%
+      max-width: 100%
+      background-color: white
+      border-radius: $bradius
+      top: 0
+      bottom: 0
+      left: 0
+      right: 0
+      border: solid 2px $dark-blue
+      transition: all $animation_lenght ease-in-out
 
   .n-btn, .n-upload-btn
     @extend %big-btn

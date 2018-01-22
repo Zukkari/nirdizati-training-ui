@@ -83,12 +83,20 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
                             this.sclass = "no-logs-found"
                         })
                     this.appendChild(
-                        Button(NirdizatiUtil.localizeText("validation.train")).also {
-                            it.addEventListener(Events.ON_CLICK, { _ ->
-                                this@ValidationController.setContent(cs.ut.util.PAGE_TRAINING, page)
-                            })
-                            it.sclass = "n-btn margin-top-7px"
+                        Hlayout().apply {
+                            this.vflex = "min"
+                            this.hflex = "min"
+                            this.sclass = "margin-top-7px"
+                            this.appendChild(
+                                Button(NirdizatiUtil.localizeText("validation.train")).also {
+                                    it.addEventListener(Events.ON_CLICK, { _ ->
+                                        this@ValidationController.setContent(cs.ut.util.PAGE_TRAINING, page)
+                                    })
+                                    it.sclass = "n-btn"
+                                }
+                            )
                         }
+
                     )
                 }
             )

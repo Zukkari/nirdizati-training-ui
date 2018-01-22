@@ -7,15 +7,14 @@
             <label sclass="file-name" id="fileName"/>
         </vbox>
         <vlayout vflex="3">
-            <vlayout>
-                <fileupload sclass="n-upload-btn" id="chooseFile" upload="true">${labels.upload.choose.file}
-                </fileupload>
-            </vlayout>
+            <hlayout hflex="min" vflex="min">
+                <fileupload sclass="n-upload-btn" id="chooseFile" upload="true" label="${labels.upload.choose.file}"/>
+            </hlayout>
             <vlayout style="margin-top: 40px">
                 <label sclass="upload-label param-label">${labels.upload.log_support}</label>
             </vlayout>
-            <vlayout style="margin-top: 40px">
-                <button id="upload" sclass="n-upload-btn" visible="false">${labels.upload.train}</button>
+            <vlayout hflex="min" vflex="min" style="margin-top: 40px">
+                <button id="upload" sclass="n-upload-btn" disabled="true" label="${labels.upload.train}"/>
             </vlayout>
         </vlayout>
     </vbox>
