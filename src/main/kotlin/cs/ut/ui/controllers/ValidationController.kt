@@ -21,7 +21,7 @@ import org.zkoss.zk.ui.select.annotation.Wire
 import org.zkoss.zul.*
 import javax.servlet.http.HttpServletRequest
 
-class ValidationController : SelectorComposer<Component>() {
+class ValidationController : SelectorComposer<Component>(), Redirectable {
     private val log = Logger.getLogger(ValidationController::class.java)
     private var job: SimulationJob? = null
     private lateinit var charts: Map<String, List<Chart>>
@@ -39,7 +39,7 @@ class ValidationController : SelectorComposer<Component>() {
     private lateinit var comboLayout: Vbox
 
     @Wire
-    private lateinit var logSelect: Vlayout
+    private lateinit var logSelect: Hbox
 
     @Wire
     private lateinit var canvas: Include
@@ -65,20 +65,37 @@ class ValidationController : SelectorComposer<Component>() {
             JobManager.loadJobsFromStorage(CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest))
 
         if (jobs.isNotEmpty()) {
-            Grid().apply {
-                logSelect.appendChild(this)
-                this.appendChild(
-                    Rows().also {
-                        addRowContent(jobs, it)
-                    })
-            }
+            addLayoutContent(jobs)
             log.debug("Generated layout for no context mode")
             handleSelection(jobs.first())
         } else {
+            logSelect.vflex = "1"
             logSelect.appendChild(
-                Label(NirdizatiUtil.localizeText("validation.empty"))
+                Vbox().apply {
+                    this.align = "center"
+                    this.pack = "center"
+                    this.appendChild(
+                        Label(NirdizatiUtil.localizeText("validation.empty1")).apply {
+                            this.sclass = "no-logs-found"
+                        })
+                    this.appendChild(
+                        Label(NirdizatiUtil.localizeText("validation.empty2")).apply {
+                            this.sclass = "no-logs-found"
+                        })
+                    this.appendChild(
+                        Button(NirdizatiUtil.localizeText("validation.train")).also {
+                            it.addEventListener(Events.ON_CLICK, { _ ->
+                                this@ValidationController.setContent(cs.ut.util.PAGE_TRAINING, page)
+                            })
+                            it.sclass = "n-btn margin-top-7px"
+                        }
+                    )
+                }
             )
-            logSelect.parent.getChildren<Component>().forEach { if (it != logSelect) it.isVisible = false }
+            logSelect.parent.apply {
+                this.getChildren<Component>().clear()
+                this.appendChild(logSelect)
+            }
         }
     }
 
@@ -90,7 +107,7 @@ class ValidationController : SelectorComposer<Component>() {
         canvas.src = "/views/graphs/graph_canvas.html"
     }
 
-    private fun addRowContent(jobs: List<SimulationJob>, it: Rows) {
+    private fun addLayoutContent(jobs: List<SimulationJob>) {
         val combo = Combobox().apply {
             this.addEventListener(Events.ON_SELECT, { e ->
                 e as SelectEvent<*, *>
@@ -105,16 +122,15 @@ class ValidationController : SelectorComposer<Component>() {
             }
 
             this.selectedItem = this.items[0]
+            this.sclass = "id-combo"
+            this.width = "340px"
+            this.isReadonly = true
         }
-        it.appendChild(Row().also {
-            it.align = "center"
-            it.appendChild(Hlayout().also {
-                it.appendChild(Label(NirdizatiUtil.localizeText("validation.select_completed")).also {
-                    it.sclass = "param-label"
-                })
-                it.appendChild(combo)
-            })
+        logSelect.appendChild(Label(NirdizatiUtil.localizeText("validation.select_completed")).apply {
+            this.sclass = "param-label"
+            this.vflex = "min"
         })
+        logSelect.appendChild(combo)
     }
 
     private fun handleSelection(job: SimulationJob) {
