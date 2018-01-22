@@ -59,8 +59,8 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable {
             log.debug("Log is not in allowed format -> showing error")
             fileNameCont.sclass = "file-upload-err"
             fileName.value = Labels.getLabel(
-                    "upload.wrong.format",
-                    arrayOf(uploaded.name, FilenameUtils.getExtension(uploaded.name))
+                "upload.wrong.format",
+                arrayOf(uploaded.name, FilenameUtils.getExtension(uploaded.name))
             )
             upload.isVisible = false
         }
@@ -80,9 +80,9 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable {
 
             val args = mapOf(FILE to file)
             val window: Window = Executions.createComponents(
-                    "/views/modals/params.zul",
-                    self,
-                    args
+                "/views/modals/params.zul",
+                self,
+                args
             ) as Window
             if (self.getChildren<Component>().contains(window)) {
                 window.doModal()

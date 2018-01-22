@@ -1,14 +1,12 @@
 package cs.ut.engine
 
-import cs.ut.engine.events.DeployEvent
-import cs.ut.engine.events.NirdizatiEvent
-import cs.ut.engine.events.StatusUpdateEvent
-import cs.ut.engine.events.findAliveCheck
-import cs.ut.engine.events.findCallback
+import cs.ut.engine.events.*
 import cs.ut.jobs.Job
+import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
+import cs.ut.util.*
 import org.apache.log4j.Logger
-import org.zkoss.zk.ui.select.SelectorComposer
+import java.io.File
 import java.util.concurrent.Future
 
 
@@ -42,15 +40,10 @@ object JobManager {
         val deadSubs = mutableListOf<Any>()
         synchronized(subscribers) {
             subscribers.forEach {
-                when (it) {
-                    is SelectorComposer<*> -> {
-                        if (isAlive(it)) {
-                            notify(it, event)
-                        } else {
-                            deadSubs.add(it)
-                        }
-                    }
-                    else -> deadSubs.add(it)
+                if (isAlive(it)) {
+                    notify(it, event)
+                } else {
+                    deadSubs.add(it)
                 }
             }
         }
@@ -114,6 +107,29 @@ object JobManager {
         synchronized(executedJobs) {
             log.debug("Removing job $simulationJob for client $key")
             executedJobs[key]?.remove(simulationJob)
+        }
+    }
+
+    fun loadJobsFromStorage(key: String): List<SimulationJob> {
+        return mutableListOf<SimulationJob>().also { c ->
+            LogManager.loadJobIds(key)
+                .filter { data ->
+                    val sessionJobs = executedJobs[key] ?: listOf<Job>()
+                    data.id !in sessionJobs.map { it.id }
+                            || sessionJobs.firstOrNull { it.id == data.id }?.status == JobStatus.COMPLETED
+                }
+                .forEach {
+                    val params = readTrainingJson(it.id).flatMap { it.value }
+                    c.add(SimulationJob(
+                        params.first { it.type == ENCODING },
+                        params.first { it.type == BUCKETING },
+                        params.first { it.type == LEARNER },
+                        params.first { it.type == PREDICTIONTYPE },
+                        File(it.path),
+                        key,
+                        it.id
+                    ).also { it.status = JobStatus.COMPLETED })
+                }
         }
     }
 }

@@ -3,8 +3,10 @@ package cs.ut.ui.controllers
 import cs.ut.charts.Chart
 import cs.ut.charts.ChartGenerator
 import cs.ut.charts.MAE
+import cs.ut.engine.JobManager
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.adapters.JobValueAdataper
+import cs.ut.util.CookieUtil
 import cs.ut.util.NirdizatiUtil
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
@@ -16,31 +18,31 @@ import org.zkoss.zk.ui.event.SelectEvent
 import org.zkoss.zk.ui.event.SerializableEventListener
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zul.Cell
-import org.zkoss.zul.Combobox
-import org.zkoss.zul.Comboitem
-import org.zkoss.zul.Hlayout
-import org.zkoss.zul.Label
-import org.zkoss.zul.Row
-import org.zkoss.zul.Rows
-import org.zkoss.zul.Vbox
+import org.zkoss.zul.*
+import javax.servlet.http.HttpServletRequest
 
-class ValidationController : SelectorComposer<Component>() {
+class ValidationController : SelectorComposer<Component>(), Redirectable {
     private val log = Logger.getLogger(ValidationController::class.java)
     private var job: SimulationJob? = null
-    private val charts: Map<String, List<Chart>> by lazy { ChartGenerator(job as SimulationJob).getCharts().groupBy { it.javaClass.name } }
+    private lateinit var charts: Map<String, List<Chart>>
 
     @Wire
-    lateinit private var metadataRows: Rows
+    private lateinit var metadataRows: Rows
 
     @Wire
-    lateinit private var selectionRows: Rows
+    private lateinit var selectionRows: Rows
 
     @Wire
-    lateinit private var propertyRows: Rows
+    private lateinit var propertyRows: Rows
 
     @Wire
-    lateinit private var comboLayout: Vbox
+    private lateinit var comboLayout: Vbox
+
+    @Wire
+    private lateinit var logSelect: Hbox
+
+    @Wire
+    private lateinit var canvas: Include
 
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
@@ -48,12 +50,95 @@ class ValidationController : SelectorComposer<Component>() {
         job = Executions.getCurrent().getAttribute(JobValueAdataper.jobArg) as SimulationJob?
         job?.let {
             log.debug("Received job argument $job, initializing in read only mode")
+            charts = ChartGenerator(job as SimulationJob).getCharts().groupBy { it.javaClass.name }
             generateReadOnlyMode()
             return
         }
 
-        TODO("Validation without context not implemented yet")
+        log.debug("Inital job not found -> initializing valdiation mdoe withtout context")
+        logSelect.isVisible = true
+        initLayout()
     }
+
+    private fun initLayout() {
+        val jobs =
+            JobManager.loadJobsFromStorage(CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest))
+
+        if (jobs.isNotEmpty()) {
+            addLayoutContent(jobs)
+            log.debug("Generated layout for no context mode")
+            handleSelection(jobs.first())
+        } else {
+            logSelect.vflex = "1"
+            logSelect.appendChild(
+                Vbox().apply {
+                    this.align = "center"
+                    this.pack = "center"
+                    this.appendChild(
+                        Label(NirdizatiUtil.localizeText("validation.empty1")).apply {
+                            this.sclass = "no-logs-found"
+                        })
+                    this.appendChild(
+                        Label(NirdizatiUtil.localizeText("validation.empty2")).apply {
+                            this.sclass = "no-logs-found"
+                        })
+                    this.appendChild(
+                        Button(NirdizatiUtil.localizeText("validation.train")).also {
+                            it.addEventListener(Events.ON_CLICK, { _ ->
+                                this@ValidationController.setContent(cs.ut.util.PAGE_TRAINING, page)
+                            })
+                            it.sclass = "n-btn margin-top-7px"
+                        }
+                    )
+                }
+            )
+            logSelect.parent.apply {
+                this.getChildren<Component>().clear()
+                this.appendChild(logSelect)
+            }
+        }
+    }
+
+    private fun clearLayouts() {
+        metadataRows.getChildren<Component>().clear()
+        propertyRows.getChildren<Component>().clear()
+        selectionRows.getChildren<Component>().clear()
+        canvas.src = null
+        canvas.src = "/views/graphs/graph_canvas.html"
+    }
+
+    private fun addLayoutContent(jobs: List<SimulationJob>) {
+        val combo = Combobox().apply {
+            this.addEventListener(Events.ON_SELECT, { e ->
+                e as SelectEvent<*, *>
+                log.debug("Generating layout for new job -> ${e.data}")
+                clearLayouts()
+                handleSelection((e.selectedItems.first() as Comboitem).getValue())
+            })
+
+            jobs.forEach {
+                val comboItem = this.appendItem(it.id)
+                comboItem.setValue(it)
+            }
+
+            this.selectedItem = this.items[0]
+            this.sclass = "id-combo"
+            this.width = "340px"
+            this.isReadonly = true
+        }
+        logSelect.appendChild(Label(NirdizatiUtil.localizeText("validation.select_completed")).apply {
+            this.sclass = "param-label"
+            this.vflex = "min"
+        })
+        logSelect.appendChild(combo)
+    }
+
+    private fun handleSelection(job: SimulationJob) {
+        this.job = job
+        charts = ChartGenerator(job).getCharts().groupBy { it.javaClass.name }
+        generateReadOnlyMode()
+    }
+
 
     private fun generateReadOnlyMode() {
         generateMetadataRow()
@@ -75,8 +160,10 @@ class ValidationController : SelectorComposer<Component>() {
         cell.id = entry.key
         cell.align = "center"
         cell.valign = "center"
-        cell.addEventListener(Events.ON_CLICK,
-                if (entry.value.size == 1) entry.value.first().generateListenerForOne() else entry.value.generateListenerForMany())
+        cell.addEventListener(
+            Events.ON_CLICK,
+            if (entry.value.size == 1) entry.value.first().generateListenerForOne() else entry.value.generateListenerForMany()
+        )
         cell.addEventListener(Events.ON_CLICK, { _ ->
             selectionRows.getChildren<Row>().first().getChildren<Cell>().forEach { it.sclass = "" }
             cell.sclass = "selected-option"
@@ -123,7 +210,9 @@ class ValidationController : SelectorComposer<Component>() {
             (combobox.selectedItem.getValue() as Chart).render()
             combobox.width = "330px"
 
-            combobox.addEventListener(Events.ON_SELECT, { e -> (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).render() })
+            combobox.addEventListener(
+                Events.ON_SELECT,
+                { e -> (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).render() })
             comboLayout.appendChild(combobox)
         }
     }

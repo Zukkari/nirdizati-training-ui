@@ -1,10 +1,9 @@
 package cs.ut.ui.controllers
 
 import cs.ut.config.ClientInfo
-import cs.ut.ui.controllers.JobTrackerController.Companion.GRID_ID
-import cs.ut.engine.JobManager
 import cs.ut.jobs.Job
 import cs.ut.ui.NirdizatiGrid
+import cs.ut.ui.controllers.JobTrackerController.Companion.GRID_ID
 import cs.ut.util.CookieUtil
 import cs.ut.util.NAVBAR
 import org.apache.log4j.Logger
@@ -38,12 +37,12 @@ class MainPageController : SelectorComposer<Component>(), Redirectable {
     fun gatherInformation(e: ClientInfoEvent) {
         log.debug("Client info event, gathering browser information")
         val info = ClientInfo(
-                e.screenWidth,
-                e.screenHeight,
-                e.desktopWidth,
-                e.desktopHeight,
-                e.colorDepth,
-                e.orientation
+            e.screenWidth,
+            e.screenHeight,
+            e.desktopWidth,
+            e.desktopHeight,
+            e.colorDepth,
+            e.orientation
         )
 
         if (e.desktopWidth <= 680) {
@@ -76,7 +75,8 @@ class MainPageController : SelectorComposer<Component>(), Redirectable {
         if (cookieKey.isBlank()) {
             cookieUtil.setUpCookie(Executions.getCurrent().nativeResponse as HttpServletResponse)
         } else {
-            val jobGrid: NirdizatiGrid<Job> = Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
+            val jobGrid: NirdizatiGrid<Job> =
+                Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
             val jobs: List<Job> = cookieUtil.getJobsByCookie(request)
             if (jobs.isNotEmpty()) {
                 jobGrid.generate(jobs)

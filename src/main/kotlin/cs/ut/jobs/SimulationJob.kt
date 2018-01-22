@@ -2,28 +2,25 @@ package cs.ut.jobs
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
-
 import cs.ut.config.nodes.Dir
 import cs.ut.config.nodes.UserPreferences
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.UserRightsJob.Companion.updateACL
-
-import cs.ut.util.FileWriter
-import cs.ut.util.NirdizatiUtil
-import cs.ut.util.PREFIX
-import org.apache.commons.io.FilenameUtils
+import cs.ut.util.*
 import org.json.JSONObject
-
 import java.io.File
 import java.io.IOException
 
 
 class SimulationJob(
-        val encoding: ModelParameter,
-        val bucketing: ModelParameter,
-        val learner: ModelParameter,
-        val outcome: ModelParameter,
-        val logFile: File) : Job() {
+    val encoding: ModelParameter,
+    val bucketing: ModelParameter,
+    val learner: ModelParameter,
+    val outcome: ModelParameter,
+    val logFile: File,
+    private val owner: String,
+    id: String = ""
+) : Job(id) {
 
     private var process: Process? = null
     private val dirConfig = MasterConfiguration.dirConfig
@@ -44,15 +41,24 @@ class SimulationJob(
             learner.properties.forEach { (k, _, v) -> params.put(k, convertToNumber(v)) }
         }
 
-        json.put(outcome.parameter,
-                JSONObject().put(bucketing.parameter + "_" + encoding.parameter,
-                        JSONObject().put(learner.parameter, params)
-                )
+        json.put(
+            outcome.parameter,
+            JSONObject().put(
+                bucketing.parameter + "_" + encoding.parameter,
+                JSONObject().put(learner.parameter, params)
+            )
+        )
+        json.put(
+            UI_DATA, JSONObject()
+                .put(OWNER, owner)
+                .put(LOG_FILE, logFile.absoluteFile)
         )
 
         val writer = FileWriter()
-        val f = writer.writeJsonToDisk(json, id,
-                dirConfig.dirPath(Dir.TRAIN_DIR))
+        val f = writer.writeJsonToDisk(
+            json, id,
+            dirConfig.dirPath(Dir.TRAIN_DIR)
+        )
 
         updateACL(f)
     }
@@ -114,7 +120,7 @@ class SimulationJob(
     override fun getNotificationMessage() = NirdizatiUtil.localizeText("job.completed.simulation", this.toString())
 
     override fun toString(): String {
-        return FilenameUtils.getBaseName(logFile.name) +
+        return logFile.nameWithoutExtension +
                 "_" +
                 bucketing.parameter +
                 "_" +
@@ -127,11 +133,11 @@ class SimulationJob(
     }
 
     private fun convertToNumber(value: String): Number =
-            try {
-                value.toInt()
-            } catch (e: NumberFormatException) {
-                value.toDouble()
-            }
+        try {
+            value.toInt()
+        } catch (e: NumberFormatException) {
+            value.toDouble()
+        }
 
     companion object {
         const val TRAIN_PY = "train.py"

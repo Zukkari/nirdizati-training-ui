@@ -45,7 +45,13 @@ class ChartGenerator(val job: SimulationJob) {
 
         (1..files.size).zip(files).forEach {
             val payload = getBarChartPayload(it.second)
-            charts.add(BarChart(it.first.toString(), gson.toJson(payload.map { it.value }), gson.toJson(payload.map { it.label })))
+            charts.add(
+                BarChart(
+                    it.first.toString(),
+                    gson.toJson(payload.map { it.value }),
+                    gson.toJson(payload.map { it.label })
+                )
+            )
         }
 
         return charts.toList()
@@ -55,9 +61,11 @@ class ChartGenerator(val job: SimulationJob) {
         val file = LogManager.getDetailedFile(job)
         val heatMap = getHeatMapPayload(file)
 
-        return HeatMap(TRUE_VS_PREDICTED,
-                gson.toJson(heatMap.data.map { arrayOf(it.x, it.y, it.value) }),
-                gson.toJson(heatMap.xLabels),
-                gson.toJson(heatMap.yLabels))
+        return HeatMap(
+            TRUE_VS_PREDICTED,
+            gson.toJson(heatMap.data.map { arrayOf(it.x, it.y, it.value) }),
+            gson.toJson(heatMap.xLabels),
+            gson.toJson(heatMap.yLabels)
+        )
     }
 }

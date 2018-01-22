@@ -170,6 +170,20 @@
   100% {
     background-position-x: 100%;
     background-position-y: 50%; } }
+.selected-option {
+  animation: cell-select 1s;
+  background: #0093f9 !important;
+  color: white !important; }
+
+@keyframes cell-select {
+  0% {
+    opacity: 0.3;
+    background: rgba(0, 147, 249, 0.3) !important;
+    color: rgba(0, 0, 0, 0.57); }
+  25% {
+    color: white !important; }
+  100% {
+    background: #0093f9 !important; } }
 .file-upload-err, .file-upload {
   text-align: center;
   width: 80%;
@@ -200,10 +214,22 @@
 .graph-container {
   max-width: 100%;
   max-height: 100%;
-  width: 100%; }
+  width: 70%;
+  height: 100%;
+  margin-left: 3%; }
 
 .padding-top {
   padding-top: 7%; }
+
+.no-logs-found {
+  font-size: larger;
+  color: rgba(0, 0, 0, 0.5); }
+
+.id-combo {
+  margin-left: 10px;
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%; }
 
 .z-loading {
   top: 50% !important;

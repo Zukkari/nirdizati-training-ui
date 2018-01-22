@@ -19,7 +19,8 @@ class CookieUtil {
         log.debug("Successfully generated new cookie and added it to response")
     }
 
-    fun getCookieKey(request: HttpServletRequest): String = request.cookies.firstOrNull { it.name == JOBS_KEY }?.value ?: ""
+    fun getCookieKey(request: HttpServletRequest): String =
+        request.cookies.firstOrNull { it.name == JOBS_KEY }?.value ?: ""
 
 
     fun getJobsByCookie(request: HttpServletRequest): List<Job> {

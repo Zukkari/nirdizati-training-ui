@@ -55,7 +55,12 @@ class CsvReader(private val f: File) {
         }
     }
 
-    tailrec private fun identifyColumn(col: String, ids: MutableList<String>, type: String, result: MutableMap<String, String>) {
+    tailrec private fun identifyColumn(
+        col: String,
+        ids: MutableList<String>,
+        type: String,
+        result: MutableMap<String, String>
+    ) {
         if (ids.isNotEmpty()) {
             if (ids.first() == col.toLowerCase()) {
                 result[type] = col
@@ -122,7 +127,11 @@ class CsvReader(private val f: File) {
         return resultCols
     }
 
-    private fun postProcessCase(resultCols: MutableMap<String, MutableList<String>>, case: Case, alreadyClassified: MutableSet<String>) {
+    private fun postProcessCase(
+        resultCols: MutableMap<String, MutableList<String>>,
+        case: Case,
+        alreadyClassified: MutableSet<String>
+    ) {
         val caseCols = case.classifiedColumns
 
         caseCols[STATIC + NUM_COL]?.forEach {
@@ -138,12 +147,20 @@ class CsvReader(private val f: File) {
         }
 
         caseCols[DYNAMIC + CAT_COLS]?.forEach {
-            categorizeColumn(it, DYNAMIC + CAT_COLS, resultCols, alreadyClassified,
-                    listOf(STATIC + NUM_COL, STATIC + CAT_COLS, DYNAMIC + NUM_COL))
+            categorizeColumn(
+                it, DYNAMIC + CAT_COLS, resultCols, alreadyClassified,
+                listOf(STATIC + NUM_COL, STATIC + CAT_COLS, DYNAMIC + NUM_COL)
+            )
         }
     }
 
-    private fun categorizeColumn(column: String, key: String, resultCols: MutableMap<String, MutableList<String>>, alreadyClassified: MutableSet<String>, lookthrough: List<String>) {
+    private fun categorizeColumn(
+        column: String,
+        key: String,
+        resultCols: MutableMap<String, MutableList<String>>,
+        alreadyClassified: MutableSet<String>,
+        lookthrough: List<String>
+    ) {
         if (column !in alreadyClassified) {
             alreadyClassified.add(column)
             resultCols[key]!!.add(column)
@@ -157,7 +174,12 @@ class CsvReader(private val f: File) {
         }
     }
 
-    private fun insertIntoMap(map: MutableMap<String, MutableSet<String>>, category: String, col: String, values: Set<String>?) {
+    private fun insertIntoMap(
+        map: MutableMap<String, MutableSet<String>>,
+        category: String,
+        col: String,
+        values: Set<String>?
+    ) {
         var isNumeric = true
 
         values!!.forEach {
@@ -218,8 +240,8 @@ class CsvReader(private val f: File) {
             }
 
             it.lineSequence()
-                    .takeWhile { cases.size < sampleSize }
-                    .forEach { row -> processRow(row, cases, caseIdColIndex, header) }
+                .takeWhile { cases.size < sampleSize }
+                .forEach { row -> processRow(row, cases, caseIdColIndex, header) }
         }
 
         val end = System.currentTimeMillis()
@@ -249,7 +271,8 @@ class CsvReader(private val f: File) {
         return cases.firstOrNull { colName.toLowerCase() == it.id.toLowerCase() }
     }
 
-    fun getColumnList(): MutableList<String> = mutableListOf(STATIC + NUM_COL, STATIC + CAT_COLS, DYNAMIC + NUM_COL, DYNAMIC + CAT_COLS)
+    fun getColumnList(): MutableList<String> =
+        mutableListOf(STATIC + NUM_COL, STATIC + CAT_COLS, DYNAMIC + NUM_COL, DYNAMIC + CAT_COLS)
 
     private fun readOneCase(): Case {
         val reader = BufferedReader(FileReader(f))

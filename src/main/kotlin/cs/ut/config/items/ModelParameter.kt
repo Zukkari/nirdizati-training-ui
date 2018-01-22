@@ -1,21 +1,17 @@
 package cs.ut.config.items
 
-import javax.xml.bind.annotation.XmlAccessType
-import javax.xml.bind.annotation.XmlAccessorType
-import javax.xml.bind.annotation.XmlElement
-import javax.xml.bind.annotation.XmlElementWrapper
-import javax.xml.bind.annotation.XmlTransient
-import javax.xml.bind.annotation.XmlType
+import javax.xml.bind.annotation.*
 
 @XmlType(propOrder = arrayOf("id", "parameter", "type", "enabled", "properties"))
 @XmlAccessorType(XmlAccessType.FIELD)
-data class ModelParameter(
+open class ModelParameter(
         @field:[XmlElement(name = "id")] var id: String,
         @field:[XmlElement(name = "parameter")] var parameter: String,
         @field:[XmlElement(name = "type")] var type: String,
         @field:[XmlElement(name = "enabled")] var enabled: Boolean,
         @field:[XmlElementWrapper(name = "properties")
-        XmlElement(name = "property")] var properties: MutableList<Property>) {
+        XmlElement(name = "property")] var properties: MutableList<Property>
+) {
 
     constructor(modelParameter: ModelParameter) : this(
             modelParameter.id,
@@ -27,6 +23,7 @@ data class ModelParameter(
 
     @XmlTransient
     var translate = true
+
     fun getTranslateName() = this.type + "." + this.id
 
     constructor() : this("", "", "", false, mutableListOf())
@@ -41,7 +38,7 @@ data class ModelParameter(
     }
 
     fun getPropety(property: String): Property? {
-        return properties.firstOrNull { it.id == property}
+        return properties.firstOrNull { it.id == property }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -60,3 +57,5 @@ data class ModelParameter(
         return result
     }
 }
+
+object EmptyParameter : ModelParameter("N/A", "N/A", "N/A", true, mutableListOf(EmptyProperty))

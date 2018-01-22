@@ -13,11 +13,11 @@ object NirdizatiThreadPool {
     init {
         val config = MasterConfiguration.threadPoolConfiguration
         threadPool = ThreadPoolExecutor(
-                config.core,
-                config.max,
-                config.keepAlive.toLong(),
-                TimeUnit.SECONDS,
-                ArrayBlockingQueue<Runnable>(config.capacity)
+            config.core,
+            config.max,
+            config.keepAlive.toLong(),
+            TimeUnit.SECONDS,
+            ArrayBlockingQueue<Runnable>(config.capacity)
         )
     }
 

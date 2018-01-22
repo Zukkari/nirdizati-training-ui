@@ -2,7 +2,6 @@ package cs.ut.jobs
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.nodes.Dir
-import org.apache.commons.io.FilenameUtils
 import org.apache.log4j.Logger
 import java.io.File
 import java.nio.charset.Charset
@@ -17,7 +16,7 @@ class UserRightsJob(private val f: File) : Job() {
         updateACL(f)
 
         log.debug("Changing rights for training JSON")
-        val name: String = FilenameUtils.getBaseName(f.name)
+        val name: String = f.nameWithoutExtension
 
         val path = "${conf.dirPath(Dir.DATA_DIR)}$name.json"
         log.debug("Looking for file -> $path")
@@ -45,9 +44,10 @@ class UserRightsJob(private val f: File) : Job() {
         private fun updateRights(f: File) {
             log.debug("Updating ACL -> $f")
             val pb = ProcessBuilder(
-                    "chmod",
-                    prefs.acp,
-                    f.absolutePath)
+                "chmod",
+                prefs.acp,
+                f.absolutePath
+            )
             pb.inheritIO()
             log.debug("Running -> ${pb.command()}")
 
@@ -58,11 +58,12 @@ class UserRightsJob(private val f: File) : Job() {
         private fun updateOwnership(f: File) {
             log.debug("Updating ownership for $f -> new owner ${prefs.userName}:${prefs.userGroup}")
             val pb = ProcessBuilder(
-                    "sudo",
-                    "-S",
-                    "chown",
-                    "${prefs.userName}:${prefs.userGroup}",
-                    f.absolutePath)
+                "sudo",
+                "-S",
+                "chown",
+                "${prefs.userName}:${prefs.userGroup}",
+                f.absolutePath
+            )
 
             log.debug("Command -> ${pb.command()}")
             val process = pb.start()

@@ -8,10 +8,11 @@ import javax.xml.bind.annotation.XmlType
 @XmlType(propOrder = ["core", "max", "keepAlive", "capacity"])
 @XmlAccessorType(XmlAccessType.FIELD)
 class ThreadPoolConfiguration(
-        @XmlElement(name = "core") var core: Int,
-        @XmlElement(name = "max") var max: Int,
-        @XmlElement(name = "keepAlive") var keepAlive: Int,
-        @XmlElement(name = "capacity") var capacity: Int) {
+    @XmlElement(name = "core") var core: Int,
+    @XmlElement(name = "max") var max: Int,
+    @XmlElement(name = "keepAlive") var keepAlive: Int,
+    @XmlElement(name = "capacity") var capacity: Int
+) {
 
     constructor() : this(-1, -1, -1, -1)
 }

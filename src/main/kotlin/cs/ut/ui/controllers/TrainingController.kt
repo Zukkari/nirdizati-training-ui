@@ -12,8 +12,10 @@ import cs.ut.ui.controllers.modal.ParameterModalController.Companion.IS_RECREATI
 import cs.ut.ui.controllers.training.AdvancedModeController
 import cs.ut.ui.controllers.training.BasicModeController
 import cs.ut.ui.controllers.training.ModeController
-import cs.ut.util.*
-import org.apache.commons.io.FilenameUtils
+import cs.ut.util.CookieUtil
+import cs.ut.util.NirdizatiUtil
+import cs.ut.util.OUTCOME
+import cs.ut.util.readLogColumns
 import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -77,7 +79,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         }
     }
 
-    private fun getLogFileName(): String = FilenameUtils.getBaseName((clientLogs.selectedItem.getValue() as File).name)
+    private fun getLogFileName(): String = (clientLogs.selectedItem.getValue() as File).nameWithoutExtension
 
     private fun initPredictions(): Boolean {
         radioGroup.getChildren<Component>().clear()
@@ -97,7 +99,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
 
         val logFile: File = clientLogs.selectedItem.getValue<File>() ?: return false
 
-        val dataSetColumns: List<String> = readLogColumns(FilenameUtils.getBaseName(logFile.name))
+        val dataSetColumns: List<String> = readLogColumns(logFile.nameWithoutExtension)
 
         params.forEach {
             val item: Comboitem = predictionType.appendItem(NirdizatiUtil.localizeText("${it.type}.${it.id}"))
@@ -243,12 +245,16 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
             bucketings.forEach { bucketing ->
                 learners.forEach { learner ->
                     predictionTypes.forEach { pred ->
-                        jobs.add(SimulationJob(
-                                encoding,
-                                bucketing,
-                                learner,
-                                pred,
-                                clientLogs.selectedItem.getValue()))
+                        jobs.add(
+                                SimulationJob(
+                                        encoding,
+                                        bucketing,
+                                        learner,
+                                        pred,
+                                        clientLogs.selectedItem.getValue(),
+                                        CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
+                                )
+                        )
                     }
                 }
             }
@@ -256,7 +262,8 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
         log.debug("Generated ${jobs.size} jobs")
         JobManager.deployJobs(
                 CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest),
-                jobs)
+                jobs
+        )
     }
 
     private fun Map<String, List<ModelParameter>>.validateParameters(): Boolean {

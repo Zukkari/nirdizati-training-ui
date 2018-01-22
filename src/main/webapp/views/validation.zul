@@ -1,4 +1,5 @@
 <vbox vflex="1" hflex="1" apply="cs.ut.ui.controllers.ValidationController">
+    <hbox id="logSelect" pack="center" align="center" hflex="1" visible="false"/>
     <grid hflex="1" vflex="min">
         <rows id="metadataRows" hflex="1" vflex="1"/>
     </grid>
@@ -11,7 +12,7 @@
     <hlayout hflex="1" vflex="3">
         <vbox align="center" style="margin-top:15%" hflex="min" vflex="1" id="comboLayout"/>
         <vlayout hflex="1" vflex="1" style="margin-bottom:20px; margin-top: 20px">
-            <include src="/views/graphs/graph_canvas.html"/>
+            <include id="canvas" src="/views/graphs/graph_canvas.html"/>
         </vlayout>
     </hlayout>
 </vbox>
