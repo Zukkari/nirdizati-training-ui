@@ -15,10 +15,10 @@ enum class JobStatus {
     FAILED
 }
 
-abstract class Job : Runnable {
+abstract class Job(generatedId: String = "") : Runnable {
     val log = Logger.getLogger(Job::class.java)!!
 
-    val id: String = IdProvider.getNextId()
+    val id: String = if (generatedId.isBlank()) IdProvider.getNextId() else generatedId
 
     var status: JobStatus = JobStatus.PENDING
 

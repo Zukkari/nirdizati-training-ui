@@ -113,22 +113,23 @@ object JobManager {
     fun loadJobsFromStorage(key: String): List<SimulationJob> {
         return mutableListOf<SimulationJob>().also { c ->
             LogManager.loadJobIds(key)
-                    .filter { data ->
-                        val sessionJobs = executedJobs[key] ?: listOf<Job>()
-                        data.id !in sessionJobs.map { it.id }
-                                || sessionJobs.firstOrNull { it.id == data.id }?.status == JobStatus.COMPLETED
-                    }
-                    .forEach {
-                        val params = readTrainingJson(it.id).flatMap { it.value }
-                        c.add(SimulationJob(
-                                params.first { it.type == ENCODING },
-                                params.first { it.type == BUCKETING },
-                                params.first { it.type == LEARNER },
-                                params.first { it.type == PREDICTIONTYPE },
-                                File(it.path),
-                                key
-                        ).also { it.status = JobStatus.COMPLETED })
-                    }
+                .filter { data ->
+                    val sessionJobs = executedJobs[key] ?: listOf<Job>()
+                    data.id !in sessionJobs.map { it.id }
+                            || sessionJobs.firstOrNull { it.id == data.id }?.status == JobStatus.COMPLETED
+                }
+                .forEach {
+                    val params = readTrainingJson(it.id).flatMap { it.value }
+                    c.add(SimulationJob(
+                        params.first { it.type == ENCODING },
+                        params.first { it.type == BUCKETING },
+                        params.first { it.type == LEARNER },
+                        params.first { it.type == PREDICTIONTYPE },
+                        File(it.path),
+                        key,
+                        it.id
+                    ).also { it.status = JobStatus.COMPLETED })
+                }
         }
     }
 }

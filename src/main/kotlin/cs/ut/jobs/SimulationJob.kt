@@ -13,13 +13,14 @@ import java.io.IOException
 
 
 class SimulationJob(
-        val encoding: ModelParameter,
-        val bucketing: ModelParameter,
-        val learner: ModelParameter,
-        val outcome: ModelParameter,
-        val logFile: File,
-        val owner: String
-) : Job() {
+    val encoding: ModelParameter,
+    val bucketing: ModelParameter,
+    val learner: ModelParameter,
+    val outcome: ModelParameter,
+    val logFile: File,
+    private val owner: String,
+    id: String = ""
+) : Job(id) {
 
     private var process: Process? = null
     private val dirConfig = MasterConfiguration.dirConfig
@@ -41,20 +42,22 @@ class SimulationJob(
         }
 
         json.put(
-                outcome.parameter,
-                JSONObject().put(
-                        bucketing.parameter + "_" + encoding.parameter,
-                        JSONObject().put(learner.parameter, params)
-                )
+            outcome.parameter,
+            JSONObject().put(
+                bucketing.parameter + "_" + encoding.parameter,
+                JSONObject().put(learner.parameter, params)
+            )
         )
-        json.put(UI_DATA, JSONObject()
+        json.put(
+            UI_DATA, JSONObject()
                 .put(OWNER, owner)
-                .put(LOG_FILE, logFile.absoluteFile))
+                .put(LOG_FILE, logFile.absoluteFile)
+        )
 
         val writer = FileWriter()
         val f = writer.writeJsonToDisk(
-                json, id,
-                dirConfig.dirPath(Dir.TRAIN_DIR)
+            json, id,
+            dirConfig.dirPath(Dir.TRAIN_DIR)
         )
 
         updateACL(f)
@@ -130,11 +133,11 @@ class SimulationJob(
     }
 
     private fun convertToNumber(value: String): Number =
-            try {
-                value.toInt()
-            } catch (e: NumberFormatException) {
-                value.toDouble()
-            }
+        try {
+            value.toInt()
+        } catch (e: NumberFormatException) {
+            value.toDouble()
+        }
 
     companion object {
         const val TRAIN_PY = "train.py"

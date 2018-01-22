@@ -18,7 +18,7 @@ class StartUpJob : Job() {
         }
 
         val end = System.currentTimeMillis()
-        log.debug("Finished directory preparation in ${end - start}")
+        log.debug("Finished directory preparation in ${end - start} ms")
     }
 
     private fun File.prepareDirectory() {
