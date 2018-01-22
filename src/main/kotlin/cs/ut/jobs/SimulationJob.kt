@@ -114,6 +114,10 @@ class SimulationJob(
     override fun beforeInterrupt() {
         log.debug("Process ${super.id} has been stopped by the user")
         process?.destroy()
+        if (status != JobStatus.COMPLETED) {
+            log.debug("Job is not complete -> deleting training file")
+            File(MasterConfiguration.dirConfig.dirPath(Dir.TRAIN_DIR) + "$id.json").delete()
+        }
     }
 
     override fun isNotificationRequired() = true

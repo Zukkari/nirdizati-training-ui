@@ -28,8 +28,8 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
         gridContainer.getChildren<Component>().clear()
 
         grid.generate(parameters
-                .entries
-                .map { GeneratorArgument(it.key, it.value) })
+            .entries
+            .map { GeneratorArgument(it.key, it.value) })
 
         gridContainer.appendChild(grid)
         gridContainer.appendChild(hyperParamsContainer)
@@ -53,7 +53,9 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
                 TrainingController.LEARNER -> parameter.handleLearner(e)
                 else -> parameter.handleOther(e)
             }
-            generateGrids()
+            if (parameter.properties.isNotEmpty()) {
+                generateGrids()
+            }
         })
     }
 
@@ -69,13 +71,16 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
         log.debug("Key: $key -> value: $value")
 
         val propGrid = NirdizatiGrid(PropertyValueAdapter())
-        propGrid.setColumns(mapOf(
+        propGrid.setColumns(
+            mapOf(
                 key.type + "." + key.id to "min",
                 "" to "min"
-        ))
+            )
+        )
 
         propGrid.generate(value)
         propGrid.vflex = "1"
+        propGrid.sclass = "hyper-grid"
 
         hyperParamsContainer.appendChild(propGrid)
     }
