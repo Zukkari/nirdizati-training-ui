@@ -17,21 +17,21 @@ object JobManager {
     private val subscribers: MutableList<Any> = mutableListOf()
     private val jobStatus: MutableMap<Job, Future<*>> = mutableMapOf()
 
-    fun subscribeForUpdates(caller: Any) {
+    fun subscribe(caller: Any) {
         synchronized(subscribers) {
             log.debug("New subscriber for updates -> ${caller::class.java}")
             subscribers.add(caller)
         }
     }
 
-    fun unsubscribeFromUpdates(caller: Any) {
+    fun unsubscribe(caller: Any) {
         synchronized(subscribers) {
             log.debug("Removing subscriber ${caller::class.java}")
             subscribers.remove(caller)
         }
     }
 
-    internal fun statusUpdated(job: Job) {
+    fun statusUpdated(job: Job) {
         log.debug("Update event: ${job.id} -> notifying subscribers")
         handleEvent(StatusUpdateEvent(executedJobs.entries.firstOrNull { it.value.contains(job) }?.key ?: "", job))
     }
@@ -61,7 +61,7 @@ object JobManager {
     private fun List<Any>.cleanSubscribers() {
         log.debug("Received ${this.size} to remove from subscribers")
         this.forEach {
-            unsubscribeFromUpdates(it)
+            unsubscribe(it)
         }
     }
 
@@ -96,9 +96,9 @@ object JobManager {
         log.debug("Job thread ${job.id} successfully interrupted")
     }
 
-    fun runServiceJob(job: Job) {
+    fun runServiceJob(job: Job): Future<*> {
         log.debug("Running service job $job")
-        NirdizatiThreadPool.execute(job)
+        return NirdizatiThreadPool.execute(job)
     }
 
     fun getJobsForKey(key: String) = executedJobs[key]
