@@ -36,7 +36,7 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
         super.doAfterCompose(comp)
 
         self.desktop.enableServerPush(true)
-        JobManager.subscribeForUpdates(this)
+        JobManager.subscribe(this)
 
         val jobGrid = NirdizatiGrid(JobValueAdataper())
         jobGrid.vflex = "1"

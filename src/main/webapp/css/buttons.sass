@@ -16,7 +16,7 @@ $min-width: 680px
 .z-hlayout-inner
   z-index: 3
 
-$animation_lenght: 0.34s
+$animation_lenght: 0.14s
 $bradius: 40px
 $min-width: 48px
 $min-height: 48px
@@ -117,16 +117,6 @@ $height: 50px
       y: 50%
 
 .selected-option
-  animation: cell-select 1s
   background: $blue !important
   color: white !important
-
-@keyframes cell-select
-  0%
-    opacity: 0.3
-    background: rgba(0, 147, 249, 0.3) !important
-    color: rgba(0, 0, 0, 0.57)
-  25%
-    color: white !important
-  100%
-    background: $blue !important
+  transition: all 0.34s
