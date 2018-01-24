@@ -279,7 +279,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <executablePath>/usr/local/bin/sass</executablePath>
+                    <executablePath>/usr/bin/sass</executablePath>
                     <inputDir>src/main/webapp/css/</inputDir>
                     <outDir>target/nirdizati-training-ui/css/</outDir>
                 </configuration>
