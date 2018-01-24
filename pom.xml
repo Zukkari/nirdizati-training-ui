@@ -281,7 +281,7 @@
                 <configuration>
                     <executablePath>/usr/bin/sass</executablePath>
                     <inputDir>src/main/webapp/css/</inputDir>
-                    <outDir>target/nirdizati-training-ui/css/</outDir>
+                    <outDir>src/main/webapp/css/</outDir>
                 </configuration>
             </plugin>
         </plugins>
