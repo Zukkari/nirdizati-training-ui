@@ -12,6 +12,7 @@
         <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
         <packname>-${project.version}-FL-${maven.build.timestamp}</packname>
         <kotlin.version>1.2.20</kotlin.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <packaging>war</packaging>
     <name>The nirdizati-training-ui Project</name>
@@ -164,21 +165,6 @@
         <sourceDirectory>src/main/kotlin</sourceDirectory>
         <finalName>${project.artifactId}</finalName>
         <plugins>
-            <!-- Run with Jetty -->
-            <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>7.6.8.v20121106</version>
-                <configuration>
-                    <webAppConfig>
-                        <contextPath>/${project.artifactId}</contextPath>
-                        <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
-                    </webAppConfig>
-                    <scanIntervalSeconds>5</scanIntervalSeconds>
-                    <stopKey/>
-                    <stopPort/>
-                </configuration>
-            </plugin>
             <!-- Compile java -->
             <!-- Build war -->
             <plugin>

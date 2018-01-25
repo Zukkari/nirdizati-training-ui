@@ -113,6 +113,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
         return isValid
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun gatherValues(): Map<String, List<ModelParameter>> {
         val gathered = grid.gatherValues()
 

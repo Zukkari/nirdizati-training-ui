@@ -1,12 +1,16 @@
 package cs.ut.engine
 
-import cs.ut.engine.events.*
+import cs.ut.engine.events.DeployEvent
+import cs.ut.engine.events.NirdizatiEvent
+import cs.ut.engine.events.StatusUpdateEvent
+import cs.ut.engine.events.findCallback
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
 import cs.ut.util.*
 import org.apache.log4j.Logger
 import java.io.File
+import java.lang.ref.WeakReference
 import java.util.concurrent.Future
 
 
@@ -14,20 +18,20 @@ object JobManager {
     val log: Logger = Logger.getLogger(JobManager::class.java)!!
 
     private val executedJobs: MutableMap<String, MutableList<Job>> = mutableMapOf()
-    private val subscribers: MutableList<Any> = mutableListOf()
+    private var subscribers: List<WeakReference<Any>> = listOf()
     private val jobStatus: MutableMap<Job, Future<*>> = mutableMapOf()
 
     fun subscribe(caller: Any) {
         synchronized(subscribers) {
             log.debug("New subscriber for updates -> ${caller::class.java}")
-            subscribers.add(caller)
+            subscribers += WeakReference(caller)
         }
     }
 
     fun unsubscribe(caller: Any) {
         synchronized(subscribers) {
             log.debug("Removing subscriber ${caller::class.java}")
-            subscribers.remove(caller)
+            subscribers.firstOrNull { it.get() == caller }?.let { subscribers -= it }
         }
     }
 
@@ -37,32 +41,26 @@ object JobManager {
     }
 
     private fun handleEvent(event: NirdizatiEvent) {
-        val deadSubs = mutableListOf<Any>()
+        cleanSubscribers()
         synchronized(subscribers) {
             subscribers.forEach {
-                if (isAlive(it)) {
-                    notify(it, event)
-                } else {
-                    deadSubs.add(it)
-                }
+                notify(it, event)
             }
         }
-        deadSubs.cleanSubscribers()
     }
 
-    private fun isAlive(obj: Any): Boolean {
-        return findAliveCheck(obj::class.java).invoke(obj) as Boolean
-    }
-
-    private fun notify(obj: Any, event: NirdizatiEvent) {
-        findCallback(obj::class.java, event::class).invoke(obj, event)
-    }
-
-    private fun List<Any>.cleanSubscribers() {
-        log.debug("Received ${this.size} to remove from subscribers")
-        this.forEach {
-            unsubscribe(it)
+    private fun cleanSubscribers() {
+        val before: Int = subscribers.size
+        subscribers = subscribers.filter { it.get() != null }
+        val after: Int = subscribers.size
+        if (before > after) {
+            log.debug("Unsubscribed ${before - after} callbacks")
         }
+    }
+
+    private fun notify(ref: WeakReference<Any>, event: NirdizatiEvent) {
+        val obj = ref.get() ?: return
+        findCallback(obj::class.java, event::class).invoke(obj, event)
     }
 
     fun deployJobs(key: String, jobs: List<Job>) {

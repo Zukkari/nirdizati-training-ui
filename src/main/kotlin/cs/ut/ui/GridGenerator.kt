@@ -13,7 +13,7 @@ import org.zkoss.zul.impl.NumberInputElement
 
 class FieldComponent(val label: Component, val control: Component)
 
-class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
+class NirdizatiGrid<T>(private val provider: GridValueProvider<T, Row>) : Grid() {
     private val log = Logger.getLogger(NirdizatiGrid::class.java)
     val fields = mutableListOf<FieldComponent>()
 
@@ -53,7 +53,7 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
 
     fun getComponentByName(name: String) = fields.first { it.label.id == name }
 
-    tailrec private fun generateRows(data: MutableList<T>, rows: Rows) {
+    private tailrec fun generateRows(data: MutableList<T>, rows: Rows) {
         if (data.isNotEmpty()) {
             val row = provider.provide(data.first())
             rows.appendChild(row)
@@ -67,7 +67,7 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
         return invalid.isEmpty()
     }
 
-    tailrec private fun validateFields(fields: MutableList<FieldComponent>, invalid: MutableList<Component>) {
+    private tailrec fun validateFields(fields: MutableList<FieldComponent>, invalid: MutableList<Component>) {
         if (fields.isNotEmpty()) {
             val comp = fields.first().control
 
@@ -127,7 +127,8 @@ class NirdizatiGrid<T>(val provider: GridValueProvider<T, Row>) : Grid() {
         return valueMap
     }
 
-    tailrec private fun gatherValueFromFields(valueMap: MutableMap<String, Any>, fields: MutableList<FieldComponent>) {
+    @Suppress("UNCHECKED_CAST")
+    private tailrec fun gatherValueFromFields(valueMap: MutableMap<String, Any>, fields: MutableList<FieldComponent>) {
         if (fields.isNotEmpty()) {
             val field = fields.first().control
             val id = fields.first().label.getAttribute(COMP_ID) as String

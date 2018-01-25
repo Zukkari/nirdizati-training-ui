@@ -125,7 +125,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @Suppress("UNCHECKED_CAST")
     private fun updateContent(params: MutableMap<String, MutableList<String>>) {
         okBtn.isDisabled = false
         log.debug("Updating content with params $params")

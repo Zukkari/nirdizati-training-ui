@@ -1,7 +1,6 @@
 package cs.ut.ui.controllers
 
 import cs.ut.engine.JobManager
-import cs.ut.engine.events.AliveCheck
 import cs.ut.engine.events.Callback
 import cs.ut.engine.events.DeployEvent
 import cs.ut.engine.events.StatusUpdateEvent
@@ -44,8 +43,13 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
         jobTracker.appendChild(jobGrid)
     }
 
+    @Suppress("UNCHECKED_CAST")
     @Callback(StatusUpdateEvent::class)
     fun updateJobStatus(event: StatusUpdateEvent) {
+        if (self.desktop == null || !self.desktop.isAlive) {
+            return
+        }
+
         Executions.schedule(
             self.desktop,
             { _ ->
@@ -62,7 +66,12 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
     }
 
     @Callback(DeployEvent::class)
+    @Suppress("UNCHECKED_CAST")
     fun updateDeployment(event: DeployEvent) {
+        if (self.desktop == null || !self.desktop.isAlive) {
+            return
+        }
+
         Executions.schedule(
             self.desktop,
             { _ ->
@@ -82,12 +91,7 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
         )
     }
 
-    @AliveCheck
-    fun isAlive(): Boolean {
-        return self.desktop != null && self.desktop.isAlive
-    }
-
-    tailrec private fun Job.updateJobStatus(rows: List<Row>) {
+    private tailrec fun Job.updateJobStatus(rows: List<Row>) {
         if (rows.isNotEmpty()) {
             val row = rows.first()
             val buttons = row.lastChild.lastChild.getChildren<Component>()

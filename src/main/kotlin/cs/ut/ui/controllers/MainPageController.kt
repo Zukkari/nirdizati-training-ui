@@ -69,6 +69,7 @@ class MainPageController : SelectorComposer<Component>(), Redirectable {
     /**
      * Handles users cookie so jobs could be persistent if user refreshes the page.
      */
+    @Suppress("UNCHECKED_CAST")
     private fun handleCookie() {
         val request = Executions.getCurrent().nativeRequest as HttpServletRequest
         val cookieKey: String = cookieUtil.getCookieKey(request)
