@@ -5,19 +5,19 @@ import cs.ut.config.UiData
 import cs.ut.config.nodes.Dir
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.SimulationJob
+import cs.ut.logging.NirdLogger
 import cs.ut.util.LOG_FILE
 import cs.ut.util.OWNER
 import cs.ut.util.PREFIX
 import cs.ut.util.UI_DATA
 import org.apache.commons.io.FilenameUtils
-import org.apache.log4j.Logger
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 
 object LogManager {
-    private val log: Logger = Logger.getLogger(LogManager::class.java)!!
+    private val log= NirdLogger(caller = this.javaClass)
 
     private const val REGRESSION = "_regr"
     private const val CLASSIFICATION = "_class"

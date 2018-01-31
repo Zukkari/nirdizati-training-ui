@@ -158,6 +158,11 @@
             <version>${kotlin.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-core</artifactId>
+            <version>0.22</version>
+        </dependency>
 
 
     </dependencies>
@@ -197,6 +202,7 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <configuration>
                     <jvmTarget>1.8</jvmTarget>
+                    <experimentalCoroutines>enable</experimentalCoroutines>
                 </configuration>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <version>${kotlin.version}</version>
@@ -265,9 +271,9 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <executablePath>/usr/local/bin/sass</executablePath>
                     <inputDir>src/main/webapp/css/</inputDir>
                     <outDir>target/nirdizati-training-ui/css/</outDir>
+                    <ignoreErrors>true</ignoreErrors>
                 </configuration>
             </plugin>
         </plugins>

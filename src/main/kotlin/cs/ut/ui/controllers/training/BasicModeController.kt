@@ -2,12 +2,14 @@ package cs.ut.ui.controllers.training
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
-import org.apache.log4j.Logger
+import cs.ut.logging.NirdLogger
 import org.zkoss.zk.ui.Component
+import org.zkoss.zk.ui.Executions
 import org.zkoss.zul.Vlayout
 
-class BasicModeController(gridContainer: Vlayout, private val logName: String) : AbstractModeController(gridContainer), ModeController {
-    private val log: Logger = Logger.getLogger(BasicModeController::class.java)!!
+class BasicModeController(gridContainer: Vlayout, private val logName: String) : AbstractModeController(gridContainer),
+    ModeController {
+    private val log = NirdLogger(NirdLogger.getId(Executions.getCurrent().nativeRequest), this.javaClass)
     private val optimized: Map<String, List<ModelParameter>> = MasterConfiguration.optimizedParams
 
     init {

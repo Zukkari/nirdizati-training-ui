@@ -7,15 +7,15 @@ import cs.ut.engine.events.findCallback
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
+import cs.ut.logging.NirdLogger
 import cs.ut.util.*
-import org.apache.log4j.Logger
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.concurrent.Future
 
 
 object JobManager {
-    val log: Logger = Logger.getLogger(JobManager::class.java)!!
+    val log= NirdLogger(caller = this.javaClass)
 
     private val executedJobs: MutableMap<String, MutableList<Job>> = mutableMapOf()
     private var subscribers: List<WeakReference<Any>> = listOf()

@@ -4,6 +4,7 @@ import cs.ut.config.items.ModelParameter
 import cs.ut.config.nodes.*
 import cs.ut.engine.JobManager
 import cs.ut.jobs.StartUpJob
+import cs.ut.logging.NirdLogger
 import cs.ut.util.readHyperParameterJson
 import org.apache.log4j.*
 import java.io.File
@@ -14,7 +15,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.concurrent.timerTask
 
 object MasterConfiguration {
-    private val log: Logger = Logger.getLogger(MasterConfiguration::class.java)!!
+    private val log= NirdLogger(caller = this.javaClass)
 
     val file: File = File(javaClass.classLoader.getResource("configuration.xml").file!!)
 

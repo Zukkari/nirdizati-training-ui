@@ -2,11 +2,12 @@ package cs.ut.ui
 
 import cs.ut.config.items.ModelParameter
 import cs.ut.config.items.Property
+import cs.ut.logging.NirdLogger
 import cs.ut.util.COMP_ID
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PROPERTY
-import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Component
+import org.zkoss.zk.ui.Executions
 import org.zkoss.zul.*
 import org.zkoss.zul.impl.NumberInputElement
 
@@ -14,7 +15,7 @@ import org.zkoss.zul.impl.NumberInputElement
 class FieldComponent(val label: Component, val control: Component)
 
 class NirdizatiGrid<T>(private val provider: GridValueProvider<T, Row>) : Grid() {
-    private val log = Logger.getLogger(NirdizatiGrid::class.java)
+    private val log = NirdLogger(NirdLogger.getId(Executions.getCurrent().nativeRequest), this.javaClass)
     val fields = mutableListOf<FieldComponent>()
 
     init {
