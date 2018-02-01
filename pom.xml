@@ -271,9 +271,9 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <inputDir>src/main/webapp/css/</inputDir>
-                    <outDir>src/webapp/css/</outDir>
-                    <ignoreErrors>true</ignoreErrors>
+                    <inputDir>src/main/webapp/css/main.sass</inputDir>
+                    <outDir>src/main/webapp/css/</outDir>
+                    <ignoreErrors>false</ignoreErrors>
                 </configuration>
             </plugin>
         </plugins>
