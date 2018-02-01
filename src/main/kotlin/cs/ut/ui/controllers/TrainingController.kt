@@ -61,7 +61,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
     private lateinit var thresholdContainer: Hbox
 
     @Wire
-    private lateinit var genDataSetParam: Button
+    private lateinit var genDataSetParam: A
 
     private lateinit var radioGroup: Radiogroup
 

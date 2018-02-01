@@ -24,6 +24,7 @@ import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.event.SerializableEventListener
 import org.zkoss.zk.ui.select.annotation.Wire
 import org.zkoss.zk.ui.util.GenericAutowireComposer
+import org.zkoss.zul.A
 import org.zkoss.zul.Button
 import org.zkoss.zul.Hlayout
 import org.zkoss.zul.Window
@@ -120,7 +121,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
     private fun enableGenerateButton() {
         Executions.getCurrent().desktop.components.firstOrNull { it.id == GENERATE_DATASET }?.let {
-            it as Button
+            it as A
             it.isDisabled = false
         }
     }
