@@ -272,7 +272,7 @@
                 </executions>
                 <configuration>
                     <inputDir>src/main/webapp/css/</inputDir>
-                    <outDir>target/nirdizati-training-ui/css/</outDir>
+                    <outDir>src/webapp/css/</outDir>
                     <ignoreErrors>true</ignoreErrors>
                 </configuration>
             </plugin>
