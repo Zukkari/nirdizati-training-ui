@@ -1,7 +1,7 @@
 package cs.ut.engine
 
+import cs.ut.logging.NirdLogger
 import org.apache.commons.codec.binary.Hex
-import org.apache.log4j.Logger
 import java.nio.charset.Charset
 import java.security.MessageDigest
 import java.util.*
@@ -11,7 +11,7 @@ import java.util.*
  * if id is going to be generated at the same time (which is unlikely but possible)
  */
 object IdProvider {
-    private val log: Logger = Logger.getLogger(IdProvider::class.java)!!
+    private val log= NirdLogger(caller = this.javaClass)
 
     private val digest = MessageDigest.getInstance("MD5")!!
     private var previous: String = ""

@@ -15,18 +15,15 @@
                 <combobox id="predictionType"/>
             </row>
             <row vflex="1">
-                <label value="${labels.training.gen_dataset_para}"/>
-                <hlayout hflex="min" vflex="min">
-                    <button id="genDataSetParam" sclass="n-btn" label="${labels.training.generate}"
-                            onClick="generateNewDatasetParams" disabled="true"/>
-                </hlayout>
-            </row>
-            <row>
                 <hlayout>
-                    <label value="${labels.training.advanced}" hflex="1"/>
-                    <checkbox id="advancedMode" zclass="toggle" sclass="switch toggle-round-flat" hflex="1"/>
+                    <hlayout>
+                        <label value="${labels.training.advanced}" hflex="1"/>
+                        <checkbox id="advancedMode" zclass="toggle" sclass="switch toggle-round-flat" hflex="1"/>
+                    </hlayout>
+                    <hbox align="center" vflex="1" id="thresholdContainer" visible="false"/>
                 </hlayout>
-                <hbox align="center" vflex="1" id="thresholdContainer" visible="false"/>
+                <a id="genDataSetParam" label="${labels.training.gen_dataset_para}" onClick="generateNewDatasetParams"
+                   hflex="1"/>
             </row>
         </rows>
     </grid>

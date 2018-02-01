@@ -5,10 +5,10 @@ import cs.ut.charts.ChartGenerator
 import cs.ut.charts.MAE
 import cs.ut.engine.JobManager
 import cs.ut.jobs.SimulationJob
+import cs.ut.logging.NirdLogger
 import cs.ut.ui.adapters.JobValueAdataper
 import cs.ut.util.CookieUtil
 import cs.ut.util.NirdizatiUtil
-import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
@@ -22,7 +22,7 @@ import org.zkoss.zul.*
 import javax.servlet.http.HttpServletRequest
 
 class ValidationController : SelectorComposer<Component>(), Redirectable {
-    private val log = Logger.getLogger(ValidationController::class.java)
+    private val log = NirdLogger(NirdLogger.getId(Executions.getCurrent().nativeRequest), this.javaClass)
     private var job: SimulationJob? = null
     private lateinit var charts: Map<String, List<Chart>>
 

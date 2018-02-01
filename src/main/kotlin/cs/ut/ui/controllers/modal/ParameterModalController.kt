@@ -6,6 +6,7 @@ import cs.ut.config.nodes.Dir
 import cs.ut.engine.JobManager
 import cs.ut.jobs.DataSetGenerationJob
 import cs.ut.jobs.UserRightsJob
+import cs.ut.logging.NirdLogger
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.adapters.ColumnRowValueAdapter
 import cs.ut.ui.adapters.ComboArgument
@@ -15,7 +16,6 @@ import cs.ut.ui.controllers.TrainingController.Companion.GENERATE_DATASET
 import cs.ut.util.CsvReader
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.TIMESTAMP_COL
-import org.apache.log4j.Logger
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
@@ -24,6 +24,7 @@ import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.event.SerializableEventListener
 import org.zkoss.zk.ui.select.annotation.Wire
 import org.zkoss.zk.ui.util.GenericAutowireComposer
+import org.zkoss.zul.A
 import org.zkoss.zul.Button
 import org.zkoss.zul.Hlayout
 import org.zkoss.zul.Window
@@ -33,7 +34,7 @@ import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
 class ParameterModalController : GenericAutowireComposer<Component>(), Redirectable {
-    private val log: Logger = Logger.getLogger(ParameterModalController::class.java)!!
+    private val log= NirdLogger(NirdLogger.getId(Executions.getCurrent().nativeRequest), this.javaClass)
 
     @Wire
     private lateinit var modal: Window
@@ -109,7 +110,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
         okBtnListener = SerializableEventListener { _ ->
             okBtn.isDisabled = true
-            updateContent(csvReader.generateDatasetParams(grid.gatherValues()))
+            updateContent(csvReader.generateDataSetParams(grid.gatherValues()))
         }
 
         okBtn.addEventListener(Events.ON_CLICK, okBtnListener)
@@ -120,12 +121,12 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
     private fun enableGenerateButton() {
         Executions.getCurrent().desktop.components.firstOrNull { it.id == GENERATE_DATASET }?.let {
-            it as Button
+            it as A
             it.isDisabled = false
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @Suppress("UNCHECKED_CAST")
     private fun updateContent(params: MutableMap<String, MutableList<String>>) {
         okBtn.isDisabled = false
         log.debug("Updating content with params $params")

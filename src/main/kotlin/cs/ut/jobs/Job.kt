@@ -3,7 +3,7 @@ package cs.ut.jobs
 
 import cs.ut.engine.IdProvider
 import cs.ut.engine.JobManager
-import org.apache.log4j.Logger
+import cs.ut.logging.NirdLogger
 
 
 enum class JobStatus {
@@ -16,7 +16,7 @@ enum class JobStatus {
 }
 
 abstract class Job(generatedId: String = "") : Runnable {
-    val log = Logger.getLogger(Job::class.java)!!
+    val log = NirdLogger(caller = this.javaClass)
 
     val id: String = if (generatedId.isBlank()) IdProvider.getNextId() else generatedId
 

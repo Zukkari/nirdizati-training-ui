@@ -55,7 +55,7 @@ class CsvReader(private val f: File) {
         }
     }
 
-    tailrec private fun identifyColumn(
+    private tailrec fun identifyColumn(
         col: String,
         ids: MutableList<String>,
         type: String,
@@ -70,7 +70,7 @@ class CsvReader(private val f: File) {
         }
     }
 
-    fun generateDatasetParams(userCols: MutableMap<String, Any>): MutableMap<String, MutableList<String>> {
+    fun generateDataSetParams(userCols: MutableMap<String, Any>): MutableMap<String, MutableList<String>> {
         val start = System.currentTimeMillis()
         val case = userCols[CASE_ID_COL] ?: throw NirdizatiRuntimeException("No case id column in log")
         val cases = parseCsv(case as String)

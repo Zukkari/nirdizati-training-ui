@@ -20,7 +20,7 @@ class CookieUtil {
     }
 
     fun getCookieKey(request: HttpServletRequest): String =
-        request.cookies.firstOrNull { it.name == JOBS_KEY }?.value ?: ""
+        request.cookies?.firstOrNull { it.name == JOBS_KEY }?.value ?: ""
 
 
     fun getJobsByCookie(request: HttpServletRequest): List<Job> {

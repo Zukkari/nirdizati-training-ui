@@ -2,9 +2,9 @@ package cs.ut.ui.controllers
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.nodes.Dir
+import cs.ut.logging.NirdLogger
 import cs.ut.ui.controllers.modal.ParameterModalController.Companion.FILE
 import org.apache.commons.io.FilenameUtils
-import org.apache.log4j.Logger
 import org.zkoss.util.media.Media
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -22,7 +22,7 @@ import java.io.FileOutputStream
 import java.nio.charset.Charset
 
 class UploadLogController : SelectorComposer<Component>(), Redirectable {
-    private val log: Logger = Logger.getLogger(UploadLogController::class.java)!!
+    private val log = NirdLogger(NirdLogger.getId(Executions.getCurrent().nativeRequest), this.javaClass)
 
     @Wire
     private lateinit var fileName: Label
@@ -63,7 +63,7 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable {
             )
             upload.isDisabled = true
         }
-     }
+    }
 
     @Listen("onClick = #upload")
     fun processLog() {

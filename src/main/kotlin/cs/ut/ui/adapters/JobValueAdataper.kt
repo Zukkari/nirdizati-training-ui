@@ -151,6 +151,7 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
         return fileLayout
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun SimulationJob.generateRemoveBtn(row: Row): Button {
         val btn = Button("x")
         btn.vflex = "min"

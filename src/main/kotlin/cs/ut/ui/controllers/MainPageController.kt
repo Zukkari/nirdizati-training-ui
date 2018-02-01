@@ -2,11 +2,11 @@ package cs.ut.ui.controllers
 
 import cs.ut.config.ClientInfo
 import cs.ut.jobs.Job
+import cs.ut.logging.NirdLogger
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.controllers.JobTrackerController.Companion.GRID_ID
 import cs.ut.util.CookieUtil
 import cs.ut.util.NAVBAR
-import org.apache.log4j.Logger
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.Session
@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class MainPageController : SelectorComposer<Component>(), Redirectable {
-    val log: Logger = Logger.getLogger(MainPageController::class.java)!!
+    val log = NirdLogger(NirdLogger.getId(Executions.getCurrent().nativeRequest), this.javaClass)
     private var clientInformation: Map<Session, ClientInfo> = mapOf()
 
     @Wire
@@ -69,6 +69,7 @@ class MainPageController : SelectorComposer<Component>(), Redirectable {
     /**
      * Handles users cookie so jobs could be persistent if user refreshes the page.
      */
+    @Suppress("UNCHECKED_CAST")
     private fun handleCookie() {
         val request = Executions.getCurrent().nativeRequest as HttpServletRequest
         val cookieKey: String = cookieUtil.getCookieKey(request)
