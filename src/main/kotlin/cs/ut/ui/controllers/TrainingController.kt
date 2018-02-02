@@ -63,6 +63,9 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
     @Wire
     private lateinit var genDataSetParam: A
 
+    @Wire
+    private lateinit var trainingGrid: Grid
+
     private lateinit var radioGroup: Radiogroup
 
     private lateinit var gridController: ModeController

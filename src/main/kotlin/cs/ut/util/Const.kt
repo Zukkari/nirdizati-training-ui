@@ -1,5 +1,6 @@
 package cs.ut.util
 
+const val HYPER_PARAM_CONT = "hyperParamGridContainer"
 const val MAINLAYOUT = "mainLayout"
 const val NAVBAR = "navbar"
 const val DEST = "dest"
