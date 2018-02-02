@@ -335,4 +335,11 @@
             </modelparam>
         </modelparams>
     </modelConfig>
+
+    <tooltips>
+        <tooltip>
+            <id>example</id>
+            <value>this is example tooltip, more on this can be found url('here', 'http://google.com')</value>
+        </tooltip>
+    </tooltips>
 </configuration>
