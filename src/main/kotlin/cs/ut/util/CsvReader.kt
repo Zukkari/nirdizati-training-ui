@@ -62,7 +62,7 @@ class CsvReader(private val f: File) {
         result: MutableMap<String, String>
     ) {
         if (ids.isNotEmpty()) {
-            if (ids.first() == col.toLowerCase()) {
+            if (col.toLowerCase() in ids.first()) {
                 result[type] = col
             } else {
                 identifyColumn(col, ids.drop(1).toMutableList(), type, result)
@@ -108,11 +108,6 @@ class CsvReader(private val f: File) {
         resultCols[STATIC + NUM_COL] = mutableListOf()
         resultCols[DYNAMIC + CAT_COLS] = mutableListOf()
         resultCols[DYNAMIC + NUM_COL] = mutableListOf()
-
-        userCols[RESOURCE_COL]?.let {
-            resultCols[DYNAMIC + CAT_COLS]!!.add(userCols[RESOURCE_COL] as String)
-            userCols.remove(RESOURCE_COL)
-        }
 
         cases.forEach { c ->
             c.dynamicCols.forEach { insertIntoMap(c.classifiedColumns, DYNAMIC, it, colValues[it]) }

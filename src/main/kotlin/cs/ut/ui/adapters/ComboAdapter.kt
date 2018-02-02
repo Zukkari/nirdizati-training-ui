@@ -18,23 +18,23 @@ class ComboProvider : GridValueProvider<ComboArgument, Row> {
         label.setAttribute(COMP_ID, data.caption)
         label.sclass = "display-block"
 
-        val combobox = Combobox()
-        combobox.sclass = "max-width max-height"
+        val comboBox = Combobox()
+        comboBox.sclass = "max-width max-height"
         data.values.forEach {
-            val item = combobox.appendItem(NirdizatiUtil.localizeText("params." + it))
+            val item = comboBox.appendItem(NirdizatiUtil.localizeText("params." + it))
             item.setValue(it)
 
             if (it == data.selected) {
-                combobox.selectedItem = item
+                comboBox.selectedItem = item
             }
         }
 
-        combobox.isReadonly = true
+        comboBox.isReadonly = true
 
         val row = Row()
         row.appendChild(label)
-        row.appendChild(combobox)
-        fields.add(FieldComponent(label, combobox))
+        row.appendChild(comboBox)
+        fields.add(FieldComponent(label, comboBox))
 
         return row
     }

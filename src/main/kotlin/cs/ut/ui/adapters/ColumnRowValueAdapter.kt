@@ -21,7 +21,7 @@ class ColumnRowValueAdapter(private val valueList: List<String>, private val ide
 
         val combobox = Combobox()
 
-        val identified = identifiedCols.get(data)
+        val identified = identifiedCols[data]
         combobox.isReadonly = true
         combobox.setConstraint("no empty")
 
@@ -35,7 +35,7 @@ class ColumnRowValueAdapter(private val valueList: List<String>, private val ide
 
         try {
             combobox.selectedItem
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             combobox.selectedItem = (combobox.getItemAtIndex(0))
         }
 
