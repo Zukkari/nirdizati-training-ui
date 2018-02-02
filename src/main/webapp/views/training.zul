@@ -36,6 +36,8 @@
     <hlayout id="hyperParamGridContainer" vflex="2" hflex="1"/>
 
     <hbox hflex="min" vflex="1" align="center" pack="center">
-        <button id="startTraining" sclass="n-btn" label="${labels.training.start_training}"/>
+        <vlayout hflex="min" vflex="min">
+            <button id="startTraining" sclass="n-btn" label="${labels.training.start_training}"/>
+        </vlayout>
     </hbox>
 </vbox>

@@ -37,7 +37,7 @@ class HeaderController : SelectorComposer<Component>(), Redirectable {
                 setContent(it.redirect, page)
                 navbar.selectItem(navItem)
             })
-            navItem.isDisabled = !it.enabled
+            navItem.isVisible = it.enabled
 
             navbar.appendChild(navItem)
         }
