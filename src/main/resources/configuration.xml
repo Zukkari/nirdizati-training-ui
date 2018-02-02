@@ -147,6 +147,7 @@
             <col>case_id_col</col>
             <col>activity_col</col>
             <col>timestamp_col</col>
+            <col>resource_col</col>
         </userCols>
 
         <!-- Values that will be used to search for case id column -->
