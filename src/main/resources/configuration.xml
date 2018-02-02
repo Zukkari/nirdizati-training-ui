@@ -22,7 +22,7 @@
         <sudo></sudo>
         <acp>0660</acp>
         <authorized>VjNyWUg0ckRQNFNzVzByRA==</authorized>
-        <requirePassword>false</requirePassword>
+        <requirePassword>true</requirePassword>
     </userPreferences>
 
     <!-- Configuration for default values in TrainingController-->
@@ -121,7 +121,7 @@
         <dir>
             <!-- Log file directory, where to read from on admin page -->
             <id>logFile</id>
-            <path>/home/zukkari/apache-tomcat-8.5.24/logs/catalina.out</path>
+            <path>/home/ubuntu/apache-tomcat-8.5.24/logs/catalina.out</path>
         </dir>
     </dirs>
 
