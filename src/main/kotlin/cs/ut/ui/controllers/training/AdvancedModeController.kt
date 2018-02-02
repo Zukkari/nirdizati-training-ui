@@ -9,6 +9,7 @@ import cs.ut.ui.adapters.AdvancedModeAdapter
 import cs.ut.ui.adapters.GeneratorArgument
 import cs.ut.ui.adapters.PropertyValueAdapter
 import cs.ut.ui.controllers.TrainingController
+import cs.ut.util.HYPER_PARAM_CONT
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.CheckEvent
@@ -21,7 +22,8 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
     private val log = NirdLogger(NirdLogger.getId(Executions.getCurrent().nativeRequest), this.javaClass)
 
     private val grid: NirdizatiGrid<GeneratorArgument> = NirdizatiGrid(AdvancedModeAdapter())
-    private val hyperParamsContainer = Hlayout()
+    private val hyperParamsContainer: Hlayout =
+        Executions.getCurrent().desktop.components.first { it.id == HYPER_PARAM_CONT } as Hlayout
     private var hyperParameters: MutableMap<ModelParameter, MutableList<Property>> = mutableMapOf()
 
     init {
@@ -33,10 +35,10 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
             .map { GeneratorArgument(it.key, it.value) })
 
         gridContainer.appendChild(grid)
-        gridContainer.appendChild(hyperParamsContainer)
         grid.fields.forEach { it.generateListener() }
         grid.sclass = "max-height max-width"
         grid.hflex = "min"
+        grid.vflex = "min"
         log.debug("Finished grid initialization")
     }
 
@@ -62,7 +64,6 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
 
     private fun generateGrids() {
         hyperParamsContainer.getChildren<Component>().clear()
-        hyperParamsContainer.vflex = "1"
         hyperParameters.entries.forEach { it.generateGrid() }
     }
 
