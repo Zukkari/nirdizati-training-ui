@@ -32,7 +32,8 @@ enum class Dir(private val id: String) {
     FEATURE_DIR("featureDir"),
     VALIDATION_DIR("validationDir"),
     TMP_DIR("tmpDir"),
-    CORE_DIR("coreDir");
+    CORE_DIR("coreDir"),
+    LOG_FILE("logFile");
 
     fun value(): String = id
 }

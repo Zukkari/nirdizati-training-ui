@@ -23,7 +23,6 @@ class DataSetGenerationJob(
 
         // Resource column should always be dynamic categorical
         parameters[DYNAMIC + CAT_COLS]?.apply {
-            this as MutableList<String>
             this.add(parameters.remove(cs.ut.util.RESOURCE_COL)!![0])
         }
 

@@ -3,7 +3,7 @@
         <vbox vflex="1" align="end" pack="end">
             <label sclass="upload-label">${labels.upload.current.file}</label>
         </vbox>
-        <vbox id="fileNameCont" pack="center" align="center" sclass="file-upload">
+        <vbox id="fileNameCont" pack="center" align="center" sclass="file-upload" width="20%">
             <label sclass="file-name" id="fileName"/>
         </vbox>
         <vlayout vflex="3">
@@ -11,7 +11,7 @@
                 <fileupload sclass="n-upload-btn" id="chooseFile" upload="true" label="${labels.upload.choose.file}"/>
             </hlayout>
             <vlayout style="margin-top: 40px">
-                <label sclass="upload-label param-label">${labels.upload.log_support}</label>
+                <html sclass="upload-label param-label display-block zk-font" width="30%">${labels.upload.log_support}</html>
             </vlayout>
             <vlayout hflex="min" vflex="min" style="margin-top: 40px">
                 <button id="upload" sclass="n-upload-btn" disabled="true" label="${labels.upload.train}"/>

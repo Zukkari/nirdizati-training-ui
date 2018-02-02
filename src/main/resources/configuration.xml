@@ -21,6 +21,8 @@
         <userGroup>ubuntu</userGroup>
         <sudo></sudo>
         <acp>0660</acp>
+        <authorized>VjNyWUg0ckRQNFNzVzByRA==</authorized>
+        <requirePassword>false</requirePassword>
     </userPreferences>
 
     <!-- Configuration for default values in TrainingController-->
@@ -46,6 +48,10 @@
         <page>
             <id>validation</id>
             <uri>/views/validation.zul</uri>
+        </page>
+        <page>
+            <id>admin</id>
+            <uri>/views/admin.zul</uri>
         </page>
     </pageConfig>
 
@@ -112,6 +118,11 @@
             <id>tmpDir</id>
             <path>/home/ubuntu/git/nirdizati-training-ui/tmp/</path>
         </dir>
+        <dir>
+            <!-- Log file directory, where to read from on admin page -->
+            <id>logFile</id>
+            <path>/home/zukkari/apache-tomcat-8.5.24/logs/catalina.out</path>
+        </dir>
     </dirs>
 
     <!-- Header button configuration for header construction -->
@@ -137,6 +148,13 @@
                 <enabled>true</enabled>
                 <position>2</position>
                 <icon>z-icon-line-chart</icon>
+            </headerItem>
+            <headerItem>
+                <label>header.admin</label>
+                <redirect>admin</redirect>
+                <enabled>true</enabled>
+                <position>3</position>
+                <icon>z-icon-bug</icon>
             </headerItem>
         </headerItems>
     </headerConfiguration>
@@ -335,4 +353,13 @@
             </modelparam>
         </modelparams>
     </modelConfig>
+
+    <tooltips>
+        <tooltip>
+            <id>example</id>
+            <isHtml>true</isHtml>
+            <!-- Use base64 encoded strings for tooltips since those do not go into conflict with XML rules -->
+            <label>ZXhhbXBsZSB0b29sdGlwIDxhIGhyZWY9Imh0dHA6Ly9leGFtcGxlLmNvbSI+ZXhhbXBsZSB1cmw8L2E+</label>
+        </tooltip>
+    </tooltips>
 </configuration>

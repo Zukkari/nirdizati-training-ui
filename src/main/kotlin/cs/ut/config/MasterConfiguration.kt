@@ -15,28 +15,25 @@ import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.concurrent.timerTask
 
 object MasterConfiguration {
-    private val log= NirdLogger(caller = this.javaClass)
+    private val log = NirdLogger(caller = this.javaClass)
 
     val file: File = File(javaClass.classLoader.getResource("configuration.xml").file!!)
 
-    val dirConfig by lazy { readClass(DirectoryConfiguration::class.java, "dirs") }
-    val modelConfiguration by lazy {
-        val element = readClass(ModelConfiguration::class.java, "modelConfig")
-        element.prepareData()
-        element
-    }
+    lateinit var dirConfig: DirectoryConfiguration
+    lateinit var modelConfiguration: ModelConfiguration
 
-    val csvConfiguration by lazy { readClass(CsvConfiguration::class.java, "csvConfig") }
-    val threadPoolConfiguration by lazy { readClass(ThreadPoolConfiguration::class.java, "threadpool") }
-    val headerConfiguration by lazy { readClass(HeaderConfiguration::class.java, "headerConfiguration") }
-    val pageConfiguration by lazy { readClass(PageConfiguration::class.java, "pageConfig") }
-    val userPreferences by lazy { readClass(UserPreferences::class.java, "userPreferences") }
-    val defaultValuesConfiguration by lazy { readClass(DefaultValuesConfiguration::class.java, "defaultConfig") }
+    lateinit var csvConfiguration: CsvConfiguration
+    lateinit var threadPoolConfiguration: ThreadPoolConfiguration
+    lateinit var headerConfiguration: HeaderConfiguration
+    lateinit var pageConfiguration: PageConfiguration
+    lateinit var userPreferences: UserPreferences
+    lateinit var defaultValuesConfiguration: DefaultValuesConfiguration
+    lateinit var tooltipConfig: TooltipConfig
 
-    val optimizedParams: Map<String, List<ModelParameter>> by lazy { readHyperParameterJson() }
-
+    lateinit var optimizedParams: Map<String, List<ModelParameter>>
 
     init {
+        readConfig()
         configureLogger()
         log.debug("Logger configured successfully")
         Timer().schedule(timerTask { JobManager.runServiceJob(StartUpJob()) }, 10000L)
@@ -82,5 +79,23 @@ object MasterConfiguration {
 
         val jaxbContext = JAXBContext.newInstance(clazz)
         return jaxbContext.createUnmarshaller().unmarshal(node.item(0), clazz).value
+    }
+
+    fun readConfig() {
+        dirConfig = readClass(DirectoryConfiguration::class.java, "dirs")
+        modelConfiguration= readClass(ModelConfiguration::class.java, "modelConfig")
+            .also {
+                it.prepareData()
+            }
+
+        csvConfiguration = readClass(CsvConfiguration::class.java, "csvConfig")
+        threadPoolConfiguration = readClass(ThreadPoolConfiguration::class.java, "threadpool")
+        headerConfiguration = readClass(HeaderConfiguration::class.java, "headerConfiguration")
+        pageConfiguration = readClass(PageConfiguration::class.java, "pageConfig")
+        userPreferences = readClass(UserPreferences::class.java, "userPreferences")
+        defaultValuesConfiguration = readClass(DefaultValuesConfiguration::class.java, "defaultConfig")
+        tooltipConfig = readClass(TooltipConfig::class.java, "tooltips")
+
+        optimizedParams = readHyperParameterJson()
     }
 }

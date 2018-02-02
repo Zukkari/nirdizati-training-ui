@@ -13,7 +13,7 @@ class StartUpJob : Job() {
     override fun execute() {
         val start = System.currentTimeMillis()
         Dir.values().forEach {
-            if (it == Dir.PYTHON) return@forEach
+            if (it == Dir.PYTHON || it == Dir.LOG_FILE) return@forEach
             config.dirByName(it).prepareDirectory()
         }
 

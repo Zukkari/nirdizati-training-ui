@@ -8,9 +8,22 @@ import java.util.concurrent.TimeUnit
 
 
 object NirdizatiThreadPool {
-    private val threadPool: ThreadPoolExecutor
+    private lateinit var threadPool: ThreadPoolExecutor
 
     init {
+        initPool()
+    }
+
+    fun execute(runnable: Runnable): Future<*> = threadPool.submit(runnable)
+
+    fun shutDown() = threadPool.shutdown()
+
+    fun restart() {
+        shutDown()
+        initPool()
+    }
+
+    private fun initPool() {
         val config = MasterConfiguration.threadPoolConfiguration
         threadPool = ThreadPoolExecutor(
             config.core,
@@ -20,6 +33,4 @@ object NirdizatiThreadPool {
             ArrayBlockingQueue<Runnable>(config.capacity)
         )
     }
-
-    fun execute(runnable: Runnable): Future<*> = threadPool.submit(runnable)
 }
