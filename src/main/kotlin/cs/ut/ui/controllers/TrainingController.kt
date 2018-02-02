@@ -206,8 +206,14 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
     @Listen("onCheck = #advancedMode")
     fun switchMode() {
         gridController = when (advancedMode.isChecked) {
-            true -> AdvancedModeController(gridContainer)
-            false -> BasicModeController(gridContainer, getLogFileName())
+            true -> {
+                gridController.preDestroy()
+                AdvancedModeController(gridContainer)
+            }
+            false -> {
+                gridController.preDestroy()
+                BasicModeController(gridContainer, getLogFileName())
+            }
         }
     }
 

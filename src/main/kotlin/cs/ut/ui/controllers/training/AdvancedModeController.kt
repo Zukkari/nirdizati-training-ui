@@ -148,4 +148,8 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
         return gathered as Map<String, List<ModelParameter>>
     }
 
+    override fun preDestroy() {
+        hyperParamsContainer.getChildren<Component>().clear()
+    }
+
 }
