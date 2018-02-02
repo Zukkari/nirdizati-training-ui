@@ -33,7 +33,7 @@
         <vlayout id="gridContainer" vflex="1" sclass="max-height max-width"/>
     </hlayout>
 
-    <hlayout id="hyperParamGridContainer" vflex="2" hflex="1"/>
+    <hlayout id="hyperParamGridContainer" vflex="1" hflex="1"/>
 
     <hbox hflex="min" vflex="1" align="center" pack="center">
         <vlayout hflex="min" vflex="min">
