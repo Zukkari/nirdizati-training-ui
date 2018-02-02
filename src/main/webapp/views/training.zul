@@ -1,12 +1,12 @@
 <vbox hflex="1" vflex="1" align="center" apply="cs.ut.ui.controllers.TrainingController"
       xmlns="http://www.zkoss.org/2005/zul">
     <hlayout hflex="1" vflex="1" sclass="padding-bottom-20px">
-        <grid id="trainingGrid" sclass="max-height max-width">
+        <grid id="trainingGrid" vflex="1" sclass="max-height max-width">
             <columns>
                 <column hflex="min" align="center"/>
                 <column hflex="min" align="center"/>
             </columns>
-            <rows>
+            <rows vflex="1">
                 <row>
                     <label hflex="1" value="${labels.training.selected_log}" sclass="label-combo"/>
                     <combobox id="clientLogs"/>
