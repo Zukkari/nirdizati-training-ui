@@ -32,6 +32,7 @@ object MasterConfiguration {
     val pageConfiguration by lazy { readClass(PageConfiguration::class.java, "pageConfig") }
     val userPreferences by lazy { readClass(UserPreferences::class.java, "userPreferences") }
     val defaultValuesConfiguration by lazy { readClass(DefaultValuesConfiguration::class.java, "defaultConfig") }
+    val tooltipConfig by lazy { readClass(TooltipConfig::class.java, "tooltips") }
 
     val optimizedParams: Map<String, List<ModelParameter>> by lazy { readHyperParameterJson() }
 

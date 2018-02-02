@@ -339,7 +339,9 @@
     <tooltips>
         <tooltip>
             <id>example</id>
-            <value>this is example tooltip, more on this can be found url('here', 'http://google.com')</value>
+            <isHtml>true</isHtml>
+            <!-- Use base64 encoded strings for tooltips since those do not go into conflict with XML rules -->
+            <label>ZXhhbXBsZSB0b29sdGlwIDxhIGhyZWY9Imh0dHA6Ly9leGFtcGxlLmNvbSI+ZXhhbXBsZSB1cmw8L2E+</label>
         </tooltip>
     </tooltips>
 </configuration>
