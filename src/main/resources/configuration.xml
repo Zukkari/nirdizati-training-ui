@@ -121,7 +121,7 @@
         <dir>
             <!-- Log file directory, where to read from on admin page -->
             <id>logFile</id>
-            <path>/home/ubuntu/apache-tomcat-8.5.24/logs/catalina.out</path>
+            <path>/home/ubuntu/apache-tomcat-8.5.23/logs/catalina.out</path>
         </dir>
     </dirs>
 
