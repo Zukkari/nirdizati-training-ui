@@ -6,4 +6,6 @@ interface ModeController {
     fun isValid(): Boolean
 
     fun gatherValues(): Map<String, List<ModelParameter>>
+
+    fun preDestroy() = Unit
 }
