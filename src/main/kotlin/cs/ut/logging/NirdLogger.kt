@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest
 
 class NirdLogger(private val id: String = "GLOBAL", caller: Class<Any>) {
 
-    val log = Logger.getLogger(caller)!!
+    val log = Logger.getLogger(caller::class.java)!!
 
     fun debug(msg: Any?) {
         log.debug("[${this.id}] $msg")

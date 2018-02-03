@@ -36,7 +36,7 @@ const val PAGE_TRAINING = "training"
 const val PAGE_VALIDATION = "validation"
 
 const val LAST_STATE = "last_state"
-const val PREFIX = "prefix_lenght_based"
+const val PREFIX = "prefix_length_based"
 const val FREQUENCY = "frequency"
 const val COMBINED = "combined"
 const val INDEX = "index_based"
