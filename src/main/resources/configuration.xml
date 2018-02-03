@@ -356,10 +356,79 @@
 
     <tooltips>
         <tooltip>
-            <id>example</id>
+            <id>encoding</id>
             <isHtml>true</isHtml>
-            <!-- Use base64 encoded strings for tooltips since those do not go into conflict with XML rules -->
-            <label>ZXhhbXBsZSB0b29sdGlwIDxhIGhyZWY9Imh0dHA6Ly9leGFtcGxlLmNvbSI+ZXhhbXBsZSB1cmw8L2E+</label>
+            <label>PGI+RW5jb2Rpbmc8L2I+IC0gdGhpcyBpcyBob3cgeW91IHdhbnQgdG8gZW5jb2RlIHRyYWNlcyBmcm9tIHRoZSBzYW1lIGJ1Y2tldCBpbnRvIGZpeGVkLXNpemUgZmVhdHVyZSB2ZWN0b3Jz</label>
+        </tooltip>
+        <tooltip>
+            <id>last_state</id>
+            <isHtml>false</isHtml>
+            <label>TGFzdCBzdGF0ZSAtIGNvbmNhdGVuYXRlIGNhc2UgYXR0cmlidXRlcyArIGF0dHJpYnV0ZXMgb2YgdGhlIGxhdGVzdCBleGVjdXRlZCBldmVudA==</label>
+        </tooltip>
+        <tooltip>
+            <id>frequency</id>
+            <isHtml>false</isHtml>
+            <label>RnJlcXVlbmN5IC0gY29uY2F0ZW5hdGUgY2FzZSBhdHRyaWJ1dGVzICsgY291bnRzIG9mIGNhdGVnb3JpY2FsIGF0dHJpYnV0ZXMgKGFjdGl2aXRpZXMsIHJlc291cmNlcywgZXRjLikgKyBtaW4vYXZlcmFnZS9tYXgvc3VtIG9mIG51bWVyaWNhbCBhdHRyaWJ1dGVzIChjb3N0LCB0aW1lIHNpbmNlIGNhc2Ugc3RhcnQsIGV0Yy4p</label>
+        </tooltip>
+        <tooltip>
+            <id>combined</id>
+            <isHtml>false</isHtml>
+            <label>Q29tYmluZWQgLSBsYXN0IHN0YXRlICsgZnJlcXVlbmN5</label>
+        </tooltip>
+        <tooltip>
+            <id>index_based</id>
+            <isHtml>true</isHtml>
+            <label>SW5kZXgtYmFzZWQgLSBjb25jYXRlbmF0ZSBjYXNlIGF0dHJpYnV0ZXMgKyBhdHRyaWJ1dGVzIG9mIDxiPmVhY2g8L2I+IGV4ZWN1dGVkIGV2ZW50LiBUaGUgPGI+b25seTwvYj4gZW5jb2RpbmcgdGhhdCBpcyBsb3NzbGVzcy4gSXQgY2FuIG9ubHkgYmUgdXNlZCB3aXRoIHByZWZpeC1sZW5ndGggYnVja2V0aW5n</label>
+        </tooltip>
+        <tooltip>
+            <id>bucketing</id>
+            <isHtml>true</isHtml>
+            <label>PGI+QnVja2V0aW5nPC9iPiAtIHRoaXMgaXMgaG93IHlvdSB3YW50IHRvIGdyb3VwIHByb2Nlc3MgdHJhY2VzIGludG8gYnVja2V0cy4gQSBzZXBhcmF0ZSBwcmVkaWN0b3Igd2lsbCBiZSB0cmFpbmVkIGZvciBlYWNoIGJ1Y2tldC4=</label>
+        </tooltip>
+        <tooltip>
+            <id>zero</id>
+            <isHtml>false</isHtml>
+            <label>WmVybyAtIGRpc2NhcmQgZ3JvdXBpbmcsIHRyYWluIGEgc2luZ2xlIHByZWRpY3RvciB1c2luZyBhbGwgYXZhaWxhYmxlIHByb2Nlc3MgdHJhY2VzLg==</label>
+        </tooltip>
+        <tooltip>
+            <id>state_based</id>
+            <isHtml>false</isHtml>
+            <label>U3RhdGUgYmFzZWQgLSBncm91cCB0cmFjZXMgYWNjb3JkaW5nIHRvIHRoZSBzdGF0ZSAoZGVjaXNpb24gcG9pbnQpIHRoZXkgaGF2ZSByZWFjaGVkIHNvIGZhciwgb25lIHByZWRpY3RvciBmb3IgZWFjaCBzdGF0ZS4gTm90ZSB0cmFpbmluZyB3aWxsIHRha2UgbG9uZ2VyIGZvciBwcm9jZXNzZXMgd2l0aCBjb21wbGljYXRlZCBwcm9jZXNzIG1vZGVscy4=</label>
+        </tooltip>
+        <tooltip>
+            <id>clustering</id>
+            <isHtml>false</isHtml>
+            <label>Q2x1c3RlcmluZyAtIGdyb3VwIHNpbWlsYXIgdHJhY2VzIHVzaW5nIGstbWVhbnMgY2x1c3RlcmluZywgb25lIHByZWRpY3RvciBmb3IgZWFjaCBjbHVzdGVyLg==</label>
+        </tooltip>
+        <tooltip>
+            <id>prefix_length</id>
+            <isHtml>true</isHtml>
+            <label>UHJlZml4IGxlbmd0aCBiYXNlZCAtIGdyb3VwIHRyYWNlcyBhY2NvcmRpbmcgdG8gdGhlaXIgbGVuZ3RoLiBUaGUgPGk+bjwvaT4tdGggYnVja2V0IHdpbGwgY29uc2lzdCBvZiB0cmFjZXMgdGhhdCBhcmUgYXQgbGVhc3QgPGk+bjwvaT4gZXZlbnRzIGxvbmcu</label>
+        </tooltip>
+        <tooltip>
+            <id>learner</id>
+            <isHtml>true</isHtml>
+            <label>PGI+UHJlZGljdGlvbiBtZXRob2Q8L2I+IC0gdGhpcyBpcyB0aGUgbWFjaGluZSBsZWFybmluZyBhbGdvcml0aG0gdGhhdCBpcyB1c2VkIHRvIGZpdCBhIHByZWRpY3RpdmUgbW9kZWwu</label>
+        </tooltip>
+        <tooltip>
+            <id>random_forest</id>
+            <isHtml>true</isHtml>
+            <label>PGEgaHJlZj0iaHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvUmFuZG9tX2ZvcmVzdCI+UmFuZG9tIGZvcmVzdDwvYT4=</label>
+        </tooltip>
+        <tooltip>
+            <id>gradient_boosting</id>
+            <isHtml>true</isHtml>
+            <label>PGEgaHJlZj0iaHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvR3JhZGllbnRfYm9vc3RpbmciPkdyYWRpZW50IGJvb3N0aW5nPC9hPg==</label>
+        </tooltip>
+        <tooltip>
+            <id>decision_tree</id>
+            <isHtml>true</isHtml>
+            <label>PGEgaHJlZj0iaHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvRGVjaXNpb25fdHJlZSI+RGVjaXNpb24gdHJlZTwvYT4=</label>
+        </tooltip>
+        <tooltip>
+            <id>xgboost</id>
+            <isHtml>true</isHtml>
+            <label>PGEgaHJlZj0iaHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvWGdib29zdCI+WEdCb29zdDwvYT4=</label>
         </tooltip>
     </tooltips>
 </configuration>
