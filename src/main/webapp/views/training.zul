@@ -1,28 +1,30 @@
-<vbox hflex="1" vflex="1" align="center" apply="cs.ut.ui.controllers.TrainingController"
-      xmlns="http://www.zkoss.org/2005/zul">
-    <hlayout hflex="1" vflex="1" sclass="padding-bottom-20px">
-        <grid id="trainingGrid" vflex="1" sclass="max-height max-width">
-            <columns>
-                <column hflex="min" align="center"/>
-                <column hflex="min" align="center"/>
-            </columns>
-            <rows vflex="1">
-                <row>
-                    <label hflex="1" value="${labels.training.selected_log}" sclass="label-combo"/>
+<vbox align="center" vflex="1" hflex="1" apply="cs.ut.ui.controllers.TrainingController">
+    <hlayout hflex="1" vflex="1">
+        <grid id="trainingGrid" vflex="min" hflex="min" sclass="max-height max-width">
+            <rows>
+                <row align="center">
+                    <label value="${labels.training.selected_log}" sclass="label-combo"/>
                     <combobox id="clientLogs"/>
                 </row>
-                <row>
-                    <label value="${labels.training.prediction_type}" hflex="1"/>
+                <row align="center">
+                    <label value="${labels.training.prediction_type}"/>
                     <combobox id="predictionType"/>
                 </row>
-                <row vflex="1">
-                    <hlayout>
-                        <hlayout>
-                            <label value="${labels.training.advanced}" hflex="1"/>
-                            <checkbox id="advancedMode" zclass="toggle" sclass="switch toggle-round-flat" hflex="1"/>
-                        </hlayout>
-                        <hbox align="center" vflex="1" id="thresholdContainer" visible="false"/>
-                    </hlayout>
+                <row align="center">
+                    <label value="${labels.threshold.threshold_msg}"/>
+                    <hbox align="center">
+                        <radiogroup id="radioGroup">
+                            <radio id="avgRadio" label="${labels.threshold.avg}" selected="true" radiogroup="radioGroup"/>
+                            <radio id="customRadio" label="${labels.threshold.custom}" radiogroup="radioGroup"/>
+                        </radiogroup>
+                        <doublebox id="customBox" width="60px" disabled="true"/>
+                    </hbox>
+                </row>
+                <row align="center">
+                    <hbox hflex="1" vflex="1" align="center" pack="center">
+                        <label value="${labels.training.advanced}"/>
+                        <checkbox id="advancedMode" zclass="toggle" sclass="switch toggle-round-flat"/>
+                    </hbox>
                     <a id="genDataSetParam" label="${labels.training.gen_dataset_para}"
                        onClick="generateNewDatasetParams"
                        hflex="1"/>
@@ -35,7 +37,7 @@
 
     <hlayout id="hyperParamGridContainer" vflex="1" hflex="1"/>
 
-    <hbox hflex="min" vflex="1" align="center" pack="center">
+    <hbox hflex="1" vflex="1" align="center" pack="center">
         <vlayout hflex="min" vflex="min">
             <button id="startTraining" sclass="n-btn" label="${labels.training.start_training}"/>
         </vlayout>

@@ -282,7 +282,7 @@
                 </properties>
             </modelparam>
             <modelparam>
-                <id>prefix_lenght_based</id>
+                <id>prefix_length_based</id>
                 <parameter>prefix</parameter>
                 <type>bucketing</type>
                 <enabled>true</enabled>

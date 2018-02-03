@@ -58,22 +58,24 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
     private lateinit var gridContainer: Vlayout
 
     @Wire
-    private lateinit var thresholdContainer: Hbox
-
-    @Wire
     private lateinit var genDataSetParam: A
 
     @Wire
-    private lateinit var trainingGrid: Grid
-
     private lateinit var radioGroup: Radiogroup
+
+    @Wire
+    private lateinit var avgRadio: Radio
+
+    @Wire
+    private lateinit var customRadio: Radio
+
+    @Wire
+    private lateinit var customBox: Doublebox
 
     private lateinit var gridController: ModeController
 
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
-
-        radioGroup = Radiogroup()
 
         initClientLogs()
         if (initPredictions()) {
@@ -85,9 +87,9 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
     private fun getLogFileName(): String = (clientLogs.selectedItem.getValue() as File).nameWithoutExtension
 
     private fun initPredictions(): Boolean {
-        radioGroup.getChildren<Component>().clear()
-        thresholdContainer.getChildren<Component>().clear()
-        thresholdContainer.isVisible = false
+        customBox.isDisabled = true
+        avgRadio.isDisabled = true
+        customRadio.isDisabled = true
 
         predictionType.items.clear()
         log.debug("Cleared prediction type items")
@@ -126,11 +128,15 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
             val param = (e.selectedItems.first() as Comboitem).getValue() as ModelParameter
             log.debug("Prediction type model changed to $param")
             if (param.id == OUTCOME) {
-                thresholdContainer.isVisible = true
+                customBox.isDisabled = false
+                avgRadio.isDisabled = false
+                customRadio.isDisabled = false
                 log.debug("Prediciton type is $OUTCOME generating radio buttons")
             } else {
                 log.debug("Clearing thresholdContainer")
-                thresholdContainer.isVisible = false
+                customBox.isDisabled = true
+                avgRadio.isDisabled = true
+                customRadio.isDisabled = true
             }
         })
 
@@ -140,33 +146,24 @@ class TrainingController : SelectorComposer<Component>(), Redirectable {
     }
 
     private fun ModelParameter.setUpRadioButtons() {
-        val avg = radioGroup.appendItem(NirdizatiUtil.localizeText("threshold.avg"), this.parameter)
-        avg.setValue(this.parameter.toDouble())
-        radioGroup.selectedItem = avg
-
-        val custom = radioGroup.appendItem(NirdizatiUtil.localizeText("threshold.custom"), this.parameter)
-        custom.setValue(DEFAULT)
-        val customBox = Doublebox()
-        customBox.width = "60px"
+        avgRadio.setValue(this.parameter.toDouble())
+        customRadio.setValue(DEFAULT)
         customBox.setValue(DEFAULT)
-        customBox.style = "padding-top: 10px"
-        customBox.vflex = "1"
+
         customBox.addEventListener(Events.ON_CHANGE, { _ ->
             log.debug("New value for custom threshold ${customBox.value}")
             val res: Double? = customBox.value
 
             if (res == null || res <= 0) {
-                custom.setValue(DEFAULT)
+                customRadio.setValue(DEFAULT)
                 customBox.setValue(DEFAULT)
                 customBox.errorMessage = NirdizatiUtil.localizeText("threshold.custom_error", 0)
             } else {
                 customBox.clearErrorMessage()
-                custom.setValue(res)
+                customBox.setValue(res)
+                customRadio.setValue(res)
             }
         })
-
-        thresholdContainer.appendChild(radioGroup)
-        thresholdContainer.appendChild(customBox)
     }
 
     private fun initClientLogs() {
