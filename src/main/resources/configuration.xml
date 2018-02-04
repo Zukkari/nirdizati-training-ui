@@ -47,11 +47,15 @@
         </page>
         <page>
             <id>validation</id>
-            <uri>/views/validation.zul</uri>
+            <uri>/views/job_info.zul</uri>
         </page>
         <page>
             <id>admin</id>
             <uri>/views/admin.zul</uri>
+        </page>
+        <page>
+            <id>jobOverview</id>
+            <uri>/views/job_overview.zul</uri>
         </page>
     </pageConfig>
 
@@ -144,7 +148,7 @@
             </headerItem>
             <headerItem>
                 <label>header.validation</label>
-                <redirect>validation</redirect>
+                <redirect>jobOverview</redirect>
                 <enabled>true</enabled>
                 <position>2</position>
                 <icon>z-icon-line-chart</icon>

@@ -3,12 +3,13 @@ package cs.ut.ui.controllers
 import cs.ut.charts.Chart
 import cs.ut.charts.ChartGenerator
 import cs.ut.charts.MAE
-import cs.ut.engine.JobManager
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdLogger
 import cs.ut.ui.adapters.JobValueAdataper
-import cs.ut.util.CookieUtil
 import cs.ut.util.NirdizatiUtil
+import cs.ut.util.PAGE_JOB_OVERVIEW
+import cs.ut.util.PAGE_TRAINING
+import cs.ut.util.PAGE_VALIDATION
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
@@ -17,23 +18,20 @@ import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.event.SelectEvent
 import org.zkoss.zk.ui.event.SerializableEventListener
 import org.zkoss.zk.ui.select.SelectorComposer
+import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zul.Button
 import org.zkoss.zul.Cell
 import org.zkoss.zul.Combobox
 import org.zkoss.zul.Comboitem
-import org.zkoss.zul.Hbox
 import org.zkoss.zul.Hlayout
-import org.zkoss.zul.Include
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import org.zkoss.zul.Rows
 import org.zkoss.zul.Vbox
-import javax.servlet.http.HttpServletRequest
 
-class ValidationController : SelectorComposer<Component>(), Redirectable {
+class SingleJobValidationController : SelectorComposer<Component>(), Redirectable {
     private val log = NirdLogger(NirdLogger.getId(Executions.getCurrent().nativeRequest), this.javaClass)
-    private var job: SimulationJob? = null
+    private lateinit var job: SimulationJob
     private lateinit var charts: Map<String, List<Chart>>
 
     @Wire
@@ -48,115 +46,24 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
     @Wire
     private lateinit var comboLayout: Vbox
 
-    @Wire
-    private lateinit var logSelect: Hbox
-
-    @Wire
-    private lateinit var canvas: Include
-
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
 
-        job = Executions.getCurrent().getAttribute(JobValueAdataper.jobArg) as SimulationJob?
-        job?.let {
-            log.debug("Received job argument $job, initializing in read only mode")
-            charts = ChartGenerator(job as SimulationJob).getCharts().groupBy { it.javaClass.name }
-            generateReadOnlyMode()
-            return
-        }
-
-        log.debug("Inital job not found -> initializing valdiation mdoe withtout context")
-        logSelect.isVisible = true
-        initLayout()
-    }
-
-    private fun initLayout() {
-        val jobs =
-            JobManager.loadJobsFromStorage(CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest))
-
-        if (jobs.isNotEmpty()) {
-            addLayoutContent(jobs)
-            log.debug("Generated layout for no context mode")
-            handleSelection(jobs.first())
-        } else {
-            logSelect.vflex = "1"
-            logSelect.appendChild(
-                Vbox().apply {
-                    this.align = "center"
-                    this.pack = "center"
-                    this.appendChild(
-                        Label(NirdizatiUtil.localizeText("validation.empty1")).apply {
-                            this.sclass = "no-logs-found"
-                        })
-                    this.appendChild(
-                        Label(NirdizatiUtil.localizeText("validation.empty2")).apply {
-                            this.sclass = "no-logs-found"
-                        })
-                    this.appendChild(
-                        Hlayout().apply {
-                            this.vflex = "min"
-                            this.hflex = "min"
-                            this.sclass = "margin-top-7px"
-                            this.appendChild(
-                                Button(NirdizatiUtil.localizeText("validation.train")).also {
-                                    it.addEventListener(Events.ON_CLICK, { _ ->
-                                        this@ValidationController.setContent(cs.ut.util.PAGE_TRAINING, page)
-                                    })
-                                    it.sclass = "n-btn"
-                                }
-                            )
-                        }
-
-                    )
-                }
-            )
-            logSelect.parent.apply {
-                this.getChildren<Component>().clear()
-                this.appendChild(logSelect)
-            }
-        }
-    }
-
-    private fun clearLayouts() {
-        metadataRows.getChildren<Component>().clear()
-        propertyRows.getChildren<Component>().clear()
-        selectionRows.getChildren<Component>().clear()
-        canvas.src = null
-        canvas.src = "/views/graphs/graph_canvas.html"
-    }
-
-    private fun addLayoutContent(jobs: List<SimulationJob>) {
-        val combo = Combobox().apply {
-            this.addEventListener(Events.ON_SELECT, { e ->
-                e as SelectEvent<*, *>
-                log.debug("Generating layout for new job -> ${e.data}")
-                clearLayouts()
-                handleSelection((e.selectedItems.first() as Comboitem).getValue())
-            })
-
-            jobs.forEach {
-                val comboItem = this.appendItem(it.id)
-                comboItem.setValue(it)
-            }
-
-            this.selectedItem = this.items[0]
-            this.sclass = "id-combo"
-            this.width = "340px"
-            this.isReadonly = true
-        }
-        logSelect.appendChild(Label(NirdizatiUtil.localizeText("validation.select_completed")).apply {
-            this.sclass = "param-label"
-            this.vflex = "min"
-        })
-        logSelect.appendChild(combo)
-    }
-
-    private fun handleSelection(job: SimulationJob) {
-        this.job = job
+        job = Executions.getCurrent().getAttribute(JobValueAdataper.jobArg) as SimulationJob
+        log.debug("Received job argument $job, initializing in read only mode")
         charts = ChartGenerator(job).getCharts().groupBy { it.javaClass.name }
         generateReadOnlyMode()
     }
 
+    @Listen("onClick=#backToTraining")
+    fun backToTraining() {
+        setContent(PAGE_TRAINING, page)
+    }
+
+    @Listen("onClick=#backToValidation")
+    fun backToValidation() {
+        setContent(PAGE_JOB_OVERVIEW, page)
+    }
 
     private fun generateReadOnlyMode() {
         generateMetadataRow()
@@ -251,15 +158,15 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
     }
 
     private fun Row.generatePropertyData() {
-        job!!.learner.properties.forEach { this.generateLabelAndValue("property." + it.id, it.property, false) }
+        job.learner.properties.forEach { this.generateLabelAndValue("property." + it.id, it.property, false) }
     }
 
     private fun Row.generateMainData() {
-        var param = job!!.encoding
+        var param = job.encoding
         generateLabelAndValue(param.type, param.type + "." + param.id)
-        param = job!!.bucketing
+        param = job.bucketing
         generateLabelAndValue(param.type, param.type + "." + param.id)
-        param = job!!.learner
+        param = job.learner
         generateLabelAndValue(param.type, param.type + "." + param.id)
     }
 
