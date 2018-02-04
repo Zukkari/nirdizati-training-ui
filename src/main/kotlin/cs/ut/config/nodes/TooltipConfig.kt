@@ -4,12 +4,16 @@ import cs.ut.config.items.TooltipItem
 import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlElement
+import javax.xml.bind.annotation.XmlElementWrapper
 import javax.xml.bind.annotation.XmlRootElement
 
-@XmlRootElement(name = "tooltips")
+@XmlRootElement(name = "configuration")
 @XmlAccessorType(XmlAccessType.FIELD)
 data class TooltipConfig(
-    @XmlElement(name = "tooltip")
+
+    @field:[
+    XmlElementWrapper(name = "tooltips")
+    XmlElement(name = "tooltip")]
     val items: MutableList<TooltipItem>
 ) {
     constructor() : this(mutableListOf())

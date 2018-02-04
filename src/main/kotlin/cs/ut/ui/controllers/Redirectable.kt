@@ -12,7 +12,7 @@ import org.zkoss.zk.ui.select.Selectors
 import org.zkoss.zkmax.zul.Navbar
 import org.zkoss.zkmax.zul.Navitem
 import org.zkoss.zul.Include
-import java.util.*
+import java.util.Timer
 import kotlin.concurrent.timerTask
 
 interface Redirectable {

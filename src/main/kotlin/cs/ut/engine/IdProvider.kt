@@ -4,7 +4,7 @@ import cs.ut.logging.NirdLogger
 import org.apache.commons.codec.binary.Hex
 import java.nio.charset.Charset
 import java.security.MessageDigest
-import java.util.*
+import java.util.Calendar
 
 /**
  * Has to be singleton in order to be thread safe. If used from different threads there is a danger of collision

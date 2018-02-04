@@ -8,7 +8,11 @@ import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdLogger
-import cs.ut.util.*
+import cs.ut.util.BUCKETING
+import cs.ut.util.ENCODING
+import cs.ut.util.LEARNER
+import cs.ut.util.PREDICTIONTYPE
+import cs.ut.util.readTrainingJson
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.concurrent.Future

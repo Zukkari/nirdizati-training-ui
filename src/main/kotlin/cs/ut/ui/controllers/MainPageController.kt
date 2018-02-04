@@ -17,7 +17,7 @@ import org.zkoss.zk.ui.select.annotation.Wire
 import org.zkoss.zkmax.zul.Navbar
 import org.zkoss.zul.Borderlayout
 import org.zkoss.zul.East
-import java.util.*
+import java.util.NoSuchElementException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 

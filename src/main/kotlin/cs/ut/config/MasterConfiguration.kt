@@ -1,14 +1,26 @@
 package cs.ut.config
 
 import cs.ut.config.items.ModelParameter
-import cs.ut.config.nodes.*
+import cs.ut.config.nodes.CsvConfiguration
+import cs.ut.config.nodes.DefaultValuesConfiguration
+import cs.ut.config.nodes.DirectoryConfiguration
+import cs.ut.config.nodes.HeaderConfiguration
+import cs.ut.config.nodes.ModelConfiguration
+import cs.ut.config.nodes.PageConfiguration
+import cs.ut.config.nodes.ThreadPoolConfiguration
+import cs.ut.config.nodes.TooltipConfig
+import cs.ut.config.nodes.UserPreferences
 import cs.ut.engine.JobManager
 import cs.ut.jobs.StartUpJob
 import cs.ut.logging.NirdLogger
 import cs.ut.util.readHyperParameterJson
-import org.apache.log4j.*
+import org.apache.log4j.ConsoleAppender
+import org.apache.log4j.FileAppender
+import org.apache.log4j.Level
+import org.apache.log4j.Logger
+import org.apache.log4j.PatternLayout
 import java.io.File
-import java.util.*
+import java.util.Timer
 import javax.xml.bind.JAXBContext
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
@@ -94,7 +106,7 @@ object MasterConfiguration {
         pageConfiguration = readClass(PageConfiguration::class.java, "pageConfig")
         userPreferences = readClass(UserPreferences::class.java, "userPreferences")
         defaultValuesConfiguration = readClass(DefaultValuesConfiguration::class.java, "defaultConfig")
-        tooltipConfig = readClass(TooltipConfig::class.java, "tooltips")
+        tooltipConfig = readClass(TooltipConfig::class.java, "configuration")
 
         optimizedParams = readHyperParameterJson()
     }

@@ -3,7 +3,7 @@ package cs.ut.config.items
 import javax.xml.bind.annotation.XmlElement
 import javax.xml.bind.annotation.XmlType
 
-@XmlType(propOrder = arrayOf("id", "uri"))
+@XmlType(propOrder = ["id", "uri"])
 data class Page(
     @XmlElement(name = "id")
     var id: String,

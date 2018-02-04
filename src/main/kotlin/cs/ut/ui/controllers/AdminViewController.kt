@@ -6,7 +6,6 @@ import cs.ut.config.nodes.Dir
 import cs.ut.config.nodes.UserPreferences
 import cs.ut.engine.NirdizatiThreadPool
 import cs.ut.logging.NirdLogger
-import kotlinx.coroutines.experimental.async
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.event.Events

@@ -5,7 +5,8 @@ import org.zkoss.zul.Html
 import org.zkoss.zul.Label
 import org.zkoss.zul.Popup
 import java.nio.charset.Charset
-import java.util.*
+import java.util.Base64
+
 
 class TooltipParser {
     private val config = MasterConfiguration.tooltipConfig
@@ -14,8 +15,9 @@ class TooltipParser {
         val popup = Popup()
 
         config.items.firstOrNull { it.id == id }?.apply tooltip@ {
+            popup.id = id
             popup.appendChild(
-                if (this.isHtml) {
+                if (this.enableHtml) {
                     Html(decodeBase64(this.label)).apply {
                         this.id = this@tooltip.id
                     }
@@ -28,5 +30,5 @@ class TooltipParser {
         return popup
     }
 
-    private fun decodeBase64(payload: String) = String(Base64.getDecoder().decode(payload), Charset.forName("UTF-8"))
+    private fun decodeBase64(payload: String) = String(Base64.getDecoder().decode(payload.trim()), Charset.forName("UTF-8"))
 }
