@@ -64,7 +64,7 @@ object JobManager {
 
     private fun notify(ref: WeakReference<Any>, event: NirdizatiEvent) {
         val obj = ref.get() ?: return
-        findCallback(obj::class.java, event::class).invoke(obj, event)
+        findCallback(obj::class.java, event::class)?.invoke(obj, event)
     }
 
     fun deployJobs(key: String, jobs: List<Job>) {

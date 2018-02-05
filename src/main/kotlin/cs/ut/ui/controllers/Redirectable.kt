@@ -3,7 +3,7 @@ package cs.ut.ui.controllers
 import cs.ut.config.MasterConfiguration
 import cs.ut.util.DEST
 import cs.ut.util.NAVBAR
-import cs.ut.util.PAGE_JOB_OVERVIEW
+import cs.ut.util.PAGE_MODELS_OVERVIEW
 import cs.ut.util.PAGE_VALIDATION
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Desktop
@@ -30,7 +30,7 @@ interface Redirectable {
         val include = Selectors.iterable(page, "#contentInclude").iterator().next() as Include
         include.src = null
         include.src = MasterConfiguration.pageConfiguration.getPageByName(dest).uri
-        activateHeaderButton(if (dest == PAGE_VALIDATION) PAGE_JOB_OVERVIEW else dest, page)
+        activateHeaderButton(if (dest == PAGE_VALIDATION) PAGE_MODELS_OVERVIEW else dest, page)
     }
 
     fun setContent(dest: String, page: Page, delay: Int, desktop: Desktop) {

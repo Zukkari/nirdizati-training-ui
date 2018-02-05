@@ -8,7 +8,7 @@ import cs.ut.logging.NirdLogger
 import cs.ut.ui.adapters.JobValueAdataper
 import cs.ut.ui.controllers.Redirectable
 import cs.ut.util.NirdizatiUtil
-import cs.ut.util.PAGE_JOB_OVERVIEW
+import cs.ut.util.PAGE_MODELS_OVERVIEW
 import cs.ut.util.PAGE_TRAINING
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -62,7 +62,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
 
     @Listen("onClick=#backToValidation")
     fun backToValidation() {
-        setContent(PAGE_JOB_OVERVIEW, page)
+        setContent(PAGE_MODELS_OVERVIEW, page)
     }
 
     private fun generateReadOnlyMode() {

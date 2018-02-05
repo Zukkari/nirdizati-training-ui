@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Callback(val event: KClass<*>)
 
-fun findCallback(target: Class<*>, eventType: KClass<*>): Method {
+fun findCallback(target: Class<*>, eventType: KClass<*>): Method? {
     val methods: List<Method> = target.methods.filter { it.isAnnotationPresent(Callback::class.java) }
     methods.forEach { m ->
         val annotations = m.annotations
@@ -20,5 +20,5 @@ fun findCallback(target: Class<*>, eventType: KClass<*>): Method {
             }
         }
     }
-    throw NoSuchElementException("Method with $eventType could not be found in $target")
+    return null
 }
