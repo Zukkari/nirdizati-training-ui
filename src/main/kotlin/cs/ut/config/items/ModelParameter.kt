@@ -61,6 +61,8 @@ open class ModelParameter(
         result = 31 * result + enabled.hashCode()
         return result
     }
+
+    override fun toString(): String = "$type.$id"
 }
 
 object EmptyParameter : ModelParameter("N/A", "N/A", "N/A", true, mutableListOf(EmptyProperty))

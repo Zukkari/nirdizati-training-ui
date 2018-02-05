@@ -1,4 +1,4 @@
-package cs.ut.ui.controllers
+package cs.ut.ui.controllers.validation
 
 import cs.ut.charts.Chart
 import cs.ut.charts.ChartGenerator
@@ -6,10 +6,10 @@ import cs.ut.charts.MAE
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdLogger
 import cs.ut.ui.adapters.JobValueAdataper
+import cs.ut.ui.controllers.Redirectable
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PAGE_JOB_OVERVIEW
 import cs.ut.util.PAGE_TRAINING
-import cs.ut.util.PAGE_VALIDATION
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions

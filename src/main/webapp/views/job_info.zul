@@ -1,10 +1,10 @@
 <vbox vflex="1" hflex="1" apply="cs.ut.ui.controllers.validation.SingleJobValidationController">
     <hlayout>
-        <hbox align="start" pack="start" hflex="1">
-            <a id="backToValidation" iconSclass="z-icon-arrow-circle-left" label="${labels.validation.check_other}" onClick="backToValidation"/>
+        <hbox align="center" pack="start" hflex="1">
+            <a id="backToValidation" sclass="validation-link" iconSclass="z-icon-arrow-circle-left" label="${labels.validation.check_other}" onClick="backToValidation"/>
         </hbox>
         <hbox align="start" pack="end" hflex="1">
-            <a id="backToTraining" iconSclass="z-icon-arrow-circle-right" label="${labels.validation.train_more}" onClick="backToTraining" dir="reverse"/>
+            <a id="backToTraining" sclass="validation-link" iconSclass="z-icon-arrow-circle-right" label="${labels.validation.train_more}" onClick="backToTraining" dir="reverse"/>
         </hbox>
     </hlayout>
 
