@@ -1,8 +1,13 @@
 package cs.ut.config.items
 
-import javax.xml.bind.annotation.*
+import javax.xml.bind.annotation.XmlAccessType
+import javax.xml.bind.annotation.XmlAccessorType
+import javax.xml.bind.annotation.XmlElement
+import javax.xml.bind.annotation.XmlElementWrapper
+import javax.xml.bind.annotation.XmlTransient
+import javax.xml.bind.annotation.XmlType
 
-@XmlType(propOrder = arrayOf("id", "parameter", "type", "enabled", "properties"))
+@XmlType(propOrder = ["id", "parameter", "type", "enabled", "properties"])
 @XmlAccessorType(XmlAccessType.FIELD)
 open class ModelParameter(
         @field:[XmlElement(name = "id")] var id: String,
@@ -56,6 +61,8 @@ open class ModelParameter(
         result = 31 * result + enabled.hashCode()
         return result
     }
+
+    override fun toString(): String = "$type.$id"
 }
 
 object EmptyParameter : ModelParameter("N/A", "N/A", "N/A", true, mutableListOf(EmptyProperty))

@@ -1,16 +1,22 @@
 package cs.ut.config.items
 
+import javax.xml.bind.annotation.XmlAccessType
+import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlElement
+import javax.xml.bind.annotation.XmlType
 
+
+@XmlType(propOrder = ["id", "enableHtml", "label"])
+@XmlAccessorType(XmlAccessType.FIELD)
 data class TooltipItem(
     @XmlElement(name = "id")
-    val id: String,
+    var id: String,
 
-    @XmlElement(name = "isHtml")
-    val isHtml: Boolean,
+    @XmlElement(name = "enableHtml")
+    var enableHtml: Boolean,
 
     @XmlElement(name = "label")
-    val label: String
+    var label: String
 ) {
     constructor() : this("", false, "")
 }

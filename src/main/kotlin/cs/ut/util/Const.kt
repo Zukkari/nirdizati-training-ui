@@ -31,9 +31,9 @@ const val TRACKER_EAST = "trackerEast"
 
 const val PAGE_LANDING = "landing"
 const val PAGE_UPLOAD = "upload"
-const val PAGE_LOGOVERVIEW = "logOverview"
 const val PAGE_TRAINING = "training"
 const val PAGE_VALIDATION = "validation"
+const val PAGE_MODELS_OVERVIEW = "jobOverview"
 
 const val LAST_STATE = "last_state"
 const val PREFIX = "prefix_length_based"

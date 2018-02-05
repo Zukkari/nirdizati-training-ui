@@ -8,7 +8,9 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 import java.lang.Double.max
-import java.util.*
+import java.util.Collections
+import java.util.HashMap
+import java.util.LinkedHashMap
 import kotlin.properties.Delegates
 
 class CsvReader(private val f: File) {

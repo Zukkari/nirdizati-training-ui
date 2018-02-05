@@ -3,6 +3,8 @@ package cs.ut.ui.controllers
 import cs.ut.config.MasterConfiguration
 import cs.ut.util.DEST
 import cs.ut.util.NAVBAR
+import cs.ut.util.PAGE_MODELS_OVERVIEW
+import cs.ut.util.PAGE_VALIDATION
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Desktop
 import org.zkoss.zk.ui.Executions
@@ -12,7 +14,7 @@ import org.zkoss.zk.ui.select.Selectors
 import org.zkoss.zkmax.zul.Navbar
 import org.zkoss.zkmax.zul.Navitem
 import org.zkoss.zul.Include
-import java.util.*
+import java.util.Timer
 import kotlin.concurrent.timerTask
 
 interface Redirectable {
@@ -28,7 +30,7 @@ interface Redirectable {
         val include = Selectors.iterable(page, "#contentInclude").iterator().next() as Include
         include.src = null
         include.src = MasterConfiguration.pageConfiguration.getPageByName(dest).uri
-        activateHeaderButton(dest, page)
+        activateHeaderButton(if (dest == PAGE_VALIDATION) PAGE_MODELS_OVERVIEW else dest, page)
     }
 
     fun setContent(dest: String, page: Page, delay: Int, desktop: Desktop) {

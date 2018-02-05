@@ -1,5 +1,13 @@
-<vbox vflex="1" hflex="1" apply="cs.ut.ui.controllers.ValidationController">
-    <hbox id="logSelect" pack="center" align="center" hflex="1" visible="false"/>
+<vbox vflex="1" hflex="1" apply="cs.ut.ui.controllers.validation.SingleJobValidationController">
+    <hlayout>
+        <hbox align="center" pack="start" hflex="1">
+            <a id="backToValidation" sclass="validation-link" iconSclass="z-icon-arrow-circle-left" label="${labels.validation.check_other}" onClick="backToValidation"/>
+        </hbox>
+        <hbox align="start" pack="end" hflex="1">
+            <a id="backToTraining" sclass="validation-link" iconSclass="z-icon-arrow-circle-right" label="${labels.validation.train_more}" onClick="backToTraining" dir="reverse"/>
+        </hbox>
+    </hlayout>
+
     <grid hflex="1" vflex="min">
         <rows id="metadataRows" hflex="1" vflex="1"/>
     </grid>
