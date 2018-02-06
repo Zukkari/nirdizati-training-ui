@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest
 class ValidationController : SelectorComposer<Component>(), Redirectable {
 
     @Wire
-    private lateinit var mainContainer: Vbox
+    lateinit var mainContainer: Vbox
 
     @Wire
     private lateinit var grid: NirdizatiGrid<Job>
@@ -93,11 +93,11 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
     private fun NirdizatiGrid<Job>.configure() {
         this.setColumns(
             mapOf(
-                "encoding" to "",
-                "bucketing" to "",
-                "learner" to "",
-                "predictiontype" to "",
                 "logfile" to "",
+                "predictiontype" to "",
+                "bucketing" to "",
+                "encoding" to "",
+                "learner" to "",
                 "hyperparameters" to "min"
             )
         )

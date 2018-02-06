@@ -421,7 +421,7 @@
             </label>
         </tooltip>
         <tooltip>
-            <id>prefix_length</id>
+            <id>prefix_length_based</id>
             <enableHtml>true</enableHtml>
             <label>
                 UHJlZml4IGxlbmd0aCBiYXNlZCAtIGdyb3VwIHRyYWNlcyBhY2NvcmRpbmcgdG8gdGhlaXIgbGVuZ3RoLiBUaGUgPGk+bjwvaT4tdGggYnVja2V0IHdpbGwgY29uc2lzdCBvZiB0cmFjZXMgdGhhdCBhcmUgYXQgbGVhc3QgPGk+bjwvaT4gZXZlbnRzIGxvbmcu
