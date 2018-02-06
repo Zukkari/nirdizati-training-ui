@@ -14,7 +14,7 @@ import org.zkoss.zul.Hlayout
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 
-class AdvancedModeAdapter() : GridValueProvider<GeneratorArgument, Row> {
+class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
     override var fields: MutableList<FieldComponent> = mutableListOf()
 
     private val parser: TooltipParser = TooltipParser()
