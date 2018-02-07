@@ -4,7 +4,7 @@ import cs.ut.charts.Chart
 import cs.ut.charts.ChartGenerator
 import cs.ut.charts.MAE
 import cs.ut.jobs.SimulationJob
-import cs.ut.logging.NirdLogger
+import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.adapters.JobValueAdataper
 import cs.ut.ui.controllers.Redirectable
 import cs.ut.util.NirdizatiUtil
@@ -30,7 +30,7 @@ import org.zkoss.zul.Rows
 import org.zkoss.zul.Vbox
 
 class SingleJobValidationController : SelectorComposer<Component>(), Redirectable {
-    private val log = NirdLogger(NirdLogger.getId(Executions.getCurrent().nativeRequest), this.javaClass)
+    private val log = NirdizatiLogger.getLogger(SingleJobValidationController::class.java)
     private lateinit var job: SimulationJob
     private lateinit var charts: Map<String, List<Chart>>
 

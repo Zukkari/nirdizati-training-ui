@@ -1,6 +1,7 @@
 package cs.ut.ui.controllers
 
 import cs.ut.config.MasterConfiguration
+import cs.ut.util.CookieUtil
 import cs.ut.util.DEST
 import cs.ut.util.NAVBAR
 import cs.ut.util.PAGE_MODELS_OVERVIEW
@@ -15,6 +16,7 @@ import org.zkoss.zkmax.zul.Navbar
 import org.zkoss.zkmax.zul.Navitem
 import org.zkoss.zul.Include
 import java.util.Timer
+import javax.servlet.http.HttpServletRequest
 import kotlin.concurrent.timerTask
 
 interface Redirectable {

@@ -2,7 +2,8 @@ package cs.ut.ui.controllers
 
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.nodes.Dir
-import cs.ut.logging.NirdLogger
+import cs.ut.logging.NirdizatiLogger
+import cs.ut.ui.UIComponent
 import cs.ut.ui.controllers.modal.ParameterModalController.Companion.FILE
 import org.apache.commons.io.FilenameUtils
 import org.zkoss.util.media.Media
@@ -21,8 +22,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.nio.charset.Charset
 
-class UploadLogController : SelectorComposer<Component>(), Redirectable {
-    private val log = NirdLogger(NirdLogger.getId(Executions.getCurrent().nativeRequest), this.javaClass)
+class UploadLogController : SelectorComposer<Component>(), Redirectable, UIComponent {
+    private val log = NirdizatiLogger.getLogger(UploadLogController::class.java, getSessionId())
 
     @Wire
     private lateinit var fileName: Label

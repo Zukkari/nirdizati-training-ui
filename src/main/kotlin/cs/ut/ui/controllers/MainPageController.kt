@@ -2,8 +2,9 @@ package cs.ut.ui.controllers
 
 import cs.ut.config.ClientInfo
 import cs.ut.jobs.Job
-import cs.ut.logging.NirdLogger
+import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.NirdizatiGrid
+import cs.ut.ui.UIComponent
 import cs.ut.ui.controllers.JobTrackerController.Companion.GRID_ID
 import cs.ut.util.CookieUtil
 import cs.ut.util.NAVBAR
@@ -21,8 +22,8 @@ import java.util.NoSuchElementException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class MainPageController : SelectorComposer<Component>(), Redirectable {
-    val log = NirdLogger(NirdLogger.getId(Executions.getCurrent().nativeRequest), this.javaClass)
+class MainPageController : SelectorComposer<Component>(), Redirectable, UIComponent {
+    val log = NirdizatiLogger.getLogger(MainPageController::class.java, getSessionId())
     private var clientInformation: Map<Session, ClientInfo> = mapOf()
 
     @Wire

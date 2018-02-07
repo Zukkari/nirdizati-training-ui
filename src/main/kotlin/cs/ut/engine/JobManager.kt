@@ -7,7 +7,7 @@ import cs.ut.engine.events.findCallback
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
-import cs.ut.logging.NirdLogger
+import cs.ut.logging.NirdizatiLogger
 import cs.ut.util.BUCKETING
 import cs.ut.util.ENCODING
 import cs.ut.util.LEARNER
@@ -19,7 +19,7 @@ import java.util.concurrent.Future
 
 
 object JobManager {
-    val log= NirdLogger(caller = this.javaClass)
+    val log= NirdizatiLogger.getLogger(JobManager::class.java)
 
     private val executedJobs: MutableMap<String, MutableList<Job>> = mutableMapOf()
     private var subscribers: List<WeakReference<Any>> = listOf()

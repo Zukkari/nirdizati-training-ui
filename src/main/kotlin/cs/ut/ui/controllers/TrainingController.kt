@@ -7,7 +7,8 @@ import cs.ut.engine.JobManager
 import cs.ut.engine.LogManager
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
-import cs.ut.logging.NirdLogger
+import cs.ut.logging.NirdizatiLogger
+import cs.ut.ui.UIComponent
 import cs.ut.ui.controllers.modal.ParameterModalController.Companion.FILE
 import cs.ut.ui.controllers.modal.ParameterModalController.Companion.IS_RECREATION
 import cs.ut.ui.controllers.training.AdvancedModeController
@@ -38,8 +39,8 @@ import org.zkoss.zul.Window
 import java.io.File
 import javax.servlet.http.HttpServletRequest
 
-class TrainingController : SelectorComposer<Component>(), Redirectable {
-    private val log = NirdLogger(NirdLogger.getId(Executions.getCurrent().nativeRequest), this.javaClass)
+class TrainingController : SelectorComposer<Component>(), Redirectable, UIComponent {
+    private val log = NirdizatiLogger.getLogger(TrainingController::class.java, getSessionId())
 
     companion object {
         const val LEARNER = "learner"
