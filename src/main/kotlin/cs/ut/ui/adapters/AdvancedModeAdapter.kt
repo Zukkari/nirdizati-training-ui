@@ -28,15 +28,11 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
         }
 
         row.appendChild(Hbox().apply {
-            this.appendChild(Hbox().apply {
-                this.vflex = "1"
-                this.hflex = "1"
-                this.align = "center"
-                this.appendChild(label)
-            })
-
-            this.appendChild(getTooltipButton(data.id))
+            this.vflex = "1"
+            this.align = "center"
+            this.appendChild(label)
         })
+        row.appendChild(getTooltipButton(data.id))
 
         data.params.forEach { param ->
             row.appendChild(Hlayout().also {
@@ -48,9 +44,9 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
                             this.setValue(param)
                             fields.add(FieldComponent(label, this))
                         })
-                        it.appendChild(getTooltipButton(param.id))
                     })
             })
+            row.appendChild(getTooltipButton(param.id))
         }
         return row
     }
