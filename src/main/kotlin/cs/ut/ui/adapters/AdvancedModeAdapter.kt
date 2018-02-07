@@ -14,7 +14,7 @@ import org.zkoss.zul.Hlayout
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 
-class AdvancedModeAdapter() : GridValueProvider<GeneratorArgument, Row> {
+class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
     override var fields: MutableList<FieldComponent> = mutableListOf()
 
     private val parser: TooltipParser = TooltipParser()
@@ -28,15 +28,11 @@ class AdvancedModeAdapter() : GridValueProvider<GeneratorArgument, Row> {
         }
 
         row.appendChild(Hbox().apply {
-            this.appendChild(Hbox().apply {
-                this.vflex = "1"
-                this.hflex = "1"
-                this.align = "center"
-                this.appendChild(label)
-            })
-
-            this.appendChild(getTooltipButton(data.id))
+            this.vflex = "1"
+            this.align = "center"
+            this.appendChild(label)
         })
+        row.appendChild(getTooltipButton(data.id))
 
         data.params.forEach { param ->
             row.appendChild(Hlayout().also {
@@ -48,9 +44,9 @@ class AdvancedModeAdapter() : GridValueProvider<GeneratorArgument, Row> {
                             this.setValue(param)
                             fields.add(FieldComponent(label, this))
                         })
-                        it.appendChild(getTooltipButton(param.id))
                     })
             })
+            row.appendChild(getTooltipButton(param.id))
         }
         return row
     }
@@ -65,6 +61,7 @@ class AdvancedModeAdapter() : GridValueProvider<GeneratorArgument, Row> {
             this.addEventListener(Events.ON_CLICK, { _ ->
                 parser.readTooltip(tooltip).also {
                     this.appendChild(it)
+                    it.sclass = "n-popup"
                     it.id = ValidationViewAdapter.PROP_POPUP
 
                     it.addEventListener(Events.ON_OPEN, { e ->
