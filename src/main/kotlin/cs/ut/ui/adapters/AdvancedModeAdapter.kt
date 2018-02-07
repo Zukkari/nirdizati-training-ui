@@ -65,6 +65,7 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
             this.addEventListener(Events.ON_CLICK, { _ ->
                 parser.readTooltip(tooltip).also {
                     this.appendChild(it)
+                    it.sclass = "n-popup"
                     it.id = ValidationViewAdapter.PROP_POPUP
 
                     it.addEventListener(Events.ON_OPEN, { e ->
