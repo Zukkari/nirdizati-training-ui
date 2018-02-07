@@ -5,7 +5,8 @@ import cs.ut.config.MasterConfiguration
 import cs.ut.config.nodes.Dir
 import cs.ut.config.nodes.UserPreferences
 import cs.ut.engine.NirdizatiThreadPool
-import cs.ut.logging.NirdLogger
+import cs.ut.logging.NirdizatiLogger
+import cs.ut.ui.UIComponent
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.event.Events
@@ -18,8 +19,8 @@ import java.io.File
 import java.io.FileReader
 import java.nio.charset.Charset
 
-class AdminViewController : SelectorComposer<Component>() {
-    val log = NirdLogger(caller = this.javaClass)
+class AdminViewController : SelectorComposer<Component>(), UIComponent {
+    val log = NirdizatiLogger.getLogger(AdminViewController::class.java, getSessionId())
 
     @Wire
     private lateinit var flushConfig: Button

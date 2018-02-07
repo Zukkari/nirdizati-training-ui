@@ -52,3 +52,5 @@ const val ENCODING = "encoding"
 const val BUCKETING = "bucketing"
 const val LEARNER = "learner"
 const val PREDICTIONTYPE = "predictiontype"
+
+const val LOGGER_NAME = "nirdizati-logger"

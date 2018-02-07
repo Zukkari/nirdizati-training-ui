@@ -5,7 +5,7 @@ import cs.ut.config.UiData
 import cs.ut.config.nodes.Dir
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.SimulationJob
-import cs.ut.logging.NirdLogger
+import cs.ut.logging.NirdizatiLogger
 import cs.ut.util.LOG_FILE
 import cs.ut.util.OWNER
 import cs.ut.util.PREFIX
@@ -17,7 +17,7 @@ import java.io.File
 import java.io.FileReader
 
 object LogManager {
-    private val log= NirdLogger(caller = this.javaClass)
+    private val log = NirdizatiLogger.getLogger(LogManager::class.java)
 
     private const val REGRESSION = "_regr"
     private const val CLASSIFICATION = "_class"
@@ -57,7 +57,7 @@ object LogManager {
      * @return List of all available file names contained in user log directory
      */
     fun getAllAvailableLogs(): List<File> =
-            File(logDirectory).listFiles().filter { it.extension in allowedExtensions }
+        File(logDirectory).listFiles().filter { it.extension in allowedExtensions }
 
 
     /**
@@ -120,13 +120,13 @@ object LogManager {
      * @param job that needs to be categorized
      */
     fun isClassification(job: SimulationJob): Boolean =
-            !File(detailedDir + DETAILED + FilenameUtils.getBaseName(job.logFile.name) + "_" + job.id + REGRESSION + ".csv").exists()
+        !File(detailedDir + DETAILED + FilenameUtils.getBaseName(job.logFile.name) + "_" + job.id + REGRESSION + ".csv").exists()
 
     private fun SimulationJob.getFileName(dir: String): String =
-            if (dir == FEATURE)
-                dir + this.logFile.nameWithoutExtension + "_" + this.id
-            else
-                dir + this.logFile.nameWithoutExtension + "_" + this.id + if (isClassification(this)) CLASSIFICATION else REGRESSION
+        if (dir == FEATURE)
+            dir + this.logFile.nameWithoutExtension + "_" + this.id
+        else
+            dir + this.logFile.nameWithoutExtension + "_" + this.id + if (isClassification(this)) CLASSIFICATION else REGRESSION
 
     fun loadJobIds(key: String): List<UiData> {
         return mutableListOf<UiData>().also { c ->

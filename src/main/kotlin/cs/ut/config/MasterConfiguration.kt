@@ -12,7 +12,7 @@ import cs.ut.config.nodes.TooltipConfig
 import cs.ut.config.nodes.UserPreferences
 import cs.ut.engine.JobManager
 import cs.ut.jobs.StartUpJob
-import cs.ut.logging.NirdLogger
+import cs.ut.logging.NirdizatiLogger
 import cs.ut.util.readHyperParameterJson
 import org.apache.log4j.ConsoleAppender
 import org.apache.log4j.FileAppender
@@ -27,7 +27,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.concurrent.timerTask
 
 object MasterConfiguration {
-    private val log = NirdLogger(caller = this.javaClass)
+    private val log = NirdizatiLogger.getLogger(javaClass)
 
     val file: File = File(javaClass.classLoader.getResource("configuration.xml").file!!)
 
@@ -45,8 +45,8 @@ object MasterConfiguration {
     lateinit var optimizedParams: Map<String, List<ModelParameter>>
 
     init {
-        readConfig()
         configureLogger()
+        readConfig()
         log.debug("Logger configured successfully")
         Timer().schedule(timerTask { JobManager.runServiceJob(StartUpJob()) }, 10000L)
     }
@@ -55,18 +55,19 @@ object MasterConfiguration {
      * Configures logger and Enables appenders for Log4j
      */
     private fun configureLogger() {
+        Logger.getRootLogger().level = Level.DEBUG
         Logger.getRootLogger().removeAllAppenders()
         Logger.getRootLogger().additivity = false
 
         val ca = ConsoleAppender()
-        ca.layout = PatternLayout("<%d{ISO8601}> <%p> <%C{1}.class:%L> <%m>%n")
+        ca.layout = PatternLayout("<%d{ISO8601}> <%p> <%F:%L> <%m>%n")
         ca.threshold = Level.DEBUG
         ca.activateOptions()
 
         Logger.getRootLogger().addAppender(ca)
 
         val fileAppender = FileAppender()
-        fileAppender.layout = PatternLayout("<%d{ISO8601}> <%p> <%C{1}.class:%L> <%m>%n")
+        fileAppender.layout = PatternLayout("<%d{ISO8601}> <%p> <%F:%L> <%m>%n")
         fileAppender.name = "nirdizati_ui_log.log"
         fileAppender.file = "nirdizati_ui_log.log"
         fileAppender.threshold = Level.DEBUG
@@ -95,7 +96,7 @@ object MasterConfiguration {
 
     fun readConfig() {
         dirConfig = readClass(DirectoryConfiguration::class.java, "dirs")
-        modelConfiguration= readClass(ModelConfiguration::class.java, "modelConfig")
+        modelConfiguration = readClass(ModelConfiguration::class.java, "modelConfig")
             .also {
                 it.prepareData()
             }

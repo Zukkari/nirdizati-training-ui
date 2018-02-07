@@ -3,9 +3,7 @@ package cs.ut.jobs
 
 import cs.ut.engine.IdProvider
 import cs.ut.engine.JobManager
-import cs.ut.logging.NirdLogger
-import java.util.Calendar
-import java.util.Date
+import cs.ut.logging.NirdizatiLogger
 
 
 enum class JobStatus {
@@ -17,18 +15,18 @@ enum class JobStatus {
     FAILED
 }
 
-abstract class Job(generatedId: String = "") : Runnable {
-    val log = NirdLogger(caller = this.javaClass)
+open class Job protected constructor(generatedId: String = "") : Runnable {
+    val log = NirdizatiLogger.getLogger(Job::class.java)
 
     val id: String = if (generatedId.isBlank()) IdProvider.getNextId() else generatedId
 
     var status: JobStatus = JobStatus.PENDING
 
-    open fun preProcess() {}
+    open fun preProcess() = Unit
 
-    open fun execute() {}
+    open fun execute() = Unit
 
-    open fun postExecute() {}
+    open fun postExecute() = Unit
 
     open fun isNotificationRequired() = false
 

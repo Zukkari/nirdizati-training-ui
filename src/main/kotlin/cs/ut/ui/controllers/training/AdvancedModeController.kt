@@ -2,9 +2,10 @@ package cs.ut.ui.controllers.training
 
 import cs.ut.config.items.ModelParameter
 import cs.ut.config.items.Property
-import cs.ut.logging.NirdLogger
+import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.NirdizatiGrid
+import cs.ut.ui.UIComponent
 import cs.ut.ui.adapters.AdvancedModeAdapter
 import cs.ut.ui.adapters.GeneratorArgument
 import cs.ut.ui.adapters.PropertyValueAdapter
@@ -18,8 +19,8 @@ import org.zkoss.zul.Checkbox
 import org.zkoss.zul.Hlayout
 import org.zkoss.zul.Vlayout
 
-class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gridContainer), ModeController {
-    private val log = NirdLogger(NirdLogger.getId(Executions.getCurrent().nativeRequest), this.javaClass)
+class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gridContainer), ModeController, UIComponent {
+    private val log = NirdizatiLogger.getLogger(AdvancedModeController::class.java, getSessionId())
 
     private val grid: NirdizatiGrid<GeneratorArgument> = NirdizatiGrid(AdvancedModeAdapter())
     private val hyperParamsContainer: Hlayout =

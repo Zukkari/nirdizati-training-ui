@@ -6,8 +6,9 @@ import cs.ut.config.nodes.Dir
 import cs.ut.engine.JobManager
 import cs.ut.jobs.DataSetGenerationJob
 import cs.ut.jobs.UserRightsJob
-import cs.ut.logging.NirdLogger
+import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.NirdizatiGrid
+import cs.ut.ui.UIComponent
 import cs.ut.ui.adapters.ColumnRowValueAdapter
 import cs.ut.ui.adapters.ComboArgument
 import cs.ut.ui.adapters.ComboProvider
@@ -33,8 +34,8 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
-class ParameterModalController : GenericAutowireComposer<Component>(), Redirectable {
-    private val log= NirdLogger(NirdLogger.getId(Executions.getCurrent().nativeRequest), this.javaClass)
+class ParameterModalController : GenericAutowireComposer<Component>(), Redirectable, UIComponent {
+    private val log= NirdizatiLogger.getLogger(ParameterModalController::class.java, getSessionId())
 
     @Wire
     private lateinit var modal: Window
