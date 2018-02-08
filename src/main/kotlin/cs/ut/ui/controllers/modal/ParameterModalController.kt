@@ -17,6 +17,7 @@ import cs.ut.ui.controllers.TrainingController.Companion.GENERATE_DATASET
 import cs.ut.util.CsvReader
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.TIMESTAMP_COL
+import cs.ut.util.UPLOADED_FILE
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
@@ -166,6 +167,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
                     StandardCopyOption.REPLACE_EXISTING
                 )
 
+                Executions.getCurrent().desktop.setAttribute(UPLOADED_FILE, target.toFile())
                 JobManager.runServiceJob(UserRightsJob(target.toFile()))
                 setContent("training", getPage(), 2000, Executions.getCurrent().desktop)
             } else {
