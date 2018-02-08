@@ -8,22 +8,18 @@ import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
-import cs.ut.util.BUCKETING
-import cs.ut.util.ENCODING
-import cs.ut.util.LEARNER
-import cs.ut.util.PREDICTIONTYPE
-import cs.ut.util.readTrainingJson
-import java.io.File
 import java.lang.ref.WeakReference
 import java.util.concurrent.Future
 
 
 object JobManager {
-    val log= NirdizatiLogger.getLogger(JobManager::class.java)
+    val log = NirdizatiLogger.getLogger(JobManager::class.java)
 
-    private val executedJobs: MutableMap<String, MutableList<Job>> = mutableMapOf()
+    val cache: CacheHolder<SimulationJob> = JobCacheHolder()
     private var subscribers: List<WeakReference<Any>> = listOf()
     private val jobStatus: MutableMap<Job, Future<*>> = mutableMapOf()
+
+    val queue: MutableList<SimulationJob> = mutableListOf()
 
     fun subscribe(caller: Any) {
         synchronized(subscribers) {
@@ -41,7 +37,13 @@ object JobManager {
 
     fun statusUpdated(job: Job) {
         log.debug("Update event: ${job.id} -> notifying subscribers")
-        handleEvent(StatusUpdateEvent(executedJobs.entries.firstOrNull { it.value.contains(job) }?.key ?: "", job))
+
+        if (job.status == JobStatus.COMPLETED && job in queue && job is SimulationJob) {
+            queue.remove(job)
+            cache.addToCache(job.owner, job)
+        }
+
+        handleEvent(StatusUpdateEvent(job))
     }
 
     private fun handleEvent(event: NirdizatiEvent) {
@@ -69,22 +71,16 @@ object JobManager {
 
     fun deployJobs(key: String, jobs: List<Job>) {
         log.debug("Jobs to be executed for client $key -> $jobs")
-
-        val deployed: MutableList<Job> = executedJobs[key]?.toMutableList() ?: mutableListOf()
-        log.debug("Client $key has ${deployed.size} completed jobs")
         log.debug("Deploying ${jobs.size} jobs")
 
         synchronized(jobStatus) {
             jobs.forEach {
                 jobStatus[it] = NirdizatiThreadPool.execute(it)
-                deployed.add(it)
+                queue.add(it as SimulationJob)
             }
         }
 
         log.debug("Updating completed job status for $key")
-        executedJobs[key] = deployed
-        log.debug("Successfully updated $key -> $deployed")
-
 
         log.debug("Successfully deployed all jobs to worker")
         handleEvent(DeployEvent(key, jobs))
@@ -103,35 +99,9 @@ object JobManager {
         return NirdizatiThreadPool.execute(job)
     }
 
-    fun getJobsForKey(key: String) = executedJobs[key]
-
-    fun removeJob(key: String, simulationJob: SimulationJob) {
-        synchronized(executedJobs) {
-            log.debug("Removing job $simulationJob for client $key")
-            executedJobs[key]?.remove(simulationJob)
-        }
-    }
-
-    fun loadJobsFromStorage(key: String): List<SimulationJob> {
-        return mutableListOf<SimulationJob>().also { c ->
-            LogManager.loadJobIds(key)
-                .filter { data ->
-                    val sessionJobs = executedJobs[key] ?: listOf<Job>()
-                    data.id !in sessionJobs.map { it.id }
-                            || sessionJobs.firstOrNull { it.id == data.id }?.status == JobStatus.COMPLETED
-                }
-                .forEach {
-                    val params = readTrainingJson(it.id).flatMap { it.value }
-                    c.add(SimulationJob(
-                        params.first { it.type == ENCODING },
-                        params.first { it.type == BUCKETING },
-                        params.first { it.type == LEARNER },
-                        params.first { it.type == PREDICTIONTYPE },
-                        File(it.path),
-                        key,
-                        it.id
-                    ).also { it.status = JobStatus.COMPLETED })
-                }
-        }
+    fun getJobsForKey(key: String): List<SimulationJob> {
+        val cached: List<SimulationJob> = cache.retrieveFromCache(key).rawData()
+        val pending: List<SimulationJob> = queue.filter { it.owner == key }
+        return (pending.toList() + cached.toList())
     }
 }

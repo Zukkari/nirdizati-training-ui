@@ -17,6 +17,7 @@ import cs.ut.ui.controllers.training.ModeController
 import cs.ut.util.CookieUtil
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.OUTCOME
+import cs.ut.util.UPLOADED_FILE
 import cs.ut.util.readLogColumns
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -192,12 +193,22 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
             clientLogs.isDisabled = true
         }
 
+        Executions.getCurrent().desktop.getAttribute(UPLOADED_FILE)?.apply {
+            this as File
+            clientLogs.items.forEach {
+                if ((it.getValue() as File) == this) {
+                    clientLogs.selectedItem = it
+                }
+            }
+        }
+
         clientLogs.isReadonly = true
 
         clientLogs.addEventListener(Events.ON_SELECT, { _ ->
             switchMode()
             initPredictions()
         })
+
 
         // Disable start button if logs are not found so simulation can not be started
         val startButton = Executions.getCurrent().desktop.components.firstOrNull { it.id == START_TRAINING }
@@ -229,7 +240,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
         if (!gridController.isValid()) return
 
         val jobParameters = mutableMapOf<String, List<ModelParameter>>()
-        jobParameters.put(PREDICTION, listOf(predictionType.selectedItem.getValue()))
+        jobParameters[PREDICTION] = listOf(predictionType.selectedItem.getValue())
         jobParameters.putAll(gridController.gatherValues())
 
         if (!jobParameters.validateParameters()) return
@@ -292,12 +303,12 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
         }
 
         if (this[BUCKETING] == null) {
-            msg += if (msg == "") BUCKETING else ", ${BUCKETING}"
+            msg += if (msg == "") BUCKETING else ", $BUCKETING"
             isValid = false
         }
 
         if (this[LEARNER] == null) {
-            msg += if (msg == "") LEARNER else ", ${LEARNER}"
+            msg += if (msg == "") LEARNER else ", $LEARNER"
             isValid = false
         }
 

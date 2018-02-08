@@ -23,7 +23,7 @@ class SimulationJob(
     val learner: ModelParameter,
     val outcome: ModelParameter,
     val logFile: File,
-    private val owner: String,
+    val owner: String,
     id: String = ""
 ) : Job(id) {
 

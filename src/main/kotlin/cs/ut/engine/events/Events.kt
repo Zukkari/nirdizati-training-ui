@@ -2,8 +2,8 @@ package cs.ut.engine.events
 
 import cs.ut.jobs.Job
 
-sealed class NirdizatiEvent(open val target: String)
+sealed class NirdizatiEvent
 
-data class StatusUpdateEvent(override val target: String, val data: Job) : NirdizatiEvent(target)
+data class StatusUpdateEvent(val data: Job) : NirdizatiEvent()
 
-data class DeployEvent(override val target: String, val data: List<Job>) : NirdizatiEvent(target)
+data class DeployEvent(val target: String, val data: List<Job>) : NirdizatiEvent()

@@ -32,7 +32,7 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
             this.align = "center"
             this.appendChild(label)
         })
-        row.appendChild(getTooltipButton(data.id))
+        row.appendChild(getTooltip(data.id))
 
         data.params.forEach { param ->
             row.appendChild(Hlayout().also {
@@ -46,12 +46,12 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
                         })
                     })
             })
-            row.appendChild(getTooltipButton(param.id))
+            row.appendChild(getTooltip(param.id))
         }
         return row
     }
 
-    private fun getTooltipButton(tooltip: String): A {
+    private fun getTooltip(tooltip: String): A {
         return A().apply {
             this.vflex = "1"
             this.hflex = "min"
@@ -62,7 +62,13 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
                 parser.readTooltip(tooltip).also {
                     this.appendChild(it)
                     it.sclass = "n-popup"
-                    it.id = ValidationViewAdapter.PROP_POPUP
+                    it.id = tooltip
+
+                    it.addEventListener(Events.ON_CLICK, { _ ->
+                        it.close()
+                        it.detach()
+                    })
+
 
                     it.addEventListener(Events.ON_OPEN, { e ->
                         e as OpenEvent

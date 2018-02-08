@@ -11,7 +11,6 @@ import cs.ut.ui.GridValueProvider
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.controllers.JobTrackerController
 import cs.ut.ui.controllers.Redirectable
-import cs.ut.util.CookieUtil
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.OUTCOME
 import cs.ut.util.PAGE_VALIDATION
@@ -26,7 +25,6 @@ import org.zkoss.zul.Hlayout
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import org.zkoss.zul.Vlayout
-import javax.servlet.http.HttpServletRequest
 
 
 class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
@@ -181,10 +179,6 @@ class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
                     }
                 },
                 Event("abort_job", null, null)
-            )
-            JobManager.removeJob(
-                CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest),
-                this
             )
         })
 

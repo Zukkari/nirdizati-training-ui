@@ -6,6 +6,7 @@ import cs.ut.engine.events.DeployEvent
 import cs.ut.engine.events.StatusUpdateEvent
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
+import cs.ut.jobs.SimulationJob
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.adapters.JobValueAdataper
 import cs.ut.util.CookieUtil
@@ -28,7 +29,6 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
 
     companion object {
         const val GRID_ID = "tracker_grid"
-        const val TRACKER = "tracker"
     }
 
     override fun doAfterCompose(comp: Component?) {
@@ -46,7 +46,7 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
     @Suppress("UNCHECKED_CAST")
     @Callback(StatusUpdateEvent::class)
     fun updateJobStatus(event: StatusUpdateEvent) {
-        if (self.desktop == null || !self.desktop.isAlive) {
+        if (self.desktop == null || !self.desktop.isAlive || event.data !is SimulationJob) {
             return
         }
 
@@ -55,7 +55,7 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
             { _ ->
                 val subKey: String =
                     CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
-                if (subKey == event.target) {
+                if (subKey == event.data.owner) {
                     val grid =
                         Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
                     event.data.updateJobStatus(grid.rows.getChildren())
