@@ -209,10 +209,6 @@
                 <configuration>
                     <jvmTarget>1.8</jvmTarget>
                     <experimentalCoroutines>enable</experimentalCoroutines>
-                    <sourceDirs>
-                        <sourceDir>src/main/java</sourceDir>
-                        <sourceDir>src/main/kotlin</sourceDir>
-                    </sourceDirs>
                 </configuration>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <version>${kotlin.version}</version>

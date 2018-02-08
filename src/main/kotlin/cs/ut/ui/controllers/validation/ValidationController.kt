@@ -41,7 +41,10 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
 
     private fun generate() {
         val userJobs =
-            JobManager.loadJobsFromStorage(CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest))
+            JobManager
+                .cache
+                .retrieveFromCache((CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)))
+                .rawData()
 
         grid = NirdizatiGrid(ValidationViewAdapter(this)).apply {
             this.configure()
@@ -118,7 +121,10 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
                     Executions.schedule(
                         self.desktop, { _ ->
                             val userJobs =
-                                JobManager.loadJobsFromStorage(CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest))
+                                JobManager
+                                    .cache
+                                    .retrieveFromCache(CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest))
+                                    .rawData()
                                     .reversed()
                             if (grid.parent != mainContainer) {
                                 mainContainer.getChildren<Component>().clear()
