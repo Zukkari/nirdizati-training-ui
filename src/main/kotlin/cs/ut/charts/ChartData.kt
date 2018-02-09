@@ -1,17 +1,61 @@
 package cs.ut.charts
 
 import com.google.gson.Gson
+import cs.ut.engine.Cache
+import cs.ut.engine.CacheHolder
 import cs.ut.engine.LogManager
 import cs.ut.jobs.SimulationJob
+import cs.ut.logging.NirdizatiLogger
 
 class ChartGenerator(val job: SimulationJob) {
+    val log = NirdizatiLogger.getLogger(ChartGenerator::class.java)
+
     companion object {
         const val TRUE_VS_PREDICTED = "true_vs_predicted"
     }
 
+    private val chartCache = Cache.chartCache[job.owner]
+
     private val gson = Gson()
 
     fun getCharts(): List<Chart> {
+        log.debug("Fetching charts for job with id ${job.id} for client ${job.owner}")
+        val cached = chartCache
+        return when (cached) {
+            is CacheHolder<Chart> -> getFromCache(cached)
+            else -> {
+                // No cache for this client, need to fetch and cache
+                fetchCharts().apply {
+                    synchronized(Cache.chartCache) {
+                        Cache.chartCache[job.owner] = CacheHolder()
+                        log.debug("Created new slot in cache for ${job.owner}")
+                        Cache.chartCache[job.owner]!!.addToCache(job.id, this)
+                        log.debug("Added ${this.size} items to cache")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getFromCache(cached: CacheHolder<Chart>): List<Chart> {
+        log.debug("Fetching data for client exists")
+        val charts = cached.retrieveFromCache(job.id)
+        return if (charts.rawData().isEmpty()) {
+            log.debug("Job ${job.id} is not cached for the client, fetching if from disk")
+            // Fetch
+            fetchCharts().apply {
+                log.debug("Fetched ${this.size} items from disk")
+                charts.addItems(this)
+                log.debug("Added items to cache")
+            }
+        } else {
+            // is cached
+            log.debug("Charts are cached, returning cached version")
+            charts.rawData()
+        }
+    }
+
+    private fun fetchCharts(): MutableList<Chart> {
         val charts = mutableListOf<Chart>()
 
         if (LogManager.isClassification(job)) {

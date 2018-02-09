@@ -15,7 +15,7 @@ import java.util.concurrent.Future
 object JobManager {
     val log = NirdizatiLogger.getLogger(JobManager::class.java)
 
-    val cache: CacheHolder<SimulationJob> = JobCacheHolder()
+    val cache: CacheHolder<SimulationJob> = Cache.jobCache
     private var subscribers: List<WeakReference<Any>> = listOf()
     private val jobStatus: MutableMap<Job, Future<*>> = mutableMapOf()
 

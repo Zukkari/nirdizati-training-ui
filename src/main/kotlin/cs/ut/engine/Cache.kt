@@ -1,8 +1,8 @@
 package cs.ut.engine
 
+import cs.ut.charts.Chart
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.util.BUCKETING
 import cs.ut.util.ENCODING
 import cs.ut.util.LEARNER
@@ -18,10 +18,12 @@ data class CacheItem<T>(private val items: MutableList<T> = mutableListOf()) {
     fun rawData() = items
 }
 
-abstract class CacheHolder<T> {
+open class CacheHolder<T> {
     protected val cachedItems = mutableMapOf<String, CacheItem<T>>()
 
     open fun addToCache(key: String, item: T) = (cachedItems[key] ?: createNewItem(key)).addItem(item)
+
+    open fun addToCache(key: String, items: List<T>) = (cachedItems[key] ?: createNewItem(key)).addItems(items)
 
     open fun retrieveFromCache(key: String): CacheItem<T> = cachedItems[key] ?: CacheItem()
 
@@ -31,7 +33,6 @@ abstract class CacheHolder<T> {
 }
 
 class JobCacheHolder : CacheHolder<SimulationJob>() {
-    val logger = NirdizatiLogger.getLogger(this::class.java)
 
     override fun retrieveFromCache(key: String): CacheItem<SimulationJob> {
         val existing: CacheItem<SimulationJob>? = cachedItems[key]
@@ -52,7 +53,7 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
     private fun loadFromDisk(key: String): List<SimulationJob> {
         return mutableListOf<SimulationJob>().also { c ->
             LogManager.loadJobIds(key)
-                .filter { it.id !in JobManager.queue.map { it.id }}
+                .filter { it.id !in JobManager.queue.map { it.id } }
                 .forEach {
                     val params = readTrainingJson(it.id).flatMap { it.value }
                     c.add(SimulationJob(
@@ -67,5 +68,11 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
                 }
         }
     }
+}
+
+object Cache {
+    val jobCache = JobCacheHolder()
+
+    val chartCache: MutableMap<String, CacheHolder<Chart>> = mutableMapOf()
 }
 
