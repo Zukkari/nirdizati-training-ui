@@ -44,7 +44,7 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
             JobManager
                 .cache
                 .retrieveFromCache((CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)))
-                .rawData()
+                .rawData().sortedByDescending { it.startTime }
 
         grid = NirdizatiGrid(ValidationViewAdapter(this)).apply {
             this.configure()
