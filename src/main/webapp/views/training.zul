@@ -27,7 +27,7 @@
                     </hbox>
                     <a id="genDataSetParam" label="${labels.training.gen_dataset_para}"
                        onClick="generateNewDatasetParams"
-                       hflex="1"/>
+                       hflex="1" disabled="true"/>
                 </row>
             </rows>
         </grid>
