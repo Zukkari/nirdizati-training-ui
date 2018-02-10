@@ -9,12 +9,19 @@ import cs.ut.logging.NirdizatiLogger
 import cs.ut.util.LOG_FILE
 import cs.ut.util.OWNER
 import cs.ut.util.PREFIX
+import cs.ut.util.START_DATE
 import cs.ut.util.UI_DATA
 import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
+import java.time.Instant
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalAccessor
+import java.time.temporal.TemporalField
+import java.util.Date
 
 object LogManager {
     private val log = NirdizatiLogger.getLogger(LogManager::class.java)
@@ -133,7 +140,7 @@ object LogManager {
             loadTrainingFiles().forEach {
                 val uiData = JSONObject(readFileContent(it)).getJSONObject(UI_DATA)
                 if (uiData[OWNER] == key) {
-                    c.add(UiData(it.nameWithoutExtension, uiData[LOG_FILE] as String))
+                    c.add(UiData(it.nameWithoutExtension, uiData[LOG_FILE] as String, startDate(uiData)))
                 }
             }
         }
@@ -149,5 +156,9 @@ object LogManager {
         val files = dir.listFiles() ?: arrayOf()
         log.debug("Found ${files.size} training files total")
         return files.toList()
+    }
+
+    private fun startDate(data: JSONObject): Instant {
+        return Instant.parse(data[START_DATE] as String)
     }
 }

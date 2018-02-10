@@ -11,6 +11,7 @@ import cs.ut.util.LOG_FILE
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.OWNER
 import cs.ut.util.PREFIX
+import cs.ut.util.START_DATE
 import cs.ut.util.UI_DATA
 import org.json.JSONObject
 import java.io.File
@@ -57,6 +58,7 @@ class SimulationJob(
             UI_DATA, JSONObject()
                 .put(OWNER, owner)
                 .put(LOG_FILE, logFile.absoluteFile)
+                .put(START_DATE, startTime)
         )
 
         val writer = FileWriter()

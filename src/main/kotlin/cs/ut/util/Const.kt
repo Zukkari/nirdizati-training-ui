@@ -10,6 +10,7 @@ const val OWNER = "job_owner"
 const val UI_DATA = "ui_data"
 const val LOG_FILE = "log_file"
 const val UPLOADED_FILE = "uploaded_file"
+const val START_DATE = "start_time"
 
 const val COMP_ID = "compId"
 const val CASE_ID_COL = "case_id_col"

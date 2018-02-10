@@ -4,6 +4,11 @@ package cs.ut.jobs
 import cs.ut.engine.IdProvider
 import cs.ut.engine.JobManager
 import cs.ut.logging.NirdizatiLogger
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Date
 
 
 enum class JobStatus {
@@ -22,6 +27,8 @@ open class Job protected constructor(generatedId: String = "") : Runnable {
 
     var status: JobStatus = JobStatus.PENDING
 
+    lateinit var startTime: String
+
     open fun preProcess() = Unit
 
     open fun execute() = Unit
@@ -36,9 +43,10 @@ open class Job protected constructor(generatedId: String = "") : Runnable {
 
     override fun run() {
         log.debug("Started job execution: $this")
+        startTime = start()
 
         try {
-            log.debug("Stared preprocess stage")
+            log.debug("Stared pre process stage")
             status = JobStatus.PREPARING
 
             updateEvent()
@@ -88,5 +96,11 @@ open class Job protected constructor(generatedId: String = "") : Runnable {
 
     private fun updateEvent() {
         JobManager.statusUpdated(this)
+    }
+
+    private fun start(): String {
+        val date = Date()
+        val df = DateTimeFormatter.ISO_INSTANT
+        return df.format(date.toInstant())
     }
 }
