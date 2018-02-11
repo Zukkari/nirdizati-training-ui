@@ -5,12 +5,10 @@ const canvas = "chart_canvas";
 
 function prepareGraphContainer(isHeatMap) {
     let container = document.getElementById(graphContainer);
-    container.className = "padding-top";
     while (container.firstChild) {
         container.removeChild(container.firstChild);
     }
     if (!isHeatMap) {
-        container.className = '';
         let c = document.createElement("canvas");
         c.setAttribute("id", canvas);
         container.appendChild(c);

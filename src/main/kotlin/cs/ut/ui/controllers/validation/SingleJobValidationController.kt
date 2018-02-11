@@ -46,6 +46,14 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
     @Wire
     private lateinit var comboLayout: Vbox
 
+    @Wire
+    lateinit var infoContainer: Vbox
+
+    @Wire
+    lateinit var comparisonContainer: Vbox
+
+    private var currentlySelected: String = ""
+
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
 
@@ -85,14 +93,18 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         cell.id = entry.key
         cell.align = "center"
         cell.valign = "center"
+
+        cell.addEventListener(Events.ON_CLICK, { _ ->
+            selectionRows.getChildren<Row>().first().getChildren<Cell>().forEach { it.sclass = "" }
+            cell.sclass = "selected-option"
+            currentlySelected = entry.key
+        })
+
         cell.addEventListener(
             Events.ON_CLICK,
             if (entry.value.size == 1) entry.value.first().generateListenerForOne() else entry.value.generateListenerForMany()
         )
-        cell.addEventListener(Events.ON_CLICK, { _ ->
-            selectionRows.getChildren<Row>().first().getChildren<Cell>().forEach { it.sclass = "" }
-            cell.sclass = "selected-option"
-        })
+
         cell.appendChild(label)
         this.appendChild(cell)
     }
@@ -100,8 +112,14 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
     private fun Chart.generateListenerForOne(): SerializableEventListener<Event> {
         return SerializableEventListener { _ ->
             removeChildren()
+            comboLayout.isVisible = false
             this.render()
+            setVisibility()
         }
+    }
+
+    private fun setVisibility() {
+        comparisonContainer.isVisible = currentlySelected == "cs.ut.charts.LineChart"
     }
 
     private fun removeChildren() {
@@ -112,6 +130,8 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         return SerializableEventListener { _ ->
             removeChildren()
 
+            comboLayout.isVisible = true
+            setVisibility()
             val label = Label(Labels.getLabel("validation.select_version"))
             label.sclass = "param-label"
             comboLayout.appendChild(label)

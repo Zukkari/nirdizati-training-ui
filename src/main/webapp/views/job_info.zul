@@ -1,10 +1,12 @@
 <vbox vflex="1" hflex="1" apply="cs.ut.ui.controllers.validation.SingleJobValidationController">
     <hlayout>
         <hbox align="center" pack="start" hflex="1">
-            <a id="backToValidation" sclass="validation-link" iconSclass="z-icon-arrow-circle-left" label="${labels.validation.check_other}" onClick="backToValidation"/>
+            <a id="backToValidation" sclass="validation-link" iconSclass="z-icon-arrow-circle-left"
+               label="${labels.validation.check_other}" onClick="backToValidation"/>
         </hbox>
         <hbox align="start" pack="end" hflex="1">
-            <a id="backToTraining" sclass="validation-link" iconSclass="z-icon-arrow-circle-right" label="${labels.validation.train_more}" onClick="backToTraining" dir="reverse"/>
+            <a id="backToTraining" sclass="validation-link" iconSclass="z-icon-arrow-circle-right"
+               label="${labels.validation.train_more}" onClick="backToTraining" dir="reverse"/>
         </hbox>
     </hlayout>
 
@@ -17,10 +19,35 @@
     <grid hflex="1" vflex="min">
         <rows id="selectionRows" hflex="1" vflex="1"/>
     </grid>
-    <hlayout hflex="1" vflex="3">
-        <vbox align="center" style="margin-top:15%" hflex="min" vflex="1" id="comboLayout"/>
-        <vlayout hflex="1" vflex="1" style="margin-bottom:20px; margin-top: 20px">
-            <include id="canvas" src="/views/graphs/graph_canvas.html"/>
-        </vlayout>
+    <hlayout hflex="1" vflex="1" sclass="margin-top-40px">
+        <vbox hflex="3" vflex="1" align="center">
+            <include id="canvas" src="/views/graphs/graph_canvas.html" hflex="1" vflex="1" sclass="validation-include"/>
+        </vbox>
+        <vbox id="infoContainer" align="start" hflex="1" vflex="1" sclass="info-container">
+            <separator bar="true" hflex="1"/>
+            <vbox pack="center" align="center" hflex="min" vflex="min" id="comboLayout"/>
+            <vbox id="comparisonContainer" hflex="1" vflex="1" align="center" pack="center">
+                <separator bar="true"/>
+                <label value="${labels.validation.compare}" sclass="validation-label"/>
+                <hbox hflex="1" sclass="margin-top-20px">
+                    <hbox align="end" pack="center" hflex="1" vflex="1">
+                        <label value="${labels.validation.available}" sclass="validation-label"/>
+                    </hbox>
+                    <separator spacing="8px"/>
+                    <hbox align="end" pack="center" hflex="1" vflex="1">
+                        <label value="${labels.validation.selected}" sclass="validation-label"/>
+                    </hbox>
+                </hbox>
+                <hbox hflex="1" vflex="1">
+                    <listbox id="availableLogs" hflex="1" droppable="true" vflex="1" sclass="log-listbox">
+                        <listitem label="item" draggable="true" vflex="min" hflex="1"/>
+                    </listbox>
+                    <separator orient="vertical" spacing="8px" hflex="min"/>
+                    <listbox id="selectedLogs" hflex="1" droppable="true" vflex="1" sclass="log-listbox">
+                        <listitem label="testItem" draggable="true" hflex="1" vflex="min"/>
+                    </listbox>
+                </hbox>
+            </vbox>
+        </vbox>
     </hlayout>
 </vbox>
