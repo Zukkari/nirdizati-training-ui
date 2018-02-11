@@ -34,19 +34,22 @@ class ValidationViewAdapter(private val parentController: ValidationController) 
             it.appendChild(A().apply {
                 this.iconSclass = "z-icon-question-circle"
                 this.sclass = "validation-btn"
-                this.hflex = "min"
-                this.vflex = "min"
-                this.addEventListener(Events.ON_CLICK, { _ ->
+                this.vflex = "1"
+                this.addEventListener(Events.ON_MOUSE_OVER, { _ ->
                     Popup().also {
                         it.appendChild(Html(data.formTooltip()))
-                        parentController.mainContainer.appendChild(it)
                         it.id = PROP_POPUP
 
-                        it.addEventListener(Events.ON_OPEN, { e ->
-                            e as OpenEvent
-                            if (!e.isOpen) it.detach()
-                        })
-                    }.open(this, "after_pointer")
+                        val comp = desktop.components.firstOrNull { it.id == PROP_POPUP } as Popup?
+                        if (comp == null) {
+                            parentController.mainContainer.appendChild(it)
+                        } else {
+                            comp.open(this, "after_end")
+                        }
+                    }.open(this, "after_end")
+                })
+                this.addEventListener(Events.ON_MOUSE_OUT, { _ ->
+                    desktop.components.filter { it is Popup }.forEach { (it as Popup).close() }
                 })
             })
 

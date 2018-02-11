@@ -12,6 +12,7 @@ import org.zkoss.zul.Checkbox
 import org.zkoss.zul.Hbox
 import org.zkoss.zul.Hlayout
 import org.zkoss.zul.Label
+import org.zkoss.zul.Popup
 import org.zkoss.zul.Row
 
 class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
@@ -58,23 +59,17 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
             this.iconSclass = "z-icon-question-circle"
             this.sclass = "validation-btn"
 
-            this.addEventListener(Events.ON_CLICK, { _ ->
+            this.addEventListener(Events.ON_MOUSE_OVER, { _ ->
                 parser.readTooltip(tooltip).also {
-                    this.appendChild(it)
+                    if (desktop.components.firstOrNull { it.id == popup && it is Popup } == null) {
+                        this.appendChild(it)
+                    }
                     it.sclass = "n-popup"
-                    it.id = tooltip
-
-                    it.addEventListener(Events.ON_CLICK, { _ ->
-                        it.close()
-                        it.detach()
-                    })
-
-
-                    it.addEventListener(Events.ON_OPEN, { e ->
-                        e as OpenEvent
-                        if (!e.isOpen) it.detach()
-                    })
-                }.open(this, "after_pointer")
+                    it.id = popup
+                }.open(this, "end_after")
+            })
+            this.addEventListener(Events.ON_MOUSE_OUT, { _ ->
+                desktop.components.filter { it is Popup }.forEach { (it as Popup).close() }
             })
         }
     }
