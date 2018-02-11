@@ -46,7 +46,7 @@ class ValidationViewAdapter(private val parentController: ValidationController) 
                         } else {
                             comp.open(this, "after_end")
                         }
-                    }.open(this, "after_end")
+                    }.open(this, "after_end ")
                 })
                 this.addEventListener(Events.ON_MOUSE_OUT, { _ ->
                     desktop.components.filter { it is Popup }.forEach { (it as Popup).close() }
