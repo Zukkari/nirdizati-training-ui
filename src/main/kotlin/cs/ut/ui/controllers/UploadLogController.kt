@@ -45,6 +45,7 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
      */
     @Listen("onUpload = #chooseFile")
     fun analyzeFile(event: UploadEvent) {
+        upload.isDisabled = true
         log.debug("Upload event. Analyzing file")
 
         val uploaded = event.media ?: return
