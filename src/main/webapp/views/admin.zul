@@ -8,23 +8,33 @@
                 </row>
                 <row align="center">
                     <label>Flush configuration file</label>
-                    <button id="flushConfig">Execute</button>
+                    <vlayout hflex="min" vflex="min">
+                        <button sclass="n-btn" id="flushConfig">Execute</button>
+                    </vlayout>
                 </row>
                 <row align="center">
                     <label>Flush messages file</label>
-                    <button id="flushMessages">Execute</button>
+                    <vlayout hflex="min" vflex="min">
+                        <button sclass="n-btn" id="flushMessages">Execute</button>
+                    </vlayout>
                 </row>
                 <row align="center">
                     <label>Kill thread pool</label>
-                    <button id="killThreadPool">Execute</button>
+                    <vlayout hflex="min" vflex="min">
+                        <button sclass="n-btn" id="killThreadPool">Execute</button>
+                    </vlayout>
                 </row>
                 <row align="center">
                     <label>Restart thread pool</label>
-                    <button id="restartThreadPool">Execute</button>
+                    <vlayout hflex="min" vflex="min">
+                        <button sclass="n-btn" id="restartThreadPool">Execute</button>
+                    </vlayout>
                 </row>
                 <row align="center">
                     <label>Show log</label>
-                    <button id="showLogs">Execute</button>
+                    <vlayout hflex="min" vflex="min">
+                        <button sclass="n-btn" id="showLogs">Execute</button>
+                    </vlayout>
                 </row>
             </rows>
         </grid>
