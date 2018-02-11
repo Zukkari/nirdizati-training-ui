@@ -12,7 +12,7 @@
 
 @mixin background($color, $border)
   background-color: $color
-  border: thin solid $border
+  border: thick dashed $border
 
 $grey-bg: ""
 $error-bg: ""
@@ -25,3 +25,6 @@ $error-bg: ""
 .file-upload
   @extend %full-size
   @include background($light-grey, $dark-grey)
+
+.drop-area
+  background: transparent

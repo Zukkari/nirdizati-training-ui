@@ -6,6 +6,7 @@
         <vbox id="fileNameCont" pack="center" align="center" sclass="file-upload" width="20%">
             <label sclass="file-name" id="fileName"/>
         </vbox>
+        <dropupload id="dropArea" sclass="drop-area" anchor="${fileNameCont}" detection="browser" onUpload="chooseFile"/>
         <vlayout vflex="3">
             <hlayout hflex="min" vflex="min">
                 <fileupload sclass="n-upload-btn" id="chooseFile" upload="true" label="${labels.upload.choose.file}"/>
