@@ -43,7 +43,7 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
      *
      * @param event upload event where media should be retrieved from
      */
-    @Listen("onUpload = #chooseFile")
+    @Listen("onUpload = #chooseFile, #dropArea")
     fun analyzeFile(event: UploadEvent) {
         upload.isDisabled = true
         log.debug("Upload event. Analyzing file")
