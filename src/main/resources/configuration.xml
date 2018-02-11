@@ -20,7 +20,7 @@
         <userName>ubuntu</userName>
         <userGroup>ubuntu</userGroup>
         <sudo></sudo>
-        <acp>0660</acp>
+        <acp>0770</acp>
         <authorized>VjNyWUg0ckRQNFNzVzByRA==</authorized>
         <requirePassword>true</requirePassword>
     </userPreferences>
