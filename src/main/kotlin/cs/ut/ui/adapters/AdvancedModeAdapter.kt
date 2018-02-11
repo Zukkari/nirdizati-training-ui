@@ -6,7 +6,6 @@ import cs.ut.ui.TooltipParser
 import cs.ut.util.COMP_ID
 import cs.ut.util.NirdizatiUtil
 import org.zkoss.zk.ui.event.Events
-import org.zkoss.zk.ui.event.OpenEvent
 import org.zkoss.zul.A
 import org.zkoss.zul.Checkbox
 import org.zkoss.zul.Hbox
@@ -60,16 +59,19 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
             this.sclass = "validation-btn"
 
             this.addEventListener(Events.ON_MOUSE_OVER, { _ ->
-                parser.readTooltip(tooltip).also {
-                    if (desktop.components.firstOrNull { it.id == popup && it is Popup } == null) {
+                val popup = desktop.components.firstOrNull { it.id == tooltip && it is Popup } as Popup?
+                if (popup == null) {
+                    parser.readTooltip(tooltip).also {
                         this.appendChild(it)
-                    }
-                    it.sclass = "n-popup"
-                    it.id = popup
-                }.open(this, "end_after")
+                        it.sclass = "n-popup"
+                        it.id = tooltip
+                    }.open(this, "end_after")
+                } else {
+                    popup.open(this, "end_after")
+                }
             })
             this.addEventListener(Events.ON_MOUSE_OUT, { _ ->
-                desktop.components.filter { it is Popup }.forEach { (it as Popup).close() }
+                desktop.components.forEach { (it as? Popup)?.close() }
             })
         }
     }

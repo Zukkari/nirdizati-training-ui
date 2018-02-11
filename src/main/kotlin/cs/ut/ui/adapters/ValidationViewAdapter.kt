@@ -11,7 +11,6 @@ import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PAGE_VALIDATION
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Events
-import org.zkoss.zk.ui.event.OpenEvent
 import org.zkoss.zul.A
 import org.zkoss.zul.Html
 import org.zkoss.zul.Label
@@ -36,17 +35,16 @@ class ValidationViewAdapter(private val parentController: ValidationController) 
                 this.sclass = "validation-btn"
                 this.vflex = "1"
                 this.addEventListener(Events.ON_MOUSE_OVER, { _ ->
-                    Popup().also {
-                        it.appendChild(Html(data.formTooltip()))
-                        it.id = PROP_POPUP
-
-                        val comp = desktop.components.firstOrNull { it.id == PROP_POPUP } as Popup?
-                        if (comp == null) {
+                    val comp = desktop.components.firstOrNull { it.id == PROP_POPUP } as Popup?
+                    if (comp == null) {
+                        Popup().also {
+                            it.appendChild(Html(data.formTooltip()))
+                            it.id = PROP_POPUP
                             parentController.mainContainer.appendChild(it)
-                        } else {
-                            comp.open(this, "after_end")
-                        }
-                    }.open(this, "after_end ")
+                        }.open(this, "after_end ")
+                    } else {
+                        comp.open(this, "after_end")
+                    }
                 })
                 this.addEventListener(Events.ON_MOUSE_OUT, { _ ->
                     desktop.components.filter { it is Popup }.forEach { (it as Popup).close() }
