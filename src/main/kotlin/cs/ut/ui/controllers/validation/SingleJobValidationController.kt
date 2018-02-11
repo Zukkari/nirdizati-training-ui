@@ -104,6 +104,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
             Events.ON_CLICK,
             if (entry.value.size == 1) entry.value.first().generateListenerForOne() else entry.value.generateListenerForMany()
         )
+
         cell.appendChild(label)
         this.appendChild(cell)
     }
@@ -119,7 +120,6 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
 
     private fun setVisibility() {
         comparisonContainer.isVisible = currentlySelected == "cs.ut.charts.LineChart"
-        infoContainer.isVisible = comparisonContainer.isVisible && comboLayout.isVisible
     }
 
     private fun removeChildren() {
@@ -132,7 +132,6 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
 
             comboLayout.isVisible = true
             setVisibility()
-
             val label = Label(Labels.getLabel("validation.select_version"))
             label.sclass = "param-label"
             comboLayout.appendChild(label)

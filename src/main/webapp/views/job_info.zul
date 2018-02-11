@@ -20,8 +20,11 @@
         <rows id="selectionRows" hflex="1" vflex="1"/>
     </grid>
     <hlayout hflex="1" vflex="1" sclass="margin-top-40px">
-        <vbox id="infoContainer" align="center" hflex="1" vflex="1">
-            <separator bar="true"/>
+        <vbox hflex="3" vflex="1" align="center">
+            <include id="canvas" src="/views/graphs/graph_canvas.html" hflex="1" vflex="1" sclass="validation-include"/>
+        </vbox>
+        <vbox id="infoContainer" align="start" hflex="1" vflex="1" sclass="info-container">
+            <separator bar="true" hflex="1"/>
             <vbox pack="center" align="center" hflex="min" vflex="min" id="comboLayout"/>
             <vbox id="comparisonContainer" hflex="1" vflex="1" align="center" pack="center">
                 <separator bar="true"/>
@@ -45,9 +48,6 @@
                     </listbox>
                 </hbox>
             </vbox>
-        </vbox>
-        <vbox hflex="3" vflex="1" align="center" pack="center">
-            <include id="canvas" src="/views/graphs/graph_canvas.html" hflex="1" vflex="1"/>
         </vbox>
     </hlayout>
 </vbox>
