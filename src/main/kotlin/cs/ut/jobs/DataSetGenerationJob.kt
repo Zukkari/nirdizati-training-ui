@@ -3,12 +3,7 @@ package cs.ut.jobs
 import cs.ut.config.MasterConfiguration
 import cs.ut.config.nodes.Dir
 import cs.ut.exceptions.NirdizatiRuntimeException
-import cs.ut.util.ACTIVITY_COL
-import cs.ut.util.CASE_ID_COL
-import cs.ut.util.CAT_COLS
-import cs.ut.util.DYNAMIC
-import cs.ut.util.FileWriter
-import cs.ut.util.TIMESTAMP_COL
+import cs.ut.util.*
 import org.json.JSONObject
 import java.io.File
 
@@ -28,7 +23,10 @@ class DataSetGenerationJob(
 
         // Resource column should always be dynamic categorical
         parameters[DYNAMIC + CAT_COLS]?.apply {
-            this.add(parameters.remove(cs.ut.util.RESOURCE_COL)!![0])
+            val resource = parameters.remove(cs.ut.util.RESOURCE_COL)!![0]
+            if (resource.isNotEmpty()) {
+                this.add(resource)
+            }
         }
 
         parameters.forEach { k, v -> json.put(k, v) }
