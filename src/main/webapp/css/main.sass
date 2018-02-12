@@ -52,6 +52,8 @@
   color: rgba(0, 0, 0, 0.54)
 
 .validation-link
+  @include n-text()
+  margin-bottom: 5px
   & > i
     margin:
       right: 5px
@@ -59,6 +61,9 @@
     font-size: 24px !important
     padding:
       top: 5px
+
+.z-panel-header
+  @include n-text
 
 .validation-btn
   & > i

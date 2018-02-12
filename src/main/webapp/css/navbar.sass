@@ -3,10 +3,17 @@ $min-width: 680px
 .logo
   cursor: pointer
 
-.z-navitem-text
+@mixin n-text
   font-size: small !important
   font-weight: bold !important
-  text-transform: uppercase
+  text-transform: uppercase!important
+  word-break: normal
+
+.z-navitem-text
+  @include n-text()
+
+.z-column-content
+  @include n-text()
 
 .n-nav-item
   text-align: center

@@ -84,8 +84,8 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         cell.valign = "center"
 
         cell.addEventListener(Events.ON_CLICK, { _ ->
-            selectionRows.getChildren<Row>().first().getChildren<Cell>().forEach { it.sclass = "" }
-            cell.sclass = "selected-option"
+            selectionRows.getChildren<Row>().first().getChildren<Cell>().forEach { it.sclass = "val-cell" }
+            cell.sclass = "val-cell selected-option"
             currentlySelected = entry.key
         })
 
