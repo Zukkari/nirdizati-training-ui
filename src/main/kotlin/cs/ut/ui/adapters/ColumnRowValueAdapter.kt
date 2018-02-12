@@ -4,6 +4,7 @@ import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.util.COMP_ID
 import cs.ut.util.NirdizatiUtil
+import cs.ut.util.RESOURCE_COL
 import org.zkoss.zul.Combobox
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
@@ -32,6 +33,11 @@ class ColumnRowValueAdapter(private val valueList: List<String>, private val ide
             if (it == identified) combobox.selectedItem = comboItem
         }
 
+        // Add empty value as well if resource column is not present
+        if (data == RESOURCE_COL) {
+            combobox.appendItem(NirdizatiUtil.localizeText(NO_RESOURCE)).setValue("")
+        }
+
 
         try {
             combobox.selectedItem
@@ -44,5 +50,9 @@ class ColumnRowValueAdapter(private val valueList: List<String>, private val ide
         row.appendChild(combobox)
 
         return row
+    }
+
+    companion object {
+        private const val NO_RESOURCE = "modals.param.no_resource"
     }
 }
