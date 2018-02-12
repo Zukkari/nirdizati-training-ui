@@ -6,11 +6,11 @@ import cs.ut.charts.MAE
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.adapters.JobValueAdataper
+import cs.ut.ui.adapters.ValidationViewAdapter
 import cs.ut.ui.controllers.Redirectable
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PAGE_MODELS_OVERVIEW
 import cs.ut.util.PAGE_TRAINING
-import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
@@ -20,14 +20,7 @@ import org.zkoss.zk.ui.event.SerializableEventListener
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zul.Cell
-import org.zkoss.zul.Combobox
-import org.zkoss.zul.Comboitem
-import org.zkoss.zul.Hlayout
-import org.zkoss.zul.Label
-import org.zkoss.zul.Row
-import org.zkoss.zul.Rows
-import org.zkoss.zul.Vbox
+import org.zkoss.zul.*
 
 class SingleJobValidationController : SelectorComposer<Component>(), Redirectable {
     private val log = NirdizatiLogger.getLogger(SingleJobValidationController::class.java)
@@ -35,19 +28,16 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
     private lateinit var charts: Map<String, List<Chart>>
 
     @Wire
-    private lateinit var metadataRows: Rows
-
-    @Wire
-    private lateinit var selectionRows: Rows
+    private lateinit var mainContainer: Vbox
 
     @Wire
     private lateinit var propertyRows: Rows
 
     @Wire
-    private lateinit var comboLayout: Vbox
+    private lateinit var selectionRows: Rows
 
     @Wire
-    lateinit var infoContainer: Vbox
+    private lateinit var comboLayout: Vbox
 
     @Wire
     lateinit var comparisonContainer: Vbox
@@ -74,8 +64,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
     }
 
     private fun generateReadOnlyMode() {
-        generateMetadataRow()
-        generatePropertyRow()
+        propertyRows.appendChild(ValidationViewAdapter(null, mainContainer).provide(job, false))
         generateChartOptions()
     }
 
@@ -101,8 +90,8 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         })
 
         cell.addEventListener(
-            Events.ON_CLICK,
-            if (entry.value.size == 1) entry.value.first().generateListenerForOne() else entry.value.generateListenerForMany()
+                Events.ON_CLICK,
+                if (entry.value.size == 1) entry.value.first().generateListenerForOne() else entry.value.generateListenerForMany()
         )
 
         cell.appendChild(label)
@@ -132,12 +121,10 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
 
             comboLayout.isVisible = true
             setVisibility()
-            val label = Label(Labels.getLabel("validation.select_version"))
-            label.sclass = "param-label"
-            comboLayout.appendChild(label)
 
             var itemSet = false
             val combobox = Combobox()
+            combobox.hflex = "max"
             this.forEach {
                 val comboItem = combobox.appendItem(NirdizatiUtil.localizeText(it.getCaption()))
                 comboItem.setValue(it)
@@ -153,51 +140,11 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
             combobox.isReadonly = true
             combobox.setConstraint("no empty")
             (combobox.selectedItem.getValue() as Chart).render()
-            combobox.width = "330px"
 
             combobox.addEventListener(
-                Events.ON_SELECT,
-                { e -> (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).render() })
+                    Events.ON_SELECT,
+                    { e -> (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).render() })
             comboLayout.appendChild(combobox)
         }
-    }
-
-
-    private fun generatePropertyRow() {
-        val row = Row()
-        row.align = "center"
-        row.generatePropertyData()
-        propertyRows.appendChild(row)
-    }
-
-    private fun generateMetadataRow() {
-        val row = Row()
-        row.align = "center"
-        row.generateMainData()
-        metadataRows.appendChild(row)
-    }
-
-    private fun Row.generatePropertyData() {
-        job.learner.properties.forEach { this.generateLabelAndValue("property." + it.id, it.property, false) }
-    }
-
-    private fun Row.generateMainData() {
-        var param = job.encoding
-        generateLabelAndValue(param.type, param.type + "." + param.id)
-        param = job.bucketing
-        generateLabelAndValue(param.type, param.type + "." + param.id)
-        param = job.learner
-        generateLabelAndValue(param.type, param.type + "." + param.id)
-    }
-
-    private fun Row.generateLabelAndValue(labelCaption: String, valueCaption: String, localizeValue: Boolean = true) {
-        val label = Label(Labels.getLabel(labelCaption) + ": ")
-        val value = Label(if (localizeValue) Labels.getLabel(valueCaption) else valueCaption)
-        value.sclass = "param-label"
-
-        val hlayout = Hlayout()
-        hlayout.appendChild(label)
-        hlayout.appendChild(value)
-        this.appendChild(hlayout)
     }
 }

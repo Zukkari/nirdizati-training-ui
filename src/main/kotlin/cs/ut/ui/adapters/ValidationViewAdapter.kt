@@ -9,19 +9,20 @@ import cs.ut.ui.adapters.JobValueAdataper.Companion.jobArg
 import cs.ut.ui.controllers.validation.ValidationController
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PAGE_VALIDATION
+import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Events
-import org.zkoss.zul.A
-import org.zkoss.zul.Html
-import org.zkoss.zul.Label
-import org.zkoss.zul.Popup
-import org.zkoss.zul.Row
+import org.zkoss.zul.*
 
-class ValidationViewAdapter(private val parentController: ValidationController) : GridValueProvider<Job, Row> {
+class ValidationViewAdapter(private val parentController: ValidationController?, private val container: Component?) : GridValueProvider<Job, Row> {
     override var fields: MutableList<FieldComponent> = mutableListOf()
 
 
     override fun provide(data: Job): Row {
+        return provide(data, true)
+    }
+
+    fun provide(data: Job, addRedirectListener: Boolean = true): Row {
         data as SimulationJob
         return Row().also {
             it.align = "center"
@@ -40,7 +41,7 @@ class ValidationViewAdapter(private val parentController: ValidationController) 
                         Popup().also {
                             it.appendChild(Html(data.formTooltip()))
                             it.id = PROP_POPUP
-                            parentController.mainContainer.appendChild(it)
+                            container?.appendChild(it)
                         }.open(this, "after_end ")
                     } else {
                         comp.open(this, "after_end")
@@ -51,10 +52,12 @@ class ValidationViewAdapter(private val parentController: ValidationController) 
                 })
             })
 
-            it.addEventListener(Events.ON_CLICK, { _ ->
-                Executions.getCurrent().setAttribute(jobArg, data)
-                this.parentController.setContent(PAGE_VALIDATION, parentController.page())
-            })
+            if (addRedirectListener) {
+                it.addEventListener(Events.ON_CLICK, { _ ->
+                    Executions.getCurrent().setAttribute(jobArg, data)
+                    this.parentController!!.setContent(PAGE_VALIDATION, parentController.page())
+                })
+            }
         }
     }
 

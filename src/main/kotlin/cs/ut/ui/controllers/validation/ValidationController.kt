@@ -18,11 +18,7 @@ import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zul.Button
-import org.zkoss.zul.Column
-import org.zkoss.zul.Hlayout
-import org.zkoss.zul.Label
-import org.zkoss.zul.Vbox
+import org.zkoss.zul.*
 import javax.servlet.http.HttpServletRequest
 
 class ValidationController : SelectorComposer<Component>(), Redirectable {
@@ -46,7 +42,7 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
                 .retrieveFromCache((CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)))
                 .rawData().sortedByDescending { it.startTime }
 
-        grid = NirdizatiGrid(ValidationViewAdapter(this)).apply {
+        grid = NirdizatiGrid(ValidationViewAdapter(this, mainContainer)).apply {
             this.configure()
         }
 
