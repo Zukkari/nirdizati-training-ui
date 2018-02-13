@@ -40,7 +40,13 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
     private lateinit var comboLayout: Vbox
 
     @Wire
-    lateinit var comparisonContainer: Vbox
+    private lateinit var comparisonContainer: Vbox
+
+    @Wire
+    private lateinit var availableLogs: Listbox
+
+    @Wire
+    private lateinit var selectedLogs: Listbox
 
     private var currentlySelected: String = ""
 
@@ -101,14 +107,14 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
     private fun Chart.generateListenerForOne(): SerializableEventListener<Event> {
         return SerializableEventListener { _ ->
             removeChildren()
-            comboLayout.isVisible = false
+            comboLayout.parent.parent.isVisible = false
             this.render()
             setVisibility()
         }
     }
 
     private fun setVisibility() {
-        comparisonContainer.isVisible = currentlySelected == "cs.ut.charts.LineChart"
+        comparisonContainer.parent.parent.isVisible = currentlySelected == "cs.ut.charts.LineChart"
     }
 
     private fun removeChildren() {
@@ -119,7 +125,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         return SerializableEventListener { _ ->
             removeChildren()
 
-            comboLayout.isVisible = true
+            comboLayout.parent.parent.isVisible = true
             setVisibility()
 
             var itemSet = false
