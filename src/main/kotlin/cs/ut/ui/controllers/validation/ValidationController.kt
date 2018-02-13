@@ -19,6 +19,7 @@ import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Wire
 import org.zkoss.zul.*
+import java.time.Instant
 import javax.servlet.http.HttpServletRequest
 
 class ValidationController : SelectorComposer<Component>(), Redirectable {
@@ -39,8 +40,8 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
         val userJobs =
             JobManager
                 .cache
-                .retrieveFromCache((CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)))
-                .rawData().sortedByDescending { it.startTime }
+                .retrieveFromCache((CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest)))
+                .rawData().sortedByDescending { Instant.parse(it.startTime) }
 
         grid = NirdizatiGrid(ValidationViewAdapter(this, mainContainer)).apply {
             this.configure()
@@ -119,7 +120,7 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
                             val userJobs =
                                 JobManager
                                     .cache
-                                    .retrieveFromCache(CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest))
+                                    .retrieveFromCache(CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest))
                                     .rawData()
                                     .reversed()
                             if (grid.parent != mainContainer) {

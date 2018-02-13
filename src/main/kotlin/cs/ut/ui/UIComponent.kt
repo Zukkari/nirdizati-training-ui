@@ -6,5 +6,5 @@ import javax.servlet.http.HttpServletRequest
 
 interface UIComponent {
 
-    fun getSessionId(): String = CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
+    fun getSessionId(): String = CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest)
 }

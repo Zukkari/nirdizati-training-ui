@@ -54,7 +54,7 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
             self.desktop,
             { _ ->
                 val subKey: String =
-                    CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
+                    CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest)
                 if (subKey == event.data.owner) {
                     val grid =
                         Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
@@ -76,7 +76,7 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
             self.desktop,
             { _ ->
                 val subKey: String =
-                    CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
+                    CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest)
                 if (subKey == event.target) {
 
                     val comps = Executions.getCurrent().desktop.components

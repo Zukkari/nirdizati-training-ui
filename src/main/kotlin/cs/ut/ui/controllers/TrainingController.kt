@@ -279,7 +279,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
                                 learner,
                                 pred,
                                 clientLogs.selectedItem.getValue(),
-                                CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest)
+                                CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest)
                             )
                         )
                     }
@@ -288,7 +288,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
         }
         log.debug("Generated ${jobs.size} jobs")
         JobManager.deployJobs(
-            CookieUtil().getCookieKey(Executions.getCurrent().nativeRequest as HttpServletRequest),
+            CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest),
             jobs
         )
     }

@@ -31,26 +31,7 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
             it.appendChild(getLabel(data.bucketing.toString()))
             it.appendChild(getLabel(data.encoding.toString()))
             it.appendChild(getLabel(data.learner.toString()))
-            it.appendChild(A().apply {
-                this.iconSclass = "z-icon-question-circle"
-                this.sclass = "validation-btn"
-                this.vflex = "1"
-                this.addEventListener(Events.ON_MOUSE_OVER, { _ ->
-                    val comp = desktop.components.firstOrNull { it.id == PROP_POPUP } as Popup?
-                    if (comp == null) {
-                        Popup().also {
-                            it.appendChild(Html(data.formTooltip()))
-                            it.id = PROP_POPUP
-                            container?.appendChild(it)
-                        }.open(this, "after_end ")
-                    } else {
-                        comp.open(this, "after_end")
-                    }
-                })
-                this.addEventListener(Events.ON_MOUSE_OUT, { _ ->
-                    desktop.components.filter { it is Popup }.forEach { (it as Popup).close() }
-                })
-            })
+            it.appendChild(A().apply { loadTooltip(this, data) })
 
             if (addRedirectListener) {
                 it.addEventListener(Events.ON_CLICK, { _ ->
@@ -59,6 +40,27 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
                 })
             }
         }
+    }
+
+    fun loadTooltip(a: A, data: SimulationJob) {
+        a.iconSclass = "z-icon-question-circle"
+        a.sclass = "validation-btn"
+        a.vflex = "1"
+        a.addEventListener(Events.ON_MOUSE_OVER, { _ ->
+            val comp = a.desktop.components.firstOrNull { it.id == PROP_POPUP } as Popup?
+            if (comp == null) {
+                Popup().also {
+                    it.appendChild(Html(data.formTooltip()))
+                    it.id = PROP_POPUP
+                    container?.appendChild(it)
+                }.open(a, "after_end ")
+            } else {
+                comp.open(a, "after_end")
+            }
+        })
+        a.addEventListener(Events.ON_MOUSE_OUT, { _ ->
+            a.desktop.components.filter { it is Popup }.forEach { (it as Popup).close() }
+        })
     }
 
     private fun SimulationJob.formTooltip(): String {

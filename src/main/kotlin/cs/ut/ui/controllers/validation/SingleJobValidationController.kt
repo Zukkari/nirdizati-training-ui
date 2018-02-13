@@ -3,11 +3,13 @@ package cs.ut.ui.controllers.validation
 import cs.ut.charts.Chart
 import cs.ut.charts.ChartGenerator
 import cs.ut.charts.MAE
+import cs.ut.jobs.JobService
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.adapters.JobValueAdataper
 import cs.ut.ui.adapters.ValidationViewAdapter
 import cs.ut.ui.controllers.Redirectable
+import cs.ut.util.CookieUtil
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PAGE_MODELS_OVERVIEW
 import cs.ut.util.PAGE_TRAINING
@@ -20,7 +22,16 @@ import org.zkoss.zk.ui.event.SerializableEventListener
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zul.*
+import org.zkoss.zul.A
+import org.zkoss.zul.Cell
+import org.zkoss.zul.Combobox
+import org.zkoss.zul.Comboitem
+import org.zkoss.zul.Label
+import org.zkoss.zul.Listbox
+import org.zkoss.zul.Listcell
+import org.zkoss.zul.Row
+import org.zkoss.zul.Rows
+import org.zkoss.zul.Vbox
 
 class SingleJobValidationController : SelectorComposer<Component>(), Redirectable {
     private val log = NirdizatiLogger.getLogger(SingleJobValidationController::class.java)
@@ -40,7 +51,13 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
     private lateinit var comboLayout: Vbox
 
     @Wire
-    lateinit var comparisonContainer: Vbox
+    private lateinit var comparisonContainer: Vbox
+
+    @Wire
+    private lateinit var availableLogs: Listbox
+
+    @Wire
+    private lateinit var selectedLogs: Listbox
 
     private var currentlySelected: String = ""
 
@@ -73,7 +90,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         row.align = "center"
         charts.forEach { row.generateCell(it) }
         selectionRows.appendChild(row)
-        Events.postEvent("onClick", row.getChildren<Component>().first { it.id == "cs.ut.charts.LineChart" }, null)
+        Events.postEvent("onClick", row.getChildren<Component>().first { it.id == ACCURACY_COMPARISON }, null)
     }
 
     private fun Row.generateCell(entry: Map.Entry<String, List<Chart>>) {
@@ -90,8 +107,8 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         })
 
         cell.addEventListener(
-                Events.ON_CLICK,
-                if (entry.value.size == 1) entry.value.first().generateListenerForOne() else entry.value.generateListenerForMany()
+            Events.ON_CLICK,
+            if (entry.value.size == 1) entry.value.first().generateListenerForOne() else entry.value.generateListenerForMany()
         )
 
         cell.appendChild(label)
@@ -101,14 +118,55 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
     private fun Chart.generateListenerForOne(): SerializableEventListener<Event> {
         return SerializableEventListener { _ ->
             removeChildren()
-            comboLayout.isVisible = false
+            comboLayout.parent.parent.isVisible = false
             this.render()
             setVisibility()
         }
     }
 
     private fun setVisibility() {
-        comparisonContainer.isVisible = currentlySelected == "cs.ut.charts.LineChart"
+        comparisonContainer.parent.parent.isVisible = currentlySelected == ACCURACY_COMPARISON
+        if (currentlySelected == ACCURACY_COMPARISON) {
+            availableLogs.addElements()
+            selectedLogs.addCurrent()
+        }
+    }
+
+    private fun Listbox.addElements() {
+        val provider = ValidationViewAdapter(null, mainContainer)
+        val similar: List<SimulationJob> =
+            JobService.findSimilarJobs(CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest), job)
+        similar.forEach {
+            this.generateItem(it, provider)
+        }
+    }
+
+    private fun Listbox.addCurrent() {
+        val provider = ValidationViewAdapter(null, mainContainer)
+        generateItem(job, provider, true)
+    }
+
+    private fun Listbox.generateItem(
+        thisjob: SimulationJob,
+        provider: ValidationViewAdapter,
+        disable: Boolean = false
+    ) {
+        this.appendItem(
+            "${thisjob.bucketing.id.substring(0..3)}_${thisjob.encoding.id.substring(0..3)}_${thisjob.learner.id.substring(
+                0..3
+            )}", ""
+        ).apply {
+            this.vflex = "min"
+            this.appendChild(Listcell().apply {
+                this.appendChild(A().apply {
+                    this.hflex = "min"
+                    provider.loadTooltip(this, thisjob)
+                })
+            })
+            this.setValue(thisjob)
+            this.isDisabled = disable
+            this.draggable = if (disable) "false" else "true"
+        }
     }
 
     private fun removeChildren() {
@@ -119,7 +177,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         return SerializableEventListener { _ ->
             removeChildren()
 
-            comboLayout.isVisible = true
+            comboLayout.parent.parent.isVisible = true
             setVisibility()
 
             var itemSet = false
@@ -142,9 +200,13 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
             (combobox.selectedItem.getValue() as Chart).render()
 
             combobox.addEventListener(
-                    Events.ON_SELECT,
-                    { e -> (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).render() })
+                Events.ON_SELECT,
+                { e -> (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).render() })
             comboLayout.appendChild(combobox)
         }
+    }
+
+    companion object {
+        private const val ACCURACY_COMPARISON = "cs.ut.charts.LineChart"
     }
 }
