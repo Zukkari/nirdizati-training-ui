@@ -32,8 +32,6 @@ class MainPageController : SelectorComposer<Component>(), Redirectable, UICompon
     @Wire
     private lateinit var trackerEast: East
 
-    private val cookieUtil = CookieUtil()
-
     @Listen("onClientInfo = #mainLayout")
     fun gatherInformation(e: ClientInfoEvent) {
         log.debug("Client info event, gathering browser information")
@@ -73,13 +71,13 @@ class MainPageController : SelectorComposer<Component>(), Redirectable, UICompon
     @Suppress("UNCHECKED_CAST")
     private fun handleCookie() {
         val request = Executions.getCurrent().nativeRequest as HttpServletRequest
-        val cookieKey: String = cookieUtil.getCookieKey(request)
+        val cookieKey: String = CookieUtil.getCookieKey(request)
         if (cookieKey.isBlank()) {
-            cookieUtil.setUpCookie(Executions.getCurrent().nativeResponse as HttpServletResponse)
+            CookieUtil.setUpCookie(Executions.getCurrent().nativeResponse as HttpServletResponse)
         } else {
             val jobGrid: NirdizatiGrid<Job> =
                 Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
-            val jobs: List<Job> = cookieUtil.getJobsByCookie(request)
+            val jobs: List<Job> = CookieUtil.getJobsByCookie(request)
             if (jobs.isNotEmpty()) {
                 jobGrid.generate(jobs)
                 trackerEast.isVisible = true

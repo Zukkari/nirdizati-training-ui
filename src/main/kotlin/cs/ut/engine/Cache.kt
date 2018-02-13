@@ -64,7 +64,10 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
                         File(it.path),
                         key,
                         it.id
-                    ).also { it.status = JobStatus.COMPLETED })
+                    ).apply {
+                        this.status = JobStatus.COMPLETED
+                        this.startTime = it.startTime
+                    })
                 }
         }
     }

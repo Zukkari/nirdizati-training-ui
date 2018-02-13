@@ -25,16 +25,17 @@
         <rows id="selectionRows" hflex="1" vflex="1"/>
     </grid>
     <hlayout hflex="1" vflex="1" sclass="margin-top-40px">
-        <vbox hflex="3" vflex="1" align="center">
+        <vbox hflex="5" vflex="1" align="center">
             <include id="canvas" src="/views/graphs/graph_canvas.html" hflex="1" vflex="1"/>
         </vbox>
-        <vbox id="infoContainer" align="start" hflex="1" vflex="1" sclass="info-container">
+        <vbox id="infoContainer" align="start" hflex="2" vflex="1" sclass="info-container">
             <panel title="${labels.validation.select_version}" collapsible="true" open="false" hflex="1">
                 <panelchildren>
                     <vbox pack="center" align="center" hflex="min" vflex="1" id="comboLayout"/>
                 </panelchildren>
             </panel>
-            <panel title="${labels.validation.compare}" collapsible="true" open="false" hflex="1" sclass="validation-panel">
+            <panel title="${labels.validation.compare}" collapsible="true" open="false" hflex="1"
+                   sclass="validation-panel">
                 <panelchildren>
                     <vbox id="comparisonContainer" hflex="1" vflex="max" align="center" pack="center">
                         <hbox hflex="1">
@@ -47,12 +48,20 @@
                             </hbox>
                         </hbox>
                         <hbox hflex="1" vflex="max">
-                            <listbox id="availableLogs" hflex="1" droppable="true" vflex="max" sclass="log-listbox">
-                                <listitem label="item" draggable="true" vflex="min" hflex="1"/>
+                            <listbox id="availableLogs" hflex="1" droppable="true" vflex="max" sclass="log-listbox"
+                                     rows="10">
+                                <listhead>
+                                    <listheader hflex="max"/>
+                                    <listheader hflex="min"/>
+                                </listhead>
                             </listbox>
                             <separator orient="vertical" spacing="8px" hflex="min"/>
-                            <listbox id="selectedLogs" hflex="1" droppable="true" vflex="max" sclass="log-listbox">
-                                <listitem label="testItem" draggable="true" hflex="1" vflex="min"/>
+                            <listbox id="selectedLogs" hflex="1" droppable="true" vflex="max" sclass="log-listbox"
+                                     rows="10">
+                                <listhead>
+                                    <listheader hflex="max"/>
+                                    <listheader hflex="min"/>
+                                </listhead>
                             </listbox>
                         </hbox>
                     </vbox>

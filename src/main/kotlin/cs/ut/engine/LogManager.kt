@@ -140,7 +140,7 @@ object LogManager {
             loadTrainingFiles().forEach {
                 val uiData = JSONObject(readFileContent(it)).getJSONObject(UI_DATA)
                 if (uiData[OWNER] == key) {
-                    c.add(UiData(it.nameWithoutExtension, uiData[LOG_FILE] as String, startDate(uiData)))
+                    c.add(UiData(it.nameWithoutExtension, uiData[LOG_FILE] as String, uiData[START_DATE] as String))
                 }
             }
         }
@@ -156,9 +156,5 @@ object LogManager {
         val files = dir.listFiles() ?: arrayOf()
         log.debug("Found ${files.size} training files total")
         return files.toList()
-    }
-
-    private fun startDate(data: JSONObject): Instant {
-        return Instant.parse(data[START_DATE] as String)
     }
 }
