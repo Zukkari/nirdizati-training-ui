@@ -2,8 +2,8 @@ Chart.defaults.global.legend.display = false;
 
 const graphContainer = "graph-container";
 const canvas = "chart_canvas";
-
 let chart = null;
+let dataSet = null;
 
 function prepareGraphContainer(isHeatMap) {
     let container = document.getElementById(graphContainer);
@@ -23,13 +23,14 @@ const getCanvasContext = () => {
 };
 
 const linerDataSetData = (payload, chart_label) => {
-    return [{
+    dataSet = [{
         label: chart_label,
         data: JSON.parse(payload),
         borderColor: 'rgba(0, 147, 249, 0.4)',
         backgroundColor: 'rgba(0, 147, 249, 0.2)',
         fill: false
-    }]
+    }];
+    return dataSet
 };
 
 const scalesData = (xLabel, yLabel) => {
@@ -87,13 +88,15 @@ function addDataSet(label, payload) {
     chart.data.datasets.push({
         label: label,
         data: JSON.parse(payload)
-    })
+    });
+    chart.update()
 }
 
 function removeDataSet(label) {
     const data = chart.data.datasets;
     let index = data.indexOf(data.filter(d => d.label === label));
-    chart.data = data.splice(index, 1)
+    chart["data"]["datasets"] = data.splice(index, 1);
+    chart.update()
 }
 
 function lineChart(payload, chart_label, n_of_events, axis_label) {

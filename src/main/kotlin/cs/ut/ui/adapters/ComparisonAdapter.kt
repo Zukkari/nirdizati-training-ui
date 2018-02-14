@@ -49,7 +49,7 @@ class ComparisonAdapter(container: Component) :
 
 
     fun addDataSet(payload: String) {
-        Clients.evalJavaScript("addDataSet('$payload')")
+        Clients.evalJavaScript("addDataSet('', '$payload')")
     }
 
     fun removeDataSet(payload: String) {
