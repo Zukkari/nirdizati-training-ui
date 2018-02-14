@@ -3,6 +3,8 @@ Chart.defaults.global.legend.display = false;
 const graphContainer = "graph-container";
 const canvas = "chart_canvas";
 
+let chart = null;
+
 function prepareGraphContainer(isHeatMap) {
     let container = document.getElementById(graphContainer);
     while (container.firstChild) {
@@ -64,7 +66,7 @@ const generateLabels = (n_of_events) => {
 function scatterPlot(payload, chart_label) {
     prepareGraphContainer(false);
     let ctx = getCanvasContext();
-    Chart.Scatter(ctx, {
+    chart = Chart.Scatter(ctx, {
         data: {
             datasets: linerDataSetData(payload, chart_label)
         },
@@ -81,10 +83,23 @@ function scatterPlot(payload, chart_label) {
     });
 }
 
+function addDataSet(label, payload) {
+    chart.data.datasets.push({
+        label: label,
+        data: JSON.parse(payload)
+    })
+}
+
+function removeDataSet(label) {
+    const data = chart.data.datasets;
+    let index = data.indexOf(data.filter(d => d.label === label));
+    chart.data = data.splice(index, 1)
+}
+
 function lineChart(payload, chart_label, n_of_events, axis_label) {
     prepareGraphContainer(false);
     let ctx = getCanvasContext();
-    Chart.Line(ctx, {
+    chart = Chart.Line(ctx, {
         data: {
             datasets: linerDataSetData(payload, chart_label),
             labels: generateLabels(n_of_events)
@@ -103,7 +118,7 @@ function lineChart(payload, chart_label, n_of_events, axis_label) {
 function barChart(payload, chart_label, labels) {
     prepareGraphContainer(false);
     let ctx = getCanvasContext();
-    new Chart(ctx, {
+    chart = new Chart(ctx, {
         type: 'horizontalBar',
         data: {
             labels: JSON.parse(labels),
