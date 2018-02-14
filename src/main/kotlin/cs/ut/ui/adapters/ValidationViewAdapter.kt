@@ -12,9 +12,14 @@ import cs.ut.util.PAGE_VALIDATION
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Events
-import org.zkoss.zul.*
+import org.zkoss.zul.A
+import org.zkoss.zul.Html
+import org.zkoss.zul.Label
+import org.zkoss.zul.Popup
+import org.zkoss.zul.Row
 
-class ValidationViewAdapter(private val parentController: ValidationController?, private val container: Component?) : GridValueProvider<Job, Row> {
+class ValidationViewAdapter(private val parentController: ValidationController?, private val container: Component?) :
+    GridValueProvider<Job, Row> {
     override var fields: MutableList<FieldComponent> = mutableListOf()
 
 
@@ -47,16 +52,12 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
         a.sclass = "validation-btn"
         a.vflex = "1"
         a.addEventListener(Events.ON_MOUSE_OVER, { _ ->
-            val comp = a.desktop.components.firstOrNull { it.id == PROP_POPUP } as Popup?
-            if (comp == null) {
-                Popup().also {
-                    it.appendChild(Html(data.formTooltip()))
-                    it.id = PROP_POPUP
-                    container?.appendChild(it)
-                }.open(a, "after_end ")
-            } else {
-                comp.open(a, "after_end")
-            }
+            a.desktop.components.firstOrNull { it.id == PROP_POPUP }?.detach()
+            Popup().also {
+                it.appendChild(Html(data.formTooltip()))
+                it.id = PROP_POPUP
+                container?.appendChild(it)
+            }.open(a, "after_end ")
         })
         a.addEventListener(Events.ON_MOUSE_OUT, { _ ->
             a.desktop.components.filter { it is Popup }.forEach { (it as Popup).close() }

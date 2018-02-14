@@ -6,6 +6,7 @@ import cs.ut.charts.MAE
 import cs.ut.jobs.JobService
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
+import cs.ut.ui.adapters.ComparisonAdapter
 import cs.ut.ui.adapters.JobValueAdataper
 import cs.ut.ui.adapters.ValidationViewAdapter
 import cs.ut.ui.controllers.Redirectable
@@ -22,13 +23,10 @@ import org.zkoss.zk.ui.event.SerializableEventListener
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zul.A
 import org.zkoss.zul.Cell
 import org.zkoss.zul.Combobox
 import org.zkoss.zul.Comboitem
 import org.zkoss.zul.Label
-import org.zkoss.zul.Listbox
-import org.zkoss.zul.Listcell
 import org.zkoss.zul.Row
 import org.zkoss.zul.Rows
 import org.zkoss.zul.Vbox
@@ -53,13 +51,10 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
     @Wire
     private lateinit var comparisonContainer: Vbox
 
-    @Wire
-    private lateinit var availableLogs: Listbox
-
-    @Wire
-    private lateinit var selectedLogs: Listbox
-
     private var currentlySelected: String = ""
+
+    @Wire
+    private lateinit var compRows: Rows
 
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
@@ -67,6 +62,12 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         job = Executions.getCurrent().getAttribute(JobValueAdataper.jobArg) as SimulationJob
         log.debug("Received job argument $job, initializing in read only mode")
         charts = ChartGenerator(job).getCharts().groupBy { it.javaClass.name }
+
+        val provider = ComparisonAdapter(mainContainer)
+        (listOf(job) +
+                JobService.findSimilarJobs(CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest), job))
+            .map { provider.provide(it) }.forEach { compRows.appendChild(it) }
+
         generateReadOnlyMode()
     }
 
@@ -126,47 +127,6 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
 
     private fun setVisibility() {
         comparisonContainer.parent.parent.isVisible = currentlySelected == ACCURACY_COMPARISON
-        if (currentlySelected == ACCURACY_COMPARISON) {
-            availableLogs.addElements()
-            selectedLogs.addCurrent()
-        }
-    }
-
-    private fun Listbox.addElements() {
-        val provider = ValidationViewAdapter(null, mainContainer)
-        val similar: List<SimulationJob> =
-            JobService.findSimilarJobs(CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest), job)
-        similar.forEach {
-            this.generateItem(it, provider)
-        }
-    }
-
-    private fun Listbox.addCurrent() {
-        val provider = ValidationViewAdapter(null, mainContainer)
-        generateItem(job, provider, true)
-    }
-
-    private fun Listbox.generateItem(
-        thisjob: SimulationJob,
-        provider: ValidationViewAdapter,
-        disable: Boolean = false
-    ) {
-        this.appendItem(
-            "${thisjob.bucketing.id.substring(0..3)}_${thisjob.encoding.id.substring(0..3)}_${thisjob.learner.id.substring(
-                0..3
-            )}", ""
-        ).apply {
-            this.vflex = "min"
-            this.appendChild(Listcell().apply {
-                this.appendChild(A().apply {
-                    this.hflex = "min"
-                    provider.loadTooltip(this, thisjob)
-                })
-            })
-            this.setValue(thisjob)
-            this.isDisabled = disable
-            this.draggable = if (disable) "false" else "true"
-        }
     }
 
     private fun removeChildren() {
@@ -181,28 +141,28 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
             setVisibility()
 
             var itemSet = false
-            val combobox = Combobox()
-            combobox.hflex = "max"
+            val comboBox = Combobox()
+            comboBox.hflex = "max"
             this.forEach {
-                val comboItem = combobox.appendItem(NirdizatiUtil.localizeText(it.getCaption()))
+                val comboItem = comboBox.appendItem(NirdizatiUtil.localizeText(it.getCaption()))
                 comboItem.setValue(it)
 
                 if (MAE == it.name) {
-                    combobox.selectedItem = comboItem
+                    comboBox.selectedItem = comboItem
                     itemSet = true
                 }
             }
 
-            if (!itemSet) combobox.selectedItem = combobox.items.first()
+            if (!itemSet) comboBox.selectedItem = comboBox.items.first()
 
-            combobox.isReadonly = true
-            combobox.setConstraint("no empty")
-            (combobox.selectedItem.getValue() as Chart).render()
+            comboBox.isReadonly = true
+            comboBox.setConstraint("no empty")
+            (comboBox.selectedItem.getValue() as Chart).render()
 
-            combobox.addEventListener(
+            comboBox.addEventListener(
                 Events.ON_SELECT,
                 { e -> (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).render() })
-            comboLayout.appendChild(combobox)
+            comboLayout.appendChild(comboBox)
         }
     }
 

@@ -47,19 +47,16 @@ class NirdizatiGrid<T>(private val provider: GridValueProvider<T, Row>) : Grid()
 
     fun setColumns(properties: Map<String, String>) {
         val cols = Columns()
-        cols.vflex = "min"
         appendChild(cols)
         properties.entries.forEach {
-            val column = Column(NirdizatiUtil.localizeText(it.key))
+            val column = if (it.key.isNotBlank()) Column(NirdizatiUtil.localizeText(it.key)) else Column()
             column.id = it.key
             if (it.value.isNotEmpty()) {
                 column.hflex = it.value
             }
-            columns.appendChild(column)
+            cols.appendChild(column)
         }
     }
-
-    fun getComponentByName(name: String) = fields.first { it.label.id == name }
 
     private tailrec fun generateRows(data: MutableList<T>, rows: Rows) {
         if (data.isNotEmpty()) {
@@ -120,9 +117,9 @@ class NirdizatiGrid<T>(private val provider: GridValueProvider<T, Row>) : Grid()
 
         if (prop.maxValue == -1.0 && prop.minValue == -1.0) return true
 
-        when (comp) {
-            is Intbox -> return isInRange(comp.value, prop.minValue, prop.maxValue)
-            is Doublebox -> return isInRange(comp.value, prop.minValue, prop.maxValue)
+        return when (comp) {
+            is Intbox -> isInRange(comp.value, prop.minValue, prop.maxValue)
+            is Doublebox -> isInRange(comp.value, prop.minValue, prop.maxValue)
             else -> throw UnsupportedOperationException("Operation not defined for class $comp")
         }
     }

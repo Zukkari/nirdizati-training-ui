@@ -25,10 +25,10 @@
         <rows id="selectionRows" hflex="1" vflex="1"/>
     </grid>
     <hlayout hflex="1" vflex="1" sclass="margin-top-40px">
-        <vbox hflex="5" vflex="1" align="center">
+        <vbox hflex="2" vflex="1" align="center">
             <include id="canvas" src="/views/graphs/graph_canvas.html" hflex="1" vflex="1"/>
         </vbox>
-        <vbox id="infoContainer" align="start" hflex="2" vflex="1" sclass="info-container">
+        <vbox id="infoContainer" align="start" hflex="1" vflex="1" sclass="info-container">
             <panel title="${labels.validation.select_version}" collapsible="true" open="false" hflex="1">
                 <panelchildren>
                     <vbox pack="center" align="center" hflex="min" vflex="1" id="comboLayout"/>
@@ -37,33 +37,17 @@
             <panel title="${labels.validation.compare}" collapsible="true" open="false" hflex="1"
                    sclass="validation-panel">
                 <panelchildren>
-                    <vbox id="comparisonContainer" hflex="1" vflex="max" align="center" pack="center">
-                        <hbox hflex="1">
-                            <hbox align="end" pack="center" hflex="1" vflex="1">
-                                <label value="${labels.validation.available}" sclass="validation-label"/>
-                            </hbox>
-                            <separator spacing="8px"/>
-                            <hbox align="end" pack="center" hflex="1" vflex="1">
-                                <label value="${labels.validation.selected}" sclass="validation-label"/>
-                            </hbox>
-                        </hbox>
-                        <hbox hflex="1" vflex="max">
-                            <listbox id="availableLogs" hflex="1" droppable="true" vflex="max" sclass="log-listbox"
-                                     rows="10">
-                                <listhead>
-                                    <listheader hflex="max"/>
-                                    <listheader hflex="min"/>
-                                </listhead>
-                            </listbox>
-                            <separator orient="vertical" spacing="8px" hflex="min"/>
-                            <listbox id="selectedLogs" hflex="1" droppable="true" vflex="max" sclass="log-listbox"
-                                     rows="10">
-                                <listhead>
-                                    <listheader hflex="max"/>
-                                    <listheader hflex="min"/>
-                                </listhead>
-                            </listbox>
-                        </hbox>
+                    <vbox id="comparisonContainer" hflex="max" vflex="max" align="center" pack="center">
+                        <grid height="340px">
+                            <columns>
+                                <column align="center" hflex="min"/>
+                                <column align="center" hflex="min"/>
+                                <column align="center" hflex="min"/>
+                                <column align="center" hflex="min"/>
+                                <column align="center" hflex="min"/>
+                            </columns>
+                            <rows id="compRows"/>
+                        </grid>
                     </vbox>
                 </panelchildren>
             </panel>
