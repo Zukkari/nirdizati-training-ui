@@ -11,30 +11,30 @@ import javax.xml.bind.annotation.XmlValue
 @XmlType(propOrder = ["id", "type", "property", "maxValue", "minValue"])
 @XmlAccessorType(XmlAccessType.FIELD)
 open class Property(
-        @XmlAttribute(name = "id")
-        var id: String,
+    @XmlAttribute(name = "id")
+    var id: String,
 
-        @XmlAttribute(name = "type")
-        var type: String,
+    @XmlAttribute(name = "type")
+    var type: String,
 
-        @XmlValue
-        var property: String,
+    @XmlValue
+    var property: String,
 
-        @XmlAttribute(name = "maxValue")
-        var maxValue: Double,
+    @XmlAttribute(name = "maxValue")
+    var maxValue: Double,
 
-        @XmlAttribute(name = "minValue")
-        var minValue: Double
+    @XmlAttribute(name = "minValue")
+    var minValue: Double
 ) {
 
     constructor() : this("", "", "", -1.0, -1.0)
 
     constructor(property: Property) : this(
-            property.id,
-            property.type,
-            property.property,
-            property.maxValue,
-            property.minValue
+        property.id,
+        property.type,
+        property.property,
+        property.maxValue,
+        property.minValue
     )
 
     operator fun component1(): String = id
@@ -42,6 +42,12 @@ open class Property(
     operator fun component2(): String = type
 
     operator fun component3(): String = property
+
+
+    override fun equals(other: Any?): Boolean {
+        return other is Property && this.id == other.id && this.type == other.type && this.property == other.property &&
+                this.maxValue == other.maxValue && this.minValue == other.minValue
+    }
 }
 
 object EmptyProperty : Property("N/A", "N/A", "N/A", 0.0, 0.0)
