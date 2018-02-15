@@ -97,7 +97,6 @@ function addDataSet(label, payload) {
 }
 
 function removeDataSet(label) {
-    console.log(`Removing data set with label: ${label}`);
     const data = chart.data.datasets;
     let index = -1;
     for (let i = 0; i < data.length; i++) {
@@ -105,7 +104,6 @@ function removeDataSet(label) {
             index = i;
         }
     }
-    console.log(`Index of removed item: ${index}`);
     data.splice(index, 1);
     chart.update()
 }

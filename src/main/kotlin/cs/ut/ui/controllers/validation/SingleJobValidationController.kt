@@ -24,6 +24,7 @@ import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
 import org.zkoss.zul.Cell
+import org.zkoss.zul.Checkbox
 import org.zkoss.zul.Combobox
 import org.zkoss.zul.Comboitem
 import org.zkoss.zul.Label
@@ -57,6 +58,8 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
 
     @Wire
     private lateinit var compRows: Rows
+
+    val checkBoxes = mutableListOf<Checkbox>()
 
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
@@ -129,6 +132,16 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
 
     private fun setVisibility() {
         comparisonContainer.parent.parent.isVisible = currentlySelected == ACCURACY_COMPARISON
+        if (currentlySelected == ACCURACY_COMPARISON) {
+            addDataSets()
+        }
+    }
+
+    private fun addDataSets() {
+        checkBoxes.filter { it.isChecked && (it.getValue() as? SimulationJob)?.id != job.id }.forEach {
+            val value = it.getValue<SimulationJob>() as SimulationJob
+            ComparisonAdapter.addDataSet(value.id, ComparisonAdapter.getPayload(value, this))
+        }
     }
 
     private fun removeChildren() {
@@ -140,7 +153,6 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
             removeChildren()
 
             comboLayout.parent.parent.isVisible = true
-            setVisibility()
 
             var itemSet = false
             val comboBox = Combobox()
@@ -170,9 +182,11 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
                     (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).apply {
                         accuracyMode = this.name
                         this.render()
+                        addDataSets()
                     }
                 })
             comboLayout.appendChild(comboBox)
+            setVisibility()
         }
     }
 

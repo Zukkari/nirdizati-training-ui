@@ -28,16 +28,18 @@ class ComparisonAdapter(container: Component, private val controller: SingleJobV
             this.appendChild(Checkbox().apply {
                 this.isChecked = first
                 this.isDisabled = first
+                this.setValue(data)
                 if (first) first = false
 
                 this.addEventListener(Events.ON_CHECK, { e ->
                     e as CheckEvent
                     if (e.isChecked) {
-                        addDataSet(data.id, getPayload(data))
+                        addDataSet(data.id, getPayload(data, controller))
                     } else {
                         removeDataSet(data.id)
                     }
                 })
+                controller.checkBoxes.add(this)
             })
             this.appendChild(Label(NirdizatiUtil.localizeText("${data.bucketing.type}.${data.bucketing.id}")))
             this.appendChild(Label(NirdizatiUtil.localizeText("${data.encoding.type}.${data.encoding.id}")))
@@ -48,17 +50,19 @@ class ComparisonAdapter(container: Component, private val controller: SingleJobV
         }
     }
 
-    private fun getPayload(job: SimulationJob): String {
-        return ChartGenerator(job).getCharts()
-            .first { it::class.java == LineChart::class.java && it.name == controller.accuracyMode }
-            .payload
-    }
+    companion object {
+        fun getPayload(job: SimulationJob, controller: SingleJobValidationController): String {
+            return ChartGenerator(job).getCharts()
+                .first { it::class.java == LineChart::class.java && it.name == controller.accuracyMode }
+                .payload
+        }
 
-    private fun addDataSet(label: String, payload: String) {
-        Clients.evalJavaScript("addDataSet('$label', '$payload')")
-    }
+        fun addDataSet(label: String, payload: String) {
+            Clients.evalJavaScript("addDataSet('$label', '$payload')")
+        }
 
-    private fun removeDataSet(label: String) {
-        Clients.evalJavaScript("removeDataSet('$label')")
+        fun removeDataSet(label: String) {
+            Clients.evalJavaScript("removeDataSet('$label')")
+        }
     }
 }
