@@ -79,7 +79,7 @@ class ChartGenerator(val job: SimulationJob) {
     private fun generateLineCharts(): List<LineChart> {
         val payload = getLinearPayload(LogManager.getValidationFile(job), Mode.LINE).groupBy { it.dataType }
         var charts = listOf<LineChart>()
-        payload.forEach { charts += LineChart(it.key, gson.toJson(it.value), it.value.last().x.toInt()) }
+        payload.forEach { charts += LineChart(job.id, it.key, gson.toJson(it.value), it.value.last().x.toInt()) }
         return charts
     }
 

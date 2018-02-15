@@ -2,6 +2,8 @@ Chart.defaults.global.legend.display = false;
 
 const graphContainer = "graph-container";
 const canvas = "chart_canvas";
+let chart = null;
+let dataSet = null;
 
 function prepareGraphContainer(isHeatMap) {
     let container = document.getElementById(graphContainer);
@@ -21,13 +23,14 @@ const getCanvasContext = () => {
 };
 
 const linerDataSetData = (payload, chart_label) => {
-    return [{
+    dataSet = [{
         label: chart_label,
         data: JSON.parse(payload),
         borderColor: 'rgba(0, 147, 249, 0.4)',
         backgroundColor: 'rgba(0, 147, 249, 0.2)',
         fill: false
-    }]
+    }];
+    return dataSet
 };
 
 const scalesData = (xLabel, yLabel) => {
@@ -64,7 +67,7 @@ const generateLabels = (n_of_events) => {
 function scatterPlot(payload, chart_label) {
     prepareGraphContainer(false);
     let ctx = getCanvasContext();
-    Chart.Scatter(ctx, {
+    chart = Chart.Scatter(ctx, {
         data: {
             datasets: linerDataSetData(payload, chart_label)
         },
@@ -81,10 +84,34 @@ function scatterPlot(payload, chart_label) {
     });
 }
 
+function addDataSet(label, payload) {
+    const color = randomColor()
+    chart.data.datasets.push({
+        label: label,
+        data: JSON.parse(payload),
+        fill: false,
+        borderColor: color,
+        backgroundColor: color
+    });
+    chart.update()
+}
+
+function removeDataSet(label) {
+    const data = chart.data.datasets;
+    let index = -1;
+    for (let i = 0; i < data.length; i++) {
+        if (data[i].label === label) {
+            index = i;
+        }
+    }
+    data.splice(index, 1);
+    chart.update()
+}
+
 function lineChart(payload, chart_label, n_of_events, axis_label) {
     prepareGraphContainer(false);
     let ctx = getCanvasContext();
-    Chart.Line(ctx, {
+    chart = Chart.Line(ctx, {
         data: {
             datasets: linerDataSetData(payload, chart_label),
             labels: generateLabels(n_of_events)
@@ -103,7 +130,7 @@ function lineChart(payload, chart_label, n_of_events, axis_label) {
 function barChart(payload, chart_label, labels) {
     prepareGraphContainer(false);
     let ctx = getCanvasContext();
-    new Chart(ctx, {
+    chart = new Chart(ctx, {
         type: 'horizontalBar',
         data: {
             labels: JSON.parse(labels),
@@ -224,3 +251,13 @@ function heatMap(payload, title, xLabels, yLabels) {
         }]
     });
 }
+
+const randomColor = () => {
+    const r = randomInRange();
+    const g = randomInRange();
+    const b = randomInRange();
+    return `rgb(${r},${g},${b})`
+};
+
+const randomInRange = () => Math.floor(Math.random() * 255);
+

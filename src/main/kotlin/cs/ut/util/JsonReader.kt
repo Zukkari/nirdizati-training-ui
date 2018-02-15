@@ -46,8 +46,8 @@ private fun mapTypes(modelsParams: Map<String, List<ModelParameter>>) {
     val allProperties = MasterConfiguration.modelConfiguration.getAllProperties()
 
     modelsParams.values.flatMap { it }.flatMap { it.properties }.forEach { prop ->
-        val withType = allProperties.first { it.id == prop.id }
-        prop.type = withType.type
+        val withType = allProperties.firstOrNull{ it.id == prop.id }
+        prop.type = withType?.type ?: ""
     }
 }
 

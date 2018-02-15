@@ -59,16 +59,12 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
             this.sclass = "validation-btn"
 
             this.addEventListener(Events.ON_MOUSE_OVER, { _ ->
-                val popup = desktop.components.firstOrNull { it.id == tooltip && it is Popup } as Popup?
-                if (popup == null) {
-                    parser.readTooltip(tooltip).also {
-                        this.appendChild(it)
-                        it.sclass = "n-popup"
-                        it.id = tooltip
-                    }.open(this, "end_after")
-                } else {
-                    popup.open(this, "end_after")
-                }
+                desktop.components.firstOrNull { it.id == tooltip && it is Popup }?.detach()
+                parser.readTooltip(tooltip).also {
+                    this.appendChild(it)
+                    it.sclass = "n-popup"
+                    it.id = tooltip
+                }.open(this, "end_after")
             })
             this.addEventListener(Events.ON_MOUSE_OUT, { _ ->
                 desktop.components.forEach { (it as? Popup)?.close() }
