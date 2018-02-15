@@ -1,5 +1,7 @@
 package cs.ut.ui.adapters
 
+import cs.ut.charts.ChartGenerator
+import cs.ut.charts.LineChart
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
@@ -14,7 +16,7 @@ import org.zkoss.zul.Checkbox
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 
-class ComparisonAdapter(container: Component) :
+class ComparisonAdapter(container: Component, private val controller: SingleJobValidationController) :
     GridValueProvider<SimulationJob, Row> {
     override var fields: MutableList<FieldComponent> = mutableListOf()
     private val adapter = ValidationViewAdapter(null, container)
@@ -31,9 +33,9 @@ class ComparisonAdapter(container: Component) :
                 this.addEventListener(Events.ON_CHECK, { e ->
                     e as CheckEvent
                     if (e.isChecked) {
-                        addDataSet("")
+                        addDataSet(data.id, getPayload(data))
                     } else {
-                        removeDataSet("")
+                        removeDataSet(data.id)
                     }
                 })
             })
@@ -46,13 +48,17 @@ class ComparisonAdapter(container: Component) :
         }
     }
 
-
-
-    fun addDataSet(payload: String) {
-        Clients.evalJavaScript("addDataSet('', '$payload')")
+    private fun getPayload(job: SimulationJob): String {
+        return ChartGenerator(job).getCharts()
+            .first { it::class.java == LineChart::class.java && it.name == controller.accuracyMode }
+            .payload
     }
 
-    fun removeDataSet(payload: String) {
-        Clients.evalJavaScript("removeDataSet('$payload')")
+    private fun addDataSet(label: String, payload: String) {
+        Clients.evalJavaScript("addDataSet('$label', '$payload')")
+    }
+
+    private fun removeDataSet(label: String) {
+        Clients.evalJavaScript("removeDataSet('$label')")
     }
 }

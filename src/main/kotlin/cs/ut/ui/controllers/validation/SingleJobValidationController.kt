@@ -53,6 +53,8 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
 
     private var currentlySelected: String = ""
 
+    var accuracyMode: String = ""
+
     @Wire
     private lateinit var compRows: Rows
 
@@ -63,7 +65,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         log.debug("Received job argument $job, initializing in read only mode")
         charts = ChartGenerator(job).getCharts().groupBy { it.javaClass.name }
 
-        val provider = ComparisonAdapter(mainContainer)
+        val provider = ComparisonAdapter(mainContainer, this)
         (listOf(job) +
                 JobService.findSimilarJobs(CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest), job))
             .map { provider.provide(it) }.forEach { compRows.appendChild(it) }
@@ -150,10 +152,13 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
                 if (MAE == it.name) {
                     comboBox.selectedItem = comboItem
                     itemSet = true
+                    accuracyMode = it.name
                 }
             }
 
-            if (!itemSet) comboBox.selectedItem = comboBox.items.first()
+            if (!itemSet) comboBox.selectedItem = comboBox.items.first().apply {
+                accuracyMode = (this.getValue() as Chart).name
+            }
 
             comboBox.isReadonly = true
             comboBox.setConstraint("no empty")
@@ -161,7 +166,12 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
 
             comboBox.addEventListener(
                 Events.ON_SELECT,
-                { e -> (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).render() })
+                { e ->
+                    (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).apply {
+                        accuracyMode = this.name
+                        this.render()
+                    }
+                })
             comboLayout.appendChild(comboBox)
         }
     }

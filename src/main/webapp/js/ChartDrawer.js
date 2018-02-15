@@ -85,17 +85,28 @@ function scatterPlot(payload, chart_label) {
 }
 
 function addDataSet(label, payload) {
+    const color = randomColor()
     chart.data.datasets.push({
         label: label,
-        data: JSON.parse(payload)
+        data: JSON.parse(payload),
+        fill: false,
+        borderColor: color,
+        backgroundColor: color
     });
     chart.update()
 }
 
 function removeDataSet(label) {
+    console.log(`Removing data set with label: ${label}`);
     const data = chart.data.datasets;
-    let index = data.indexOf(data.filter(d => d.label === label));
-    chart["data"]["datasets"] = data.splice(index, 1);
+    let index = -1;
+    for (let i = 0; i < data.length; i++) {
+        if (data[i].label === label) {
+            index = i;
+        }
+    }
+    console.log(`Index of removed item: ${index}`);
+    data.splice(index, 1);
     chart.update()
 }
 
@@ -242,3 +253,13 @@ function heatMap(payload, title, xLabels, yLabels) {
         }]
     });
 }
+
+const randomColor = () => {
+    const r = randomInRange();
+    const g = randomInRange();
+    const b = randomInRange();
+    return `rgb(${r},${g},${b})`
+};
+
+const randomInRange = () => Math.floor(Math.random() * 255);
+
