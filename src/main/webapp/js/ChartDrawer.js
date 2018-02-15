@@ -104,7 +104,9 @@ function removeDataSet(label) {
             index = i;
         }
     }
-    data.splice(index, 1);
+    if (index !== -1) {
+        data.splice(index, 1);
+    }
     chart.update()
 }
 

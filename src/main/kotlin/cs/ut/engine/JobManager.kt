@@ -104,4 +104,7 @@ object JobManager {
         val pending: List<SimulationJob> = queue.filter { it.owner == key }
         return (pending.toList() + cached.toList())
     }
+
+    fun getCompletedJobs(key: String): List<SimulationJob> =
+        getJobsForKey(key).filter { it.status == JobStatus.COMPLETED }
 }
