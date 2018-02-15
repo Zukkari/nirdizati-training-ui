@@ -28,9 +28,14 @@ fun readLogColumns(logName: String): List<String> {
 }
 
 fun readTrainingJson(key: String): Map<String, List<ModelParameter>> =
-        parseJsonFiles(listOf(File(
-                MasterConfiguration.dirConfig.dirPath(Dir.TRAIN_DIR) + "$key.json")))
-                .apply { mapTypes(this) }
+    parseJsonFiles(
+        listOf(
+            File(
+                MasterConfiguration.dirConfig.dirPath(Dir.TRAIN_DIR) + "$key.json"
+            )
+        )
+    )
+        .apply { mapTypes(this) }
 
 private fun readTrainingData(logName: String): TrainingData {
     val config: DirectoryConfiguration = MasterConfiguration.dirConfig
@@ -46,7 +51,7 @@ private fun mapTypes(modelsParams: Map<String, List<ModelParameter>>) {
     val allProperties = MasterConfiguration.modelConfiguration.getAllProperties()
 
     modelsParams.values.flatMap { it }.flatMap { it.properties }.forEach { prop ->
-        val withType = allProperties.firstOrNull{ it.id == prop.id }
+        val withType = allProperties.firstOrNull { it.id == prop.id }
         prop.type = withType?.type ?: ""
     }
 }
@@ -90,7 +95,7 @@ private tailrec fun readJson(files: List<File>, jsons: MutableMap<String, String
     }
 }
 
-
+@Suppress("UNCHECKED_CAST")
 private tailrec fun parseJson(jsons: MutableMap<String, String>, map: MutableMap<String, List<ModelParameter>>) {
     if (jsons.isNotEmpty()) {
         val key = jsons.keys.first()
@@ -111,13 +116,25 @@ private tailrec fun parseJson(jsons: MutableMap<String, String>, map: MutableMap
         params.add(learner)
 
         val paramArray = thirdLevel.getJSONObject(learner).toMap()
-        val properties = mutableListOf<Property>()
-        paramArray.entries.forEach {
-            properties.add(Property(it.key, "", it.value.toString(), -1.0, -1.0))
+        val properties = mutableSetOf<Property>()
+        var collected = false
+        paramArray.entries.forEach properties@ {
+            try {
+                if (!collected) {
+                    it.key.toInt()
+                    // Parse successful - prefix length
+                    (it.value as HashMap<String, Any>).entries.forEach {
+                        properties.add(Property(it.key, "", it.value.toString(), -1.0, -1.0))
+                    }
+                    collected = true
+                }
+            } catch (e: NumberFormatException) {
+                properties.add(Property(it.key, "", it.value.toString(), -1.0, -1.0))
+            }
         }
 
         val modelProperties = getModelParams(params)
-        modelProperties.first { it.type == "learner" }.properties = properties
+        modelProperties.first { it.type == "learner" }.properties = properties.toMutableList()
 
         map[key] = modelProperties
 
