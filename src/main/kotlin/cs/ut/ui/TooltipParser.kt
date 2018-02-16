@@ -18,17 +18,15 @@ class TooltipParser {
             popup.id = id
             popup.appendChild(
                 if (this.enableHtml) {
-                    Html(decodeBase64(this.label)).apply {
+                    Html(this.label).apply {
                         this.id = this@tooltip.id
                     }
                 } else {
-                    Label(decodeBase64(this.label))
+                    Label(this.label)
                 }
             )
         }
 
         return popup
     }
-
-    private fun decodeBase64(payload: String) = String(Base64.getDecoder().decode(payload.trim()), Charset.forName("UTF-8"))
 }

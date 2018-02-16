@@ -363,101 +363,136 @@
             <id>encoding</id>
             <enableHtml>true</enableHtml>
             <label>
-                PGI+RW5jb2Rpbmc8L2I+IC0gdGhpcyBpcyBob3cgeW91IHdhbnQgdG8gZW5jb2RlIHRyYWNlcyBmcm9tIHRoZSBzYW1lIGJ1Y2tldCBpbnRvIGZpeGVkLXNpemUgZmVhdHVyZSB2ZWN0b3Jz
+                <![CDATA[
+<b>Encoding</b> - this is how you want to encode traces from the same bucket into fixed-size feature vectors
+                ]]>
             </label>
         </tooltip>
         <tooltip>
             <id>last_state</id>
-            <enableHtml>false</enableHtml>
+            <enableHtml>true</enableHtml>
             <label>
-                TGFzdCBzdGF0ZSAtIGNvbmNhdGVuYXRlIGNhc2UgYXR0cmlidXRlcyArIGF0dHJpYnV0ZXMgb2YgdGhlIGxhdGVzdCBleGVjdXRlZCBldmVudA==
+                <![CDATA[
+<b>Last state</b> - concatenate case attributes + attributes of the latest executed event
+                ]]>
             </label>
         </tooltip>
         <tooltip>
             <id>frequency</id>
-            <enableHtml>false</enableHtml>
+            <enableHtml>true</enableHtml>
             <label>
-                RnJlcXVlbmN5IC0gY29uY2F0ZW5hdGUgY2FzZSBhdHRyaWJ1dGVzICsgY291bnRzIG9mIGNhdGVnb3JpY2FsIGF0dHJpYnV0ZXMgKGFjdGl2aXRpZXMsIHJlc291cmNlcywgZXRjLikgKyBtaW4vYXZlcmFnZS9tYXgvc3VtIG9mIG51bWVyaWNhbCBhdHRyaWJ1dGVzIChjb3N0LCB0aW1lIHNpbmNlIGNhc2Ugc3RhcnQsIGV0Yy4p
+                <![CDATA[
+<b>Frequency</b> - concatenate case attributes + counts of categorical attributes (activities, resources, etc.) + min/average/max/sum of numerical attributes (cost, time since case start, etc.)
+                ]]>
             </label>
         </tooltip>
         <tooltip>
             <id>combined</id>
-            <enableHtml>false</enableHtml>
-            <label>Q29tYmluZWQgLSBsYXN0IHN0YXRlICsgZnJlcXVlbmN5</label>
+            <enableHtml>true</enableHtml>
+            <label>
+                <![CDATA[
+<b>Combined</b> - last state + frequency
+                ]]>
+            </label>
         </tooltip>
         <tooltip>
             <id>index_based</id>
             <enableHtml>true</enableHtml>
             <label>
-                SW5kZXgtYmFzZWQgLSBjb25jYXRlbmF0ZSBjYXNlIGF0dHJpYnV0ZXMgKyBhdHRyaWJ1dGVzIG9mIDxiPmVhY2g8L2I+IGV4ZWN1dGVkIGV2ZW50LiBUaGUgPGI+b25seTwvYj4gZW5jb2RpbmcgdGhhdCBpcyBsb3NzbGVzcy4gSXQgY2FuIG9ubHkgYmUgdXNlZCB3aXRoIHByZWZpeC1sZW5ndGggYnVja2V0aW5n
+                <![CDATA[
+<b>Index-based</b> - concatenate case attributes + attributes of <b>each</b> executed event. The <b>only</b> encoding that is lossless. It can only be used with prefix-length bucketing
+                ]]>
             </label>
         </tooltip>
         <tooltip>
             <id>bucketing</id>
             <enableHtml>true</enableHtml>
             <label>
-                PGI+QnVja2V0aW5nPC9iPiAtIHRoaXMgaXMgaG93IHlvdSB3YW50IHRvIGdyb3VwIHByb2Nlc3MgdHJhY2VzIGludG8gYnVja2V0cy4gQSBzZXBhcmF0ZSBwcmVkaWN0b3Igd2lsbCBiZSB0cmFpbmVkIGZvciBlYWNoIGJ1Y2tldC4=
+                <![CDATA[
+<b>Bucketing</b> - this is how you want to group process traces into buckets. A separate predictor will be trained for each bucket.
+                ]]>
             </label>
         </tooltip>
         <tooltip>
             <id>zero</id>
-            <enableHtml>false</enableHtml>
+            <enableHtml>true</enableHtml>
             <label>
-                WmVybyAtIGRpc2NhcmQgZ3JvdXBpbmcsIHRyYWluIGEgc2luZ2xlIHByZWRpY3RvciB1c2luZyBhbGwgYXZhaWxhYmxlIHByb2Nlc3MgdHJhY2VzLg==
+                <![CDATA[
+<b>Zero</b> - discard grouping, train a single predictor using all available process traces.
+                ]]>
             </label>
         </tooltip>
         <tooltip>
             <id>state_based</id>
-            <enableHtml>false</enableHtml>
+            <enableHtml>true</enableHtml>
             <label>
-                U3RhdGUgYmFzZWQgLSBncm91cCB0cmFjZXMgYWNjb3JkaW5nIHRvIHRoZSBzdGF0ZSAoZGVjaXNpb24gcG9pbnQpIHRoZXkgaGF2ZSByZWFjaGVkIHNvIGZhciwgb25lIHByZWRpY3RvciBmb3IgZWFjaCBzdGF0ZS4gTm90ZSB0cmFpbmluZyB3aWxsIHRha2UgbG9uZ2VyIGZvciBwcm9jZXNzZXMgd2l0aCBjb21wbGljYXRlZCBwcm9jZXNzIG1vZGVscy4=
+                <![CDATA[
+<b>State based</b> - group traces according to the state (decision point) they have reached so far, one predictor for each state. Note training will take longer for processes with complicated process models.
+                ]]>
             </label>
         </tooltip>
         <tooltip>
             <id>clustering</id>
-            <enableHtml>false</enableHtml>
+            <enableHtml>true</enableHtml>
             <label>
-                Q2x1c3RlcmluZyAtIGdyb3VwIHNpbWlsYXIgdHJhY2VzIHVzaW5nIGstbWVhbnMgY2x1c3RlcmluZywgb25lIHByZWRpY3RvciBmb3IgZWFjaCBjbHVzdGVyLg==
+                <![CDATA[
+<b>Clustering</b> - group similar traces using k-means clustering, one predictor for each cluster.
+                ]]>
             </label>
         </tooltip>
         <tooltip>
             <id>prefix_length_based</id>
             <enableHtml>true</enableHtml>
             <label>
-                UHJlZml4IGxlbmd0aCBiYXNlZCAtIGdyb3VwIHRyYWNlcyBhY2NvcmRpbmcgdG8gdGhlaXIgbGVuZ3RoLiBUaGUgPGk+bjwvaT4tdGggYnVja2V0IHdpbGwgY29uc2lzdCBvZiB0cmFjZXMgdGhhdCBhcmUgYXQgbGVhc3QgPGk+bjwvaT4gZXZlbnRzIGxvbmcu
+                <![CDATA[
+<b>Prefix length based</b> - group traces according to their length. The <i>n</i>-th bucket will consist of traces that are at least <i>n</i> events long.
+                ]]>
             </label>
         </tooltip>
         <tooltip>
             <id>learner</id>
             <enableHtml>true</enableHtml>
             <label>
-                PGI+UHJlZGljdGlvbiBtZXRob2Q8L2I+IC0gdGhpcyBpcyB0aGUgbWFjaGluZSBsZWFybmluZyBhbGdvcml0aG0gdGhhdCBpcyB1c2VkIHRvIGZpdCBhIHByZWRpY3RpdmUgbW9kZWwu
+                <![CDATA[
+<b>Prediction method</b> - this is the machine learning algorithm that is used to fit a predictive model.
+                ]]>
             </label>
         </tooltip>
         <tooltip>
             <id>random_forest</id>
             <enableHtml>true</enableHtml>
-            <label>PGEgaHJlZj0iaHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvUmFuZG9tX2ZvcmVzdCI+UmFuZG9tIGZvcmVzdDwvYT4=
+            <label>
+                <![CDATA[
+<a href="https://en.wikipedia.org/wiki/Random_forest">Random forest</a>
+                ]]>
             </label>
         </tooltip>
         <tooltip>
             <id>gradient_boosting</id>
             <enableHtml>true</enableHtml>
             <label>
-                PGEgaHJlZj0iaHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvR3JhZGllbnRfYm9vc3RpbmciPkdyYWRpZW50IGJvb3N0aW5nPC9hPg==
+                <![CDATA[
+<a href="https://en.wikipedia.org/wiki/Gradient_boosting">Gradient boosting</a>
+                ]]>
             </label>
         </tooltip>
         <tooltip>
             <id>decision_tree</id>
             <enableHtml>true</enableHtml>
             <label>
-                PGEgaHJlZj0iaHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvRGVjaXNpb25fdHJlZSI+RGVjaXNpb24gdHJlZTwvYT4=
+                <![CDATA[
+<a href="https://en.wikipedia.org/wiki/Decision_tree">Decision tree</a>
+                ]]>
             </label>
         </tooltip>
         <tooltip>
             <id>xgboost</id>
             <enableHtml>true</enableHtml>
-            <label>PGEgaHJlZj0iaHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvWGdib29zdCI+WEdCb29zdDwvYT4=</label>
+            <label>
+                <![CDATA[
+<a href="https://en.wikipedia.org/wiki/Xgboost">XGBoost</a>
+                ]]>
+            </label>
         </tooltip>
     </tooltips>
 </configuration>
