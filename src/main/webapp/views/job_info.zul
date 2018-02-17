@@ -25,10 +25,10 @@
         <rows id="selectionRows" hflex="1" vflex="1"/>
     </grid>
     <hlayout hflex="1" vflex="1" sclass="margin-top-40px">
-        <vbox hflex="2" vflex="1" align="center">
+        <vbox hflex="3" vflex="1" align="center">
             <include id="canvas" src="/views/graphs/graph_canvas.html" hflex="1" vflex="1"/>
         </vbox>
-        <vbox id="infoContainer" align="start" hflex="1" vflex="1" sclass="info-container">
+        <vbox id="infoContainer" align="start" hflex="2" vflex="1" sclass="info-container">
             <panel title="${labels.validation.select_version}" collapsible="true" open="false" hflex="1">
                 <panelchildren>
                     <vbox pack="center" align="center" hflex="min" vflex="1" id="comboLayout"/>
@@ -38,8 +38,8 @@
                    sclass="validation-panel">
                 <panelchildren>
                     <vbox id="comparisonContainer" hflex="max" vflex="max" align="center" pack="center">
-                        <grid height="340px">
-                            <columns>
+                        <grid sclass="comp-grid" height="340px">
+                            <columns hflex="max">
                                 <column align="center" hflex="min"/>
                                 <column align="center" hflex="min"/>
                                 <column align="center" hflex="min"/>

@@ -13,6 +13,7 @@ import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.util.Clients
 import org.zkoss.zul.A
 import org.zkoss.zul.Checkbox
+import org.zkoss.zul.Hlayout
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 
@@ -25,21 +26,31 @@ class ComparisonAdapter(container: Component, private val controller: SingleJobV
 
     override fun provide(data: SimulationJob): Row {
         return Row().apply {
-            this.appendChild(Checkbox().apply {
-                this.isChecked = first
-                this.isDisabled = first
-                this.setValue(data)
-                if (first) first = false
+            this.appendChild(Hlayout().apply {
+                this.hflex = "1"
+                this.vflex = "1"
 
-                this.addEventListener(Events.ON_CHECK, { e ->
-                    e as CheckEvent
-                    if (e.isChecked) {
-                        addDataSet(data.id, getPayload(data, controller))
-                    } else {
-                        removeDataSet(data.id)
-                    }
+                this.appendChild(
+                    Checkbox().apply {
+                        this.isChecked = first
+                        this.isDisabled = first
+                        this.setValue(data)
+                        if (first) first = false
+
+                        this.addEventListener(Events.ON_CHECK, { e ->
+                            e as CheckEvent
+                            if (e.isChecked) {
+                                addDataSet(data.id, getPayload(data, controller))
+                            } else {
+                                removeDataSet(data.id)
+                            }
+                        })
+                        controller.checkBoxes.add(this)
+                    })
+
+                this.appendChild(Hlayout().apply {
+                    this.sclass = "color-box c${data.id}"
                 })
-                controller.checkBoxes.add(this)
             })
             this.appendChild(Label(NirdizatiUtil.localizeText("${data.bucketing.type}.${data.bucketing.id}")))
             this.appendChild(Label(NirdizatiUtil.localizeText("${data.encoding.type}.${data.encoding.id}")))

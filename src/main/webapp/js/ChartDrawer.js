@@ -23,13 +23,20 @@ const getCanvasContext = () => {
 };
 
 const linerDataSetData = (payload, chart_label) => {
+    const blue = 'rgba(0, 147, 249, 0.4)';
     dataSet = [{
         label: chart_label,
         data: JSON.parse(payload),
-        borderColor: 'rgba(0, 147, 249, 0.4)',
+        borderColor: blue,
         backgroundColor: 'rgba(0, 147, 249, 0.2)',
         fill: false
     }];
+
+    const elem = document.querySelector(`.c${chart_label}`);
+    if (elem != null) {
+        elem.style.backgroundColor = blue;
+    }
+
     return dataSet
 };
 
@@ -85,7 +92,13 @@ function scatterPlot(payload, chart_label) {
 }
 
 function addDataSet(label, payload) {
-    const color = randomColor()
+    const color = randomColor();
+
+    const elem = document.querySelector(`.c${label}`);
+    if (elem != null) {
+        elem.style.backgroundColor = color;
+    }
+
     chart.data.datasets.push({
         label: label,
         data: JSON.parse(payload),
@@ -107,6 +120,12 @@ function removeDataSet(label) {
     if (index !== -1) {
         data.splice(index, 1);
     }
+
+    const elem = document.querySelector(`.c${label}`);
+    if (elem != null) {
+        elem.style.backgroundColor = 'white';
+    }
+
     chart.update()
 }
 
