@@ -38,13 +38,13 @@
                    sclass="validation-panel">
                 <panelchildren>
                     <vbox id="comparisonContainer" hflex="max" vflex="max" align="center" pack="center">
-                        <grid sclass="comp-grid" height="340px">
-                            <columns hflex="max">
-                                <column align="center" hflex="min"/>
-                                <column align="center" hflex="min"/>
-                                <column align="center" hflex="min"/>
-                                <column align="center" hflex="min"/>
-                                <column align="center" hflex="min"/>
+                        <grid sclass="comp-grid" hflex="1" height="340px">
+                            <columns hflex="1">
+                                <column align="center" hflex="1"/>
+                                <column align="center" hflex="1"/>
+                                <column align="center" hflex="1"/>
+                                <column align="center" hflex="1"/>
+                                <column align="center" hflex="1"/>
                             </columns>
                             <rows id="compRows"/>
                         </grid>
