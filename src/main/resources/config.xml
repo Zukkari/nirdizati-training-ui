@@ -1,0 +1,424 @@
+<Node>
+    <Node Identifier="threadPool">
+        <!-- Thread pool configuration -->
+        <Value Identifier="core">10</Value>
+        <Value Identifier="max">20</Value>
+        <Value Identifier="keepAlive">10</Value>
+        <Value Identifier="capacity">1024</Value>
+    </Node>
+    <Node Identifier="userPreferences">
+        <!-- Whether the simulation process should be run under specific user (root by default) -->
+        <Value Identifier="isEnabled">false</Value>
+        <Value Identifier="userName">zukkari</Value>
+        <Value Identifier="userGroup">zukkari</Value>
+        <Value Identifier="acp">0660</Value>
+        <Node Identifier="adminFunctionality">
+            <!-- Admin page functionality -->
+            <Value Identifier="isEnabled">true</Value>
+            <Value Identifier="password">VjNyWUg0ckRQNFNzVzByRA</Value>
+            <Value Identifier="isPasswordRequired">false</Value>
+        </Node>
+    </Node>
+    <Node Identifier="defaultValues">
+        <!-- Default values for training page -->
+        <Value Identifier="minimum">0.1</Value>
+        <Value Identifier="average">-1</Value>
+    </Node>
+    <Node Identifier="pages">
+        <!-- Page configuration -->
+        <Node Identifier="itemList">
+            <Value Identifier="landing">/views/upload_page.zul</Value>
+            <Value Identifier="training">/views/training.zul</Value>
+            <Value Identifier="validation">/views/job_info.zul</Value>
+            <Value Identifier="admin">/views/admin.zul</Value>
+            <Value Identifier="jobOverview">/views/job_overview.zul</Value>
+        </Node>
+    </Node>
+    <Node Identifier="directories">
+        <!-- Directory configuration -->
+        <Node Identifier="itemList">
+            <Value Identifier="python">/usr/bin/python3</Value>
+            <Value Identifier="userLogDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/logdata/
+            </Value>
+            <Value Identifier="userModelDirectory">/home/zukkari/git/nirdizati-training-ui/usermodels/</Value>
+            <Value Identifier="scriptDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/</Value>
+            <Value Identifier="coreDir">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/</Value>
+            <Value Identifier="trainDirectory">
+                /home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/training_params/
+            </Value>
+            <Value Identifier="datasetDirectory">
+                /home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/dataset_params/
+            </Value>
+            <Value Identifier="pklDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/pkl/</Value>
+            <Value Identifier="ohpdir">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/optimal_params/
+            </Value>
+            <Value Identifier="detailedDir">
+                /home/zukkari/git/nirdizati-training-ui/PredictiveMethods/results/detailed/
+            </Value>
+            <Value Identifier="validationDir">
+                /home/zukkari/git/nirdizati-training-ui/PredictiveMethods/results/validation/
+            </Value>
+            <Value Identifier="tmpDir">/home/zukkari/git/nirdizati-training-ui/tmp/</Value>
+            <Value Identifier="logFile">/home/zukkari/apache-tomcat-8.5.24/logs/catalina.out</Value>
+        </Node>
+    </Node>
+    <Node Identifier="header">
+        <Node Identifier="upload">
+            <Value Identifier="label">header.upload</Value>
+            <Value Identifier="redirect">upload</Value>
+            <Value Identifier="isEnabled">true</Value>
+            <Value Identifier="position">0</Value>
+            <Value Identifier="icon">-icon-cloud-upload</Value>
+        </Node>
+        <Node Identifier="training">
+            <Value Identifier="label">header.training</Value>
+            <Value Identifier="redirect">training</Value>
+            <Value Identifier="isEnabled">true</Value>
+            <Value Identifier="position">1</Value>
+            <Value Identifier="icon">z-icon-gears</Value>
+        </Node>
+        <Node Identifier="validation">
+            <Value Identifier="label">header.validation</Value>
+            <Value Identifier="redirect">jobOverview</Value>
+            <Value Identifier="isEnabled">true</Value>
+            <Value Identifier="position">2</Value>
+            <Value Identifier="icon">z-icon-line-chart</Value>
+        </Node>
+        <Node Identifier="admin">
+            <Value Identifier="label">header.admin</Value>
+            <Value Identifier="redirect">admin</Value>
+            <Value Identifier="isEnabled">true</Value>
+            <Value Identifier="position">0</Value>
+            <Value Identifier="icon">z-icon-bug</Value>
+        </Node>
+    </Node>
+    <Node Identifier="csv">
+        <Value Identifier="splitter">[,;]</Value>
+        <Value Identifier="threshold">20</Value>
+        <Value Identifier="sampleSize">100</Value>
+        <Node Identifier="userCols">
+            <Node Identifier="itemList">
+                <Value>case_id_col</Value>
+                <Value>activity_col</Value>
+                <Value>timestamp_col</Value>
+                <Value>resource_col</Value>
+            </Node>
+        </Node>
+        <Node Identifier="caseId">
+            <Node Identifier="itemList">
+                <Value>caseid</Value>
+                <Value>case_id</Value>
+                <Value>case id</Value>
+            </Node>
+        </Node>
+        <Node Identifier="activityId">
+            <Node Identifier="itemList">
+                <Value>activity</Value>
+                <Value>activity_name</Value>
+                <Value>activity_id</Value>
+                <Value>event_name</Value>
+            </Node>
+        </Node>
+        <Node Identifier="resource">
+            <Node Identifier="itemList">
+                <Value>resource</Value>
+            </Node>
+        </Node>
+        <Node Identifier="timestamp">
+            <Node Identifier="itemList">
+                <Value>\d{4}[-/]\d{1,2}[-/]\d{1,2}[ T]\d{1,2}:\d{1,2}:\d{1,2}</Value>
+                <Value>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}</Value>
+            </Node>
+        </Node>
+        <Node Identifier="empty">
+            <Node Identifier="itemList">
+                <Value/>
+                <Value>EMPTY</Value>
+                <Value>empty</Value>
+            </Node>
+        </Node>
+    </Node>
+    <Node Identifier="fileUpload">
+        <Node Identifier="extensions">
+            <Node Identifier="itemList">
+                <Value>csv</Value>
+            </Node>
+        </Node>
+    </Node>
+    <Node Identifier="models">
+        <Node Identifier="types">
+            <Value>encoding</Value>
+            <Value>bucketing</Value>
+            <Value>learner</Value>
+            <Value>predictiontype</Value>
+        </Node>
+        <Node Identifier="parameters">
+            <Node Identifier="last_state">
+                <Value Identifier="isEnabled">true</Value>
+                <Value Identifier="parameter">laststate</Value>
+                <Value Identifier="type">encoding</Value>
+            </Node>
+            <Node Identifier="frequency">
+                <Value Identifier="isEnabled">true</Value>
+                <Value Identifier="parameter">agg</Value>
+                <Value Identifier="type">encoding</Value>
+            </Node>
+            <Node Identifier="combined">
+                <Value Identifier="isEnabled">true</Value>
+                <Value Identifier="parameter">combined</Value>
+                <Value Identifier="type">encoding</Value>
+            </Node>
+            <Node Identifier="index_based">
+                <Value Identifier="isEnabled">true</Value>
+                <Value Identifier="parameter">index</Value>
+                <Value Identifier="type">encoding</Value>
+            </Node>
+            <Node Identifier="zero">
+                <Value Identifier="isEnabled">true</Value>
+                <Value Identifier="parameter">zero</Value>
+                <Value Identifier="type">bucketing</Value>
+            </Node>
+            <Node Identifier="state_based">
+                <Value Identifier="isEnabled">true</Value>
+                <Value Identifier="parameter">state</Value>
+                <Value Identifier="type">bucketing</Value>
+            </Node>
+            <Node Identifier="clustering">
+                <Value Identifier="isEnabled">true</Value>
+                <Value Identifier="parameter">cluster</Value>
+                <Value Identifier="type">bucketing</Value>
+                <Node Identifier="properties">
+                    <Node Identifier="n_clusters">
+                        <Value Identifier="control">org.zkoss.zul.Intbox</Value>
+                        <Value Identifier="max">10</Value>
+                        <Value Identifier="min">1</Value>
+                        <Value Identifier="default">1</Value>
+                    </Node>
+                </Node>
+            </Node>
+            <Node Identifier="prefix_length_based">
+                <Value Identifier="isEnabled">true</Value>
+                <Value Identifier="parameter">prefix</Value>
+                <Value Identifier="type">bucketing</Value>
+            </Node>
+            <Node Identifier="random_forest">
+                <Value Identifier="isEnabled">true</Value>
+                <Value Identifier="parameter">rf</Value>
+                <Value Identifier="type">learner</Value>
+                <Node Identifier="properties">
+                    <Node Identifier="n_estimators">
+                        <Value Identifier="control">org.zkoss.zul.Intbox</Value>
+                        <Value Identifier="max">400</Value>
+                        <Value Identifier="min">1</Value>
+                        <Value Identifier="default">300</Value>
+                    </Node>
+                    <Node Identifier="max_features">
+                        <Value Identifier="control">org.zkoss.zul.Doublebox</Value>
+                        <Value Identifier="min">0.01</Value>
+                        <Value Identifier="default">0.5</Value>
+                    </Node>
+                </Node>
+            </Node>
+            <Node Identifier="gradient_boosting">
+                <Value Identifier="isEnabled">true</Value>
+                <Value Identifier="parameter">gbm</Value>
+                <Value Identifier="type">learner</Value>
+                <Node Identifier="properties">
+                    <Node Identifier="n_estimators">
+                        <Value Identifier="control">org.zkoss.zul.Intbox</Value>
+                        <Value Identifier="max">400</Value>
+                        <Value Identifier="min">1</Value>
+                        <Value Identifier="default">300</Value>
+                    </Node>
+                    <Node Identifier="max_features">
+                        <Value Identifier="control">org.zkoss.zul.Doublebox</Value>
+                        <Value Identifier="min">0.01</Value>
+                        <Value Identifier="default">0.5</Value>
+                    </Node>
+                    <Node Identifier="learning_rate">
+                        <Value Identifier="control">org.zkoss.zul.Doublebox</Value>
+                        <Value Identifier="min">0.01</Value>
+                        <Value Identifier="default">0.1</Value>
+                    </Node>
+                </Node>
+            </Node>
+            <Node Identifier="decision_tree">
+                <Value Identifier="isEnabled">true</Value>
+                <Value Identifier="parameter">dt</Value>
+                <Value Identifier="type">learner</Value>
+                <Node Identifier="properties">
+                    <Node Identifier="n_estimators">
+                        <Value Identifier="control">org.zkoss.zul.Intbox</Value>
+                        <Value Identifier="max">400</Value>
+                        <Value Identifier="min">1</Value>
+                        <Value Identifier="default">300</Value>
+                    </Node>
+                    <Node Identifier="max_depth">
+                        <Value Identifier="control">org.zkoss.zul.Intbox</Value>
+                        <Value Identifier="min">1</Value>
+                        <Value Identifier="max">10</Value>
+                        <Value Identifier="default">5</Value>
+                    </Node>
+                </Node>
+            </Node>
+            <Node Identifier="xgboost">
+                <Value Identifier="isEnabled">true</Value>
+                <Value Identifier="parameter">xgb</Value>
+                <Value Identifier="type">learner</Value>
+                <Node Identifier="properties">
+                    <Node Identifier="n_estimators">
+                        <Value Identifier="control">org.zkoss.zul.Intbox</Value>
+                        <Value Identifier="max">400</Value>
+                        <Value Identifier="min">1</Value>
+                        <Value Identifier="default">300</Value>
+                    </Node>
+                    <Node Identifier="learning_rate">
+                        <Value Identifier="control">org.zkoss.zul.Doublebox</Value>
+                        <Value Identifier="min">0.01</Value>
+                        <Value Identifier="default">0.1</Value>
+                    </Node>
+                    <Node Identifier="subsample">
+                        <Value Identifier="control">org.zkoss.zul.Doublebox</Value>
+                        <Value Identifier="min">0.1</Value>
+                        <Value Identifier="default">0.7</Value>
+                    </Node>
+                    <Node Identifier="colsample_bytree">
+                        <Value Identifier="control">org.zkoss.zul.Doublebox</Value>
+                        <Value Identifier="min">0.1</Value>
+                        <Value Identifier="default">0.7</Value>
+                    </Node>
+                    <Node Identifier="max_depth">
+                        <Value Identifier="control">org.zkoss.zul.Intbox</Value>
+                        <Value Identifier="min">1</Value>
+                        <Value Identifier="max">10</Value>
+                        <Value Identifier="default">5</Value>
+                    </Node>
+                </Node>
+            </Node>
+            <Node Identifier="remaining_time">
+                <Value Identifier="isEnabled">true</Value>
+                <Value Identifier="parameter">remtime</Value>
+                <Value Identifier="type">predictiontype</Value>
+            </Node>
+            <Node Identifier="next_activity">
+                <Value Identifier="isEnabled">next</Value>
+                <Value Identifier="parameter">remtime</Value>
+                <Value Identifier="type">predictiontype</Value>
+            </Node>
+            <Node Identifier="outcome">
+                <Value Identifier="isEnabled">true</Value>
+                <Value Identifier="parameter">-1</Value>
+                <Value Identifier="type">predictiontype</Value>
+            </Node>
+        </Node>
+    </Node>
+    <Node Identifier="tooltip">
+        <Node Identifier="tooltips">
+            <Node Identifier="encoding">
+                <Value Identifier="label">
+                    <![CDATA[
+<b>Encoding</b> - this is how you want to encode traces from the same bucket into fixed-size feature vectors
+                ]]>
+                </Value>
+            </Node>
+            <Node Identifier="last_state">
+                <Value Identifier="label">
+                    <![CDATA[
+<b>Last state</b> - concatenate case attributes + attributes of the latest executed event
+                ]]>
+                </Value>
+            </Node>
+            <Node Identifier="frequency">
+                <Value Identifier="label">
+                    <![CDATA[
+<b>Frequency</b> - concatenate case attributes + counts of categorical attributes (activities, resources, etc.) + min/average/max/sum of numerical attributes (cost, time since case start, etc.)
+                ]]>
+                </Value>
+            </Node>
+            <Node Identifier="combined">
+                <Value Identifier="label">
+                    <![CDATA[
+<b>Combined</b> - last state + frequency
+                ]]>
+                </Value>
+            </Node>
+            <Node Identifier="index_based">
+                <Value Identifier="label">
+                    <![CDATA[
+<b>Index-based</b> - concatenate case attributes + attributes of <b>each</b> executed event. The <b>only</b> encoding that is lossless. It can only be used with prefix-length bucketing
+                ]]>
+                </Value>
+            </Node>
+            <Node Identifier="bucketing">
+                <Value Identifier="label">
+                    <![CDATA[
+<b>Bucketing</b> - this is how you want to group process traces into buckets. A separate predictor will be trained for each bucket.
+                ]]>
+                </Value>
+            </Node>
+            <Node Identifier="zero">
+                <Value Identifier="label">
+                    <![CDATA[
+<b>Zero</b> - discard grouping, train a single predictor using all available process traces.
+                ]]>
+                </Value>
+            </Node>
+            <Node Identifier="state_based">
+                <Value Identifier="label">
+                    <![CDATA[
+<b>State based</b> - group traces according to the state (decision point) they have reached so far, one predictor for each state. Note training will take longer for processes with complicated process models.
+                ]]>
+                </Value>
+            </Node>
+            <Node Identifier="clustering">
+                <Value Identifier="label">
+                    <![CDATA[
+<b>Clustering</b> - group similar traces using k-means clustering, one predictor for each cluster.
+                ]]>
+                </Value>
+            </Node>
+            <Node Identifier="prefix_length_based">
+                <Value Identifier="label">
+                    <![CDATA[
+<b>Prefix length based</b> - group traces according to their length. The <i>n</i>-th bucket will consist of traces that are at least <i>n</i> events long.
+                ]]>
+                </Value>
+            </Node>
+            <Node Identifier="learner">
+                <Value Identifier="label">
+                    <![CDATA[
+<b>Prediction method</b> - this is the machine learning algorithm that is used to fit a predictive model.
+                ]]>
+                </Value>
+            </Node>
+            <Node Identifier="random_forest">
+                <Value Identifier="label">
+                    <![CDATA[
+<a href="https://en.wikipedia.org/wiki/Random_forest">Random forest</a>
+                ]]>
+                </Value>
+            </Node>
+            <Node Identifier="gradient_boosting">
+                <Value Identifier="label">
+                    <![CDATA[
+<a href="https://en.wikipedia.org/wiki/Gradient_boosting">Gradient boosting</a>
+                ]]>
+                </Value>
+            </Node>
+            <Node Identifier="decision_tree">
+                <Value Identifier="label">
+                    <![CDATA[
+<a href="https://en.wikipedia.org/wiki/Decision_tree">Decision tree</a>
+                ]]>
+                </Value>
+            </Node>
+            <Node Identifier="xgboost">
+                <Value Identifier="label">
+                    <![CDATA[
+<a href="https://en.wikipedia.org/wiki/Xgboost">XGBoost</a>
+                ]]>
+                </Value>
+            </Node>
+        </Node>
+    </Node>
+</Node>
