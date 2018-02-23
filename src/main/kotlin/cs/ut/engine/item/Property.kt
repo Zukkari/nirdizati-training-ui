@@ -1,34 +1,16 @@
 package cs.ut.config.items
 
-import javax.xml.bind.annotation.XmlAccessType
-import javax.xml.bind.annotation.XmlAccessorType
-import javax.xml.bind.annotation.XmlAttribute
-import javax.xml.bind.annotation.XmlRootElement
-import javax.xml.bind.annotation.XmlType
-import javax.xml.bind.annotation.XmlValue
-
-@XmlRootElement(name = "property")
-@XmlType(propOrder = ["id", "type", "property", "maxValue", "minValue"])
-@XmlAccessorType(XmlAccessType.FIELD)
 open class Property(
-    @XmlAttribute(name = "id")
     var id: String,
 
-    @XmlAttribute(name = "type")
     var type: String,
 
-    @XmlValue
     var property: String,
 
-    @XmlAttribute(name = "maxValue")
     var maxValue: Double,
 
-    @XmlAttribute(name = "minValue")
     var minValue: Double
 ) {
-
-    constructor() : this("", "", "", -1.0, -1.0)
-
     constructor(property: Property) : this(
         property.id,
         property.type,
@@ -36,6 +18,8 @@ open class Property(
         property.maxValue,
         property.minValue
     )
+
+    constructor() : this("", "", "", -1.0, -1.0)
 
     operator fun component1(): String = id
 
@@ -47,6 +31,15 @@ open class Property(
     override fun equals(other: Any?): Boolean {
         return other is Property && this.id == other.id && this.type == other.type && this.property == other.property &&
                 this.maxValue == other.maxValue && this.minValue == other.minValue
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + type.hashCode()
+        result = 31 * result + property.hashCode()
+        result = 31 * result + maxValue.hashCode()
+        result = 31 * result + minValue.hashCode()
+        return result
     }
 }
 

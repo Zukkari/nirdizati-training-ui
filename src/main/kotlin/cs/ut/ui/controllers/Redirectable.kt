@@ -1,7 +1,7 @@
 package cs.ut.ui.controllers
 
-import cs.ut.config.MasterConfiguration
-import cs.ut.util.CookieUtil
+import cs.ut.configuration.ConfigurationReader
+import cs.ut.configuration.Value
 import cs.ut.util.DEST
 import cs.ut.util.NAVBAR
 import cs.ut.util.PAGE_MODELS_OVERVIEW
@@ -16,7 +16,6 @@ import org.zkoss.zkmax.zul.Navbar
 import org.zkoss.zkmax.zul.Navitem
 import org.zkoss.zul.Include
 import java.util.Timer
-import javax.servlet.http.HttpServletRequest
 import kotlin.concurrent.timerTask
 
 interface Redirectable {
@@ -24,14 +23,14 @@ interface Redirectable {
      * Sets content of the page. Since application content is located in a single component, then we change is
      * asynchronously. This is done using this method.
      *
-     * @param destination - id of the page to which the content should be changed (defined in configuration.xml)
+     * @param dest - id of the page to which the content should be changed (defined in configuration.xml)
      * @param page        - caller page where Include element should be looked for.
      */
     fun setContent(dest: String, page: Page) {
         page.title = "${Labels.getLabel("header.$dest")} - Nirdizati"
         val include = Selectors.iterable(page, "#contentInclude").iterator().next() as Include
         include.src = null
-        include.src = MasterConfiguration.pageConfiguration.getPageByName(dest).uri
+        include.src = pages.first { it.identifier == dest }.value
         activateHeaderButton(if (dest == PAGE_VALIDATION) PAGE_MODELS_OVERVIEW else dest, page)
     }
 
@@ -51,5 +50,9 @@ interface Redirectable {
         val navbar = page.desktop.components.first { it.id == NAVBAR } as Navbar
         val navItem = page.desktop.components.firstOrNull { it.getAttribute(DEST) == dest } as Navitem?
         navItem?.let { navbar.selectItem(navItem) }
+    }
+
+    companion object {
+        private val pages: List<Value> = ConfigurationReader.findNode("pages")!!.itemList()
     }
 }

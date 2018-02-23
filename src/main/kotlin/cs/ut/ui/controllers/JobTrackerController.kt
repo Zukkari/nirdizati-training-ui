@@ -8,7 +8,7 @@ import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.NirdizatiGrid
-import cs.ut.ui.adapters.JobValueAdataper
+import cs.ut.ui.adapters.JobValueAdapter
 import cs.ut.util.CookieUtil
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.TRACKER_EAST
@@ -21,7 +21,6 @@ import org.zkoss.zul.Button
 import org.zkoss.zul.Hbox
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
-import javax.servlet.http.HttpServletRequest
 
 class JobTrackerController : SelectorComposer<Component>(), Redirectable {
     @Wire
@@ -37,7 +36,7 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
         self.desktop.enableServerPush(true)
         JobManager.subscribe(this)
 
-        val jobGrid = NirdizatiGrid(JobValueAdataper())
+        val jobGrid = NirdizatiGrid(JobValueAdapter())
         jobGrid.vflex = "1"
         jobGrid.id = GRID_ID
         jobTracker.appendChild(jobGrid)

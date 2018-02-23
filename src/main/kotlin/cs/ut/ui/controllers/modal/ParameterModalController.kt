@@ -1,12 +1,13 @@
 package cs.ut.ui.controllers.modal
 
 import com.google.common.html.HtmlEscapers
-import cs.ut.config.MasterConfiguration
-import cs.ut.config.nodes.Dir
+import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.JobManager
 import cs.ut.jobs.DataSetGenerationJob
 import cs.ut.jobs.UserRightsJob
 import cs.ut.logging.NirdizatiLogger
+import cs.ut.providers.Dir
+import cs.ut.providers.DirectoryConfiguration
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.UIComponent
 import cs.ut.ui.adapters.ColumnRowValueAdapter
@@ -70,7 +71,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
 
-        cols = MasterConfiguration.csvConfiguration.userCols
+        cols = ConfigurationReader.findNode("csv/userCols")!!.itemListValues()
         log.debug("Read columns from master config: $cols")
 
         this.file = arg[FILE] as File
@@ -163,7 +164,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
                 val target = Files.move(
                     Paths.get(file.absolutePath),
-                    Paths.get(File(MasterConfiguration.dirConfig.dirPath(Dir.USER_LOGS) + file.name).absolutePath),
+                    Paths.get(File(DirectoryConfiguration.dirPath(Dir.USER_LOGS) + file.name).absolutePath),
                     StandardCopyOption.REPLACE_EXISTING
                 )
 

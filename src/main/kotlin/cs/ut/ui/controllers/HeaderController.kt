@@ -1,10 +1,10 @@
 package cs.ut.ui.controllers
 
-import cs.ut.config.MasterConfiguration
-import cs.ut.config.items.HeaderItem
+import cs.ut.configuration.ConfigNode
+import cs.ut.configuration.ConfigurationReader
 import cs.ut.util.DEST
+import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PAGE_LANDING
-import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.select.SelectorComposer
@@ -15,6 +15,8 @@ import org.zkoss.zkmax.zul.Navitem
 
 class HeaderController : SelectorComposer<Component>(), Redirectable {
 
+    private val configNode = ConfigurationReader.findNode("header")!!
+
     @Wire
     private lateinit var navbar: Navbar
 
@@ -24,20 +26,19 @@ class HeaderController : SelectorComposer<Component>(), Redirectable {
     }
 
     private fun composeHeader() {
-        val items: List<HeaderItem> = MasterConfiguration.headerConfiguration.headerItems
-        items.sortedBy { it.position }
+        val items: List<ConfigNode> = configNode.childNodes
 
         items.forEach {
             val navItem = Navitem()
-            navItem.label = Labels.getLabel(it.label)
-            navItem.setAttribute(DEST, it.redirect)
-            navItem.iconSclass = it.icon
+            navItem.label = NirdizatiUtil.localizeText(it.valueWithIdentifier("label").value)
+            navItem.setAttribute(DEST, it.valueWithIdentifier("redirect").value)
+            navItem.iconSclass = it.valueWithIdentifier("icon").value
             navItem.sclass = "n-nav-item"
             navItem.addEventListener(Events.ON_CLICK, { _ ->
-                setContent(it.redirect, page)
+                setContent(it.valueWithIdentifier("redirect").value, page)
                 navbar.selectItem(navItem)
             })
-            navItem.isVisible = it.enabled
+            navItem.isVisible = it.isEnabled()
 
             navbar.appendChild(navItem)
         }
