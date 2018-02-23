@@ -5,7 +5,7 @@ import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
-import cs.ut.ui.adapters.JobValueAdataper.Companion.jobArg
+import cs.ut.ui.adapters.JobValueAdapter.Companion.jobArg
 import cs.ut.ui.controllers.validation.ValidationController
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PAGE_VALIDATION

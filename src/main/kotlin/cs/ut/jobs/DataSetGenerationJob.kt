@@ -1,8 +1,8 @@
 package cs.ut.jobs
 
-import cs.ut.config.MasterConfiguration
-import cs.ut.config.nodes.Dir
+import cs.ut.providers.Dir
 import cs.ut.exceptions.NirdizatiRuntimeException
+import cs.ut.providers.DirectoryConfiguration
 import cs.ut.util.*
 import org.json.JSONObject
 import java.io.File
@@ -34,11 +34,11 @@ class DataSetGenerationJob(
 
     override fun execute() {
         val writer = FileWriter()
-        writer.writeJsonToDisk(json, fileName, MasterConfiguration.dirConfig.dirPath(Dir.DATA_DIR))
+        writer.writeJsonToDisk(json, fileName, DirectoryConfiguration.dirPath(Dir.DATA_DIR))
     }
 
     override fun postExecute() {
-        val result = File(MasterConfiguration.dirConfig.dirPath(Dir.DATA_DIR) + fileName + ".json")
+        val result = File(DirectoryConfiguration.dirPath(Dir.DATA_DIR) + fileName + ".json")
         if (!result.exists()) {
             throw NirdizatiRuntimeException("Could not write file to disk <${result.absolutePath}>")
         }

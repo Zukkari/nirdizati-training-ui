@@ -1,6 +1,6 @@
 package cs.ut.util
 
-import cs.ut.config.MasterConfiguration
+import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.Case
 import cs.ut.exceptions.NirdizatiRuntimeException
 import org.apache.log4j.Logger
@@ -28,15 +28,16 @@ class CsvReader(private val f: File) {
     init {
         log.debug("Initializing csv reader...")
 
-        val config = MasterConfiguration.csvConfiguration
-        splitter = config.splitter.toRegex()
-        emptyValues = config.emptyValues
-        confThreshold = config.threshold
-        sampleSize = config.sampleSize
-        activityId = config.activityId
-        caseId = config.caseId
-        dateFormats = config.timestampFormat.map { it.toRegex() }
-        resourceId = config.resourceId
+        val configNode = ConfigurationReader.findNode("csv")!!
+        splitter = configNode.valueWithIdentifier("splitter").value.toRegex()
+        confThreshold = configNode.valueWithIdentifier("threshold").intValue()
+        sampleSize = configNode.valueWithIdentifier("sampleSize").intValue()
+
+        emptyValues = ConfigurationReader.findNode("csv/empty")!!.itemListValues()
+        activityId = ConfigurationReader.findNode("csv/activityId")!!.itemListValues()
+        caseId = ConfigurationReader.findNode("csv/caseId")!!.itemListValues()
+        dateFormats = ConfigurationReader.findNode("csv/timestamp")!!.itemListValues().map { it.toRegex() }
+        resourceId = ConfigurationReader.findNode("csv/resource")!!.itemListValues()
 
         log.debug("Finished initializing csv reader...")
     }

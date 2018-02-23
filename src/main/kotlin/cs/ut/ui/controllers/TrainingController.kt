@@ -1,13 +1,14 @@
 package cs.ut.ui.controllers
 
 import com.google.common.html.HtmlEscapers
-import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
+import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.JobManager
 import cs.ut.engine.LogManager
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
+import cs.ut.providers.ModelParamProvider
 import cs.ut.ui.UIComponent
 import cs.ut.ui.controllers.modal.ParameterModalController.Companion.FILE
 import cs.ut.ui.controllers.modal.ParameterModalController.Companion.IS_RECREATION
@@ -38,7 +39,6 @@ import org.zkoss.zul.Radiogroup
 import org.zkoss.zul.Vlayout
 import org.zkoss.zul.Window
 import java.io.File
-import javax.servlet.http.HttpServletRequest
 
 class TrainingController : SelectorComposer<Component>(), Redirectable, UIComponent {
     private val log = NirdizatiLogger.getLogger(TrainingController::class.java, getSessionId())
@@ -49,8 +49,10 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
         const val BUCKETING = "bucketing"
         const val PREDICTION = "predictiontype"
 
-        val DEFAULT = MasterConfiguration.defaultValuesConfiguration.minValue
-        val AVERAGE = MasterConfiguration.defaultValuesConfiguration.average.toString()
+
+        private val configNode = ConfigurationReader.findNode("defaultValues")!!
+        val DEFAULT = configNode.values.first { it.identifier == "minimum" }.doubleValue()
+        val AVERAGE = configNode.values.first { it.identifier == "average" }.value
 
         const val START_TRAINING = "startTraining"
         const val GENERATE_DATASET = "genDataSetParam"
@@ -105,7 +107,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
         predictionType.items.clear()
         log.debug("Cleared prediction type items")
 
-        val params: List<ModelParameter> = MasterConfiguration.modelConfiguration.properties[PREDICTION]!!
+        val params: List<ModelParameter> = ModelParamProvider().getPredictionTypes()
         log.debug("Received ${params.size} prediciton types")
 
         if (clientLogs.itemCount == 0) {

@@ -1,7 +1,7 @@
 package cs.ut.ui.adapters
 
-import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
+import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.JobManager
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
@@ -27,10 +27,10 @@ import org.zkoss.zul.Row
 import org.zkoss.zul.Vlayout
 
 
-class JobValueAdataper : GridValueProvider<Job, Row>, Redirectable {
+class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
     companion object {
         const val jobArg = "JOB"
-        val AVERAGE = MasterConfiguration.defaultValuesConfiguration.average.toString()
+        val AVERAGE = ConfigurationReader.findNode("defaultValues")!!.valueWithIdentifier("average").value
     }
 
     override var fields: MutableList<FieldComponent> = mutableListOf()

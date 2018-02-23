@@ -1,4 +1,4 @@
-package cs.ut.config
+package cs.ut.engine.item
 
 class TrainingData {
     var static_cat_cols: Array<String> = arrayOf()

@@ -1,6 +1,6 @@
-<Node>
+<Configuration>
     <Node Identifier="threadPool">
-        <!-- Thread pool configuration -->
+        <!-- Thread pool cs.ut.configuration -->
         <Value Identifier="core">10</Value>
         <Value Identifier="max">20</Value>
         <Value Identifier="keepAlive">10</Value>
@@ -11,6 +11,7 @@
         <Value Identifier="isEnabled">false</Value>
         <Value Identifier="userName">zukkari</Value>
         <Value Identifier="userGroup">zukkari</Value>
+        <Value Identifier="sudo"></Value>
         <Value Identifier="acp">0660</Value>
         <Node Identifier="adminFunctionality">
             <!-- Admin page functionality -->
@@ -25,9 +26,10 @@
         <Value Identifier="average">-1</Value>
     </Node>
     <Node Identifier="pages">
-        <!-- Page configuration -->
+        <!-- Page cs.ut.configuration -->
         <Node Identifier="itemList">
-            <Value Identifier="landing">/views/upload_page.zul</Value>
+            <Value Identifier="upload">/views/upload_page.zul</Value>
+            <Value Identifier="landing">/views/landing.zul</Value>
             <Value Identifier="training">/views/training.zul</Value>
             <Value Identifier="validation">/views/job_info.zul</Value>
             <Value Identifier="admin">/views/admin.zul</Value>
@@ -35,29 +37,20 @@
         </Node>
     </Node>
     <Node Identifier="directories">
-        <!-- Directory configuration -->
+        <!-- Directory cs.ut.configuration -->
         <Node Identifier="itemList">
             <Value Identifier="python">/usr/bin/python3</Value>
-            <Value Identifier="userLogDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/logdata/
-            </Value>
+            <Value Identifier="userLogDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/logdata/</Value>
             <Value Identifier="userModelDirectory">/home/zukkari/git/nirdizati-training-ui/usermodels/</Value>
             <Value Identifier="scriptDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/</Value>
             <Value Identifier="coreDir">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/</Value>
-            <Value Identifier="trainDirectory">
-                /home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/training_params/
-            </Value>
-            <Value Identifier="datasetDirectory">
-                /home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/dataset_params/
-            </Value>
+            <Value Identifier="trainDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/training_params/</Value>
+            <Value Identifier="datasetDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/dataset_params/</Value>
             <Value Identifier="pklDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/pkl/</Value>
-            <Value Identifier="ohpdir">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/optimal_params/
-            </Value>
-            <Value Identifier="detailedDir">
-                /home/zukkari/git/nirdizati-training-ui/PredictiveMethods/results/detailed/
-            </Value>
-            <Value Identifier="validationDir">
-                /home/zukkari/git/nirdizati-training-ui/PredictiveMethods/results/validation/
-            </Value>
+            <Value Identifier="ohpdir">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/optimal_params/</Value>
+            <Value Identifier="detailedDir">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/results/detailed/</Value>
+            <Value Identifier="validationDir">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/results/validation/</Value>
+            <Value Identifier="featureDir">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/results/feature_importance/</Value>
             <Value Identifier="tmpDir">/home/zukkari/git/nirdizati-training-ui/tmp/</Value>
             <Value Identifier="logFile">/home/zukkari/apache-tomcat-8.5.24/logs/catalina.out</Value>
         </Node>
@@ -67,28 +60,24 @@
             <Value Identifier="label">header.upload</Value>
             <Value Identifier="redirect">upload</Value>
             <Value Identifier="isEnabled">true</Value>
-            <Value Identifier="position">0</Value>
-            <Value Identifier="icon">-icon-cloud-upload</Value>
+            <Value Identifier="icon">z-icon-cloud-upload</Value>
         </Node>
         <Node Identifier="training">
             <Value Identifier="label">header.training</Value>
             <Value Identifier="redirect">training</Value>
             <Value Identifier="isEnabled">true</Value>
-            <Value Identifier="position">1</Value>
             <Value Identifier="icon">z-icon-gears</Value>
         </Node>
         <Node Identifier="validation">
             <Value Identifier="label">header.validation</Value>
             <Value Identifier="redirect">jobOverview</Value>
             <Value Identifier="isEnabled">true</Value>
-            <Value Identifier="position">2</Value>
             <Value Identifier="icon">z-icon-line-chart</Value>
         </Node>
         <Node Identifier="admin">
             <Value Identifier="label">header.admin</Value>
             <Value Identifier="redirect">admin</Value>
             <Value Identifier="isEnabled">true</Value>
-            <Value Identifier="position">0</Value>
             <Value Identifier="icon">z-icon-bug</Value>
         </Node>
     </Node>
@@ -146,11 +135,12 @@
         </Node>
     </Node>
     <Node Identifier="models">
-        <Node Identifier="types">
-            <Value>encoding</Value>
-            <Value>bucketing</Value>
-            <Value>learner</Value>
-            <Value>predictiontype</Value>
+        <Node Identifier="basic">
+            <Node Identifier="itemList">
+                <Value>zero</Value>
+                <Value>frequency</Value>
+                <Value>xgboost</Value>
+            </Node>
         </Node>
         <Node Identifier="parameters">
             <Node Identifier="last_state">
@@ -421,4 +411,4 @@
             </Node>
         </Node>
     </Node>
-</Node>
+</Configuration>

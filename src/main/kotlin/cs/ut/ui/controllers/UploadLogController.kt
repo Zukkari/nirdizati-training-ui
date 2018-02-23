@@ -1,8 +1,9 @@
 package cs.ut.ui.controllers
 
-import cs.ut.config.MasterConfiguration
-import cs.ut.config.nodes.Dir
+import cs.ut.configuration.ConfigurationReader
 import cs.ut.logging.NirdizatiLogger
+import cs.ut.providers.Dir
+import cs.ut.providers.DirectoryConfiguration
 import cs.ut.ui.UIComponent
 import cs.ut.ui.controllers.modal.ParameterModalController.Companion.FILE
 import org.apache.commons.io.FilenameUtils
@@ -36,7 +37,7 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
 
     private lateinit var media: Media
 
-    private val allowedExtensions = MasterConfiguration.csvConfiguration.extensions
+    private val allowedExtensions = ConfigurationReader.findNode("fileUpload/extensions")!!.itemListValues()
 
     /**
      * Method that analyzes uploaded file. Checks that the file has required extension.
@@ -70,7 +71,7 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
     @Listen("onClick = #upload")
     fun processLog() {
         val runnable = Runnable {
-            val tmpDir = MasterConfiguration.dirConfig.dirPath(Dir.TMP_DIR)
+            val tmpDir = DirectoryConfiguration.dirPath(Dir.TMP_DIR)
             val file = File(tmpDir + media.name)
             log.debug("Creating file: ${file.absolutePath}")
             file.createNewFile()

@@ -1,24 +1,23 @@
 package cs.ut.jobs
 
-import cs.ut.config.MasterConfiguration
-import cs.ut.config.nodes.Dir
+import cs.ut.configuration.ConfigurationReader
+import cs.ut.providers.Dir
+import cs.ut.providers.DirectoryConfiguration
 import org.apache.log4j.Logger
 import java.io.File
 import java.nio.charset.Charset
 
 class UserRightsJob(private val f: File) : Job() {
-    private val conf = MasterConfiguration.dirConfig
-
     override fun execute() {
         log.debug("Starting ACL job for $id")
 
-        log.debug("Setting permission ${prefs.acp}")
+        log.debug("Setting permission ${configNode.valueWithIdentifier("acp").value}")
         updateACL(f)
 
         log.debug("Changing rights for training JSON")
         val name: String = f.nameWithoutExtension
 
-        val path = "${conf.dirPath(Dir.DATA_DIR)}$name.json"
+        val path = "${DirectoryConfiguration.dirPath(Dir.DATA_DIR)}$name.json"
         log.debug("Looking for file -> $path")
 
         updateACL(File(path))
@@ -27,12 +26,12 @@ class UserRightsJob(private val f: File) : Job() {
 
 
     companion object {
-        private val prefs = MasterConfiguration.userPreferences
+        private val configNode = ConfigurationReader.findNode("userPreferences")!!
 
         val log = Logger.getLogger(UserRightsJob::class.java)!!
 
         fun updateACL(f: File) {
-            if (!prefs.enabled) {
+            if (!configNode.isEnabled()) {
                 log.debug("ACL updating is disabled -> skipping")
                 return
             }
@@ -45,7 +44,7 @@ class UserRightsJob(private val f: File) : Job() {
             log.debug("Updating ACL -> $f")
             val pb = ProcessBuilder(
                 "chmod",
-                prefs.acp,
+                configNode.valueWithIdentifier("acp").value,
                 f.absolutePath
             )
             pb.inheritIO()
@@ -56,19 +55,24 @@ class UserRightsJob(private val f: File) : Job() {
         }
 
         private fun updateOwnership(f: File) {
-            log.debug("Updating ownership for $f -> new owner ${prefs.userName}:${prefs.userGroup}")
+            val userName = configNode.valueWithIdentifier("userName").value
+            val userGroup = configNode.valueWithIdentifier("userGroup").value
+
+            log.debug("Updating ownership for $f -> " +
+                    "new owner $userName:$userGroup")
             val pb = ProcessBuilder(
                 "sudo",
                 "-S",
                 "chown",
-                "${prefs.userName}:${prefs.userGroup}",
+                "$userName:$userGroup",
                 f.absolutePath
             )
 
             log.debug("Command -> ${pb.command()}")
             val process = pb.start()
-            if (prefs.sudo.isNotEmpty()) {
-                process.outputStream.write((prefs.sudo + "\n\r").toByteArray(Charset.forName("UTF-8")))
+            val sudo = configNode.valueWithIdentifier("sudo").value
+            if (sudo.isNotEmpty()) {
+                process.outputStream.write((sudo + "\n\r").toByteArray(Charset.forName("UTF-8")))
             }
 
             process.waitFor()

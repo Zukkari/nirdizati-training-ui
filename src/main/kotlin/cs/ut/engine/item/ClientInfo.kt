@@ -1,4 +1,4 @@
-package cs.ut.config
+package cs.ut.engine.item
 
 data class ClientInfo(
     val screenWidth: Int,

@@ -37,6 +37,12 @@ $height: 50px
   font-weight: bold !important
   text-transform: uppercase
 
+.transparent-btn
+  @include btn-props
+  background: transparent
+  border: solid 2px $dark-blue
+  color: $dark-blue
+
 @media screen and (min-width: $min-width)
   %big-btn
     z-index: 1

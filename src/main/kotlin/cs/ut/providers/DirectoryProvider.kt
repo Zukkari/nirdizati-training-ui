@@ -1,0 +1,40 @@
+package cs.ut.providers
+
+import cs.ut.configuration.ConfigurationReader
+
+object DirectoryConfiguration {
+
+    private const val NODE_NAME = "directories"
+    private val configNode = ConfigurationReader.findNode(NODE_NAME)!!
+
+    private val dirs: Map<String, String>
+
+    init {
+        dirs = mutableMapOf<String, String>().apply {
+            configNode.itemList().forEach {
+                this[it.identifier] = it.value
+            }
+        }
+    }
+
+    fun dirPath(dir: Dir): String = dirs[dir.value()]!!
+}
+
+enum class Dir(private val id: String) {
+    PYTHON("python"),
+    USER_LOGS("userLogDirectory"),
+    USER_MODEL("userModelDirectory"),
+    SCRIPT_DIR("scriptDirectory"),
+    TRAIN_DIR("trainDirectory"),
+    DATA_DIR("datasetDirectory"),
+    PKL_DIR("pklDirectory"),
+    OHP_DIR("ohpdir"),
+    DETAIL_DIR("detailedDir"),
+    FEATURE_DIR("featureDir"),
+    VALIDATION_DIR("validationDir"),
+    TMP_DIR("tmpDir"),
+    CORE_DIR("coreDir"),
+    LOG_FILE("logFile");
+
+    fun value(): String = id
+}

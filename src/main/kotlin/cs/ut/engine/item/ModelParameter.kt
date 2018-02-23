@@ -1,32 +1,21 @@
 package cs.ut.config.items
 
-import javax.xml.bind.annotation.XmlAccessType
-import javax.xml.bind.annotation.XmlAccessorType
-import javax.xml.bind.annotation.XmlElement
-import javax.xml.bind.annotation.XmlElementWrapper
-import javax.xml.bind.annotation.XmlTransient
-import javax.xml.bind.annotation.XmlType
-
-@XmlType(propOrder = ["id", "parameter", "type", "enabled", "properties"])
-@XmlAccessorType(XmlAccessType.FIELD)
 open class ModelParameter(
-        @field:[XmlElement(name = "id")] var id: String,
-        @field:[XmlElement(name = "parameter")] var parameter: String,
-        @field:[XmlElement(name = "type")] var type: String,
-        @field:[XmlElement(name = "enabled")] var enabled: Boolean,
-        @field:[XmlElementWrapper(name = "properties")
-        XmlElement(name = "property")] var properties: MutableList<Property>
+    var id: String,
+    var parameter: String,
+    var type: String,
+    var enabled: Boolean,
+    var properties: MutableList<Property>
 ) {
 
     constructor(modelParameter: ModelParameter) : this(
-            modelParameter.id,
-            modelParameter.parameter,
-            modelParameter.type,
-            modelParameter.enabled,
-            modelParameter.properties
+        modelParameter.id,
+        modelParameter.parameter,
+        modelParameter.type,
+        modelParameter.enabled,
+        modelParameter.properties
     )
 
-    @XmlTransient
     var translate = true
 
     fun getTranslateName() = this.type + "." + this.id
@@ -64,5 +53,3 @@ open class ModelParameter(
 
     override fun toString(): String = "$type.$id"
 }
-
-object EmptyParameter : ModelParameter("N/A", "N/A", "N/A", true, mutableListOf(EmptyProperty))

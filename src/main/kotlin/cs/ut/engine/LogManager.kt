@@ -1,11 +1,12 @@
 package cs.ut.engine
 
-import cs.ut.config.MasterConfiguration
-import cs.ut.config.UiData
-import cs.ut.config.nodes.Dir
+import cs.ut.configuration.ConfigurationReader
+import cs.ut.engine.item.UiData
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
+import cs.ut.providers.Dir
+import cs.ut.providers.DirectoryConfiguration
 import cs.ut.util.LOG_FILE
 import cs.ut.util.OWNER
 import cs.ut.util.PREFIX
@@ -16,12 +17,6 @@ import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
-import java.time.Instant
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalAccessor
-import java.time.temporal.TemporalField
-import java.util.Date
 
 object LogManager {
     private val log = NirdizatiLogger.getLogger(LogManager::class.java)
@@ -41,21 +36,20 @@ object LogManager {
 
     init {
         log.debug("Initializing $this")
-        val conf = MasterConfiguration.dirConfig
 
-        logDirectory = conf.dirPath(Dir.USER_LOGS)
+        logDirectory = DirectoryConfiguration.dirPath(Dir.USER_LOGS)
         log.debug("User log directory -> $logDirectory")
 
-        validationDir = conf.dirPath(Dir.VALIDATION_DIR)
+        validationDir = DirectoryConfiguration.dirPath(Dir.VALIDATION_DIR)
         log.debug("Validation directory -> $validationDir")
 
-        featureImportanceDir = conf.dirPath(Dir.FEATURE_DIR)
+        featureImportanceDir = DirectoryConfiguration.dirPath(Dir.FEATURE_DIR)
         log.debug("Feature importance directory -> $featureImportanceDir")
 
-        detailedDir = conf.dirPath(Dir.DETAIL_DIR)
+        detailedDir = DirectoryConfiguration.dirPath(Dir.DETAIL_DIR)
         log.debug("Detailed log directory -> $detailedDir")
 
-        allowedExtensions = MasterConfiguration.csvConfiguration.extensions
+        allowedExtensions = ConfigurationReader.findNode("fileUpload/extensions")!!.itemListValues()
     }
 
     /**
@@ -140,7 +134,13 @@ object LogManager {
             loadTrainingFiles().forEach {
                 val uiData = JSONObject(readFileContent(it)).getJSONObject(UI_DATA)
                 if (uiData[OWNER] == key) {
-                    c.add(UiData(it.nameWithoutExtension, uiData[LOG_FILE] as String, uiData[START_DATE] as String))
+                    c.add(
+                        UiData(
+                            it.nameWithoutExtension,
+                            uiData[LOG_FILE] as String,
+                            uiData[START_DATE] as String
+                        )
+                    )
                 }
             }
         }
@@ -151,7 +151,7 @@ object LogManager {
 
     private fun loadTrainingFiles(): List<File> {
         log.debug("Loading training files")
-        val dir: File = MasterConfiguration.dirConfig.dirByName(Dir.TRAIN_DIR)
+        val dir = File(DirectoryConfiguration.dirPath(Dir.TRAIN_DIR))
         log.debug("Looking for training files in ${dir.absolutePath}")
         val files = dir.listFiles() ?: arrayOf()
         log.debug("Found ${files.size} training files total")
