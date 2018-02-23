@@ -2,13 +2,13 @@ package cs.ut.util
 
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
-import cs.ut.config.MasterConfiguration
-import cs.ut.config.TrainingData
 import cs.ut.config.items.ModelParameter
 import cs.ut.config.items.Property
-import cs.ut.config.nodes.Dir
-import cs.ut.config.nodes.DirectoryConfiguration
+import cs.ut.engine.item.TrainingData
 import cs.ut.exceptions.NirdizatiRuntimeException
+import cs.ut.providers.Dir
+import cs.ut.providers.DirectoryConfiguration
+import cs.ut.providers.ModelParamProvider
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.File
@@ -31,15 +31,14 @@ fun readTrainingJson(key: String): Map<String, List<ModelParameter>> =
     parseJsonFiles(
         listOf(
             File(
-                MasterConfiguration.dirConfig.dirPath(Dir.TRAIN_DIR) + "$key.json"
+                DirectoryConfiguration.dirPath(Dir.TRAIN_DIR) + "$key.json"
             )
         )
     )
         .apply { mapTypes(this) }
 
 private fun readTrainingData(logName: String): TrainingData {
-    val config: DirectoryConfiguration = MasterConfiguration.dirConfig
-    val path: String = config.dirPath(Dir.DATA_DIR)
+    val path: String = DirectoryConfiguration.dirPath(Dir.DATA_DIR)
 
     val file = File(path + logName + ".json")
     val jsonReader = JsonReader(FileReader(file))
@@ -48,7 +47,7 @@ private fun readTrainingData(logName: String): TrainingData {
 }
 
 private fun mapTypes(modelsParams: Map<String, List<ModelParameter>>) {
-    val allProperties = MasterConfiguration.modelConfiguration.getAllProperties()
+    val allProperties = ModelParamProvider().getAllProperties()
 
     modelsParams.values.flatMap { it }.flatMap { it.properties }.forEach { prop ->
         val withType = allProperties.firstOrNull { it.id == prop.id }
@@ -58,7 +57,7 @@ private fun mapTypes(modelsParams: Map<String, List<ModelParameter>>) {
 
 
 private fun readFilesFromDir(): List<File> {
-    val path = MasterConfiguration.dirConfig.dirPath(Dir.OHP_DIR)
+    val path = DirectoryConfiguration.dirPath(Dir.OHP_DIR)
 
     val dir = File(path)
     if (!dir.exists() && dir.isDirectory) throw NirdizatiRuntimeException("Optimized hyperparameter directory does not exist")
@@ -96,10 +95,10 @@ private tailrec fun readJson(files: List<File>, jsons: MutableMap<String, String
 }
 
 @Suppress("UNCHECKED_CAST")
-private tailrec fun parseJson(jsons: MutableMap<String, String>, map: MutableMap<String, List<ModelParameter>>) {
-    if (jsons.isNotEmpty()) {
-        val key = jsons.keys.first()
-        val entry = jsons.remove(key)
+private tailrec fun parseJson(jsonItems: MutableMap<String, String>, map: MutableMap<String, List<ModelParameter>>) {
+    if (jsonItems.isNotEmpty()) {
+        val key = jsonItems.keys.first()
+        val entry = jsonItems.remove(key)
         val json = JSONObject(entry)
 
         val params = mutableListOf<String>()
@@ -138,12 +137,12 @@ private tailrec fun parseJson(jsons: MutableMap<String, String>, map: MutableMap
 
         map[key] = modelProperties
 
-        parseJson(jsons, map)
+        parseJson(jsonItems, map)
     }
 }
 
 private fun getModelParams(paramNames: List<String>): List<ModelParameter> {
-    val alreadyDefined = MasterConfiguration.modelConfiguration.parameters
+    val alreadyDefined = ModelParamProvider().properties.flatMap { it.value }
 
     val rightParameters = mutableListOf<ModelParameter>()
     paramNames.forEach { param -> rightParameters.add(ModelParameter(alreadyDefined.first { it.parameter == param })) }

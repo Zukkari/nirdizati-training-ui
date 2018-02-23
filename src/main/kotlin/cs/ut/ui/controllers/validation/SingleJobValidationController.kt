@@ -7,7 +7,7 @@ import cs.ut.jobs.JobService
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.adapters.ComparisonAdapter
-import cs.ut.ui.adapters.JobValueAdataper
+import cs.ut.ui.adapters.JobValueAdapter
 import cs.ut.ui.adapters.ValidationViewAdapter
 import cs.ut.ui.controllers.Redirectable
 import cs.ut.util.CookieUtil
@@ -64,7 +64,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
 
-        job = Executions.getCurrent().getAttribute(JobValueAdataper.jobArg) as SimulationJob
+        job = Executions.getCurrent().getAttribute(JobValueAdapter.jobArg) as SimulationJob
         log.debug("Received job argument $job, initializing in read only mode")
         charts = ChartGenerator(job).getCharts().groupBy { it.javaClass.name }
 

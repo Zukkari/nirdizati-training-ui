@@ -1,11 +1,11 @@
 package cs.ut.jobs
 
-import cs.ut.config.MasterConfiguration
 import cs.ut.config.items.ModelParameter
-import cs.ut.config.nodes.Dir
-import cs.ut.config.nodes.UserPreferences
+import cs.ut.configuration.ConfigurationReader
+import cs.ut.providers.Dir
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.UserRightsJob.Companion.updateACL
+import cs.ut.providers.DirectoryConfiguration
 import cs.ut.util.FileWriter
 import cs.ut.util.LOG_FILE
 import cs.ut.util.NirdizatiUtil
@@ -29,7 +29,7 @@ class SimulationJob(
 ) : Job(id) {
 
     private var process: Process? = null
-    private val dirConfig = MasterConfiguration.dirConfig
+    private val configNode = ConfigurationReader.findNode("userPreferences")!!
 
     override fun preProcess() {
         log.debug("Generating training parameters for job $this")
@@ -64,20 +64,19 @@ class SimulationJob(
         val writer = FileWriter()
         val f = writer.writeJsonToDisk(
             json, id,
-            dirConfig.dirPath(Dir.TRAIN_DIR)
+            DirectoryConfiguration.dirPath(Dir.TRAIN_DIR)
         )
 
         updateACL(f)
     }
 
     override fun execute() {
-        val prefs: UserPreferences = MasterConfiguration.userPreferences
-        val python: String = dirConfig.dirPath(Dir.PYTHON)
+        val python: String = DirectoryConfiguration.dirPath(Dir.PYTHON)
         val parameters = mutableListOf<String>()
-        if (prefs.enabled) {
+        if (configNode.isEnabled()) {
             parameters.add("sudo")
             parameters.add("-u")
-            parameters.add(prefs.userName)
+            parameters.add(configNode.valueWithIdentifier("userName").value)
         }
 
         parameters.add(python)
@@ -88,11 +87,11 @@ class SimulationJob(
         try {
             val pb = ProcessBuilder(parameters)
 
-            pb.directory(dirConfig.dirByName(Dir.CORE_DIR))
+            pb.directory(File(DirectoryConfiguration.dirPath(Dir.CORE_DIR)))
             pb.inheritIO()
 
             val env = pb.environment()
-            env.put("PYTHONPATH", dirConfig.dirPath(Dir.SCRIPT_DIR))
+            env["PYTHONPATH"] = DirectoryConfiguration.dirPath(Dir.SCRIPT_DIR)
 
             log.debug("Script call: ${pb.command()}")
             process = pb.start()
@@ -101,7 +100,7 @@ class SimulationJob(
             process!!.waitFor()
             log.debug("Script finished running...")
 
-            val file = File(dirConfig.dirPath(Dir.PKL_DIR) + toString())
+            val file = File(DirectoryConfiguration.dirPath(Dir.PKL_DIR) + this.toString())
             log.debug(file)
 
             if (!file.exists()) {
@@ -123,7 +122,7 @@ class SimulationJob(
         process?.destroy()
         if (status != JobStatus.COMPLETED) {
             log.debug("Job is not complete -> deleting training file")
-            File(MasterConfiguration.dirConfig.dirPath(Dir.TRAIN_DIR) + "$id.json").delete()
+            File(DirectoryConfiguration.dirPath(Dir.TRAIN_DIR) + "$id.json").delete()
         }
     }
 

@@ -21,7 +21,7 @@ import org.zkoss.zul.impl.NumberInputElement
 
 class FieldComponent(val label: Component, val control: Component)
 
-class NirdizatiGrid<T>(private val provider: GridValueProvider<T, Row>) : Grid(), UIComponent {
+class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Grid(), UIComponent {
     private val log = NirdizatiLogger.getLogger(NirdizatiGrid::class.java, getSessionId())
     val fields = mutableListOf<FieldComponent>()
 

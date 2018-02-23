@@ -1,11 +1,11 @@
 package cs.ut.ui.controllers
 
 import com.lowagie.text.pdf.codec.Base64
-import cs.ut.config.MasterConfiguration
-import cs.ut.config.nodes.Dir
-import cs.ut.config.nodes.UserPreferences
+import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.NirdizatiThreadPool
 import cs.ut.logging.NirdizatiLogger
+import cs.ut.providers.Dir
+import cs.ut.providers.DirectoryConfiguration
 import cs.ut.ui.UIComponent
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -43,16 +43,16 @@ class AdminViewController : SelectorComposer<Component>(), UIComponent {
     @Wire
     private lateinit var logData: Textbox
 
-    private val config: UserPreferences = MasterConfiguration.userPreferences
+    private val configNode = ConfigurationReader.findNode("userPreferences/adminFunctionality")!!
 
-    private val logFile: File = MasterConfiguration.dirConfig.dirByName(Dir.LOG_FILE)
+    private val logFile: File = File(DirectoryConfiguration.dirPath(Dir.LOG_FILE))
 
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
 
         flushConfig.addEventListener(Events.ON_CLICK, { _ ->
             log.debug("Flushing master configuration")
-            MasterConfiguration.readConfig()
+            ConfigurationReader.reload()
             log.debug("Master configuration flushed")
         })
 
@@ -113,10 +113,10 @@ class AdminViewController : SelectorComposer<Component>(), UIComponent {
     }
 
     private fun isAuthorized(): Boolean {
-        return !config.requirePassword ||
+        return configNode.isEnabled() && (!configNode.valueWithIdentifier("isPasswordRequired").booleanValue() ||
                 Base64.encodeBytes(
                     (passwordField.value ?: "").toByteArray(Charset.forName("UTF-8"))
-                ) == config.authorized
+                ) == configNode.valueWithIdentifier("password").value)
     }
 
 }

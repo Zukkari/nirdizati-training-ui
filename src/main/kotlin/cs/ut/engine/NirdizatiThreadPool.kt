@@ -1,6 +1,7 @@
 package cs.ut.engine
 
-import cs.ut.config.MasterConfiguration
+import cs.ut.configuration.ConfigurationReader
+import cs.ut.logging.NirdizatiLogger
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.Future
 import java.util.concurrent.ThreadPoolExecutor
@@ -8,9 +9,14 @@ import java.util.concurrent.TimeUnit
 
 
 object NirdizatiThreadPool {
+    private val log = NirdizatiLogger.getLogger(NirdizatiLogger::class.java)
+
     private lateinit var threadPool: ThreadPoolExecutor
 
+    private val configNode = ConfigurationReader.findNode("threadPool")!!
+
     init {
+        log.debug("Initializing thread pool")
         initPool()
     }
 
@@ -24,13 +30,18 @@ object NirdizatiThreadPool {
     }
 
     private fun initPool() {
-        val config = MasterConfiguration.threadPoolConfiguration
         threadPool = ThreadPoolExecutor(
-            config.core,
-            config.max,
-            config.keepAlive.toLong(),
+            configNode.valueWithIdentifier("core").intValue(),
+            configNode.valueWithIdentifier("max").intValue(),
+            configNode.valueWithIdentifier("keepAlive").intValue().toLong(),
             TimeUnit.SECONDS,
-            ArrayBlockingQueue<Runnable>(config.capacity)
+            ArrayBlockingQueue<Runnable>(configNode.valueWithIdentifier("capacity").intValue())
         )
+
+        Runtime.getRuntime().addShutdownHook(Thread {
+            log.debug("Shutdown hook triggered, shutting down thread pool")
+            threadPool.shutdown()
+            log.debug("Thread pool successfully shut down")
+        })
     }
 }

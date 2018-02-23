@@ -1,6 +1,6 @@
 package cs.ut.ui.controllers
 
-import cs.ut.config.ClientInfo
+import cs.ut.engine.item.ClientInfo
 import cs.ut.jobs.Job
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.NirdizatiGrid
