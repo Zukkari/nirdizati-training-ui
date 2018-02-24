@@ -1,5 +1,6 @@
 package cs.ut.ui.adapters
 
+import cs.ut.configuration.Value
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.util.COMP_ID
@@ -8,7 +9,7 @@ import org.zkoss.zul.Combobox
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 
-data class ComboArgument(val caption: String, val values: List<Any>, val selected: String)
+data class ComboArgument(val caption: String, val values: List<Value>, val selected: String)
 
 class ComboProvider : GridValueProvider<ComboArgument, Row> {
     override lateinit var fields: MutableList<FieldComponent>
@@ -21,10 +22,10 @@ class ComboProvider : GridValueProvider<ComboArgument, Row> {
         val comboBox = Combobox()
         comboBox.sclass = "max-width max-height"
         data.values.forEach {
-            val item = comboBox.appendItem(NirdizatiUtil.localizeText("params." + it))
-            item.setValue(it)
+            val item = comboBox.appendItem(NirdizatiUtil.localizeText(it.value))
+            item.setValue(it.identifier)
 
-            if (it == data.selected) {
+            if (it.identifier == data.selected) {
                 comboBox.selectedItem = item
             }
         }
