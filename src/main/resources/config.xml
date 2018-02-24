@@ -126,6 +126,16 @@
                 <Value>empty</Value>
             </Node>
         </Node>
+        <Node Identifier="options">
+            <Node Identifier="itemList">
+                <Value Identifier="static_num_cols">params.static_num_cols</Value>
+                <Value Identifier="static_cat_cols">params.static_cat_cols</Value>
+                <Value Identifier="dynamic_num_cols">params.dynamic_num_cols</Value>
+                <Value Identifier="dynamic_cat_cols">params.dynamic_cat_cols</Value>
+                <Value Identifier="ignore">params.ignore</Value>
+                <Value Identifier="future_values">params.future_values</Value>
+            </Node>
+        </Node>
     </Node>
     <Node Identifier="fileUpload">
         <Node Identifier="extensions">

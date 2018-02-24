@@ -1,6 +1,7 @@
 package cs.ut.util
 
 import cs.ut.configuration.ConfigurationReader
+import cs.ut.configuration.Value
 import cs.ut.engine.item.Case
 import cs.ut.exceptions.NirdizatiRuntimeException
 import org.apache.log4j.Logger
@@ -269,8 +270,8 @@ class CsvReader(private val f: File) {
         return cases.firstOrNull { colName.toLowerCase() == it.id.toLowerCase() }
     }
 
-    fun getColumnList(): MutableList<String> =
-        mutableListOf(STATIC + NUM_COL, STATIC + CAT_COLS, DYNAMIC + NUM_COL, DYNAMIC + CAT_COLS)
+    fun getColumnList(): List<Value> =
+        ConfigurationReader.findNode("csv/options")!!.itemList()
 
     private fun readOneCase(): Case {
         val reader = BufferedReader(FileReader(f))

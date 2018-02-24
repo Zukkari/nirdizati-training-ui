@@ -2,6 +2,7 @@ package cs.ut.ui.controllers.modal
 
 import com.google.common.html.HtmlEscapers
 import cs.ut.configuration.ConfigurationReader
+import cs.ut.configuration.Value
 import cs.ut.engine.JobManager
 import cs.ut.jobs.DataSetGenerationJob
 import cs.ut.jobs.UserRightsJob
@@ -37,7 +38,7 @@ import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
 class ParameterModalController : GenericAutowireComposer<Component>(), Redirectable, UIComponent {
-    private val log= NirdizatiLogger.getLogger(ParameterModalController::class.java, getSessionId())
+    private val log = NirdizatiLogger.getLogger(ParameterModalController::class.java, getSessionId())
 
     @Wire
     private lateinit var modal: Window
@@ -184,12 +185,10 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
         val escaper = HtmlEscapers.htmlEscaper()
         var args = listOf<ComboArgument>()
-        val changeable: List<String> = csvReader.getColumnList().sortedBy { it.toLowerCase() }
+        val changeable: List<Value> = csvReader.getColumnList()
         changeable.forEach { key ->
-            val cols = params[key]!!
-
-            cols.forEach {
-                args += ComboArgument(escaper.escape(it), changeable + IGNORE_COL + FUTURE_DATA, key)
+            params[key.identifier]?.forEach {
+                args += ComboArgument(escaper.escape(it), changeable, key.identifier)
             }
         }
 
