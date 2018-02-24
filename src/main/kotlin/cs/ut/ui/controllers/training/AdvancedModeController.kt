@@ -1,7 +1,7 @@
 package cs.ut.ui.controllers.training
 
-import cs.ut.config.items.ModelParameter
-import cs.ut.config.items.Property
+import cs.ut.engine.item.ModelParameter
+import cs.ut.engine.item.Property
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.NirdizatiGrid

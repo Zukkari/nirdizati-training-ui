@@ -7,6 +7,12 @@ import org.apache.log4j.Logger
 import java.io.File
 import java.nio.charset.Charset
 
+/**
+ * Job that updates user rights for a given file to
+ * match user rights specified in the configuration
+ *
+ * @param f to update user rights for
+ */
 class UserRightsJob(private val f: File) : Job() {
     override fun execute() {
         log.debug("Starting ACL job for $id")
@@ -30,6 +36,11 @@ class UserRightsJob(private val f: File) : Job() {
 
         val log = Logger.getLogger(UserRightsJob::class.java)!!
 
+        /**
+         * Update user rights and ownership for file
+         *
+         * @param f to update rights for
+         */
         fun updateACL(f: File) {
             if (!configNode.isEnabled()) {
                 log.debug("ACL updating is disabled -> skipping")
@@ -40,6 +51,11 @@ class UserRightsJob(private val f: File) : Job() {
             updateRights(f)
         }
 
+        /**
+         * Update user rights for the file
+         *
+         * @param f to update user rights for
+         */
         private fun updateRights(f: File) {
             log.debug("Updating ACL -> $f")
             val pb = ProcessBuilder(
@@ -54,6 +70,11 @@ class UserRightsJob(private val f: File) : Job() {
             process.waitFor()
         }
 
+        /**
+         * Update ownership for the file
+         *
+         * @param f to update ownership for
+         */
         private fun updateOwnership(f: File) {
             val userName = configNode.valueWithIdentifier("userName").value
             val userGroup = configNode.valueWithIdentifier("userGroup").value

@@ -1,5 +1,12 @@
-package cs.ut.config.items
+package cs.ut.engine.item
 
+/**
+ * Class that represents model parameter that are used to train models
+ * @param id identifier of given model parameter
+ * @param parameter which value to use when passing parameter to the script
+ * @param type type of the parameter (e.g. encoding, bucketing, learner or predictiontype)
+ * @param properties hyper parameter properties for given model parameter
+ */
 open class ModelParameter(
     var id: String,
     var parameter: String,
@@ -18,6 +25,9 @@ open class ModelParameter(
 
     var translate = true
 
+    /**
+     * Get translation key for given parameter
+     */
     fun getTranslateName() = this.type + "." + this.id
 
     constructor() : this("", "", "", false, mutableListOf())
@@ -29,10 +39,6 @@ open class ModelParameter(
         props.forEach { copied.add(Property(it)) }
 
         properties = copied
-    }
-
-    fun getPropety(property: String): Property? {
-        return properties.firstOrNull { it.id == property }
     }
 
     override fun equals(other: Any?): Boolean {

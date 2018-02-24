@@ -18,6 +18,8 @@ object IdProvider {
 
     /**
      * Generate unique identifier for the job
+     *
+     * @return unique identifier
      */
     fun getNextId(): String {
         log.debug("New id requested -> generating id using ${digest.algorithm}")
@@ -40,6 +42,11 @@ object IdProvider {
 
     }
 
+    /**
+     * Generates hash that might be used as a key
+     *
+     * @return unique hash based on digest algorithm
+     */
     private fun getNextHash(): String {
         val time = Calendar.getInstance().time.toInstant().toString()
         return String(Hex.encodeHex(digest.digest(time.toByteArray(Charset.forName("UTF-8")))))

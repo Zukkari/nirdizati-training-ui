@@ -1,6 +1,6 @@
 package cs.ut.ui.adapters
 
-import cs.ut.config.items.ModelParameter
+import cs.ut.engine.item.ModelParameter
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.JobManager
 import cs.ut.jobs.Job

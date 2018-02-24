@@ -1,6 +1,6 @@
 package cs.ut.ui.adapters
 
-import cs.ut.config.items.ModelParameter
+import cs.ut.engine.item.ModelParameter
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.util.COMP_ID

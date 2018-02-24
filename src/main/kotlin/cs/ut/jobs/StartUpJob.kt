@@ -1,13 +1,16 @@
 package cs.ut.jobs
 
 import cs.ut.configuration.ConfigurationReader
-import cs.ut.providers.Dir
 import cs.ut.exceptions.NirdizatiRuntimeException
+import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
 import java.io.File
 
+/**
+ * Verifies that directories specified in configuration exist if not - creates them.
+ */
 class StartUpJob : Job() {
-    private val configNode = ConfigurationReader.findNode("userPreferences")!!
+    private val configNode = ConfigurationReader.findNode("userPreferences")
 
     override fun execute() {
         val start = System.currentTimeMillis()
@@ -20,6 +23,10 @@ class StartUpJob : Job() {
         log.debug("Finished directory preparation in ${end - start} ms")
     }
 
+    /**
+     * Check that directory exists and that is a directory not a file.
+     * If directory does not exist - create it.
+     */
     private fun File.prepareDirectory() {
         log.debug("Preparing ${this.absolutePath}")
         if (!this.exists()) {

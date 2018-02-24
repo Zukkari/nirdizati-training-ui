@@ -1,7 +1,7 @@
 package cs.ut.ui.controllers
 
 import com.google.common.html.HtmlEscapers
-import cs.ut.config.items.ModelParameter
+import cs.ut.engine.item.ModelParameter
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.JobManager
 import cs.ut.engine.LogManager

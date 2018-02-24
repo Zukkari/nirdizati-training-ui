@@ -1,6 +1,6 @@
 package cs.ut.ui.controllers.training
 
-import cs.ut.config.items.ModelParameter
+import cs.ut.engine.item.ModelParameter
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.ModelParamProvider
 import cs.ut.ui.UIComponent

@@ -1,7 +1,7 @@
 package cs.ut.ui
 
-import cs.ut.config.items.ModelParameter
-import cs.ut.config.items.Property
+import cs.ut.engine.item.ModelParameter
+import cs.ut.engine.item.Property
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.util.COMP_ID
 import cs.ut.util.NirdizatiUtil
@@ -18,9 +18,14 @@ import org.zkoss.zul.Row
 import org.zkoss.zul.Rows
 import org.zkoss.zul.impl.NumberInputElement
 
+/**
+ * Data class that stores grid components for easy data collection
+ */
+data class FieldComponent(val label: Component, val control: Component)
 
-class FieldComponent(val label: Component, val control: Component)
-
+/**
+ * Custom ZK grid implementation that allows to generate grid with custom row providers
+ */
 class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Grid(), UIComponent {
     private val log = NirdizatiLogger.getLogger(NirdizatiGrid::class.java, getSessionId())
     val fields = mutableListOf<FieldComponent>()
@@ -30,6 +35,12 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Gri
         appendChild(Rows())
     }
 
+    /**
+     * Generate grid rows using the data provided
+     *
+     * @param data to generate rows with
+     * @param clear whether or not existing data should be cleared before appending new data
+     */
     fun generate(data: List<T>, clear: Boolean = true) {
         log.debug("Row generation start with ${data.size} properties")
         val start = System.currentTimeMillis()
@@ -45,6 +56,10 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Gri
         log.debug("Row generation finished in ${end - start} ms")
     }
 
+    /**
+     * Set grid columns.
+     * @param properties where key is column name and value is column width
+     */
     fun setColumns(properties: Map<String, String>) {
         val cols = Columns()
         appendChild(cols)
@@ -66,6 +81,9 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Gri
         }
     }
 
+    /**
+     * Validate that data in the grid is correct according to component definitions
+     */
     fun validate(): Boolean {
         val invalid = mutableListOf<Component>()
         validateFields(fields, invalid)
@@ -126,6 +144,11 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Gri
 
     private fun <T> MutableList<T>.tail(): MutableList<T> = drop(1).toMutableList()
 
+    /**
+     * Gather values from the grid
+     *
+     * @return map with collected elements from the grid
+     */
     fun gatherValues(): MutableMap<String, Any> {
         val valueMap = mutableMapOf<String, Any>()
         gatherValueFromFields(valueMap, fields)
@@ -156,12 +179,14 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Gri
                     }
                 }
             }
-
             gatherValueFromFields(valueMap, fields.tail())
         }
     }
 }
 
+/**
+ * Whether given value is in specific range with default arguments
+ */
 fun isInRange(num: Number, min: Double = -1.0, max: Double = -1.0): Boolean {
     return if (min != -1.0 && max != -1.0) num.toDouble() in min..max
     else if (max != -1.0) num.toDouble() <= max

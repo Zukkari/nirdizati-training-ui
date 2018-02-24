@@ -1,15 +1,21 @@
 package cs.ut.providers
 
-import cs.ut.config.items.ModelParameter
-import cs.ut.config.items.Property
+import cs.ut.engine.item.ModelParameter
+import cs.ut.engine.item.Property
 import cs.ut.configuration.ConfigNode
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.util.PREDICTIONTYPE
 import cs.ut.util.readHyperParameterJson
 
+/**
+ * Parses model parameters from configuration
+ *
+ * @see ModelParameter
+ * @see ConfigurationReader
+ */
 class ModelParamProvider {
-    private val config = ConfigurationReader.findNode("models")!!
+    private val config = ConfigurationReader.findNode("models")
 
     var properties: Map<String, List<ModelParameter>> = mutableMapOf()
 
@@ -19,8 +25,11 @@ class ModelParamProvider {
         log.debug("Successfully parsed model parameters from configuration")
     }
 
+    /**
+     * Get basic parameters based on configuration definition
+     */
     fun getBasicParameters(): List<ModelParameter> {
-        val basicParameters = ConfigurationReader.findNode("models/basic")!!.itemListValues()
+        val basicParameters = ConfigurationReader.findNode("models/basic").itemListValues()
         return mutableListOf<ModelParameter>().apply {
             basicParameters.forEach { p ->
                 this.add(properties.flatMap { it.value }.first { it.id == p })
@@ -28,10 +37,27 @@ class ModelParamProvider {
         }
     }
 
+    /**
+     * Get all prediction types
+     *
+     * @return list of model parameters marked as 'predictiontype'
+     */
     fun getPredictionTypes() = properties[PREDICTIONTYPE]!!
 
+    /**
+     * Get all properties from all model parameters
+     *
+     * @return list of properties
+     * @see Property
+     */
     fun getAllProperties(): List<Property> = properties.flatMap { it.value.flatMap { it.properties } }
 
+    /**
+     * Parses config nodes into model parameters
+     *
+     * @see ConfigNode
+     * @see ModelParameter
+     */
     private fun parseParameters() {
         val params = mutableListOf<ModelParameter>()
         config.childNodes.first { it.identifier == PARAM_NODE }.childNodes.forEach {
@@ -50,6 +76,17 @@ class ModelParamProvider {
         properties = params.groupBy { it.type }
     }
 
+    /**
+     * Parses config nodes into properties
+     *
+     * @param modelParameter model parameter that is owner of the properties
+     * @param propNode node where to take properties from
+     *
+     * @return list of properties defined by the configuration
+     *
+     * @see Property
+     * @see ConfigNode
+     */
     private fun parseProperties(modelParameter: ModelParameter, propNode: ConfigNode?): MutableList<Property> {
         val properties = mutableListOf<Property>()
         log.debug("Parsing properties for $modelParameter")

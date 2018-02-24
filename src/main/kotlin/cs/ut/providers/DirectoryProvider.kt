@@ -2,10 +2,13 @@ package cs.ut.providers
 
 import cs.ut.configuration.ConfigurationReader
 
+/**
+ * Object that provides easy access to configured directories
+ */
 object DirectoryConfiguration {
 
     private const val NODE_NAME = "directories"
-    private val configNode = ConfigurationReader.findNode(NODE_NAME)!!
+    private val configNode = ConfigurationReader.findNode(NODE_NAME)
 
     private val dirs: Map<String, String>
 
@@ -17,6 +20,11 @@ object DirectoryConfiguration {
         }
     }
 
+    /**
+     * Get directory path
+     *
+     * @param dir to get path for
+     */
     fun dirPath(dir: Dir): String = dirs[dir.value()]!!
 }
 

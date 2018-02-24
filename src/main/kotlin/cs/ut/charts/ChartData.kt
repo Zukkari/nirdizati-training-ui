@@ -7,6 +7,10 @@ import cs.ut.engine.LogManager
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
 
+/**
+ * Class that acts as a service layer between controllers and filesystem data representation.
+ * This is used to provide structured data to controllers based on job.
+ */
 class ChartGenerator(val job: SimulationJob) {
     val log = NirdizatiLogger.getLogger(ChartGenerator::class.java)
 
@@ -18,6 +22,11 @@ class ChartGenerator(val job: SimulationJob) {
 
     private val gson = Gson()
 
+    /**
+     * Get all available charts a job given in constructor
+     *
+     * @return all available charts for given log
+     */
     fun getCharts(): List<Chart> {
         log.debug("Fetching charts for job with id ${job.id} for client ${job.owner}")
         val cached = chartCache
@@ -37,6 +46,13 @@ class ChartGenerator(val job: SimulationJob) {
         }
     }
 
+    /**
+     * Retrieves logs from cache instead of fetching them from the filesystem or if charts are not found,
+     * fetches them from filesystem.
+     *
+     * @param cached cache holder where to extract charts from
+     * @return list of all available charts for current job
+     */
     private fun getFromCache(cached: CacheHolder<Chart>): List<Chart> {
         log.debug("Fetching data for client exists")
         val charts = cached.retrieveFromCache(job.id)
@@ -55,6 +71,11 @@ class ChartGenerator(val job: SimulationJob) {
         }
     }
 
+    /**
+     * Collects all the charts into single list based on job type (classification vs regression)
+     *
+     * @return mutable list of charts
+     */
     private fun fetchCharts(): MutableList<Chart> {
         val charts = mutableListOf<Chart>()
 
@@ -71,11 +92,24 @@ class ChartGenerator(val job: SimulationJob) {
         return charts
     }
 
+    /**
+     * Generates scatter plot with a given name
+     *
+     * @param name of the chart
+     * @see ScatterPlot
+     * @return scatter plot entity filled with data for current job
+     */
     private fun generateScatterPlot(name: String): ScatterPlot {
         val payload = getLinearPayload(LogManager.getDetailedFile(job), Mode.SCATTER)
         return ScatterPlot(name, gson.toJson(payload))
     }
 
+    /**
+     * Generates line charts for current job
+     *
+     * @see LineChart
+     * @return list of line charts for current job filled with data for current job
+     */
     private fun generateLineCharts(): List<LineChart> {
         val payload = getLinearPayload(LogManager.getValidationFile(job), Mode.LINE).groupBy { it.dataType }
         var charts = listOf<LineChart>()
@@ -83,6 +117,12 @@ class ChartGenerator(val job: SimulationJob) {
         return charts
     }
 
+    /**
+     * Generates bar charts for current job
+     *
+     * @see BarChart
+     * @return list of bar charts for current job filled with data for current job
+     */
     private fun generateBarCharts(): List<BarChart> {
         val files = LogManager.getFeatureImportanceFiles(job)
         val charts = mutableListOf<BarChart>()
@@ -101,6 +141,12 @@ class ChartGenerator(val job: SimulationJob) {
         return charts.toList()
     }
 
+    /**
+     * Generates heat map for given job
+     *
+     * @see HeatMap
+     * @return HeatMap entity filled with data for current job
+     */
     private fun generateHeatMap(): HeatMap {
         val file = LogManager.getDetailedFile(job)
         val heatMap = getHeatMapPayload(file)

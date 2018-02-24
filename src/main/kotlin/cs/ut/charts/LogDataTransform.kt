@@ -12,13 +12,31 @@ const val delim = ","
 const val METRIC = "metric"
 const val MAE = "mae"
 
-class LinearData(val x: Float, val y: Float, val dataType: String)
+/**
+ * Class used to represent data model for linear chart
+ *
+ * @param x horizontal position on the line chart
+ * @param y vertical position on the line chart
+ * @param dataType what data does this represent (e.g. MAE, RMSE etc)
+ */
+data class LinearData(val x: Float, val y: Float, val dataType: String)
 
+/**
+ * Enum that is used to distinguish which parsing mode to use for given file
+ */
 enum class Mode {
     SCATTER,
     LINE
 }
 
+/**
+ * Generate linear data payload based on given file and mode
+ *
+ * @param file where to extract the data from
+ * @param mode what mode to use when parsing the file
+ *
+ * @return list of linear data representations
+ */
 fun getLinearPayload(file: File, mode: Mode): List<LinearData> {
     val dataSet = mutableListOf<LinearData>()
 
@@ -50,8 +68,20 @@ fun getLinearPayload(file: File, mode: Mode): List<LinearData> {
 const val LABEL_INDEX = 0
 const val VALUE_INDEX = 1
 
+/**
+ * Class that represents the data for bar charts
+ *
+ * @param label name of the parameter in the data set
+ * @param value numeric value for given representation
+ */
 class BarChartData(val label: String, val value: Float)
 
+/**
+ * Generate bar chart payload based on given file
+ *
+ * @param file where to extract the data from
+ * @return bar chart data set representation
+ */
 fun getBarChartPayload(file: File): List<BarChartData> {
     val dataSet = mutableListOf<BarChartData>()
 
@@ -60,20 +90,41 @@ fun getBarChartPayload(file: File): List<BarChartData> {
 
     rows.forEach {
         val items = it.split(delim)
-        dataSet.add(BarChartData(items.get(LABEL_INDEX), items.get(VALUE_INDEX).toFloat()))
+        dataSet.add(BarChartData(items[LABEL_INDEX], items[VALUE_INDEX].toFloat()))
     }
 
     return dataSet
 }
 
-data class HeatMapDataset(val x: Int, val y: Int, val value: Int)
+/**
+ * Class that represents heat map data set
+ *
+ * @param x horizontal in the heat map
+ * @param y vertical position in the heat map
+ * @param value that is held in given slot
+ */
+data class HeatMapDataSet(val x: Int, val y: Int, val value: Int)
 
+/**
+ * Wrapper for heat map data which contains heat map data set data and labels
+ * @param xLabels labels for horizontal axis of the chart
+ * @param yLabels labels for vertical axis of the chart
+ * @param data heat map data set
+ */
 data class HeatMapData(
     val xLabels: List<String>,
     val yLabels: List<String>,
-    val data: List<HeatMapDataset>
+    val data: List<HeatMapDataSet>
 )
 
+/**
+ * Heat map payload based on given file
+ *
+ * @param file file where to extract the data from
+ * @return HeatMapData entitity filled with data based on given file
+ *
+ * @see HeatMapData
+ */
 fun getHeatMapPayload(file: File): HeatMapData {
     var rows: List<String> = BufferedReader(FileReader(file)).lineSequence().toList()
     var xLabels = rows[0].split(delim)
@@ -81,7 +132,7 @@ fun getHeatMapPayload(file: File): HeatMapData {
     rows -= rows[0]
 
     var yLabels: List<String> = listOf()
-    var data: List<HeatMapDataset> = listOf()
+    var data: List<HeatMapDataSet> = listOf()
 
     for ((y, row) in rows.asReversed().withIndex()) {
         var tokens: List<String> = row.split(delim)
@@ -89,7 +140,7 @@ fun getHeatMapPayload(file: File): HeatMapData {
         tokens -= tokens[0]
 
         for ((x, token) in tokens.withIndex()) {
-            data += HeatMapDataset(x, y, token.toInt())
+            data += HeatMapDataSet(x, y, token.toInt())
         }
     }
     return HeatMapData(xLabels, yLabels, data)

@@ -1,6 +1,6 @@
 package cs.ut.ui.adapters
 
-import cs.ut.config.items.Property
+import cs.ut.engine.item.Property
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider

@@ -1,6 +1,6 @@
 package cs.ut.jobs
 
-import cs.ut.config.items.ModelParameter
+import cs.ut.engine.item.ModelParameter
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.providers.Dir
 import cs.ut.exceptions.NirdizatiRuntimeException

@@ -10,7 +10,6 @@ import cs.ut.ui.adapters.ComparisonAdapter
 import cs.ut.ui.adapters.JobValueAdapter
 import cs.ut.ui.adapters.ValidationViewAdapter
 import cs.ut.ui.controllers.Redirectable
-import cs.ut.util.CookieUtil
 import cs.ut.util.NirdizatiUtil
 import cs.ut.util.PAGE_MODELS_OVERVIEW
 import cs.ut.util.PAGE_TRAINING
@@ -70,7 +69,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
 
         val provider = ComparisonAdapter(mainContainer, this)
         (listOf(job) +
-                JobService.findSimilarJobs(CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest), job))
+                JobService.findSimilarJobs(job))
             .map { provider.provide(it) }.forEach { compRows.appendChild(it) }
 
         generateReadOnlyMode()

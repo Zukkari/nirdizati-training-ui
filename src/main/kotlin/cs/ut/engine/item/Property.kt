@@ -1,5 +1,10 @@
-package cs.ut.config.items
+package cs.ut.engine.item
 
+/**
+ * Class that represent hyper parameter properties for model parameter
+ *
+ * @see ModelParameter
+ */
 open class Property(
     var id: String,
 
@@ -43,4 +48,3 @@ open class Property(
     }
 }
 
-object EmptyProperty : Property("N/A", "N/A", "N/A", 0.0, 0.0)

@@ -1,6 +1,6 @@
 package cs.ut.ui.controllers.training
 
-import cs.ut.config.items.ModelParameter
+import cs.ut.engine.item.ModelParameter
 
 interface ModeController {
     fun isValid(): Boolean
