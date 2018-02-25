@@ -91,19 +91,14 @@ class ModelParamProvider {
         val properties = mutableListOf<Property>()
         log.debug("Parsing properties for $modelParameter")
 
-        if (propNode != null) {
-            propNode.childNodes.forEach {
-                properties.add(Property().apply {
-                    this.id = it.identifier
-                    this.type = it.values.firstOrNull { it.identifier == CONTROL }?.value ?: ""
-                    this.maxValue = it.values.firstOrNull { it.identifier == MAX }?.doubleValue() ?: -1.0
-                    this.minValue = it.values.firstOrNull { it.identifier == MIN }?.doubleValue() ?: -1.0
-                    this.property = it.values.firstOrNull { it.identifier == DEFAULT }?.value ?: ""
-                })
-                log.debug("Parsed property $this from $it")
-            }
-        } else {
-            log.debug("No properties found for $modelParameter -> skipping")
+        propNode?.childNodes?.forEach {
+            properties.add(Property().apply {
+                this.id = it.identifier
+                this.type = it.values.firstOrNull { it.identifier == CONTROL }?.value ?: ""
+                this.maxValue = it.values.firstOrNull { it.identifier == MAX }?.doubleValue() ?: -1.0
+                this.minValue = it.values.firstOrNull { it.identifier == MIN }?.doubleValue() ?: -1.0
+                this.property = it.values.firstOrNull { it.identifier == DEFAULT }?.value ?: ""
+            })
         }
 
         return properties

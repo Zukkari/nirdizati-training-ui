@@ -40,6 +40,7 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
     fun provide(data: Job, addRedirectListener: Boolean = true): Row {
         data as SimulationJob
         return Row().also {
+            it.sclass = if (addRedirectListener) "pointer" else "no-hover-effect"
             it.align = "center"
             it.appendChild(Label(data.logFile.nameWithoutExtension))
             it.appendChild(getLabel(data.outcome.toString()))

@@ -29,14 +29,14 @@
             <include id="canvas" src="/views/graphs/graph_canvas.html" hflex="1" vflex="1"/>
         </vbox>
         <vbox id="infoContainer" align="start" hflex="2" vflex="1" sclass="info-container">
-            <panel title="${labels.validation.select_version}" collapsible="true" open="false" hflex="1">
-                <panelchildren>
+            <panel title="${labels.validation.select_version}" collapsible="true" open="false" hflex="1" sclass="validation-panel">
+                <panelchildren sclass="validation-panel-child">
                     <vbox pack="center" align="center" hflex="min" vflex="1" id="comboLayout"/>
                 </panelchildren>
             </panel>
             <panel title="${labels.validation.compare}" collapsible="true" open="false" hflex="1"
                    sclass="validation-panel">
-                <panelchildren>
+                <panelchildren sclass="validation-panel-child">
                     <vbox id="comparisonContainer" hflex="max" vflex="max" align="center" pack="center">
                         <grid sclass="comp-grid" hflex="1" height="340px">
                             <columns hflex="1">
