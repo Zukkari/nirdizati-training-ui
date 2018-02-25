@@ -70,7 +70,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
 
-        cols = ConfigurationReader.findNode("csv/userCols")!!.itemListValues()
+        cols = ConfigurationReader.findNode("csv/userCols").itemListValues()
         log.debug("Read columns from master config: $cols")
 
         this.file = arg[FILE] as File

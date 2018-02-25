@@ -67,6 +67,6 @@ interface Redirectable {
     }
 
     companion object {
-        private val pages: List<Value> = ConfigurationReader.findNode("pages")!!.itemList()
+        private val pages: List<Value> = ConfigurationReader.findNode("pages").itemList()
     }
 }

@@ -15,7 +15,7 @@ import org.zkoss.zkmax.zul.Navitem
 
 class HeaderController : SelectorComposer<Component>(), Redirectable {
 
-    private val configNode = ConfigurationReader.findNode("header")!!
+    private val configNode = ConfigurationReader.findNode("header")
 
     @Wire
     private lateinit var navbar: Navbar

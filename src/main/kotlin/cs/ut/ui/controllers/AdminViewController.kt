@@ -43,7 +43,7 @@ class AdminViewController : SelectorComposer<Component>(), UIComponent {
     @Wire
     private lateinit var logData: Textbox
 
-    private val configNode = ConfigurationReader.findNode("userPreferences/adminFunctionality")!!
+    private val configNode = ConfigurationReader.findNode("userPreferences/adminFunctionality")
 
     private val logFile: File = File(DirectoryConfiguration.dirPath(Dir.LOG_FILE))
 

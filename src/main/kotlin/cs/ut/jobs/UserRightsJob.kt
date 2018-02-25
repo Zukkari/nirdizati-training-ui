@@ -32,7 +32,7 @@ class UserRightsJob(private val f: File) : Job() {
 
 
     companion object {
-        private val configNode = ConfigurationReader.findNode("userPreferences")!!
+        private val configNode = ConfigurationReader.findNode("userPreferences")
 
         val log = Logger.getLogger(UserRightsJob::class.java)!!
 

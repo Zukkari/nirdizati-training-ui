@@ -37,7 +37,7 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
 
     private lateinit var media: Media
 
-    private val allowedExtensions = ConfigurationReader.findNode("fileUpload/extensions")!!.itemListValues()
+    private val allowedExtensions = ConfigurationReader.findNode("fileUpload/extensions").itemListValues()
 
     /**
      * Method that analyzes uploaded file. Checks that the file has required extension.

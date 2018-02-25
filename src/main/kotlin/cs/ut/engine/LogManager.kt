@@ -52,7 +52,7 @@ object LogManager {
         detailedDir = DirectoryConfiguration.dirPath(Dir.DETAIL_DIR)
         log.debug("Detailed log directory -> $detailedDir")
 
-        allowedExtensions = ConfigurationReader.findNode("fileUpload/extensions")!!.itemListValues()
+        allowedExtensions = ConfigurationReader.findNode("fileUpload/extensions").itemListValues()
     }
 
     /**
