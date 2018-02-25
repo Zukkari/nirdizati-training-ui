@@ -25,6 +25,9 @@ class HeaderController : SelectorComposer<Component>(), Redirectable {
         composeHeader()
     }
 
+    /**
+     * Compose header based on configuration node
+     */
     private fun composeHeader() {
         val items: List<ConfigNode> = configNode.childNodes
 
@@ -44,6 +47,9 @@ class HeaderController : SelectorComposer<Component>(), Redirectable {
         }
     }
 
+    /**
+     * Listener - update selected item in navigation bar when clicked
+     */
     @Listen("onClick = #headerLogo")
     fun handleClick() {
         setContent(PAGE_LANDING, page)

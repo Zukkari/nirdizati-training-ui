@@ -17,6 +17,9 @@ import org.zkoss.zul.Hlayout
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 
+/**
+ * Adapter which is used when generating comparison grid in validation view
+ */
 class ComparisonAdapter(container: Component, private val controller: SingleJobValidationController) :
     GridValueProvider<SimulationJob, Row> {
     override var fields: MutableList<FieldComponent> = mutableListOf()
@@ -40,7 +43,7 @@ class ComparisonAdapter(container: Component, private val controller: SingleJobV
                         this.addEventListener(Events.ON_CHECK, { e ->
                             e as CheckEvent
                             if (e.isChecked) {
-                                addDataSet(data.id, getPayload(data, controller))
+                                addDataSet(data.id, getPayload(data, controller.accuracyMode))
                             } else {
                                 removeDataSet(data.id)
                             }
@@ -62,16 +65,32 @@ class ComparisonAdapter(container: Component, private val controller: SingleJobV
     }
 
     companion object {
-        fun getPayload(job: SimulationJob, controller: SingleJobValidationController): String {
+        /**
+         * Get chart payload for a given job
+         * @param job to get payload for
+         * @param accuracyMode that is used in current controller
+         *
+         * @return payload for a chart
+         */
+        fun getPayload(job: SimulationJob, accuracyMode: String): String {
             return ChartGenerator(job).getCharts()
-                .first { it::class.java == LineChart::class.java && it.name == controller.accuracyMode }
+                .first { it::class.java == LineChart::class.java && it.name == accuracyMode }
                 .payload
         }
 
+        /**
+         * Add data set on client side
+         * @param label data set to add
+         * @param payload data set payload which will be added
+         */
         fun addDataSet(label: String, payload: String) {
             Clients.evalJavaScript("addDataSet('$label', '$payload')")
         }
 
+        /**
+         * Remove data set on client side
+         * @param label data set to remove
+         */
         fun removeDataSet(label: String) {
             Clients.evalJavaScript("removeDataSet('$label')")
         }

@@ -41,7 +41,7 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Gri
      * @param data to generate rows with
      * @param clear whether or not existing data should be cleared before appending new data
      */
-    fun generate(data: List<T>, clear: Boolean = true) {
+    fun generate(data: Collection<T>, clear: Boolean = true) {
         log.debug("Row generation start with ${data.size} properties")
         val start = System.currentTimeMillis()
 

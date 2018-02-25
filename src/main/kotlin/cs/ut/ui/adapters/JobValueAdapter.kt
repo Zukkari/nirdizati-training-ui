@@ -26,11 +26,13 @@ import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import org.zkoss.zul.Vlayout
 
-
+/**
+ * Adapter for job tracker grid
+ */
 class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
     companion object {
         const val jobArg = "JOB"
-        val AVERAGE = ConfigurationReader.findNode("defaultValues")!!.valueWithIdentifier("average").value
+        val AVERAGE = ConfigurationReader.findNode("defaultValues").valueWithIdentifier("average").value
     }
 
     override var fields: MutableList<FieldComponent> = mutableListOf()
@@ -51,12 +53,20 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
         return row
     }
 
+    /**
+     * Create identifier label for a job
+     */
     private fun Job.identifierLabel(): Label {
         val label = Label(this.id)
         label.sclass = "extra-small"
         return label
     }
 
+    /**
+     * Create result label for a job
+     *
+     * @return hlayout component with labels
+     */
     private fun ModelParameter.generateResultLabel(): Hlayout {
         val hlayout = Hlayout()
 
@@ -70,6 +80,13 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
         return hlayout
     }
 
+    /**
+     * Create layout that contains job metadata
+     *
+     * @param job to use as datasource
+     *
+     * @return vlayout component with data
+     */
     private fun Row.formJobLabel(job: Job): Vlayout {
         job as SimulationJob
 
@@ -91,7 +108,7 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
                 else outcome.parameter) + "\n"
         else ""
 
-        val bottom: Label = learner.formHyperparamRow()
+        val bottom: Label = learner.formHyperParamRow()
         bottom.value = outcomeText + bottom.value
 
         val fileLayout = job.generateFileInfo()
@@ -127,6 +144,10 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
         return vlayout
     }
 
+    /**
+     * Create layout that hold job status
+     * @param label to put inside the layout
+     */
     private fun SimulationJob.generateStatus(label: Label): Hlayout {
         val labelStatusContainer = Hlayout()
         val labelContainer = Hlayout()
@@ -146,6 +167,11 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
         return labelStatusContainer
     }
 
+    /**
+     * Create layout with the file name
+     *
+     * @return hlayout with file name label
+     */
     private fun SimulationJob.generateFileInfo(): Hlayout {
         val fileLabel = Label(NirdizatiUtil.localizeText("attribute.log_file"))
         fileLabel.sclass = "param-label"
@@ -158,6 +184,13 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
         return fileLayout
     }
 
+    /**
+     * Create job removal button
+     *
+     * @param row that will be removed when button is clicked
+     *
+     * @return button that will detach the row on click
+     */
     @Suppress("UNCHECKED_CAST")
     private fun SimulationJob.generateRemoveBtn(row: Row): Button {
         val btn = Button("x")
@@ -185,8 +218,13 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
         return btn
     }
 
+    /**
+     * Create visualization button that will redirect user to job visualization page
+     *
+     * @return button component
+     */
     private fun SimulationJob.getVisualizeBtn(): Button {
-        val visualize = Button(NirdizatiUtil.localizeText("job_tracker.visiualize"))
+        val visualize = Button(NirdizatiUtil.localizeText("job_tracker.visualize"))
         visualize.sclass = "n-btn"
         visualize.hflex = "1"
         visualize.isDisabled = !(JobStatus.COMPLETED == this.status || JobStatus.FINISHING == this.status)
@@ -209,7 +247,12 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
         return deploy
     }
 
-    private fun ModelParameter.formHyperparamRow(): Label {
+    /**
+     * Create row based on hyper parameters
+     *
+     * @return label that contains job hyper parameter information
+     */
+    private fun ModelParameter.formHyperParamRow(): Label {
         var label = ""
         val iterator = this.properties.iterator()
 

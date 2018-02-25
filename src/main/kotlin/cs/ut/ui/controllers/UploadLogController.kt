@@ -68,6 +68,9 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
         }
     }
 
+    /**
+     * Listener - user log has been accepted and now we need to generate data set parameters for it
+     */
     @Listen("onClick = #upload")
     fun processLog() {
         val runnable = Runnable {

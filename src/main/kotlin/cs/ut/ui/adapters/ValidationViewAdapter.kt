@@ -18,6 +18,9 @@ import org.zkoss.zul.Label
 import org.zkoss.zul.Popup
 import org.zkoss.zul.Row
 
+/**
+ * Used to generate metadata info about the job in validation views
+ */
 class ValidationViewAdapter(private val parentController: ValidationController?, private val container: Component?) :
     GridValueProvider<Job, Row> {
     override var fields: MutableList<FieldComponent> = mutableListOf()
@@ -27,6 +30,13 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
         return provide(data, true)
     }
 
+    /**
+     * Overloaded method that says whether redirection listener should be added to given row
+     * @param data to generate row from
+     * @param addRedirectListener should redirect listener be added
+     *
+     * @return row with generated data
+     */
     fun provide(data: Job, addRedirectListener: Boolean = true): Row {
         data as SimulationJob
         return Row().also {
@@ -47,6 +57,12 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
         }
     }
 
+    /**
+     * Load tooltip for given job and attach to given element
+     *
+     * @param a to attach to
+     * @param data to generate tooltip from
+     */
     fun loadTooltip(a: A, data: SimulationJob) {
         a.iconSclass = "z-icon-question-circle"
         a.sclass = "validation-btn"
@@ -64,6 +80,9 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
         })
     }
 
+    /**
+     * Create tooltip that contains info about hyper parameters for the job
+     */
     private fun SimulationJob.formTooltip(): String {
         val parameters = mutableListOf<Property>().also {
             it.addAll(this.encoding.properties)
@@ -76,6 +95,12 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
             transform = { "<b>" + NirdizatiUtil.localizeText("property.${it.id}") + "</b>: ${it.property}" })
     }
 
+    /**
+     * Helper to create label with content
+     * @param str to be localized and appended to label
+     *
+     * @return label with localized text
+     */
     private fun getLabel(str: String) = Label(NirdizatiUtil.localizeText(str))
 
     companion object {

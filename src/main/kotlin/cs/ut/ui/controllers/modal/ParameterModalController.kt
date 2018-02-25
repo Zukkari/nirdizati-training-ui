@@ -63,8 +63,6 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
     private var isRecreation: Boolean = false
 
     companion object {
-        const val IGNORE_COL = "ignore"
-        const val FUTURE_DATA = "future_values"
         const val FILE = "file"
         const val IS_RECREATION = "isRecreation"
     }
@@ -123,6 +121,9 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         log.debug("Log parsing successful, showing modal")
     }
 
+    /**
+     * Enable generate data set parameters button when window is closed
+     */
     private fun enableGenerateButton() {
         Executions.getCurrent().desktop.components.firstOrNull { it.id == GENERATE_DATASET }?.let {
             it as A
@@ -130,6 +131,11 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         }
     }
 
+    /**
+     * Update window content based on new data
+     *
+     * @param params to generate content from
+     */
     @Suppress("UNCHECKED_CAST")
     private fun updateContent(params: MutableMap<String, MutableList<String>>) {
         okBtn.isDisabled = false
@@ -195,6 +201,9 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         grid.generate(args)
     }
 
+    /**
+     * Prepare grid for generation, set columns, css class and flex
+     */
     private fun prepareGrid(): NirdizatiGrid<ComboArgument> {
         val grid = NirdizatiGrid(ComboProvider())
         gridSlot.getChildren<Component>().clear()
@@ -211,6 +220,13 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
     }
 
 
+    /**
+     * Make sure data is present in the log, if not show notification to the user
+     *
+     * @param header where to validate data
+     *
+     * @return whether data is present or not
+     */
     private fun validateDataPresent(header: List<String>): Boolean {
         if (header.isEmpty()) {
             NirdizatiUtil.showNotificationAsync(

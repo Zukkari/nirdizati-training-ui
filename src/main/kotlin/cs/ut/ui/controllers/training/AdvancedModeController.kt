@@ -43,6 +43,9 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
         log.debug("Finished grid initialization")
     }
 
+    /**
+     * Create listener when to show hyper parameter grid when checkbox is checked
+     */
     private fun FieldComponent.generateListener() {
         control as Checkbox
         val parameter = control.getValue<ModelParameter>()
@@ -63,11 +66,17 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
         })
     }
 
+    /**
+     * Generate all hyper parameter grids
+     */
     private fun generateGrids() {
         hyperParamsContainer.getChildren<Component>().clear()
         hyperParameters.entries.forEach { it.generateGrid() }
     }
 
+    /**
+     * Generate a single grid based on given entry
+     */
     private fun Map.Entry<ModelParameter, List<Property>>.generateGrid() {
         if (value.size < 2) return
 
@@ -88,6 +97,11 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
         hyperParamsContainer.appendChild(propGrid)
     }
 
+    /**
+     * Handle check of other property that is not a learner
+     *
+     * @param e check event to handle
+     */
     private fun ModelParameter.handleOther(e: CheckEvent) {
         hyperParameters.values.forEach {
             if (e.isChecked) {
@@ -98,6 +112,11 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
         }
     }
 
+    /**
+     * Handle check of a leaner (generate the grid)
+     *
+     * @param e check event to handle
+     */
     private fun ModelParameter.handleLearner(e: CheckEvent) {
         if (e.isChecked) {
             hyperParameters[this]?.addAll(this.properties)
@@ -106,6 +125,11 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
         }
     }
 
+    /**
+     * Is given grid valid
+     *
+     * @return is all the data correct in the grid
+     */
     override fun isValid(): Boolean {
         var isValid = grid.validate()
 
@@ -116,6 +140,11 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
         return isValid
     }
 
+    /**
+     * Gather values from this controller
+     *
+     * @return map of collected values
+     */
     @Suppress("UNCHECKED_CAST")
     override fun gatherValues(): Map<String, List<ModelParameter>> {
         val gathered = grid.gatherValues()

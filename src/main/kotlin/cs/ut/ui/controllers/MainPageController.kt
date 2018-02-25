@@ -58,6 +58,11 @@ class MainPageController : SelectorComposer<Component>(), Redirectable, UICompon
         handleCookie()
     }
 
+    /**
+     * Remove text from header if screen size is too small
+     *
+     * @param collapse should header be collapsed
+     */
     private fun updateHeader(collapse: Boolean = false) {
         Executions.getCurrent().desktop.components.firstOrNull { it.id == NAVBAR }?.let {
             it as Navbar

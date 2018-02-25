@@ -75,21 +75,33 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         generateReadOnlyMode()
     }
 
+    /**
+     * Listener - Set content to training mode when clicked
+     */
     @Listen("onClick=#backToTraining")
     fun backToTraining() {
         setContent(PAGE_TRAINING, page)
     }
 
+    /**
+     * Listener - Set content to validation view when clicked
+     */
     @Listen("onClick=#backToValidation")
     fun backToValidation() {
         setContent(PAGE_MODELS_OVERVIEW, page)
     }
 
+    /**
+     * Generate read only mode for this view
+     */
     private fun generateReadOnlyMode() {
         propertyRows.appendChild(ValidationViewAdapter(null, mainContainer).provide(job, false))
         generateChartOptions()
     }
 
+    /**
+     * Generate menu to select charts
+     */
     private fun generateChartOptions() {
         val row = Row()
         row.align = "center"
@@ -98,6 +110,9 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         Events.postEvent("onClick", row.getChildren<Component>().first { it.id == ACCURACY_COMPARISON }, null)
     }
 
+    /**
+     * Generate cell for each chart
+     */
     private fun Row.generateCell(entry: Map.Entry<String, List<Chart>>) {
         val cell = Cell()
         val label = Label(NirdizatiUtil.localizeText(entry.key))
@@ -120,6 +135,9 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         this.appendChild(cell)
     }
 
+    /**
+     * Generate listener for a single chart
+     */
     private fun Chart.generateListenerForOne(): SerializableEventListener<Event> {
         return SerializableEventListener { _ ->
             removeChildren()
@@ -129,6 +147,9 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         }
     }
 
+    /**
+     * Set visibility of collapsible panels
+     */
     private fun setVisibility() {
         comparisonContainer.parent.parent.isVisible = currentlySelected == ACCURACY_COMPARISON
         if (currentlySelected == ACCURACY_COMPARISON) {
@@ -136,17 +157,26 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         }
     }
 
+    /**
+     * Add data sets to the client view
+     */
     private fun addDataSets() {
         checkBoxes.filter { it.isChecked && (it.getValue() as? SimulationJob)?.id != job.id }.forEach {
             val value = it.getValue<SimulationJob>() as SimulationJob
-            ComparisonAdapter.addDataSet(value.id, ComparisonAdapter.getPayload(value, this))
+            ComparisonAdapter.addDataSet(value.id, ComparisonAdapter.getPayload(value, accuracyMode))
         }
     }
 
+    /**
+     * Remove children from combo layout
+     */
     private fun removeChildren() {
         comboLayout.getChildren<Component>().clear()
     }
 
+    /**
+     * Create listener to handle many charts (such as prefix length based bucketing)
+     */
     private fun List<Chart>.generateListenerForMany(): SerializableEventListener<Event> {
         return SerializableEventListener { _ ->
             removeChildren()

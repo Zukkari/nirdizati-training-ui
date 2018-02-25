@@ -14,7 +14,7 @@ class BasicModeController(gridContainer: Vlayout, private val logName: String) :
 
     init {
         log.debug("Initializing basic mode controller")
-        gridContrainer.getChildren<Component>().clear()
+        this.gridContainer.getChildren<Component>().clear()
     }
 
     override fun isValid(): Boolean = true

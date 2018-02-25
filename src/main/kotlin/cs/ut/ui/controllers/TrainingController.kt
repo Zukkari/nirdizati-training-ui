@@ -1,10 +1,10 @@
 package cs.ut.ui.controllers
 
 import com.google.common.html.HtmlEscapers
-import cs.ut.engine.item.ModelParameter
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.JobManager
 import cs.ut.engine.LogManager
+import cs.ut.engine.item.ModelParameter
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
@@ -50,7 +50,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
         const val PREDICTION = "predictiontype"
 
 
-        private val configNode = ConfigurationReader.findNode("defaultValues")!!
+        private val configNode = ConfigurationReader.findNode("defaultValues")
         val DEFAULT = configNode.values.first { it.identifier == "minimum" }.doubleValue()
         val AVERAGE = configNode.values.first { it.identifier == "average" }.value
 
@@ -97,8 +97,18 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
         }
     }
 
+    /**
+     * Get log file name from combo box
+     *
+     * @return log file name from the client log combo
+     */
     private fun getLogFileName(): String = (clientLogs.selectedItem.getValue() as File).nameWithoutExtension
 
+    /**
+     * Init predictions combo box
+     *
+     * @return whether initialization was successful
+     */
     private fun initPredictions(): Boolean {
         customBox.isDisabled = true
         avgRadio.isDisabled = true
@@ -158,6 +168,9 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
         return true
     }
 
+    /**
+     * Set up radio buttons for threshold selection
+     */
     private fun ModelParameter.setUpRadioButtons() {
         avgRadio.setValue(this.parameter.toDouble())
         customRadio.setValue(DEFAULT)
@@ -179,6 +192,9 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
         })
     }
 
+    /**
+     * Load client logs into the combo
+     */
     private fun initClientLogs() {
         val files = LogManager.getAllAvailableLogs()
         log.debug("Found ${files.size} log files")
@@ -262,6 +278,11 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
         log.debug("Job generation thread started")
     }
 
+    /**
+     * Pass jobs to job manager for execution
+     *
+     * @param jobParameters to generate jobs from
+     */
     private fun passJobs(jobParameters: MutableMap<String, List<ModelParameter>>) {
         log.debug("Generating jobs -> $jobParameters")
         val encodings = jobParameters[ENCODING]!!
@@ -295,6 +316,11 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
         )
     }
 
+    /**
+     * Validate that all the required parameters are present
+     *
+     * @return whether or not data is present
+     */
     private fun Map<String, List<ModelParameter>>.validateParameters(): Boolean {
         var isValid = true
         var msg = ""
