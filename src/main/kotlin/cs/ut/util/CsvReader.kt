@@ -271,7 +271,7 @@ class CsvReader(private val f: File) {
     }
 
     fun getColumnList(): List<Value> =
-        ConfigurationReader.findNode("csv/options")!!.itemList()
+        ConfigurationReader.findNode("csv/options").itemList()
 
     private fun readOneCase(): Case {
         val reader = BufferedReader(FileReader(f))
