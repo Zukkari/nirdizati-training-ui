@@ -11,7 +11,9 @@ import cs.ut.logging.NirdizatiLogger
 import java.lang.ref.WeakReference
 import java.util.concurrent.Future
 
-
+/**
+ * Manages jobs
+ */
 object JobManager {
     val log = NirdizatiLogger.getLogger(JobManager::class.java)
 
@@ -21,6 +23,13 @@ object JobManager {
 
     val queue: MutableList<SimulationJob> = mutableListOf()
 
+    /**
+     * Subscribe to notifications of job updates.
+     * Object must have a method annotated with @CallBack annotation in order to receive updates
+     *
+     * @param caller object that needs to subscribe for updates
+     *
+     */
     fun subscribe(caller: Any) {
         synchronized(subscribers) {
             log.debug("New subscriber for updates -> ${caller::class.java}")
@@ -28,6 +37,11 @@ object JobManager {
         }
     }
 
+    /**
+     * Unsubscribe from updates
+     *
+     * @param caller object to unsubscribe
+     */
     fun unsubscribe(caller: Any) {
         synchronized(subscribers) {
             log.debug("Removing subscriber ${caller::class.java}")
@@ -35,6 +49,11 @@ object JobManager {
         }
     }
 
+    /**
+     * Function that is called by the job when status of a job has been updated
+     *
+     * @param job status for which has been updated
+     */
     fun statusUpdated(job: Job) {
         log.debug("Update event: ${job.id} -> notifying subscribers")
 
@@ -46,6 +65,12 @@ object JobManager {
         handleEvent(StatusUpdateEvent(job))
     }
 
+    /**
+     * Clean dead subscribers (weak references that have been removed by GC) and then
+     * notify subscribers of an event
+     *
+     * @param event to notify of
+     */
     private fun handleEvent(event: NirdizatiEvent) {
         cleanSubscribers()
         synchronized(subscribers) {
@@ -55,6 +80,9 @@ object JobManager {
         }
     }
 
+    /**
+     * Clean garbage collected subscribers since we use weak references
+     */
     private fun cleanSubscribers() {
         val before: Int = subscribers.size
         subscribers = subscribers.filter { it.get() != null }
@@ -64,12 +92,26 @@ object JobManager {
         }
     }
 
+    /**
+     * Notify subscriber of the event. More specifically find
+     * method annotated with @Callback annotation and call it with
+     * the event as parameter
+     *
+     * @param ref reference to the object to notify
+     * @param event to notify about
+     */
     private fun notify(ref: WeakReference<Any>, event: NirdizatiEvent) {
         val obj = ref.get() ?: return
         findCallback(obj::class.java, event::class)?.invoke(obj, event)
     }
 
-    fun deployJobs(key: String, jobs: List<Job>) {
+    /**
+     * Deploy given jobs with given key into the threadpool
+     *
+     * @param key client
+     * @param jobs list of jobs to deploy
+     */
+    fun deployJobs(key: String, jobs: Collection<Job>) {
         log.debug("Jobs to be executed for client $key -> $jobs")
         log.debug("Deploying ${jobs.size} jobs")
 
@@ -86,6 +128,11 @@ object JobManager {
         handleEvent(DeployEvent(key, jobs))
     }
 
+    /**
+     * Gracefully stop given job
+     *
+     * @param job to stop
+     */
     fun stopJob(job: Job) {
         log.debug("Stopping job ${job.id}")
         job.beforeInterrupt()
@@ -94,17 +141,38 @@ object JobManager {
         log.debug("Job thread ${job.id} successfully interrupted")
     }
 
+    /**
+     * Run a service job such as ACL update or directory structure creation job
+     *
+     * @param job to run
+     *
+     * @return future to control the job
+     */
     fun runServiceJob(job: Job): Future<*> {
         log.debug("Running service job $job")
         return NirdizatiThreadPool.execute(job)
     }
 
+    /**
+     * Returns all jobs for given key completed and uncompleted.
+     *
+     * @param key to retrieve jobs for
+     *
+     * @return collection of simulation jobs
+     */
     fun getJobsForKey(key: String): List<SimulationJob> {
         val cached: List<SimulationJob> = cache.retrieveFromCache(key).rawData()
         val pending: List<SimulationJob> = queue.filter { it.owner == key }
         return (pending.toList() + cached.toList())
     }
 
+    /**
+     * Get only completed jobs for given key
+     *
+     * @param key to retrieve jobs for
+     *
+     * @return collection of simulation jobs that have been completed
+     */
     fun getCompletedJobs(key: String): List<SimulationJob> =
         getJobsForKey(key).filter { it.status == JobStatus.COMPLETED }
 }

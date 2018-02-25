@@ -3,6 +3,9 @@ package cs.ut.logging
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
 
+/**
+ * Logger wrapper that logs data with specific tag so it is easier to track different UI actions
+ */
 class NirdizatiLogger(name: String) : Logger(name) {
     var id: String = "GLOBAL"
 

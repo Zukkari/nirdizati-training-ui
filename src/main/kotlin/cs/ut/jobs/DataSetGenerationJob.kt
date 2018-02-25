@@ -7,6 +7,12 @@ import cs.ut.util.*
 import org.json.JSONObject
 import java.io.File
 
+/**
+ * Generates data set for a job
+ *
+ * @param parameters to generate the JSON file from
+ * @param currentFile file name to include in JSON
+ */
 class DataSetGenerationJob(
     val parameters: MutableMap<String, MutableList<String>>,
     currentFile: File

@@ -4,10 +4,19 @@ import cs.ut.configuration.ConfigurationReader
 import org.zkoss.zul.Html
 import org.zkoss.zul.Popup
 
-
+/**
+ * Parses tooltips from configuration into objects
+ */
 class TooltipParser {
-    private val configNode = ConfigurationReader.findNode("tooltip/tooltips")!!
+    private val configNode = ConfigurationReader.findNode("tooltip/tooltips")
 
+    /**
+     * Read tooltip from configuration with given id
+     *
+     * @param id of tooltip to read
+     *
+     * @return ZK popup object that can be appended to the page
+     */
     fun readTooltip(id: String): Popup {
         val popup = Popup()
 

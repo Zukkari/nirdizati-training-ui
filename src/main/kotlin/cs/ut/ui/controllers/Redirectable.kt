@@ -34,6 +34,14 @@ interface Redirectable {
         activateHeaderButton(if (dest == PAGE_VALIDATION) PAGE_MODELS_OVERVIEW else dest, page)
     }
 
+    /**
+     * Update content of the page with a delay
+     *
+     * @param dest new destination
+     * @param page page where to update the destination
+     * @param delay delay in MS
+     * @param desktop client to update the content for
+     */
     fun setContent(dest: String, page: Page, delay: Int, desktop: Desktop) {
         Timer().schedule(timerTask {
             Executions.schedule(
@@ -46,6 +54,12 @@ interface Redirectable {
         }, delay.toLong())
     }
 
+    /**
+     * Active selected header button
+     *
+     * @param dest new selected value
+     * @param page where to update the header
+     */
     private fun activateHeaderButton(dest: String, page: Page) {
         val navbar = page.desktop.components.first { it.id == NAVBAR } as Navbar
         val navItem = page.desktop.components.firstOrNull { it.getAttribute(DEST) == dest } as Navitem?
@@ -53,6 +67,6 @@ interface Redirectable {
     }
 
     companion object {
-        private val pages: List<Value> = ConfigurationReader.findNode("pages")!!.itemList()
+        private val pages: List<Value> = ConfigurationReader.findNode("pages").itemList()
     }
 }

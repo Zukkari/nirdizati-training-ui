@@ -1,5 +1,6 @@
 package cs.ut.ui.adapters
 
+import cs.ut.engine.item.ModelParameter
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.ui.TooltipParser
@@ -14,6 +15,11 @@ import org.zkoss.zul.Label
 import org.zkoss.zul.Popup
 import org.zkoss.zul.Row
 
+data class GeneratorArgument(val id: String, val params: List<ModelParameter>)
+
+/**
+ * Implementation that is used when generating grid for the training view
+ */
 class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
     override var fields: MutableList<FieldComponent> = mutableListOf()
 
@@ -51,6 +57,12 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
         return row
     }
 
+    /**
+     * Generate wrapper for tooltip with a tooltip that is shown on hover
+     *
+     * @param tooltip id of the tooltip to load
+     * @return wrapper with a tooltip that is shown on hover
+     */
     private fun getTooltip(tooltip: String): A {
         return A().apply {
             this.vflex = "1"

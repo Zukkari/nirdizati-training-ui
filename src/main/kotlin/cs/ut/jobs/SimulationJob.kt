@@ -1,6 +1,6 @@
 package cs.ut.jobs
 
-import cs.ut.config.items.ModelParameter
+import cs.ut.engine.item.ModelParameter
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.providers.Dir
 import cs.ut.exceptions.NirdizatiRuntimeException
@@ -29,7 +29,7 @@ class SimulationJob(
 ) : Job(id) {
 
     private var process: Process? = null
-    private val configNode = ConfigurationReader.findNode("userPreferences")!!
+    private val configNode = ConfigurationReader.findNode("userPreferences")
 
     override fun preProcess() {
         log.debug("Generating training parameters for job $this")

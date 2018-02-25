@@ -6,6 +6,11 @@ import org.apache.log4j.Level
 import org.apache.log4j.Logger
 import org.apache.log4j.PatternLayout
 
+/**
+ * Helper object that reads traverses the configuration tree
+ *
+ * @see Configuration
+ */
 object ConfigurationReader {
     private var configuration = Configuration.readSelf()
 
@@ -15,11 +20,21 @@ object ConfigurationReader {
         configureLogger()
     }
 
+    /**
+     * Reloads the configuration into memory
+     */
     fun reload() {
         configuration = Configuration.readSelf()
     }
 
-    fun findNode(path: String): ConfigNode? {
+    /**
+     * Find configuration node based on given path.
+     * Path should be delimited using delimiter as the "pathDelimiter" value
+     *
+     * @param path to look for
+     * @return configuration node corresponding to given path
+     */
+    fun findNode(path: String): ConfigNode {
         var currentNode: ConfigNode? = null
 
         path.split(pathDelimiter).forEach { p ->

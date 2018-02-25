@@ -42,6 +42,9 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
         jobTracker.appendChild(jobGrid)
     }
 
+    /**
+     * Call back function to receive updates from job manager
+     */
     @Suppress("UNCHECKED_CAST")
     @Callback(StatusUpdateEvent::class)
     fun updateJobStatus(event: StatusUpdateEvent) {
@@ -64,6 +67,9 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
         )
     }
 
+    /**
+     * Call back function to receive updates from job manager
+     */
     @Callback(DeployEvent::class)
     @Suppress("UNCHECKED_CAST")
     fun updateDeployment(event: DeployEvent) {
@@ -90,6 +96,11 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
         )
     }
 
+    /**
+     * Update job status label to match new status
+     *
+     * @param rows where to look for needed label
+     */
     private tailrec fun Job.updateJobStatus(rows: List<Row>) {
         if (rows.isNotEmpty()) {
             val row = rows.first()

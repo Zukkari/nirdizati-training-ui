@@ -1,6 +1,6 @@
 package cs.ut.ui.controllers.training
 
-import cs.ut.config.items.ModelParameter
+import cs.ut.engine.item.ModelParameter
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.ModelParamProvider
 import cs.ut.ui.UIComponent
@@ -14,7 +14,7 @@ class BasicModeController(gridContainer: Vlayout, private val logName: String) :
 
     init {
         log.debug("Initializing basic mode controller")
-        gridContrainer.getChildren<Component>().clear()
+        this.gridContainer.getChildren<Component>().clear()
     }
 
     override fun isValid(): Boolean = true

@@ -1,5 +1,8 @@
 package cs.ut.engine.item
 
+/**
+ * Entity that is used to hold deserialized JSON
+ */
 class TrainingData {
     var static_cat_cols: Array<String> = arrayOf()
     var dynamic_cat_cols: Array<String> = arrayOf()

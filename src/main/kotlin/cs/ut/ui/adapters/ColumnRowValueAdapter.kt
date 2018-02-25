@@ -9,6 +9,9 @@ import org.zkoss.zul.Combobox
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 
+/**
+ * Adapter that is used when generating data set parameter modal
+ */
 class ColumnRowValueAdapter(private val valueList: List<String>, private val identifiedCols: Map<String, String>) :
     GridValueProvider<String, Row> {
     override var fields: MutableList<FieldComponent> = mutableListOf()
@@ -20,34 +23,34 @@ class ColumnRowValueAdapter(private val valueList: List<String>, private val ide
         label.setAttribute(COMP_ID, data)
         label.sclass = "param-modal-label"
 
-        val combobox = Combobox()
+        val comboBox = Combobox()
 
         val identified = identifiedCols[data]
-        combobox.isReadonly = true
-        combobox.setConstraint("no empty")
+        comboBox.isReadonly = true
+        comboBox.setConstraint("no empty")
 
         valueList.forEach {
-            val comboItem = combobox.appendItem(it)
+            val comboItem = comboBox.appendItem(it)
             comboItem.setValue(it)
 
-            if (it == identified) combobox.selectedItem = comboItem
+            if (it == identified) comboBox.selectedItem = comboItem
         }
 
         // Add empty value as well if resource column is not present
         if (data == RESOURCE_COL) {
-            combobox.appendItem(NirdizatiUtil.localizeText(NO_RESOURCE)).setValue("")
+            comboBox.appendItem(NirdizatiUtil.localizeText(NO_RESOURCE)).setValue("")
         }
 
 
         try {
-            combobox.selectedItem
+            comboBox.selectedItem
         } catch (e: Throwable) {
-            combobox.selectedItem = (combobox.getItemAtIndex(0))
+            comboBox.selectedItem = (comboBox.getItemAtIndex(0))
         }
 
-        fields.add(FieldComponent(label, combobox))
+        fields.add(FieldComponent(label, comboBox))
         row.appendChild(label)
-        row.appendChild(combobox)
+        row.appendChild(comboBox)
 
         return row
     }

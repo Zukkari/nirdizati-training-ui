@@ -9,8 +9,17 @@ import org.zkoss.zul.Combobox
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 
+/**
+ * Wrapper to hold the data
+ * @param caption to use for the combo
+ * @param values put inside the combo box
+ * @param selected which option is selected
+ */
 data class ComboArgument(val caption: String, val values: List<Value>, val selected: String)
 
+/**
+ * Adapter used when generating data set parameters stage 2
+ */
 class ComboProvider : GridValueProvider<ComboArgument, Row> {
     override lateinit var fields: MutableList<FieldComponent>
 

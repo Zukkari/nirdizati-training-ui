@@ -2,8 +2,8 @@ package cs.ut.util
 
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
-import cs.ut.config.items.ModelParameter
-import cs.ut.config.items.Property
+import cs.ut.engine.item.ModelParameter
+import cs.ut.engine.item.Property
 import cs.ut.engine.item.TrainingData
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.providers.Dir

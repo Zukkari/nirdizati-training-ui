@@ -18,6 +18,9 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 
+/**
+ * Responsible for communication between file system and managing user log files
+ */
 object LogManager {
     private val log = NirdizatiLogger.getLogger(LogManager::class.java)
 
@@ -49,7 +52,7 @@ object LogManager {
         detailedDir = DirectoryConfiguration.dirPath(Dir.DETAIL_DIR)
         log.debug("Detailed log directory -> $detailedDir")
 
-        allowedExtensions = ConfigurationReader.findNode("fileUpload/extensions")!!.itemListValues()
+        allowedExtensions = ConfigurationReader.findNode("fileUpload/extensions").itemListValues()
     }
 
     /**
@@ -83,6 +86,13 @@ object LogManager {
         return getFile(validationDir + job.getFileName(VALIDATION))
     }
 
+    /**
+     * Returns feature importance files for given job
+     *
+     * @param job to retrieve feature importance files for
+     *
+     * @return list of files that represent feature importance files for given job
+     */
     fun getFeatureImportanceFiles(job: SimulationJob): List<File> {
         log.debug("Getting feature importance log information for job: '$job'")
         if (PREFIX == job.bucketing.id) {
@@ -104,6 +114,13 @@ object LogManager {
         }
     }
 
+    /**
+     * Get file with given name and make sure that file exists
+     *
+     * @param fileName to find
+     *
+     * @return file with given file name
+     */
     private fun getFile(fileName: String): File {
         val file = File(fileName + ".csv")
         log.debug("Looking for file with name ${file.name}")
@@ -123,12 +140,26 @@ object LogManager {
     fun isClassification(job: SimulationJob): Boolean =
         !File(detailedDir + DETAILED + FilenameUtils.getBaseName(job.logFile.name) + "_" + job.id + REGRESSION + ".csv").exists()
 
+    /**
+     * Get file name for given job
+     *
+     * @param dir to include with the file name
+     */
     private fun SimulationJob.getFileName(dir: String): String =
         if (dir == FEATURE)
             dir + this.logFile.nameWithoutExtension + "_" + this.id
         else
             dir + this.logFile.nameWithoutExtension + "_" + this.id + if (isClassification(this)) CLASSIFICATION else REGRESSION
 
+    /**
+     * Load serialized jobs for given key
+     *
+     * @param key to load jobs for
+     *
+     * @return list of UiData components which contain serialized job info
+     *
+     * @see UiData
+     */
     fun loadJobIds(key: String): List<UiData> {
         return mutableListOf<UiData>().also { c ->
             loadTrainingFiles().forEach {
@@ -146,9 +177,20 @@ object LogManager {
         }
     }
 
+    /**
+     * Read contents of the file and return it as string data
+     *
+     * @param f file to read from
+     *
+     * @return contents of the file as string data
+     */
     private fun readFileContent(f: File): String = BufferedReader(FileReader(f)).readLines().joinToString()
 
-
+    /**
+     * Load all training files found in configured training directory
+     *
+     * @return list of files in training directory
+     */
     private fun loadTrainingFiles(): List<File> {
         log.debug("Loading training files")
         val dir = File(DirectoryConfiguration.dirPath(Dir.TRAIN_DIR))

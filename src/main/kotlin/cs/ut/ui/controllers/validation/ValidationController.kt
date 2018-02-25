@@ -36,6 +36,9 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
         JobManager.subscribe(this)
     }
 
+    /**
+     * Generate the content for the controller
+     */
     private fun generate() {
         val userJobs =
             JobManager
@@ -58,6 +61,9 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
 
     fun page() = this.page ?: throw NirdizatiRuntimeException("No current page set")
 
+    /**
+     * Create empty layout when user has no trained models
+     */
     private fun emptyLayout() {
         mainContainer.appendChild(Vbox().apply {
             this.align = "center"
@@ -90,6 +96,9 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
         )
     }
 
+    /**
+     * Configure grid to set up columns, flex and to center the content
+     */
     private fun NirdizatiGrid<Job>.configure() {
         this.setColumns(
             mapOf(
@@ -106,6 +115,11 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
         this.columns.getChildren<Column>().forEach { it.align = "center" }
     }
 
+    /**
+     * Call back function to receive updates from JobManager
+     *
+     * @see JobManager
+     */
     @Callback(StatusUpdateEvent::class)
     fun updateContent(event: StatusUpdateEvent) {
         if (self.desktop == null || !self.desktop.isAlive) {

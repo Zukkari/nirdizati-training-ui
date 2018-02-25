@@ -10,6 +10,9 @@ import javax.xml.bind.annotation.XmlType
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
+/**
+ * XML root node for configuration element
+ */
 @XmlRootElement(name = "Configuration")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = ["childNodes"])
@@ -23,6 +26,10 @@ data class Configuration(
     companion object {
         private const val nodeName = "Configuration"
 
+        /**
+         * Reads configuration from the configuration file
+         * @return deserialized configuration
+         */
         fun readSelf(): Configuration {
             val dbf = DocumentBuilderFactory.newInstance()
             dbf.isNamespaceAware = true

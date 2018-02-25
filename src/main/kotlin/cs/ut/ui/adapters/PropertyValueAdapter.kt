@@ -1,6 +1,6 @@
 package cs.ut.ui.adapters
 
-import cs.ut.config.items.Property
+import cs.ut.engine.item.Property
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
@@ -14,6 +14,9 @@ import org.zkoss.zul.Label
 import org.zkoss.zul.Row
 import org.zkoss.zul.impl.InputElement
 
+/**
+ * Used to generate hyper parameter grids in training view
+ */
 class PropertyValueAdapter : GridValueProvider<Property, Row> {
     override var fields: MutableList<FieldComponent> = mutableListOf()
 
@@ -31,6 +34,13 @@ class PropertyValueAdapter : GridValueProvider<Property, Row> {
         return row
     }
 
+    /**
+     * Generate input component for given property
+     *
+     * @param prop to generate input component for
+     *
+     * @return input component corresponding to property definition
+     */
     private fun generateControl(prop: Property): Component {
         val obj = Class.forName(prop.type).getConstructor().newInstance()
 

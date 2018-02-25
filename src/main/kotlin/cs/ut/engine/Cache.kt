@@ -10,20 +10,62 @@ import cs.ut.util.PREDICTIONTYPE
 import cs.ut.util.readTrainingJson
 import java.io.File
 
+/**
+ * Generic structure to represent cached items
+ *
+ * @param items list where to hold cached items
+ */
 data class CacheItem<T>(private val items: MutableList<T> = mutableListOf()) {
+
+    /**
+     * Add item to cache
+     *
+     * @param item to add
+     */
     fun addItem(item: T) = items.add(item)
 
-    fun addItems(items: List<T>) = this.items.addAll(items)
+    /**
+     * Add multiple items to cache
+     *
+     * @param items collection of items to add
+     */
+    fun addItems(items: Collection<T>) = this.items.addAll(items)
 
+    /**
+     * Retrieve raw items from cache
+     */
     fun rawData() = items
 }
 
+/**
+ * Generic structure to hold cached items
+ */
 open class CacheHolder<T> {
     protected val cachedItems = mutableMapOf<String, CacheItem<T>>()
 
+    /**
+     * Add item to existing cache if it exists or create a new item
+     *
+     * @param key to look for
+     * @param item to insert into cache
+     *
+     * @return cached item
+     *
+     * @see CacheItem
+     */
     open fun addToCache(key: String, item: T) = (cachedItems[key] ?: createNewItem(key)).addItem(item)
 
-    open fun addToCache(key: String, items: List<T>) = (cachedItems[key] ?: createNewItem(key)).addItems(items)
+    /**
+     *  Add a collection of items to cache if it exists or create a new item
+     *
+     *  @param key to look for
+     *  @param items to insert into cache
+     *
+     *  @return cached item
+     *
+     *  @see CacheItem
+     */
+    open fun addToCache(key: String, items: Collection<T>) = (cachedItems[key] ?: createNewItem(key)).addItems(items)
 
     open fun retrieveFromCache(key: String): CacheItem<T> = cachedItems[key] ?: CacheItem()
 
@@ -32,6 +74,12 @@ open class CacheHolder<T> {
     fun flush() = cachedItems.clear()
 }
 
+/**
+ * Implementation of CacheHolder that holds Simulation jobs
+ *
+ * @see CacheHolder
+ * @see SimulationJob
+ */
 class JobCacheHolder : CacheHolder<SimulationJob>() {
 
     override fun retrieveFromCache(key: String): CacheItem<SimulationJob> {
@@ -43,6 +91,15 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
         }
     }
 
+    /**
+     * Fetches jobs from disk based on given key
+     *
+     * @param key job to find
+     *
+     * @return cached item with simulation job as content
+     *
+     * @see CacheItem
+     */
     private fun fetchFromDisk(key: String): CacheItem<SimulationJob> =
         CacheItem<SimulationJob>().apply {
             val items = loadFromDisk(key)
@@ -73,6 +130,9 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
     }
 }
 
+/**
+ * Object that holds job and chart cache in Nirdizati Training System
+ */
 object Cache {
     val jobCache = JobCacheHolder()
 

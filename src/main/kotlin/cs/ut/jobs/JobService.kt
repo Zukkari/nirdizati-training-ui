@@ -5,8 +5,13 @@ import cs.ut.engine.JobManager
 class JobService {
     companion object {
 
-        fun findSimilarJobs(key: String, job: SimulationJob): List<SimulationJob> {
-            val allJobs = JobManager.getCompletedJobs(key)
+        /**
+         * Find similar jobs to the given one so they can be used in comparison
+         *
+         * @param job similar jobs to the given one
+         */
+        fun findSimilarJobs(job: SimulationJob): List<SimulationJob> {
+            val allJobs = JobManager.getCompletedJobs(job.owner)
             return allJobs.filter { it.logFile == job.logFile && it.outcome.parameter == job.outcome.parameter && it.id != job.id }
         }
     }
