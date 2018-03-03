@@ -1,6 +1,6 @@
 <vbox align="center" vflex="1" hflex="1" apply="cs.ut.ui.controllers.TrainingController">
     <hlayout hflex="1" vflex="min">
-        <grid id="trainingGrid" vflex="min" hflex="min" sclass="max-height max-width">
+        <grid id="trainingGrid" vflex="min" hflex="min" sclass="max-height max-width training-cont">
             <rows>
                 <row align="center">
                     <label value="${labels.training.selected_log}" sclass="label-combo"/>
@@ -32,7 +32,7 @@
             </rows>
         </grid>
 
-        <vlayout id="gridContainer" vflex="1" sclass="max-height max-width"/>
+        <vlayout id="gridContainer" vflex="1" sclass="max-height max-width training-grid"/>
     </hlayout>
 
     <hlayout id="hyperParamGridContainer" vflex="1" hflex="1"/>
