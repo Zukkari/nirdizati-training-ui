@@ -12,7 +12,7 @@ class JobService {
          */
         fun findSimilarJobs(job: SimulationJob): List<SimulationJob> {
             val allJobs = JobManager.getCompletedJobs(job.owner)
-            return allJobs.filter { it.logFile == job.logFile && it.outcome.parameter == job.outcome.parameter && it.id != job.id }
+            return allJobs.filter { it.logFile == job.logFile && it.outcome.id == job.outcome.id && it.id != job.id }
         }
     }
 }
