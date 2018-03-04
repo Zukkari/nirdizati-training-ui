@@ -93,7 +93,7 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
 
         return parameters.joinToString(
             separator = "<br/>",
-            transform = { "<b>" + NirdizatiUtil.localizeText("property.${it.id}") + "</b>: ${it.property}" }) + "\n${this.id}"
+            transform = { "<b>" + NirdizatiUtil.localizeText("property.${it.id}") + "</b>: ${it.property}" }) + "<br/><br/>${this.id}"
     }
 
     /**
