@@ -301,8 +301,8 @@
                 <Value Identifier="type">predictiontype</Value>
             </Node>
             <Node Identifier="next_activity">
-                <Value Identifier="isEnabled">next</Value>
-                <Value Identifier="parameter">remtime</Value>
+                <Value Identifier="isEnabled">true</Value>
+                <Value Identifier="parameter">next</Value>
                 <Value Identifier="type">predictiontype</Value>
             </Node>
             <Node Identifier="outcome">
