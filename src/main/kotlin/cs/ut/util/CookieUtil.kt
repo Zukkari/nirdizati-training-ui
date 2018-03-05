@@ -28,7 +28,7 @@ class CookieUtil {
         fun getJobsByCookie(request: HttpServletRequest): List<Job> {
             val key: String = getCookieKey(request)
             log.debug("Looking for jobs with cookie key: $key")
-            return JobManager.getJobsForKey(key)
+            return JobManager.getCompletedJobs(key)
         }
     }
 }
