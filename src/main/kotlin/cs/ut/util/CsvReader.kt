@@ -1,5 +1,6 @@
 package cs.ut.util
 
+import cs.ut.configuration.ConfigNode
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.configuration.Value
 import cs.ut.engine.item.Case
@@ -24,7 +25,7 @@ class CsvReader(private val f: File) {
     private val activityId: List<String>
     private val dateFormats: List<Regex>
     private val resourceId: List<String>
-    private val escapeRegex: Regex
+    private val escapeNode: ConfigNode
 
     init {
         log.debug("Initializing csv reader...")
@@ -40,7 +41,7 @@ class CsvReader(private val f: File) {
         dateFormats = ConfigurationReader.findNode("csv/timestamp").itemListValues().map { it.toRegex() }
         resourceId = ConfigurationReader.findNode("csv/resource").itemListValues()
 
-        escapeRegex = configNode.valueWithIdentifier("escapeRegex").value.toRegex()
+        escapeNode = ConfigurationReader.findNode("csv/escape")
 
         log.debug("Finished initializing csv reader...")
     }
@@ -263,7 +264,14 @@ class CsvReader(private val f: File) {
     }
 
     private fun escapeCSV(row: String): String {
-        return row.replace(escapeRegex, transform = { it -> it.value.replace(",", ".") })
+        return row.replace(escapeNode.valueWithIdentifier("regex").value.toRegex()
+            , transform = {
+                var item = it.value
+                escapeNode.childNodes.first { it.identifier == "replacement" }.values.forEach {
+                    item = item.replace(it.identifier, it.value)
+                }
+                item
+            })
     }
 
     private fun prepareCase(head: List<String>, id: String): Case {
