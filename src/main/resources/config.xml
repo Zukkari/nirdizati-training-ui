@@ -85,6 +85,7 @@
         <Value Identifier="splitter">[,;]</Value>
         <Value Identifier="threshold">20</Value>
         <Value Identifier="sampleSize">100</Value>
+        <Value Identifier="escapeRegex">(".*?(,).*?")</Value>
         <Node Identifier="userCols">
             <Node Identifier="itemList">
                 <Value>case_id_col</Value>
