@@ -12,19 +12,19 @@ import java.lang.Double.max
 import java.util.Collections
 import java.util.HashMap
 import java.util.LinkedHashMap
-import kotlin.properties.Delegates
 
 class CsvReader(private val f: File) {
     private val log = Logger.getLogger(CsvReader::class.java)!!
 
-    private var splitter by Delegates.notNull<Regex>()
-    private var emptyValues by Delegates.notNull<List<String>>()
-    private var confThreshold by Delegates.notNull<Int>()
-    private var sampleSize by Delegates.notNull<Int>()
-    private var caseId by Delegates.notNull<List<String>>()
-    private var activityId by Delegates.notNull<List<String>>()
-    private var dateFormats by Delegates.notNull<List<Regex>>()
-    private var resourceId by Delegates.notNull<List<String>>()
+    private val splitter: Regex
+    private val emptyValues: List<String>
+    private val confThreshold: Int
+    private val sampleSize: Int
+    private val caseId: List<String>
+    private val activityId: List<String>
+    private val dateFormats: List<Regex>
+    private val resourceId: List<String>
+    private val escapeRegex: Regex
 
     init {
         log.debug("Initializing csv reader...")
@@ -39,6 +39,8 @@ class CsvReader(private val f: File) {
         caseId = ConfigurationReader.findNode("csv/caseId").itemListValues()
         dateFormats = ConfigurationReader.findNode("csv/timestamp").itemListValues().map { it.toRegex() }
         resourceId = ConfigurationReader.findNode("csv/resource").itemListValues()
+
+        escapeRegex = configNode.valueWithIdentifier("escapeRegex").value.toRegex()
 
         log.debug("Finished initializing csv reader...")
     }
@@ -158,13 +160,13 @@ class CsvReader(private val f: File) {
         key: String,
         resultCols: MutableMap<String, MutableList<String>>,
         alreadyClassified: MutableSet<String>,
-        lookthrough: List<String>
+        lookThrough: List<String>
     ) {
         if (column !in alreadyClassified) {
             alreadyClassified.add(column)
             resultCols[key]!!.add(column)
         } else {
-            lookthrough.forEach {
+            lookThrough.forEach {
                 if (resultCols[it]!!.contains(column)) {
                     resultCols[it]!!.remove(column)
                     resultCols[key]!!.add(column)
@@ -249,15 +251,19 @@ class CsvReader(private val f: File) {
     }
 
     private fun processRow(row: String, cases: MutableSet<Case>, caseIndex: Int, head: List<String>) {
-        val cols = row.split(splitter)
+        val cols = escapeCSV(row).split(splitter)
 
         val case = findCaseById(cols[caseIndex], cases) ?: prepareCase(head, cols[caseIndex])
         val keys = case.attributes.keys.toList()
 
-        for (i in (0 until cols.size)) {
-            case.attributes[keys[i]]?.add(cols[i])
+        for ((i, token) in cols.withIndex()) {
+            case.attributes[keys[i]]?.add(token)
         }
         cases.add(case)
+    }
+
+    private fun escapeCSV(row: String): String {
+        return row.replace(escapeRegex, transform = { it -> it.value.replace(",", ".") })
     }
 
     private fun prepareCase(head: List<String>, id: String): Case {
