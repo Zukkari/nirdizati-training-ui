@@ -21,6 +21,8 @@ import org.zkoss.zul.Vbox
 import org.zkoss.zul.Window
 import java.io.File
 import java.io.FileOutputStream
+import java.io.Reader
+import java.nio.CharBuffer
 import java.nio.charset.Charset
 
 class UploadLogController : SelectorComposer<Component>(), Redirectable, UIComponent {
@@ -75,12 +77,12 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
     fun processLog() {
         val runnable = Runnable {
             val tmpDir = DirectoryConfiguration.dirPath(Dir.TMP_DIR)
-            val file = File(tmpDir + media.name)
+            val file = File(tmpDir + media.name.replace("/", "_"))
             log.debug("Creating file: ${file.absolutePath}")
             file.createNewFile()
 
             FileOutputStream(file).use {
-                it.write(media.stringData.replace("/", "-").toByteArray(Charset.forName("UTF-8")))
+                it.write(media.readerData.readFromStream())
             }
 
             val args = mapOf(FILE to file)
@@ -96,5 +98,21 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
         }
         runnable.run()
         log.debug("Started training file generation thread")
+    }
+
+    private fun Reader.readFromStream(): ByteArray {
+        log.debug("Reading bytes from stream")
+        val start = System.currentTimeMillis()
+
+        val buffer = CharArray(1024)
+        val bytes = mutableListOf<Byte>()
+
+        while (this.read(buffer) == buffer.size) {
+            buffer.forEach { bytes.add(it.toByte()) }
+        }
+
+        val end = System.currentTimeMillis()
+        log.debug("Finished reading bytes in ${end - start} ms. Read ${bytes.size} bytes total")
+        return bytes.toByteArray()
     }
 }
