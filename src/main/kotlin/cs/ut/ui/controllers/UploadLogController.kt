@@ -21,9 +21,8 @@ import org.zkoss.zul.Vbox
 import org.zkoss.zul.Window
 import java.io.File
 import java.io.FileOutputStream
+import java.io.InputStream
 import java.io.Reader
-import java.nio.CharBuffer
-import java.nio.charset.Charset
 
 class UploadLogController : SelectorComposer<Component>(), Redirectable, UIComponent {
     private val log = NirdizatiLogger.getLogger(UploadLogController::class.java, getSessionId())
@@ -82,7 +81,11 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
             file.createNewFile()
 
             FileOutputStream(file).use {
-                it.write(media.readerData.readFromStream())
+                if (media.isBinary) {
+                    it.write(media.streamData.readBinary())
+                } else {
+                    it.write(media.readerData.readFromStream())
+                }
             }
 
             val args = mapOf(FILE to file)
@@ -115,4 +118,23 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
         log.debug("Finished reading bytes in ${end - start} ms. Read ${bytes.size} bytes total")
         return bytes.toByteArray()
     }
+
+    private fun InputStream.readBinary(): ByteArray {
+        log.debug("Started reading binary data from input stream")
+        val start = System.currentTimeMillis()
+
+        val buffer = ByteArray(1024)
+        val bytes = mutableListOf<Byte>()
+
+
+        while (this.read(buffer) == buffer.size) {
+            buffer.forEach { bytes.add(it) }
+        }
+
+        val end = System.currentTimeMillis()
+        log.debug("Finished reading bytes from input stream in ${end - start} ms. Read ${bytes.size} bytes total.")
+
+        return bytes.toByteArray()
+    }
 }
+
