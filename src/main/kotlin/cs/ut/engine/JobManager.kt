@@ -160,7 +160,7 @@ object JobManager {
      *
      * @return collection of simulation jobs
      */
-    fun getJobsForKey(key: String): List<SimulationJob> {
+    private fun getJobsForKey(key: String): List<SimulationJob> {
         val cached: List<SimulationJob> = cache.retrieveFromCache(key).rawData()
         val pending: List<SimulationJob> = queue.filter { it.owner == key }
         return (pending.toList() + cached.toList())
