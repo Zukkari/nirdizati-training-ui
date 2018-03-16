@@ -6,6 +6,9 @@ import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
 import cs.ut.ui.UIComponent
 import cs.ut.ui.controllers.modal.ParameterModalController.Companion.FILE
+import cs.ut.util.NirdizatiInputStream
+import cs.ut.util.NirdizatiReader
+import cs.ut.util.UploadItem
 import org.apache.commons.io.FilenameUtils
 import org.zkoss.util.media.Media
 import org.zkoss.util.resource.Labels
@@ -21,8 +24,6 @@ import org.zkoss.zul.Vbox
 import org.zkoss.zul.Window
 import java.io.File
 import java.io.FileOutputStream
-import java.io.InputStream
-import java.io.Reader
 
 class UploadLogController : SelectorComposer<Component>(), Redirectable, UIComponent {
     private val log = NirdizatiLogger.getLogger(UploadLogController::class.java, getSessionId())
@@ -39,6 +40,8 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
     private lateinit var media: Media
 
     private val allowedExtensions = ConfigurationReader.findNode("fileUpload/extensions").itemListValues()
+
+    private val bufferSize = ConfigurationReader.findNode("fileUpload").valueWithIdentifier("uploadBufferSize").intValue()
 
     /**
      * Method that analyzes uploaded file. Checks that the file has required extension.
@@ -62,8 +65,8 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
             log.debug("Log is not in allowed format -> showing error")
             fileNameCont.sclass = "file-upload-err"
             fileName.value = Labels.getLabel(
-                "upload.wrong.format",
-                arrayOf(uploaded.name, FilenameUtils.getExtension(uploaded.name))
+                    "upload.wrong.format",
+                    arrayOf(uploaded.name, FilenameUtils.getExtension(uploaded.name))
             )
             upload.isDisabled = true
         }
@@ -81,18 +84,15 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
             file.createNewFile()
 
             FileOutputStream(file).use {
-                if (media.isBinary) {
-                    it.write(media.streamData.readBinary())
-                } else {
-                    it.write(media.readerData.readFromStream())
-                }
+                val uploadItem = if (media.isBinary) NirdizatiInputStream(media.streamData) else NirdizatiReader(media.readerData)
+                it.writeStream(uploadItem)
             }
 
             val args = mapOf(FILE to file)
             val window: Window = Executions.createComponents(
-                "/views/modals/params.zul",
-                self,
-                args
+                    "/views/modals/params.zul",
+                    self,
+                    args
             ) as Window
             if (self.getChildren<Component>().contains(window)) {
                 window.doModal()
@@ -103,38 +103,18 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
         log.debug("Started training file generation thread")
     }
 
-    private fun Reader.readFromStream(): ByteArray {
-        log.debug("Reading bytes from stream")
+    private fun FileOutputStream.writeStream(obj: UploadItem) {
+        log.debug("Started writing text file from reader. Buffer size is $bufferSize")
         val start = System.currentTimeMillis()
 
-        val buffer = CharArray(1024)
-        val bytes = mutableListOf<Byte>()
+        val buffer = ByteArray(bufferSize)
 
-        while (this.read(buffer) == buffer.size) {
-            buffer.forEach { bytes.add(it.toByte()) }
+        while (obj.read(buffer) == bufferSize) {
+            this.write(buffer)
         }
 
         val end = System.currentTimeMillis()
-        log.debug("Finished reading bytes in ${end - start} ms. Read ${bytes.size} bytes total")
-        return bytes.toByteArray()
-    }
-
-    private fun InputStream.readBinary(): ByteArray {
-        log.debug("Started reading binary data from input stream")
-        val start = System.currentTimeMillis()
-
-        val buffer = ByteArray(1024)
-        val bytes = mutableListOf<Byte>()
-
-
-        while (this.read(buffer) == buffer.size) {
-            buffer.forEach { bytes.add(it) }
-        }
-
-        val end = System.currentTimeMillis()
-        log.debug("Finished reading bytes from input stream in ${end - start} ms. Read ${bytes.size} bytes total.")
-
-        return bytes.toByteArray()
+        log.debug("Finished file serialization in ${end - start} ms.")
     }
 }
 
