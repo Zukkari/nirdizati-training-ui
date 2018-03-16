@@ -24,7 +24,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
 
     private val grid: NirdizatiGrid<GeneratorArgument> = NirdizatiGrid(AdvancedModeAdapter())
     private val hyperParamsContainer: Hlayout =
-        Executions.getCurrent().desktop.components.first { it.id == HYPER_PARAM_CONT } as Hlayout
+            Executions.getCurrent().desktop.components.first { it.id == HYPER_PARAM_CONT } as Hlayout
     private var hyperParameters: MutableMap<ModelParameter, MutableList<Property>> = mutableMapOf()
 
     init {
@@ -32,8 +32,8 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
         gridContainer.getChildren<Component>().clear()
 
         grid.generate(parameters
-            .entries
-            .map { GeneratorArgument(it.key, it.value) })
+                .entries
+                .map { GeneratorArgument(it.key, it.value) })
 
         gridContainer.appendChild(grid)
         grid.fields.forEach { it.generateListener() }
@@ -53,25 +53,36 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
             hyperParameters[parameter] = mutableListOf()
         }
 
+        val handleLearner = { p: ModelParameter, e: CheckEvent ->
+            if (e.isChecked) {
+                hyperParameters[p]?.addAll(p.properties)
+            } else {
+                hyperParameters[p]?.removeAll(p.properties)
+            }
+        }
+
+        val handleOther = { p: ModelParameter, e: CheckEvent ->
+            hyperParameters.values.forEach {
+                if (e.isChecked) {
+                    it.addAll(p.properties)
+                } else {
+                    it.removeAll(p.properties)
+                }
+            }
+        }
+
         control.addEventListener(Events.ON_CHECK, { e ->
             e as CheckEvent
             log.debug("$this value changed, regenerating grid")
             when (parameter.type) {
-                TrainingController.LEARNER -> parameter.handleLearner(e)
-                else -> parameter.handleOther(e)
+                TrainingController.LEARNER -> handleLearner(parameter, e)
+                else -> handleOther(parameter, e)
             }
             if (parameter.properties.isNotEmpty()) {
-                generateGrids()
+                hyperParamsContainer.getChildren<Component>().clear()
+                hyperParameters.entries.forEach { it.generateGrid() }
             }
         })
-    }
-
-    /**
-     * Generate all hyper parameter grids
-     */
-    private fun generateGrids() {
-        hyperParamsContainer.getChildren<Component>().clear()
-        hyperParameters.entries.forEach { it.generateGrid() }
     }
 
     /**
@@ -84,10 +95,10 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
 
         val propGrid = NirdizatiGrid(PropertyValueAdapter())
         propGrid.setColumns(
-            mapOf(
-                key.type + "." + key.id to "min",
-                "" to "min"
-            )
+                mapOf(
+                        key.type + "." + key.id to "min",
+                        "" to "min"
+                )
         )
 
         propGrid.generate(value)
@@ -95,34 +106,6 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
         propGrid.sclass = "hyper-grid"
 
         hyperParamsContainer.appendChild(propGrid)
-    }
-
-    /**
-     * Handle check of other property that is not a learner
-     *
-     * @param e check event to handle
-     */
-    private fun ModelParameter.handleOther(e: CheckEvent) {
-        hyperParameters.values.forEach {
-            if (e.isChecked) {
-                it.addAll(this.properties)
-            } else {
-                it.removeAll(this.properties)
-            }
-        }
-    }
-
-    /**
-     * Handle check of a leaner (generate the grid)
-     *
-     * @param e check event to handle
-     */
-    private fun ModelParameter.handleLearner(e: CheckEvent) {
-        if (e.isChecked) {
-            hyperParameters[this]?.addAll(this.properties)
-        } else {
-            hyperParameters[this]?.removeAll(this.properties)
-        }
     }
 
     /**

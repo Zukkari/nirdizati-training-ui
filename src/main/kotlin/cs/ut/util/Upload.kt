@@ -14,7 +14,6 @@ class NirdizatiReader(private val reader: Reader) : UploadItem {
 
     override fun read(byteArray: ByteArray): Int {
         val innerBuff = CharArray(byteArray.size)
-
         val read = reader.read(innerBuff)
         log.debug("Read chunk of $read bytes")
 
