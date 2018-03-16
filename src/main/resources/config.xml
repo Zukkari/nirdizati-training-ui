@@ -145,6 +145,7 @@
         </Node>
     </Node>
     <Node Identifier="fileUpload">
+        <Value Identifier="uploadBufferSize">2048</Value>
         <Node Identifier="extensions">
             <Node Identifier="itemList">
                 <Value>csv</Value>
