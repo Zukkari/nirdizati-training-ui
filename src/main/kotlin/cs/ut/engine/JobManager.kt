@@ -167,12 +167,13 @@ object JobManager {
     }
 
     /**
-     * Get only completed jobs for given key
+     * Get jobs for key with an optional predicate (default is complted jobs)
      *
-     * @param key to retrieve jobs for
+     * @param key to fetch jobs for
+     * @param predicate optional predicate to filter jobs by
      *
-     * @return collection of simulation jobs that have been completed
+     * @return collection of jobs matching the predicate
      */
-    fun getCompletedJobs(key: String): List<SimulationJob> =
-        getJobsForKey(key).filter { it.status == JobStatus.COMPLETED }
+    fun getJobByPredicate(key: String, predicate: (SimulationJob) -> Boolean = { it.status == JobStatus.COMPLETED }): List<SimulationJob> =
+            getJobsForKey(key).filter(predicate)
 }
