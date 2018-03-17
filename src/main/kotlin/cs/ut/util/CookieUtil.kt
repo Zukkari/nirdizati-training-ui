@@ -3,6 +3,7 @@ package cs.ut.util
 import cs.ut.engine.IdProvider
 import cs.ut.engine.JobManager
 import cs.ut.jobs.Job
+import cs.ut.jobs.JobStatus
 import org.apache.log4j.Logger
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
@@ -28,7 +29,7 @@ class CookieUtil {
         fun getJobsByCookie(request: HttpServletRequest): List<Job> {
             val key: String = getCookieKey(request)
             log.debug("Looking for jobs with cookie key: $key")
-            return JobManager.getCompletedJobs(key)
+            return JobManager.getJobByPredicate(key, { it.status != JobStatus.COMPLETED })
         }
     }
 }
