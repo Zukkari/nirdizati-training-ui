@@ -11,7 +11,7 @@ class JobService {
          * @param job similar jobs to the given one
          */
         fun findSimilarJobs(job: SimulationJob): List<SimulationJob> {
-            val allJobs = JobManager.getCompletedJobs(job.owner)
+            val allJobs = JobManager.getJobByPredicate(job.owner)
             return allJobs.filter { it.logFile == job.logFile && it.outcome.id == job.outcome.id && it.id != job.id }
         }
     }
