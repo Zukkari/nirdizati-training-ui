@@ -4,6 +4,7 @@ import com.google.common.html.HtmlEscapers
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.configuration.Value
 import cs.ut.engine.JobManager
+import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.DataSetGenerationJob
 import cs.ut.jobs.UserRightsJob
 import cs.ut.logging.NirdizatiLogger
@@ -112,7 +113,11 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
         okBtnListener = SerializableEventListener { _ ->
             okBtn.isDisabled = true
-            updateContent(csvReader.generateDataSetParams(grid.gatherValues()))
+            try {
+                updateContent(csvReader.generateDataSetParams(grid.gatherValues()))
+            } catch (e: Exception) {
+                throw NirdizatiRuntimeException(NirdizatiUtil.localizeText("log.parse.fail"))
+            }
         }
 
         okBtn.addEventListener(Events.ON_CLICK, okBtnListener)
