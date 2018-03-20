@@ -5,7 +5,7 @@ import cs.ut.engine.IdProvider
 import cs.ut.engine.JobManager
 import cs.ut.logging.NirdizatiLogger
 import java.time.format.DateTimeFormatter
-import java.util.Date
+import java.util.*
 
 /**
  * Enum that represents job status

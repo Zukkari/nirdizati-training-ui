@@ -1,9 +1,11 @@
 package cs.ut.jobs
 
-import cs.ut.providers.Dir
 import cs.ut.exceptions.NirdizatiRuntimeException
+import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
-import cs.ut.util.*
+import cs.ut.util.Columns
+import cs.ut.util.FileWriter
+import cs.ut.util.IdentColumns
 import org.json.JSONObject
 import java.io.File
 
@@ -18,18 +20,20 @@ class DataSetGenerationJob(
     currentFile: File
 ) : Job() {
 
-    private var json: JSONObject = JSONObject()
-    private var fileName = currentFile.nameWithoutExtension
+    private val json: JSONObject = JSONObject()
+    private val fileName = currentFile.nameWithoutExtension
 
     @Suppress("UNCHECKED_CAST")
     override fun preProcess() {
-        json.put(CASE_ID_COL, parameters.remove(CASE_ID_COL)!![0])
-        json.put(TIMESTAMP_COL, parameters.remove(TIMESTAMP_COL)!![0])
-        json.put(ACTIVITY_COL, parameters.remove(ACTIVITY_COL)!![0])
+        for (col in IdentColumns.values()) {
+            if (col != IdentColumns.RESOURCE) {
+                json.put(col.value, parameters.remove(col.value)!![0])
+            }
+        }
 
         // Resource column should always be dynamic categorical
-        parameters[DYNAMIC + CAT_COLS]?.apply {
-            val resource = parameters.remove(cs.ut.util.RESOURCE_COL)!![0]
+        parameters[Columns.DYNAMIC_CAT_COLS.value]?.apply {
+            val resource = parameters.remove(IdentColumns.RESOURCE.value)!![0]
             if (resource.isNotEmpty()) {
                 this.add(resource)
             }

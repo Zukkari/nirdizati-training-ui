@@ -10,9 +10,8 @@ import cs.ut.ui.adapters.ComparisonAdapter
 import cs.ut.ui.adapters.JobValueAdapter
 import cs.ut.ui.adapters.ValidationViewAdapter
 import cs.ut.ui.controllers.Redirectable
-import cs.ut.util.NirdizatiUtil
-import cs.ut.util.PAGE_MODELS_OVERVIEW
-import cs.ut.util.PAGE_TRAINING
+import cs.ut.util.NirdizatiTranslator
+import cs.ut.util.Page
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
@@ -22,14 +21,7 @@ import org.zkoss.zk.ui.event.SerializableEventListener
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zul.Cell
-import org.zkoss.zul.Checkbox
-import org.zkoss.zul.Combobox
-import org.zkoss.zul.Comboitem
-import org.zkoss.zul.Label
-import org.zkoss.zul.Row
-import org.zkoss.zul.Rows
-import org.zkoss.zul.Vbox
+import org.zkoss.zul.*
 
 class SingleJobValidationController : SelectorComposer<Component>(), Redirectable {
     private val log = NirdizatiLogger.getLogger(SingleJobValidationController::class.java)
@@ -80,7 +72,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
      */
     @Listen("onClick=#backToTraining")
     fun backToTraining() {
-        setContent(PAGE_TRAINING, page)
+        setContent(Page.TRAINING.value, page)
     }
 
     /**
@@ -88,7 +80,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
      */
     @Listen("onClick=#backToValidation")
     fun backToValidation() {
-        setContent(PAGE_MODELS_OVERVIEW, page)
+        setContent(Page.MODEL_OVERVIEW.value, page)
     }
 
     /**
@@ -115,7 +107,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
      */
     private fun Row.generateCell(entry: Map.Entry<String, List<Chart>>) {
         val cell = Cell()
-        val label = Label(NirdizatiUtil.localizeText(entry.key))
+        val label = Label(NirdizatiTranslator.localizeText(entry.key))
         cell.id = entry.key
         cell.align = "center"
         cell.valign = "center"
@@ -187,7 +179,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
             val comboBox = Combobox()
             comboBox.hflex = "max"
             this.forEach {
-                val comboItem = comboBox.appendItem(NirdizatiUtil.localizeText(it.getCaption()))
+                val comboItem = comboBox.appendItem(NirdizatiTranslator.localizeText(it.getCaption()))
                 comboItem.setValue(it)
 
                 if (MAE == it.name) {

@@ -1,18 +1,12 @@
 package cs.ut.jobs
 
-import cs.ut.engine.item.ModelParameter
 import cs.ut.configuration.ConfigurationReader
-import cs.ut.providers.Dir
+import cs.ut.engine.item.ModelParameter
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.UserRightsJob.Companion.updateACL
+import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
-import cs.ut.util.FileWriter
-import cs.ut.util.LOG_FILE
-import cs.ut.util.NirdizatiUtil
-import cs.ut.util.OWNER
-import cs.ut.util.PREFIX
-import cs.ut.util.START_DATE
-import cs.ut.util.UI_DATA
+import cs.ut.util.*
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
@@ -37,7 +31,7 @@ class SimulationJob(
 
         val params = JSONObject()
 
-        if (bucketing.id == PREFIX) {
+        if (bucketing.id == Algorithm.PREFIX.value) {
             val props = JSONObject()
             learner.properties.forEach { (k, _, v) -> props.put(k, convertToNumber(v)) }
             for (i in 1..15) {
@@ -127,7 +121,7 @@ class SimulationJob(
     }
 
     override fun isNotificationRequired() = true
-    override fun getNotificationMessage() = NirdizatiUtil.localizeText("job.completed.simulation", this.toString())
+    override fun getNotificationMessage() = NirdizatiTranslator.localizeText("job.completed.simulation", this.toString())
 
     override fun toString(): String {
         return logFile.nameWithoutExtension +

@@ -9,8 +9,8 @@ import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.adapters.JobValueAdapter
-import cs.ut.util.CookieUtil
-import cs.ut.util.NirdizatiUtil
+import cs.ut.util.Cookies
+import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.TRACKER_EAST
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
@@ -56,7 +56,7 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
             self.desktop,
             { _ ->
                 val subKey: String =
-                    CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest)
+                    Cookies.getCookieKey(Executions.getCurrent().nativeRequest)
                 if (subKey == event.data.owner) {
                     val grid =
                         Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
@@ -81,7 +81,7 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
             self.desktop,
             { _ ->
                 val subKey: String =
-                    CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest)
+                    Cookies.getCookieKey(Executions.getCurrent().nativeRequest)
                 if (subKey == event.target) {
 
                     val comps = Executions.getCurrent().desktop.components
@@ -112,8 +112,8 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
                 buttons.forEach { (it as Button).isDisabled = this.status != JobStatus.COMPLETED }
 
                 if (this.status == JobStatus.COMPLETED) {
-                    NirdizatiUtil.showNotificationAsync(
-                        NirdizatiUtil.localizeText("job.completed.simulation", this),
+                    NirdizatiTranslator.showNotificationAsync(
+                        NirdizatiTranslator.localizeText("job.completed.simulation", this),
                         Executions.getCurrent().desktop
                     )
                 }

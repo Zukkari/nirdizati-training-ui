@@ -7,11 +7,7 @@ import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
-import cs.ut.util.LOG_FILE
-import cs.ut.util.OWNER
-import cs.ut.util.PREFIX
-import cs.ut.util.START_DATE
-import cs.ut.util.UI_DATA
+import cs.ut.util.*
 import org.apache.commons.io.FilenameUtils
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -95,7 +91,7 @@ object LogManager {
      */
     fun getFeatureImportanceFiles(job: SimulationJob): List<File> {
         log.debug("Getting feature importance log information for job: '$job'")
-        if (PREFIX == job.bucketing.id) {
+        if (Algorithm.PREFIX.value == job.bucketing.id) {
             log.debug("Prefix job, looking for all possible files for this job")
 
             val files = mutableListOf<File>()

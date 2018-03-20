@@ -1,7 +1,6 @@
 package cs.ut.ui.controllers
 
-import cs.ut.util.PAGE_TRAINING
-import cs.ut.util.PAGE_UPLOAD
+import cs.ut.util.Page
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.select.SelectorComposer
@@ -30,11 +29,11 @@ class LandingPageController : SelectorComposer<Component>(), Redirectable {
      */
     private fun wireButtons() {
         upload.addEventListener(Events.ON_CLICK, { _ ->
-            setContent(PAGE_UPLOAD, page)
+            setContent(Page.UPLOAD.value, page)
         })
 
         existingLog.addEventListener(Events.ON_CLICK, { _ ->
-            setContent(PAGE_TRAINING, page)
+            setContent(Page.TRAINING.value, page)
         })
     }
 }

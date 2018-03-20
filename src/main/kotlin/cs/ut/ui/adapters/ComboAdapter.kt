@@ -4,7 +4,7 @@ import cs.ut.configuration.Value
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.util.COMP_ID
-import cs.ut.util.NirdizatiUtil
+import cs.ut.util.NirdizatiTranslator
 import org.zkoss.zul.Combobox
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
@@ -31,7 +31,7 @@ class ComboProvider : GridValueProvider<ComboArgument, Row> {
         val comboBox = Combobox()
         comboBox.sclass = "max-width max-height"
         data.values.forEach {
-            val item = comboBox.appendItem(NirdizatiUtil.localizeText(it.value))
+            val item = comboBox.appendItem(NirdizatiTranslator.localizeText(it.value))
             item.setValue(it.identifier)
 
             if (it.identifier == data.selected) {
