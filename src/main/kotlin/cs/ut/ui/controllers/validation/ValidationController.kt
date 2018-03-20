@@ -10,8 +10,9 @@ import cs.ut.jobs.SimulationJob
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.adapters.ValidationViewAdapter
 import cs.ut.ui.controllers.Redirectable
-import cs.ut.util.CookieUtil
-import cs.ut.util.NirdizatiUtil
+import cs.ut.util.Cookies
+import cs.ut.util.NirdizatiTranslator
+import cs.ut.util.Page
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
@@ -20,7 +21,6 @@ import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Wire
 import org.zkoss.zul.*
 import java.time.Instant
-import javax.servlet.http.HttpServletRequest
 
 class ValidationController : SelectorComposer<Component>(), Redirectable {
 
@@ -43,7 +43,7 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
         val userJobs =
             JobManager
                 .cache
-                .retrieveFromCache((CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest)))
+                .retrieveFromCache((Cookies.getCookieKey(Executions.getCurrent().nativeRequest)))
                 .rawData().sortedByDescending { Instant.parse(it.startTime) }
 
         grid = NirdizatiGrid(ValidationViewAdapter(this, mainContainer)).apply {
@@ -69,11 +69,11 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
             this.align = "center"
             this.pack = "center"
             this.appendChild(
-                Label(NirdizatiUtil.localizeText("validation.empty1")).apply {
+                Label(NirdizatiTranslator.localizeText("validation.empty1")).apply {
                     this.sclass = "large-text"
                 })
             this.appendChild(
-                Label(NirdizatiUtil.localizeText("validation.empty2")).apply {
+                Label(NirdizatiTranslator.localizeText("validation.empty2")).apply {
                     this.sclass = "large-text"
                 })
             this.appendChild(
@@ -82,9 +82,9 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
                     this.hflex = "min"
                     this.sclass = "margin-top-7px"
                     this.appendChild(
-                        Button(NirdizatiUtil.localizeText("validation.train")).also {
+                        Button(NirdizatiTranslator.localizeText("validation.train")).also {
                             it.addEventListener(Events.ON_CLICK, { _ ->
-                                this@ValidationController.setContent(cs.ut.util.PAGE_TRAINING, page)
+                                this@ValidationController.setContent(Page.TRAINING.value, page)
                             })
                             it.sclass = "n-btn"
                         }
@@ -134,7 +134,7 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
                             val userJobs =
                                 JobManager
                                     .cache
-                                    .retrieveFromCache(CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest))
+                                    .retrieveFromCache(Cookies.getCookieKey(Executions.getCurrent().nativeRequest))
                                     .rawData()
                                     .reversed()
                             if (grid.parent != mainContainer) {

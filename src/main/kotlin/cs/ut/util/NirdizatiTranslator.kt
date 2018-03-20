@@ -6,7 +6,7 @@ import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.util.Clients
 
-class NirdizatiUtil {
+class NirdizatiTranslator {
     companion object {
         fun localizeText(text: String, vararg args: Any): String = Labels.getLabel(text, args) ?: text
 

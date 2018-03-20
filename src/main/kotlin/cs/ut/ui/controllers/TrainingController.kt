@@ -15,11 +15,7 @@ import cs.ut.ui.controllers.modal.ParameterModalController.Companion.IS_RECREATI
 import cs.ut.ui.controllers.training.AdvancedModeController
 import cs.ut.ui.controllers.training.BasicModeController
 import cs.ut.ui.controllers.training.ModeController
-import cs.ut.util.CookieUtil
-import cs.ut.util.NirdizatiUtil
-import cs.ut.util.OUTCOME
-import cs.ut.util.UPLOADED_FILE
-import cs.ut.util.readLogColumns
+import cs.ut.util.*
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
@@ -28,16 +24,7 @@ import org.zkoss.zk.ui.event.SelectEvent
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zul.A
-import org.zkoss.zul.Button
-import org.zkoss.zul.Checkbox
-import org.zkoss.zul.Combobox
-import org.zkoss.zul.Comboitem
-import org.zkoss.zul.Doublebox
-import org.zkoss.zul.Radio
-import org.zkoss.zul.Radiogroup
-import org.zkoss.zul.Vlayout
-import org.zkoss.zul.Window
+import org.zkoss.zul.*
 import java.io.File
 
 class TrainingController : SelectorComposer<Component>(), Redirectable, UIComponent {
@@ -130,11 +117,11 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
         val dataSetColumns: List<String> = readLogColumns(logFile.nameWithoutExtension)
 
         params.forEach {
-            val item: Comboitem = predictionType.appendItem(NirdizatiUtil.localizeText("${it.type}.${it.id}"))
+            val item: Comboitem = predictionType.appendItem(NirdizatiTranslator.localizeText("${it.type}.${it.id}"))
             val modelParam = ModelParameter(it)
             item.setValue(modelParam)
 
-            if (modelParam.id == OUTCOME) {
+            if (modelParam.id == Algorithm.OUTCOME.value) {
                 modelParam.setUpRadioButtons()
             }
         }
@@ -150,11 +137,11 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
             e as SelectEvent<*, *>
             val param = (e.selectedItems.first() as Comboitem).getValue() as ModelParameter
             log.debug("Prediction type model changed to $param")
-            if (param.id == OUTCOME) {
+            if (param.id == Algorithm.OUTCOME.value) {
                 customBox.isDisabled = false
                 avgRadio.isDisabled = false
                 customRadio.isDisabled = false
-                log.debug("Prediciton type is $OUTCOME generating radio buttons")
+                log.debug("Prediciton type is ${param.id} generating radio buttons")
             } else {
                 log.debug("Clearing thresholdContainer")
                 customBox.isDisabled = true
@@ -183,7 +170,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
             if (res == null || res <= 0) {
                 customRadio.setValue(DEFAULT)
                 customBox.setValue(DEFAULT)
-                customBox.errorMessage = NirdizatiUtil.localizeText("threshold.custom_error", 0)
+                customBox.errorMessage = NirdizatiTranslator.localizeText("threshold.custom_error", 0)
             } else {
                 customBox.clearErrorMessage()
                 customBox.setValue(res)
@@ -265,7 +252,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
 
         val prediction: ModelParameter = jobParameters[PREDICTION]!!.first()
 
-        if (prediction.id == OUTCOME) {
+        if (prediction.id == Algorithm.OUTCOME.value) {
             val value = (radioGroup.selectedItem.getValue() as Double)
             prediction.parameter = if (value == -1.0) AVERAGE else value.toString()
         }
@@ -296,14 +283,14 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
                 learners.forEach { learner ->
                     predictionTypes.forEach { pred ->
                         jobs.add(
-                            SimulationJob(
-                                encoding,
-                                bucketing,
-                                learner,
-                                pred,
-                                clientLogs.selectedItem.getValue(),
-                                CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest)
-                            )
+                                SimulationJob(
+                                        encoding,
+                                        bucketing,
+                                        learner,
+                                        pred,
+                                        clientLogs.selectedItem.getValue(),
+                                        Cookies.getCookieKey(Executions.getCurrent().nativeRequest)
+                                )
                         )
                     }
                 }
@@ -311,8 +298,8 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
         }
         log.debug("Generated ${jobs.size} jobs")
         JobManager.deployJobs(
-            CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest),
-            jobs
+                Cookies.getCookieKey(Executions.getCurrent().nativeRequest),
+                jobs
         )
     }
 
@@ -341,10 +328,10 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
         }
 
         if (!isValid) {
-            NirdizatiUtil.showNotificationAsync(
-                Labels.getLabel("training.validation_failed", arrayOf(msg)),
-                Executions.getCurrent().desktop,
-                "error"
+            NirdizatiTranslator.showNotificationAsync(
+                    Labels.getLabel("training.validation_failed", arrayOf(msg)),
+                    Executions.getCurrent().desktop,
+                    "error"
             )
         }
 
@@ -357,9 +344,9 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
         log.debug("Started new dataset parameter generation for -> ${clientLogs.value}")
         val args = mapOf<String, Any>(FILE to clientLogs.selectedItem.getValue(), IS_RECREATION to true)
         val window: Window = Executions.createComponents(
-            "/views/modals/params.zul",
-            self,
-            args
+                "/views/modals/params.zul",
+                self,
+                args
         ) as Window
         if (self.getChildren<Component>().contains(window)) {
             window.doModal()

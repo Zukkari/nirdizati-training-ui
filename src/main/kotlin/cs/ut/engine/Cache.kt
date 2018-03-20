@@ -3,10 +3,7 @@ package cs.ut.engine
 import cs.ut.charts.Chart
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
-import cs.ut.util.BUCKETING
-import cs.ut.util.ENCODING
-import cs.ut.util.LEARNER
-import cs.ut.util.PREDICTIONTYPE
+import cs.ut.util.Field
 import cs.ut.util.readTrainingJson
 import java.io.File
 
@@ -101,31 +98,31 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
      * @see CacheItem
      */
     private fun fetchFromDisk(key: String): CacheItem<SimulationJob> =
-        CacheItem<SimulationJob>().apply {
-            val items = loadFromDisk(key)
-            this.addItems(items)
-        }
+            CacheItem<SimulationJob>().apply {
+                val items = loadFromDisk(key)
+                this.addItems(items)
+            }
 
 
     private fun loadFromDisk(key: String): List<SimulationJob> {
         return mutableListOf<SimulationJob>().also { c ->
             LogManager.loadJobIds(key)
-                .filter { it.id !in JobManager.queue.map { it.id } }
-                .forEach {
-                    val params = readTrainingJson(it.id).flatMap { it.value }
-                    c.add(SimulationJob(
-                        params.first { it.type == ENCODING },
-                        params.first { it.type == BUCKETING },
-                        params.first { it.type == LEARNER },
-                        params.first { it.type == PREDICTIONTYPE },
-                        File(it.path),
-                        key,
-                        it.id
-                    ).apply {
-                        this.status = JobStatus.COMPLETED
-                        this.startTime = it.startTime
-                    })
-                }
+                    .filter { it.id !in JobManager.queue.map { it.id } }
+                    .forEach {
+                        val params = readTrainingJson(it.id).flatMap { it.value }
+                        c.add(SimulationJob(
+                                params.first { it.type == Field.ENCODING.value },
+                                params.first { it.type == Field.BUCKETING.value },
+                                params.first { it.type == Field.LEARNER.value },
+                                params.first { it.type == Field.PREDICTION.value },
+                                File(it.path),
+                                key,
+                                it.id
+                        ).apply {
+                            this.status = JobStatus.COMPLETED
+                            this.startTime = it.startTime
+                        })
+                    }
         }
     }
 }

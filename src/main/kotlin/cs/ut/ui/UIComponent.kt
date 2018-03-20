@@ -1,8 +1,7 @@
 package cs.ut.ui
 
-import cs.ut.util.CookieUtil
+import cs.ut.util.Cookies
 import org.zkoss.zk.ui.Executions
-import javax.servlet.http.HttpServletRequest
 
 /**
  * Interface to ease logging
@@ -10,5 +9,5 @@ import javax.servlet.http.HttpServletRequest
  */
 interface UIComponent {
 
-    fun getSessionId(): String = CookieUtil.getCookieKey(Executions.getCurrent().nativeRequest)
+    fun getSessionId(): String = Cookies.getCookieKey(Executions.getCurrent().nativeRequest)
 }

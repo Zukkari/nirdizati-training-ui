@@ -3,8 +3,8 @@ package cs.ut.ui.adapters
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.util.COMP_ID
-import cs.ut.util.NirdizatiUtil
-import cs.ut.util.RESOURCE_COL
+import cs.ut.util.IdentColumns
+import cs.ut.util.NirdizatiTranslator
 import org.zkoss.zul.Combobox
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
@@ -19,7 +19,7 @@ class ColumnRowValueAdapter(private val valueList: List<String>, private val ide
     override fun provide(data: String): Row {
         val row = Row()
 
-        val label = Label(NirdizatiUtil.localizeText("modals.param." + data))
+        val label = Label(NirdizatiTranslator.localizeText("modals.param." + data))
         label.setAttribute(COMP_ID, data)
         label.sclass = "param-modal-label"
 
@@ -37,8 +37,8 @@ class ColumnRowValueAdapter(private val valueList: List<String>, private val ide
         }
 
         // Add empty value as well if resource column is not present
-        if (data == RESOURCE_COL) {
-            comboBox.appendItem(NirdizatiUtil.localizeText(NO_RESOURCE)).setValue("")
+        if (data == IdentColumns.RESOURCE.value) {
+            comboBox.appendItem(NirdizatiTranslator.localizeText(NO_RESOURCE)).setValue("")
         }
 
 

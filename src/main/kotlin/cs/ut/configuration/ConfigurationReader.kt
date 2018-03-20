@@ -2,11 +2,7 @@ package cs.ut.configuration
 
 import cs.ut.engine.JobManager
 import cs.ut.jobs.StartUpJob
-import org.apache.log4j.ConsoleAppender
-import org.apache.log4j.FileAppender
-import org.apache.log4j.Level
-import org.apache.log4j.Logger
-import org.apache.log4j.PatternLayout
+import org.apache.log4j.*
 
 /**
  * Helper object that reads traverses the configuration tree

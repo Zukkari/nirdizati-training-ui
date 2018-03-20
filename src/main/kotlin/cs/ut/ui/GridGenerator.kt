@@ -4,18 +4,10 @@ import cs.ut.engine.item.ModelParameter
 import cs.ut.engine.item.Property
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.util.COMP_ID
-import cs.ut.util.NirdizatiUtil
+import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.PROPERTY
 import org.zkoss.zk.ui.Component
-import org.zkoss.zul.Checkbox
-import org.zkoss.zul.Column
-import org.zkoss.zul.Columns
-import org.zkoss.zul.Combobox
-import org.zkoss.zul.Doublebox
-import org.zkoss.zul.Grid
-import org.zkoss.zul.Intbox
-import org.zkoss.zul.Row
-import org.zkoss.zul.Rows
+import org.zkoss.zul.*
 import org.zkoss.zul.impl.NumberInputElement
 
 /**
@@ -64,7 +56,7 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Gri
         val cols = Columns()
         appendChild(cols)
         properties.entries.forEach {
-            val column = if (it.key.isNotBlank()) Column(NirdizatiUtil.localizeText(it.key)) else Column()
+            val column = if (it.key.isNotBlank()) Column(NirdizatiTranslator.localizeText(it.key)) else Column()
             column.id = it.key
             if (it.value.isNotEmpty()) {
                 column.hflex = it.value
@@ -97,7 +89,7 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Gri
             when (comp) {
                 is Intbox -> if (comp.value == null || !isInLimits(comp)) {
                     if (!comp.hasAttribute(PROPERTY)) {
-                        comp.errorMessage = NirdizatiUtil.localizeText("training.validation.greater_than_zero")
+                        comp.errorMessage = NirdizatiTranslator.localizeText("training.validation.greater_than_zero")
                     } else {
                         setErrorMsg(comp)
                     }
@@ -105,7 +97,7 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Gri
                 }
                 is Doublebox -> if (comp.value == null || !isInLimits(comp)) {
                     if (!comp.hasAttribute(PROPERTY)) {
-                        comp.errorMessage = NirdizatiUtil.localizeText("training.validation.greater_than_zero")
+                        comp.errorMessage = NirdizatiTranslator.localizeText("training.validation.greater_than_zero")
                     } else {
                         setErrorMsg(comp)
                     }
@@ -120,11 +112,11 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Gri
         val prop = comp.getAttribute(PROPERTY) as Property
 
         if (prop.minValue != -1.0 && prop.maxValue != -1.0) {
-            comp.errorMessage = NirdizatiUtil.localizeText("training.validation.in_range", prop.minValue, prop.maxValue)
+            comp.errorMessage = NirdizatiTranslator.localizeText("training.validation.in_range", prop.minValue, prop.maxValue)
         } else if (prop.minValue != -1.0) {
-            comp.errorMessage = NirdizatiUtil.localizeText("training.validation.min_val", prop.minValue)
+            comp.errorMessage = NirdizatiTranslator.localizeText("training.validation.min_val", prop.minValue)
         } else {
-            comp.errorMessage = NirdizatiUtil.localizeText("training.validation.max_val", prop.maxValue)
+            comp.errorMessage = NirdizatiTranslator.localizeText("training.validation.max_val", prop.maxValue)
         }
     }
 

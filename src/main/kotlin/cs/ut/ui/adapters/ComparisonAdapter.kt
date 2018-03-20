@@ -6,16 +6,12 @@ import cs.ut.jobs.SimulationJob
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.ui.controllers.validation.SingleJobValidationController
-import cs.ut.util.NirdizatiUtil
+import cs.ut.util.NirdizatiTranslator
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.event.CheckEvent
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.util.Clients
-import org.zkoss.zul.A
-import org.zkoss.zul.Checkbox
-import org.zkoss.zul.Hlayout
-import org.zkoss.zul.Label
-import org.zkoss.zul.Row
+import org.zkoss.zul.*
 
 /**
  * Adapter which is used when generating comparison grid in validation view
@@ -55,9 +51,9 @@ class ComparisonAdapter(container: Component, private val controller: SingleJobV
                     this.sclass = "color-box c${data.id}"
                 })
             })
-            this.appendChild(Label(NirdizatiUtil.localizeText("${data.bucketing.type}.${data.bucketing.id}")))
-            this.appendChild(Label(NirdizatiUtil.localizeText("${data.encoding.type}.${data.encoding.id}")))
-            this.appendChild(Label(NirdizatiUtil.localizeText("${data.learner.type}.${data.learner.id}")))
+            this.appendChild(Label(NirdizatiTranslator.localizeText("${data.bucketing.type}.${data.bucketing.id}")))
+            this.appendChild(Label(NirdizatiTranslator.localizeText("${data.encoding.type}.${data.encoding.id}")))
+            this.appendChild(Label(NirdizatiTranslator.localizeText("${data.learner.type}.${data.learner.id}")))
             this.appendChild(A().apply {
                 adapter.loadTooltip(this, data)
             })
