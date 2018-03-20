@@ -3,8 +3,8 @@ package cs.ut.ui.controllers
 import cs.ut.configuration.ConfigNode
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.util.DEST
-import cs.ut.util.NirdizatiUtil
-import cs.ut.util.PAGE_LANDING
+import cs.ut.util.NirdizatiTranslator
+import cs.ut.util.Page
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.select.SelectorComposer
@@ -33,7 +33,7 @@ class HeaderController : SelectorComposer<Component>(), Redirectable {
 
         items.forEach {
             val navItem = Navitem()
-            navItem.label = NirdizatiUtil.localizeText(it.valueWithIdentifier("label").value)
+            navItem.label = NirdizatiTranslator.localizeText(it.valueWithIdentifier("label").value)
             navItem.setAttribute(DEST, it.valueWithIdentifier("redirect").value)
             navItem.iconSclass = it.valueWithIdentifier("icon").value
             navItem.sclass = "n-nav-item"
@@ -52,7 +52,7 @@ class HeaderController : SelectorComposer<Component>(), Redirectable {
      */
     @Listen("onClick = #headerLogo")
     fun handleClick() {
-        setContent(PAGE_LANDING, page)
+        setContent(Page.LANDING.value, page)
         navbar.selectItem(null)
     }
 }

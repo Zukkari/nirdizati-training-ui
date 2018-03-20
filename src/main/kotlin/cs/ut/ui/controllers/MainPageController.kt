@@ -6,7 +6,7 @@ import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.UIComponent
 import cs.ut.ui.controllers.JobTrackerController.Companion.GRID_ID
-import cs.ut.util.CookieUtil
+import cs.ut.util.Cookies
 import cs.ut.util.NAVBAR
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
@@ -18,7 +18,7 @@ import org.zkoss.zk.ui.select.annotation.Wire
 import org.zkoss.zkmax.zul.Navbar
 import org.zkoss.zul.Borderlayout
 import org.zkoss.zul.East
-import java.util.NoSuchElementException
+import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -76,13 +76,13 @@ class MainPageController : SelectorComposer<Component>(), Redirectable, UICompon
     @Suppress("UNCHECKED_CAST")
     private fun handleCookie() {
         val request = Executions.getCurrent().nativeRequest as HttpServletRequest
-        val cookieKey: String = CookieUtil.getCookieKey(request)
+        val cookieKey: String = Cookies.getCookieKey(request)
         if (cookieKey.isBlank()) {
-            CookieUtil.setUpCookie(Executions.getCurrent().nativeResponse as HttpServletResponse)
+            Cookies.setUpCookie(Executions.getCurrent().nativeResponse as HttpServletResponse)
         } else {
             val jobGrid: NirdizatiGrid<Job> =
                 Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
-            val jobs: List<Job> = CookieUtil.getJobsByCookie(request)
+            val jobs: List<Job> = Cookies.getJobsByCookie(request)
             if (jobs.isNotEmpty()) {
                 jobGrid.generate(jobs)
                 trackerEast.isVisible = true

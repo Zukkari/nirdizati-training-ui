@@ -1,6 +1,6 @@
 package cs.ut.charts
 
-import cs.ut.util.NirdizatiUtil
+import cs.ut.util.NirdizatiTranslator
 import org.zkoss.zk.ui.util.Clients
 
 /**
@@ -10,6 +10,6 @@ class BarChart(name: String, payload: String, private val labels: String) : Char
     override fun getCaption(): String = name
 
     override fun render() {
-        Clients.evalJavaScript("barChart('$payload','${NirdizatiUtil.localizeText(getCaption())}', '$labels')")
+        Clients.evalJavaScript("barChart('$payload','${NirdizatiTranslator.localizeText(getCaption())}', '$labels')")
     }
 }

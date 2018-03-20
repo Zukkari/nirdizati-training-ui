@@ -1,11 +1,11 @@
 package cs.ut.providers
 
-import cs.ut.engine.item.ModelParameter
-import cs.ut.engine.item.Property
 import cs.ut.configuration.ConfigNode
 import cs.ut.configuration.ConfigurationReader
+import cs.ut.engine.item.ModelParameter
+import cs.ut.engine.item.Property
 import cs.ut.logging.NirdizatiLogger
-import cs.ut.util.PREDICTIONTYPE
+import cs.ut.util.Field
 import cs.ut.util.readHyperParameterJson
 
 /**
@@ -42,7 +42,7 @@ class ModelParamProvider {
      *
      * @return list of model parameters marked as 'predictiontype'
      */
-    fun getPredictionTypes() = properties[PREDICTIONTYPE]!!
+    fun getPredictionTypes() = properties[Field.PREDICTION.value]!!
 
     /**
      * Get all properties from all model parameters

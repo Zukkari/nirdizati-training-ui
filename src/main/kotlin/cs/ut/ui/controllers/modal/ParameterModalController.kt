@@ -18,8 +18,8 @@ import cs.ut.ui.adapters.ComboProvider
 import cs.ut.ui.controllers.Redirectable
 import cs.ut.ui.controllers.TrainingController.Companion.GENERATE_DATASET
 import cs.ut.util.CsvReader
-import cs.ut.util.NirdizatiUtil
-import cs.ut.util.TIMESTAMP_COL
+import cs.ut.util.IdentColumns
+import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.UPLOADED_FILE
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -88,7 +88,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
         val identifiedColumns = mutableMapOf<String, String>()
         csvReader.identifyUserColumns(header.toMutableList(), identifiedColumns)
-        identifiedColumns[TIMESTAMP_COL] = csvReader.getTimeStamp()
+        identifiedColumns[IdentColumns.TIMESTAMP.value] = csvReader.getTimeStamp()
 
         val provider = ColumnRowValueAdapter(header, identifiedColumns)
         val grid = NirdizatiGrid(provider)
@@ -116,7 +116,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
             try {
                 updateContent(csvReader.generateDataSetParams(grid.gatherValues()))
             } catch (e: Exception) {
-                throw NirdizatiRuntimeException(NirdizatiUtil.localizeText("log.parse.fail"))
+                throw NirdizatiRuntimeException(NirdizatiTranslator.localizeText("log.parse.fail"))
             }
         }
 
@@ -169,7 +169,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
             JobManager.runServiceJob(DataSetGenerationJob(params, file))
 
             if (!isRecreation) {
-                NirdizatiUtil.showNotificationAsync(
+                NirdizatiTranslator.showNotificationAsync(
                     Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))),
                     Executions.getCurrent().desktop
                 )
@@ -184,8 +184,8 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
                 JobManager.runServiceJob(UserRightsJob(target.toFile()))
                 setContent("training", getPage(), 2000, Executions.getCurrent().desktop)
             } else {
-                NirdizatiUtil.showNotificationAsync(
-                    NirdizatiUtil.localizeText("param.modal.generated"), Executions.getCurrent().desktop
+                NirdizatiTranslator.showNotificationAsync(
+                    NirdizatiTranslator.localizeText("param.modal.generated"), Executions.getCurrent().desktop
                 )
             }
 
@@ -234,7 +234,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
      */
     private fun validateDataPresent(header: List<String>): Boolean {
         if (header.isEmpty()) {
-            NirdizatiUtil.showNotificationAsync(
+            NirdizatiTranslator.showNotificationAsync(
                 Labels.getLabel(
                     "modals.unknown_separator",
                     arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))

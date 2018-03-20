@@ -9,9 +9,9 @@ import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class CookieUtil {
+class Cookies {
     companion object {
-        val log = Logger.getLogger(CookieUtil::class.java)!!
+        val log = Logger.getLogger(Cookies::class.java)!!
 
         fun setUpCookie(response: HttpServletResponse) {
             log.debug("Setting up new cookie")

@@ -1,8 +1,8 @@
 package cs.ut.ui.adapters
 
-import cs.ut.engine.item.ModelParameter
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.JobManager
+import cs.ut.engine.item.ModelParameter
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
@@ -11,20 +11,15 @@ import cs.ut.ui.GridValueProvider
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.controllers.JobTrackerController
 import cs.ut.ui.controllers.Redirectable
-import cs.ut.util.NirdizatiUtil
-import cs.ut.util.OUTCOME
-import cs.ut.util.PAGE_VALIDATION
+import cs.ut.util.Algorithm
+import cs.ut.util.NirdizatiTranslator
+import cs.ut.util.Page
 import cs.ut.util.TRACKER_EAST
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.event.Events
-import org.zkoss.zul.Button
-import org.zkoss.zul.Hbox
-import org.zkoss.zul.Hlayout
-import org.zkoss.zul.Label
-import org.zkoss.zul.Row
-import org.zkoss.zul.Vlayout
+import org.zkoss.zul.*
 
 /**
  * Adapter for job tracker grid
@@ -70,10 +65,10 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
     private fun ModelParameter.generateResultLabel(): Hlayout {
         val hlayout = Hlayout()
 
-        val label = Label(NirdizatiUtil.localizeText("property.outcome"))
+        val label = Label(NirdizatiTranslator.localizeText("property.outcome"))
         label.sclass = "param-label"
 
-        val outcome = Label(NirdizatiUtil.localizeText(if (this.translate) this.getTranslateName() else this.id))
+        val outcome = Label(NirdizatiTranslator.localizeText(if (this.translate) this.getTranslateName() else this.id))
         hlayout.appendChild(label)
         hlayout.appendChild(outcome)
 
@@ -96,15 +91,15 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
         val outcome = job.outcome
 
         val label = Label(
-            NirdizatiUtil.localizeText(encoding.type + "." + encoding.id) + "\n" +
-                    NirdizatiUtil.localizeText(bucketing.type + "." + bucketing.id) + "\n" +
-                    NirdizatiUtil.localizeText(learner.type + "." + learner.id)
+                NirdizatiTranslator.localizeText(encoding.type + "." + encoding.id) + "\n" +
+                        NirdizatiTranslator.localizeText(bucketing.type + "." + bucketing.id) + "\n" +
+                        NirdizatiTranslator.localizeText(learner.type + "." + learner.id)
         )
         label.isPre = true
         label.sclass = "param-label"
 
-        val outcomeText = "" + if (outcome.id == OUTCOME) NirdizatiUtil.localizeText("threshold.threshold_msg") + ": " +
-                (if (outcome.parameter == AVERAGE) NirdizatiUtil.localizeText("threshold.avg").toLowerCase()
+        val outcomeText = "" + if (outcome.id == Algorithm.OUTCOME.value) NirdizatiTranslator.localizeText("threshold.threshold_msg") + ": " +
+                (if (outcome.parameter == AVERAGE) NirdizatiTranslator.localizeText("threshold.avg").toLowerCase()
                 else outcome.parameter) + "\n"
         else ""
 
@@ -173,7 +168,7 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
      * @return hlayout with file name label
      */
     private fun SimulationJob.generateFileInfo(): Hlayout {
-        val fileLabel = Label(NirdizatiUtil.localizeText("attribute.log_file"))
+        val fileLabel = Label(NirdizatiTranslator.localizeText("attribute.log_file"))
         fileLabel.sclass = "param-label"
 
         val file = Label(this.logFile.name)
@@ -200,18 +195,18 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
         val client = Executions.getCurrent().desktop
         btn.addEventListener(Events.ON_CLICK, { _ ->
             val grid: NirdizatiGrid<Job> =
-                client.components.firstOrNull { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
+                    client.components.firstOrNull { it.id == JobTrackerController.GRID_ID } as NirdizatiGrid<Job>
 
             JobManager.stopJob(this)
             Executions.schedule(
-                client,
-                { _ ->
-                    row.detach()
-                    if (grid.rows.getChildren<Component>().isEmpty()) {
-                        client.components.first { it.id == TRACKER_EAST }.isVisible = false
-                    }
-                },
-                Event("abort_job", null, null)
+                    client,
+                    { _ ->
+                        row.detach()
+                        if (grid.rows.getChildren<Component>().isEmpty()) {
+                            client.components.first { it.id == TRACKER_EAST }.isVisible = false
+                        }
+                    },
+                    Event("abort_job", null, null)
             )
         })
 
@@ -224,21 +219,21 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
      * @return button component
      */
     private fun SimulationJob.getVisualizeBtn(): Button {
-        val visualize = Button(NirdizatiUtil.localizeText("job_tracker.visualize"))
+        val visualize = Button(NirdizatiTranslator.localizeText("job_tracker.visualize"))
         visualize.sclass = "n-btn"
         visualize.hflex = "1"
         visualize.isDisabled = !(JobStatus.COMPLETED == this.status || JobStatus.FINISHING == this.status)
 
         visualize.addEventListener(Events.ON_CLICK, { _ ->
             Executions.getCurrent().setAttribute(jobArg, this)
-            setContent(PAGE_VALIDATION, Executions.getCurrent().desktop.firstPage)
+            setContent(Page.VALIDATION.value, Executions.getCurrent().desktop.firstPage)
         })
 
         return visualize
     }
 
     private fun getDeployBtn(): Button {
-        val deploy = Button(NirdizatiUtil.localizeText("job_tracker.deploy_to_runtime"))
+        val deploy = Button(NirdizatiTranslator.localizeText("job_tracker.deploy_to_runtime"))
         deploy.isDisabled = true
         deploy.sclass = "n-btn"
         deploy.vflex = "min"
@@ -258,7 +253,7 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
 
         while (iterator.hasNext()) {
             val prop = iterator.next()
-            label += NirdizatiUtil.localizeText("property." + prop.id) + ": " + prop.property + "\n"
+            label += NirdizatiTranslator.localizeText("property." + prop.id) + ": " + prop.property + "\n"
         }
 
         val res = Label(label)

@@ -1,6 +1,6 @@
 package cs.ut.charts
 
-import cs.ut.util.NirdizatiUtil
+import cs.ut.util.NirdizatiTranslator
 import org.zkoss.zk.ui.util.Clients
 
 /**
@@ -12,7 +12,7 @@ class HeatMap(name: String, payload: String, private val xLabels: String, privat
     override fun render() {
         Clients.evalJavaScript(
             "heatMap('$payload', " +
-                    "'${NirdizatiUtil.localizeText(getCaption())}'" +
+                    "'${NirdizatiTranslator.localizeText(getCaption())}'" +
                     ",'$xLabels'" +
                     ", '$yLabels')"
         )
