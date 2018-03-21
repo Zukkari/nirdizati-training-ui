@@ -1,43 +1,44 @@
 package cs.ut.util
 
+import cs.ut.configuration.ConfigurationReader
 import cs.ut.logging.NirdizatiLogger
+import java.io.File
+import java.io.FileOutputStream
+import java.io.FileWriter
 import java.io.InputStream
 import java.io.Reader
 
 interface UploadItem {
 
-    fun read(byteArray: ByteArray): Int
+    val bufferSize: Int
+        get() = ConfigurationReader.findNode("fileUpload").valueWithIdentifier("uploadBufferSize").intValue()
+
+    fun write(file: File)
 
 }
 
 class NirdizatiReader(private val reader: Reader) : UploadItem {
 
-    override fun read(byteArray: ByteArray): Int {
-        val innerBuff = CharArray(byteArray.size)
-        val read = reader.read(innerBuff)
-        log.debug("Read chunk of $read bytes")
+    override fun write(file: File) {
+        val writer = FileWriter(file)
 
-        for ((i, char) in innerBuff.withIndex()) {
-            byteArray[i] = char.toByte()
+        val buffer = CharArray(bufferSize)
+
+        while (reader.read(buffer) == bufferSize) {
+            writer.write(buffer)
         }
-
-        return read
-    }
-
-    companion object {
-        private val log = NirdizatiLogger.getLogger(NirdizatiReader::class.java)
     }
 }
 
 class NirdizatiInputStream(private val inputStream: InputStream) : UploadItem {
 
-    override fun read(byteArray: ByteArray): Int {
-        val read = inputStream.read(byteArray)
-        log.debug("Read chunk of $read bytes")
-        return read
-    }
+    override fun write(file: File) {
+        val buffer = ByteArray(bufferSize)
 
-    companion object {
-        private val log = NirdizatiLogger.getLogger(NirdizatiInputStream::class.java)
+        FileOutputStream(file).use {
+            while (inputStream.read(buffer) == bufferSize) {
+                it.write(buffer)
+            }
+        }
     }
 }
