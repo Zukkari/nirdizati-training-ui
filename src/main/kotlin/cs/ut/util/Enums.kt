@@ -16,9 +16,9 @@ enum class ColumnPart(val value: String) {
 
 enum class IdentColumns(val value: String) {
     CASE_ID("case_id_col"),
-    ACTIVITY("activity"),
+    ACTIVITY("activity_col"),
     TIMESTAMP("timestamp_col"),
-    RESOURCE("resource")
+    RESOURCE("resource_col")
 }
 
 enum class Algorithm(val value: String) {
