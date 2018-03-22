@@ -20,17 +20,23 @@ interface UploadItem {
 class NirdizatiReader(private val reader: Reader) : UploadItem {
 
     override fun write(file: File) {
-        val writer = FileWriter(file)
         var total = 0
 
         val buffer = CharArray(bufferSize)
 
         var read = reader.read(buffer)
-        while (read != -1) {
-            writer.write(buffer)
 
-            total += read
-            read = reader.read(buffer)
+        FileWriter(file).use {
+            while (read != -1) {
+                if (read < bufferSize) {
+                    it.write(buffer.sliceArray(0 until read))
+                } else {
+                    it.write(buffer)
+                }
+
+                total += read
+                read = reader.read(buffer)
+            }
         }
 
         log.debug("Read total of $total bytes for file ${file.name}")
@@ -39,6 +45,7 @@ class NirdizatiReader(private val reader: Reader) : UploadItem {
     companion object {
         private val log = NirdizatiLogger.getLogger(NirdizatiReader::class.java)
     }
+
 }
 
 class NirdizatiInputStream(private val inputStream: InputStream) : UploadItem {
@@ -50,7 +57,11 @@ class NirdizatiInputStream(private val inputStream: InputStream) : UploadItem {
         var read = inputStream.read(buffer)
         FileOutputStream(file).use {
             while (read != -1) {
-                it.write(buffer)
+                if (read < bufferSize) {
+                    it.write(buffer.sliceArray(0 until read))
+                } else {
+                    it.write(buffer)
+                }
 
                 total += read
                 read = inputStream.read(buffer)
@@ -62,5 +73,6 @@ class NirdizatiInputStream(private val inputStream: InputStream) : UploadItem {
 
     companion object {
         private val log = NirdizatiLogger.getLogger(NirdizatiInputStream::class.java)
+        private const val NULL: Byte = 0x00
     }
 }
