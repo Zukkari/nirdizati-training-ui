@@ -52,7 +52,7 @@
             <Value Identifier="validationDir">/home/ubuntu/git/nirdizati-training-ui/PredictiveMethods/results/validation/</Value>
             <Value Identifier="featureDir">/home/ubuntu/git/nirdizati-training-ui/PredictiveMethods/results/feature_importance/</Value>
             <Value Identifier="tmpDir">/home/ubuntu/git/nirdizati-training-ui/tmp/</Value>
-            <Value Identifier="logFile">/home/ubuntu/apache-tomcat-8.5.24/logs/catalina.out</Value>
+            <Value Identifier="logFile">/home/ubuntu/apache-tomcat-8.5.23/logs/catalina.out</Value>
         </Node>
     </Node>
     <Node Identifier="header">
