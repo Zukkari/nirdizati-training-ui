@@ -8,7 +8,7 @@
     </Node>
     <Node Identifier="userPreferences">
         <!-- Whether the simulation process should be run under specific user (root by default) -->
-        <Value Identifier="isEnabled">false</Value>
+        <Value Identifier="isEnabled">true</Value>
         <Value Identifier="userName">ubuntu</Value>
         <Value Identifier="userGroup">ubuntu</Value>
         <Value Identifier="sudo"></Value>
