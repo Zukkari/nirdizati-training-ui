@@ -81,8 +81,13 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
         log.debug("Received file with name ${file.name}")
 
-        val header = csvReader.readTableHeader().sorted()
-        log.debug("Read header of users file: $header")
+        val header: List<String>
+        try {
+            header = csvReader.readTableHeader().sorted()
+            log.debug("Read header of users file: $header")
+        } catch (e: Exception) {
+            throw NirdizatiRuntimeException("Log file does not meet the requirements")
+        }
 
         if (validateDataPresent(header)) return
 

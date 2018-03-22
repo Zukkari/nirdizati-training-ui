@@ -41,8 +41,6 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
 
     private val allowedExtensions = ConfigurationReader.findNode("fileUpload/extensions").itemListValues()
 
-    private val bufferSize = ConfigurationReader.findNode("fileUpload").valueWithIdentifier("uploadBufferSize").intValue()
-
     /**
      * Method that analyzes uploaded file. Checks that the file has required extension.
      *
@@ -83,12 +81,13 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
             log.debug("Creating file: ${file.absolutePath}")
             file.createNewFile()
 
-            FileOutputStream(file).use {
-                val uploadItem = if (media.isBinary) NirdizatiInputStream(media.streamData) else NirdizatiReader(media.readerData)
-                it.writeStream(uploadItem)
-            }
+            val uploadItem = if (media.isBinary) NirdizatiInputStream(media.streamData) else NirdizatiReader(media.readerData)
+            uploadItem.write(file)
 
             val args = mapOf(FILE to file)
+
+            // Detach all of the old windows
+            self.getChildren<Component>().filter { it is Window }.forEach { it.detach() }
             val window: Window = Executions.createComponents(
                     "/views/modals/params.zul",
                     self,
@@ -101,20 +100,6 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
         }
         runnable.run()
         log.debug("Started training file generation thread")
-    }
-
-    private fun FileOutputStream.writeStream(obj: UploadItem) {
-        log.debug("Started writing text file from reader. Buffer size is $bufferSize")
-        val start = System.currentTimeMillis()
-
-        val buffer = ByteArray(bufferSize)
-
-        while (obj.read(buffer) == bufferSize) {
-            this.write(buffer)
-        }
-
-        val end = System.currentTimeMillis()
-        log.debug("Finished file serialization in ${end - start} ms.")
     }
 }
 
