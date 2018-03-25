@@ -2,12 +2,11 @@ package cs.ut.ui.controllers.modal
 
 import com.google.common.html.HtmlEscapers
 import cs.ut.configuration.ConfigurationReader
-import cs.ut.configuration.Value
 import cs.ut.engine.JobManager
 import cs.ut.exceptions.NirdizatiRuntimeException
-import cs.ut.jobs.DataSetGenerationJob
 import cs.ut.jobs.UserRightsJob
 import cs.ut.logging.NirdizatiLogger
+import cs.ut.parsing.CsvParser
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
 import cs.ut.ui.NirdizatiGrid
@@ -17,10 +16,11 @@ import cs.ut.ui.adapters.ComboArgument
 import cs.ut.ui.adapters.ComboProvider
 import cs.ut.ui.controllers.Redirectable
 import cs.ut.ui.controllers.TrainingController.Companion.GENERATE_DATASET
-import cs.ut.util.CsvReader
+import cs.ut.util.Columns
 import cs.ut.util.IdentColumns
 import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.UPLOADED_FILE
+import kotlinx.coroutines.experimental.runBlocking
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
@@ -59,7 +59,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
     private lateinit var file: File
 
-    private lateinit var csvReader: CsvReader
+    private lateinit var parser: CsvParser
 
     private var isRecreation: Boolean = false
 
@@ -77,23 +77,20 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         this.file = arg[FILE] as File
         this.isRecreation = arg[IS_RECREATION] as Boolean? ?: false
 
-        csvReader = CsvReader(file)
+        parser = CsvParser(file)
 
         log.debug("Received file with name ${file.name}")
 
         val header: List<String>
         try {
-            header = csvReader.readTableHeader().sorted()
+            header = parser.getFileHeader()
             log.debug("Read header of users file: $header")
         } catch (e: Exception) {
             throw NirdizatiRuntimeException("Log file does not meet the requirements")
         }
 
         if (validateDataPresent(header)) return
-
-        val identifiedColumns = mutableMapOf<String, String>()
-        csvReader.identifyUserColumns(header.toMutableList(), identifiedColumns)
-        identifiedColumns[IdentColumns.TIMESTAMP.value] = csvReader.getTimeStamp()
+        val identifiedColumns = runBlocking { parser.getUserColumns() }
 
         val provider = ColumnRowValueAdapter(header, identifiedColumns)
         val grid = NirdizatiGrid(provider)
@@ -119,7 +116,13 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         okBtnListener = SerializableEventListener { _ ->
             okBtn.isDisabled = true
             try {
-                updateContent(csvReader.generateDataSetParams(grid.gatherValues()))
+                val res = grid.gatherValues<String>().mapKeys { IdentColumns.fromString(it.key) }
+                val parsed = parser.parse(res)
+                if (parsed.isEmpty()) {
+                    runCompletion()
+                } else {
+                    updateContent(parsed)
+                }
             } catch (e: Exception) {
                 throw NirdizatiRuntimeException(NirdizatiTranslator.localizeText("log.parse.fail"))
             }
@@ -147,7 +150,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
      * @param params to generate content from
      */
     @Suppress("UNCHECKED_CAST")
-    private fun updateContent(params: MutableMap<String, MutableList<String>>) {
+    private fun updateContent(params: Map<String, List<String>>) {
         okBtn.isDisabled = false
         log.debug("Updating content with params $params")
 
@@ -158,57 +161,61 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         log.debug("Removed ok button listener")
 
         okBtnListener = SerializableEventListener { _ ->
-            val accepted = grid.gatherValues() as Map<String, String>
+            val accepted = grid.gatherValues<String>()
             accepted.forEach { k, v ->
                 params.values.forEach {
-                    if (k in it) it.remove(k)
+                    //                    if (k in it) it.remove(k)
                 }
 
                 if (v in params) {
-                    params[v]!!.add(k)
+                    //params[v]!!.add(k)
                 } else {
-                    params[v] = mutableListOf(k)
+//                    params[v] = mutableListOf(k)
                 }
             }
 
-            JobManager.runServiceJob(DataSetGenerationJob(params, file))
-
-            if (!isRecreation) {
-                NirdizatiTranslator.showNotificationAsync(
-                    Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))),
-                    Executions.getCurrent().desktop
-                )
-
-                val target = Files.move(
-                    Paths.get(file.absolutePath),
-                    Paths.get(File(DirectoryConfiguration.dirPath(Dir.USER_LOGS) + file.name).absolutePath),
-                    StandardCopyOption.REPLACE_EXISTING
-                )
-
-                Executions.getCurrent().desktop.setAttribute(UPLOADED_FILE, target.toFile())
-                JobManager.runServiceJob(UserRightsJob(target.toFile()))
-                setContent("training", getPage(), 2000, Executions.getCurrent().desktop)
-            } else {
-                NirdizatiTranslator.showNotificationAsync(
-                    NirdizatiTranslator.localizeText("param.modal.generated"), Executions.getCurrent().desktop
-                )
-            }
-
-            enableGenerateButton()
-            modal.detach()
+            runCompletion()
         }
         okBtn.addEventListener(Events.ON_CLICK, okBtnListener)
 
         val escaper = HtmlEscapers.htmlEscaper()
         var args = listOf<ComboArgument>()
-        val changeable: List<Value> = csvReader.getColumnList()
-        changeable.forEach { key ->
-            params[key.identifier]?.forEach {
-                args += ComboArgument(escaper.escape(it), changeable, key.identifier)
-            }
+//        val changeable: List<Value> = parser.getColumnList()
+//        changeable.forEach { key ->
+//            params[key.identifier]?.forEach {
+//                args += ComboArgument(escaper.escape(it), changeable, key.identifier)
+//            }
+//        }
+
+//        grid.generate(args)
+    }
+
+    private fun runCompletion() {
+        //            JobManager.runServiceJob(DataSetGenerationJob(params, file))
+
+        if (!isRecreation) {
+            NirdizatiTranslator.showNotificationAsync(
+                    Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))),
+                    Executions.getCurrent().desktop
+            )
+
+            val target = Files.move(
+                    Paths.get(file.absolutePath),
+                    Paths.get(File(DirectoryConfiguration.dirPath(Dir.USER_LOGS) + file.name).absolutePath),
+                    StandardCopyOption.REPLACE_EXISTING
+            )
+
+            Executions.getCurrent().desktop.setAttribute(UPLOADED_FILE, target.toFile())
+            JobManager.runServiceJob(UserRightsJob(target.toFile()))
+            setContent("training", getPage(), 2000, Executions.getCurrent().desktop)
+        } else {
+            NirdizatiTranslator.showNotificationAsync(
+                    NirdizatiTranslator.localizeText("param.modal.generated"), Executions.getCurrent().desktop
+            )
         }
 
-        grid.generate(args)
+        enableGenerateButton()
+        modal.detach()
     }
 
     /**
@@ -240,12 +247,12 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
     private fun validateDataPresent(header: List<String>): Boolean {
         if (header.isEmpty()) {
             NirdizatiTranslator.showNotificationAsync(
-                Labels.getLabel(
-                    "modals.unknown_separator",
-                    arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))
-                ),
-                Executions.getCurrent().desktop,
-                "error"
+                    Labels.getLabel(
+                            "modals.unknown_separator",
+                            arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))
+                    ),
+                    Executions.getCurrent().desktop,
+                    "error"
             )
             modal.detach()
             return true

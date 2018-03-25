@@ -18,7 +18,13 @@ enum class IdentColumns(val value: String) {
     CASE_ID("case_id_col"),
     ACTIVITY("activity_col"),
     TIMESTAMP("timestamp_col"),
-    RESOURCE("resource_col")
+    RESOURCE("resource_col");
+
+    companion object {
+        fun fromString(string: String): IdentColumns {
+            return IdentColumns.values().first { it.value == string }
+        }
+    }
 }
 
 enum class Algorithm(val value: String) {

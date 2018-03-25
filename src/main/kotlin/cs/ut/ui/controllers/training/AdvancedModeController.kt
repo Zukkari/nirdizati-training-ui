@@ -130,7 +130,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
      */
     @Suppress("UNCHECKED_CAST")
     override fun gatherValues(): Map<String, List<ModelParameter>> {
-        val gathered = grid.gatherValues()
+        val gathered = grid.gatherValues<List<ModelParameter>>()
 
         val hyperParams = mutableMapOf<String, Map<String, Any>>()
         hyperParamsContainer.getChildren<Component>().forEach {
@@ -158,7 +158,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
             }
         }
 
-        return gathered as Map<String, List<ModelParameter>>
+        return gathered
     }
 
     override fun preDestroy() {

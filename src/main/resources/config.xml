@@ -94,20 +94,20 @@
         </Node>
         <Node Identifier="userCols">
             <Node Identifier="itemList">
-                <Value>case_id_col</Value>
-                <Value>activity_col</Value>
-                <Value>timestamp_col</Value>
-                <Value>resource_col</Value>
+                <Value Identifier="case_id_col">case_id_col</Value>
+                <Value Identifier="activity_col">activity_col</Value>
+                <Value Identifier="timestamp_col">timestamp_col</Value>
+                <Value Identifier="resource_col">resource_col</Value>
             </Node>
         </Node>
-        <Node Identifier="caseId">
+        <Node Identifier="case_id_col">
             <Node Identifier="itemList">
                 <Value>caseid</Value>
                 <Value>case_id</Value>
                 <Value>case id</Value>
             </Node>
         </Node>
-        <Node Identifier="activityId">
+        <Node Identifier="activity_col">
             <Node Identifier="itemList">
                 <Value>activity</Value>
                 <Value>activity_name</Value>
@@ -115,12 +115,12 @@
                 <Value>event_name</Value>
             </Node>
         </Node>
-        <Node Identifier="resource">
+        <Node Identifier="resource_col">
             <Node Identifier="itemList">
                 <Value>resource</Value>
             </Node>
         </Node>
-        <Node Identifier="timestamp">
+        <Node Identifier="timestamp_col">
             <Node Identifier="itemList">
                 <Value>\d{4}[-/]\d{1,2}[-/]\d{1,2}[ T]\d{1,2}:\d{1,2}:\d{1,2}</Value>
                 <Value>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}</Value>

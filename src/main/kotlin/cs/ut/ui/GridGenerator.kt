@@ -141,28 +141,28 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Gri
      *
      * @return map with collected elements from the grid
      */
-    fun gatherValues(): MutableMap<String, Any> {
-        val valueMap = mutableMapOf<String, Any>()
+    fun <V> gatherValues(): MutableMap<String, V> {
+        val valueMap = mutableMapOf<String, V>()
         gatherValueFromFields(valueMap, fields)
         return valueMap
     }
 
     @Suppress("UNCHECKED_CAST")
-    private tailrec fun gatherValueFromFields(valueMap: MutableMap<String, Any>, fields: MutableList<FieldComponent>) {
+    private tailrec fun <V> gatherValueFromFields(valueMap: MutableMap<String, V>, fields: MutableList<FieldComponent>) {
         if (fields.isNotEmpty()) {
             val field = fields.first().control
             val id = fields.first().label.getAttribute(COMP_ID) as String
 
             when (field) {
-                is Intbox -> valueMap[id] = field.value
-                is Doublebox -> valueMap[id] = field.value
+                is Intbox -> valueMap[id] = field.value as V
+                is Doublebox -> valueMap[id] = field.value as V
                 is Combobox -> valueMap[id] = field.selectedItem.getValue()
                 is Checkbox -> {
                     if (field.isChecked) {
                         if (valueMap.containsKey(id)) {
                             (valueMap[id] as MutableList<ModelParameter>).add(field.getValue())
                         } else {
-                            valueMap[id] = mutableListOf<ModelParameter>()
+                            valueMap[id] = mutableListOf<ModelParameter>() as V
                             val params = valueMap[id]
                             when (params) {
                                 is MutableList<*> -> (params as MutableList<ModelParameter>).add(field.getValue())

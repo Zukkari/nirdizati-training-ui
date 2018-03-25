@@ -8,58 +8,67 @@ import kotlinx.coroutines.experimental.async
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
+import java.util.EnumMap
 
 typealias Row = String
 
-class Case {
+class Case(val id: String) {
     var values: List<Column> = listOf()
-
-    fun getColumns(enum: Columns): List<Column> = TODO()
 }
 
-abstract class Parser(val file: File) {
-
-    abstract fun getFileHeader(): List<String>
-
-    abstract fun parse(splitter: Regex, header: List<String>)
-
-    abstract fun getUserColumns(): Map<String, String>
-
-    abstract fun escape(row: Row): Row
-
-    abstract fun getResource(): BufferedReader
-}
-
-
-class CsvParser(file: File) : Parser(file) {
-    private lateinit var parseThread: Deferred<Unit>
-
+class CsvParser(val file: File) {
     private lateinit var identified: Deferred<Map<String, String>>
 
     private var cases: Map<String, Case> = mapOf()
     private val config = ConfigurationReader.findNode("csv")
 
-    override fun getResource(): BufferedReader = BufferedReader(FileReader(file))
+    private lateinit var header: List<String>
+    private val splitter: Regex
+    private val sampleSize: Int
 
-    override fun getFileHeader(): List<String> {
-        val splitter = config.valueWithIdentifier("splitter").value.toRegex()
+    private var columnIndices: Map<IdentColumns, Int> = EnumMap(IdentColumns::class.java)
 
+    init {
+        splitter = config.valueWithIdentifier("splitter").value.toRegex()
+        sampleSize = config.valueWithIdentifier("sampleSize").intValue()
+    }
+
+    private fun getResource(): BufferedReader = BufferedReader(FileReader(file))
+
+    fun getFileHeader(): List<String> {
         val resource = getResource()
 
-        val header: List<String> = escape(resource.readLine()).split(splitter)
+        var h = ""
+        var v = ""
+        resource.use {
+            h = it.readLine()
+            v = it.readLine()
+        }
 
+        header = escape(h).split(splitter)
         identified = async {
-            parseUserColumns(resource.readLine(), header, splitter)
+            parseUserColumns(v)
         }
 
         return header
     }
 
-    override fun parse(splitter: Regex, header: List<String>) {
+    fun parse(confirmed: Map<IdentColumns, String>): Map<String, List<String>> {
+        confirmed.forEach { columnIndices = columnIndices.plus(it.key to header.indexOf(it.value)) }
+
+        getResource()
+                .lineSequence()
+                .takeWhile { cases.keys.size < sampleSize }
+                .forEach { escape(it).processRow() }
+
+        return mapOf()
+    }
+
+    private fun String.processRow() {
 
     }
 
-    private fun parseUserColumns(row: Row, header: List<String>, splitter: Regex): Map<String, String> {
+    private fun parseUserColumns(row: Row): Map<String, String> {
         var res = mapOf<String, String>()
 
         val rowItems = escape(row).split(splitter)
@@ -68,20 +77,20 @@ class CsvParser(file: File) : Parser(file) {
         items.forEach { v ->
             val nodeValues = config.childNodes.first { it.identifier == v.value }.itemListValues()
             res += if (v.identifier == IdentColumns.TIMESTAMP.value) {
-                val match = rowItems.first { item -> nodeValues.any { item.matches(it.toRegex()) } }
+                val match = rowItems.firstOrNull { item -> nodeValues.any { item.matches(it.toRegex()) } } ?: header[0]
                 v.identifier to header[rowItems.indexOf(match)]
             } else {
                 val matches = header.filter { nodeValues.contains(it.toLowerCase()) }
-                v.identifier to matches.first()
+                v.identifier to (matches.firstOrNull() ?: header[0])
             }
         }
 
         return res
     }
 
-    override fun getUserColumns(): Map<String, String> = identified.getCompleted()
+    suspend fun getUserColumns(): Map<String, String> = identified.await()
 
-    override fun escape(row: Row): Row {
+    private fun escape(row: Row): Row {
         val escapeNode = config.childNodes.first { it.identifier == "escape" }
 
         return row.replace(escapeNode.valueWithIdentifier("regex").value.toRegex()
