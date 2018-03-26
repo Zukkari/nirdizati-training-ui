@@ -1,5 +1,6 @@
 package cs.ut.ui.adapters
 
+import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.Property
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
@@ -7,18 +8,23 @@ import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.ui.adapters.JobValueAdapter.Companion.jobArg
 import cs.ut.ui.controllers.validation.ValidationController
+import cs.ut.util.GridColumns
 import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.Page
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zul.*
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.util.Calendar
+import java.util.Date
 
 /**
  * Used to generate metadata info about the job in validation views
  */
 class ValidationViewAdapter(private val parentController: ValidationController?, private val container: Component?) :
-    GridValueProvider<Job, Row> {
+        GridValueProvider<Job, Row> {
     override var fields: MutableList<FieldComponent> = mutableListOf()
 
 
@@ -44,6 +50,7 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
             it.appendChild(getLabel(data.encoding.toString()))
             it.appendChild(getLabel(data.learner.toString()))
             it.appendChild(A().apply { loadTooltip(this, data) })
+            it.appendChild(getLabel(timeFormat.format(Date.from(Instant.parse(data.startTime)))))
 
             if (addRedirectListener) {
                 it.addEventListener(Events.ON_CLICK, { _ ->
@@ -88,8 +95,8 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
         }
 
         return parameters.joinToString(
-            separator = "<br/>",
-            transform = { "<b>" + NirdizatiTranslator.localizeText("property.${it.id}") + "</b>: ${it.property}" }) + "<br/><br/>${this.id}"
+                separator = "<br/>",
+                transform = { "<b>" + NirdizatiTranslator.localizeText("property.${it.id}") + "</b>: ${it.property}" }) + "<br/><br/>${this.id}"
     }
 
     /**
@@ -102,5 +109,6 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
 
     companion object {
         const val PROP_POPUP = "propertyPopUpMenu"
+        val timeFormat = SimpleDateFormat(ConfigurationReader.findNode("grids").valueWithIdentifier(GridColumns.TIMESTAMP.value).value)
     }
 }

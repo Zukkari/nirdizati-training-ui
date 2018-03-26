@@ -81,6 +81,22 @@
             <Value Identifier="icon">z-icon-bug</Value>
         </Node>
     </Node>
+    <Node Identifier="grids">
+        <Value Identifier="timestampFormat">HH:mm:ss dd.MM.yyyy</Value>
+        <Node Identifier="validation">
+            <Node Identifier="sortableColumns">
+                <Value Identifier="isEnabled">true</Value>
+                <Node Identifier="itemList">
+                    <Value>logfile</Value>
+                    <Value>predictiontype</Value>
+                    <Value>bucketing</Value>
+                    <Value>encoding</Value>
+                    <Value>learner</Value>
+                    <Value>timestamp</Value>
+                </Node>
+            </Node>
+        </Node>
+    </Node>
     <Node Identifier="csv">
         <Value Identifier="splitter">[,;]</Value>
         <Value Identifier="threshold">20</Value>

@@ -1,4 +1,4 @@
-<vbox id="mainContainer" vflex="1" hflex="1" apply="cs.ut.ui.controllers.validation.SingleJobValidationController">
+<vbox id="gridContainer" vflex="1" hflex="1" apply="cs.ut.ui.controllers.validation.SingleJobValidationController">
     <hlayout>
         <hbox align="center" pack="start" hflex="1">
             <a id="backToValidation" sclass="validation-link" iconSclass="z-icon-arrow-circle-left"
@@ -18,6 +18,8 @@
             <column align="center" label="${labels.encoding.$}"/>
             <column align="center" label="${labels.learner.$}"/>
             <column align="center" label="${labels.hyperparameters}"/>
+            <column align="center" label="${labels.timestamp}"/>
+            <column align="center" label="${labels.download}"/>
         </columns>
         <rows id="propertyRows"/>
     </grid>

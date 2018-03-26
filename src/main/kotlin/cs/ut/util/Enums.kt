@@ -53,3 +53,9 @@ enum class Field(val value: String) {
     LEARNER("learner"),
     PREDICTION("predictiontype")
 }
+
+enum class GridColumns(val value: String) {
+    SORTABLE("sortableColumns"),
+    HIDDEN("hiddenColumns"),
+    TIMESTAMP("timestampFormat")
+}

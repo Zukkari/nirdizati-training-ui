@@ -1,12 +1,18 @@
 package cs.ut.ui
 
+import cs.ut.configuration.ConfigNode
+import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.ModelParameter
 import cs.ut.engine.item.Property
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.util.COMP_ID
+import cs.ut.util.GridColumns
 import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.PROPERTY
 import org.zkoss.zk.ui.Component
+import org.zkoss.zk.ui.Executions
+import org.zkoss.zk.ui.event.CheckEvent
+import org.zkoss.zk.ui.event.Events
 import org.zkoss.zul.*
 import org.zkoss.zul.impl.NumberInputElement
 
@@ -18,8 +24,10 @@ data class FieldComponent(val label: Component, val control: Component)
 /**
  * Custom ZK grid implementation that allows to generate grid with custom row providers
  */
-class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Grid(), UIComponent {
+class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, private val namespace: String = "") : Grid(), UIComponent {
     private val log = NirdizatiLogger.getLogger(NirdizatiGrid::class.java, getSessionId())
+    private val configNode = if (namespace.isNotBlank()) ConfigurationReader.findNode("grids/$namespace") else ConfigNode()
+
     val fields = mutableListOf<FieldComponent>()
 
     init {
@@ -62,6 +70,25 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Gri
                 column.hflex = it.value
             }
             cols.appendChild(column)
+        }
+
+        if (namespace.isNotBlank()) {
+            log.debug("Namespace for grid -> $namespace")
+            setSortingRules()
+            columns.menupopup = "auto"
+        }
+    }
+
+    private fun setSortingRules() {
+        val sortable = configNode.childNodes.first { it.identifier == GridColumns.SORTABLE.value }
+        val values = sortable.itemListValues()
+
+        if (sortable.isEnabled()) {
+            columns.getChildren<Column>().forEach {
+                if (it.id in values) {
+                    it.setSort("auto")
+                }
+            }
         }
     }
 

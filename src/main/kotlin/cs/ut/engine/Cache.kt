@@ -3,6 +3,7 @@ package cs.ut.engine
 import cs.ut.charts.Chart
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
+import cs.ut.logging.NirdizatiLogger
 import cs.ut.util.Field
 import cs.ut.util.readTrainingJson
 import java.io.File
@@ -83,8 +84,14 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
         val existing: CacheItem<SimulationJob>? = cachedItems[key]
 
         return when (existing) {
-            is CacheItem<SimulationJob> -> existing
-            else -> fetchFromDisk(key)
+            is CacheItem<SimulationJob> -> {
+                log.debug("Retrieved item from cache for key -> $key")
+                existing
+            }
+            else -> {
+                log.debug("Jobs for key $key not cached, fetching from disk")
+                fetchFromDisk(key)
+            }
         }
     }
 
@@ -101,6 +108,7 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
             CacheItem<SimulationJob>().apply {
                 val items = loadFromDisk(key)
                 this.addItems(items)
+                cachedItems[key] = this
             }
 
 
@@ -124,6 +132,10 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
                         })
                     }
         }
+    }
+
+    companion object {
+        val log = NirdizatiLogger.getLogger(JobCacheHolder::class.java)
     }
 }
 
