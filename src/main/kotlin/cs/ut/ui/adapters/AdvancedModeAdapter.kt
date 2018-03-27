@@ -1,5 +1,6 @@
 package cs.ut.ui.adapters
 
+import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.ModelParameter
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
@@ -61,7 +62,7 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
         return A().apply {
             this.vflex = "1"
             this.hflex = "min"
-            this.iconSclass = "z-icon-question-circle"
+            this.iconSclass = icons.valueWithIdentifier("tooltip").value
             this.sclass = "validation-btn"
 
             this.addEventListener(Events.ON_MOUSE_OVER, { _ ->
@@ -76,5 +77,9 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
                 desktop.components.forEach { (it as? Popup)?.close() }
             })
         }
+    }
+
+    companion object {
+        private val icons = ConfigurationReader.findNode("iconClass")
     }
 }

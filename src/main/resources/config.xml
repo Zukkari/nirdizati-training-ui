@@ -97,6 +97,13 @@
             </Node>
         </Node>
     </Node>
+    <Node Identifier="cookies">
+        <Value Identifier="maxAge">2147483648</Value>
+    </Node>
+    <Node Identifier="iconClass">
+        <Value Identifier="download">z-icon-cloud-download</Value>
+        <Value Identifier="tooltip">z-icon-question-circle</Value>
+    </Node>
     <Node Identifier="csv">
         <Value Identifier="splitter">[,;]</Value>
         <Value Identifier="threshold">20</Value>
@@ -159,6 +166,9 @@
                 <Value Identifier="future_values">params.future_values</Value>
             </Node>
         </Node>
+    </Node>
+    <Node Identifier="modelDownload">
+        <Value Identifier="mime">application/octet-stream</Value>
     </Node>
     <Node Identifier="fileUpload">
         <Value Identifier="uploadBufferSize">2048</Value>

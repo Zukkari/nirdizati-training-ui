@@ -109,7 +109,7 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
                         "learner" to "",
                         "hyperparameters" to "min",
                         "timestamp" to "",
-                        "download" to "min"
+                        "" to "min"
                 )
         )
         this.hflex = "1"

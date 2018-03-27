@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.Calendar
 import java.util.Date
+import javax.servlet.http.HttpServletResponse
 
 /**
  * Used to generate metadata info about the job in validation views
@@ -51,6 +52,14 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
             it.appendChild(getLabel(data.learner.toString()))
             it.appendChild(A().apply { loadTooltip(this, data) })
             it.appendChild(getLabel(timeFormat.format(Date.from(Instant.parse(data.startTime)))))
+            it.appendChild(A().apply {
+                this.iconSclass = icons.valueWithIdentifier("download").value
+                this.sclass = "n-download"
+                this.addEventListener(Events.ON_CLICK, { _ ->
+                    cs.ut.util.NirdizatiDownloader(cs.ut.providers.DirectoryConfiguration.dirPath(cs.ut.providers.Dir.PKL_DIR) + "BPI2012A_state_laststate_gbm_remtime.pkl")
+                            .execute()
+                })
+            })
 
             if (addRedirectListener) {
                 it.addEventListener(Events.ON_CLICK, { _ ->
@@ -68,7 +77,7 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
      * @param data to generate tooltip from
      */
     fun loadTooltip(a: A, data: SimulationJob) {
-        a.iconSclass = "z-icon-question-circle"
+        a.iconSclass = icons.valueWithIdentifier("tooltip").value
         a.sclass = "validation-btn"
         a.vflex = "1"
         a.addEventListener(Events.ON_MOUSE_OVER, { _ ->
@@ -110,5 +119,6 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
     companion object {
         const val PROP_POPUP = "propertyPopUpMenu"
         val timeFormat = SimpleDateFormat(ConfigurationReader.findNode("grids").valueWithIdentifier(GridColumns.TIMESTAMP.value).value)
+        val icons = ConfigurationReader.findNode("iconClass")
     }
 }
