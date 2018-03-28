@@ -120,6 +120,18 @@ class SimulationJob(
         }
     }
 
+    override fun onError() {
+        super.onError()
+        log.debug("Handling error for job $id")
+        val file = File(DirectoryConfiguration.dirPath(Dir.TRAIN_DIR) + "$id.json")
+        if (file.exists()) {
+            log.debug("File ${file.name} exists, deleting file")
+            val deleted = file.delete()
+            log.debug("File deleted successfully ? $deleted")
+        }
+        log.debug("Finished handling error for $id")
+    }
+
     override fun isNotificationRequired() = true
     override fun getNotificationMessage() = NirdizatiTranslator.localizeText("job.completed.simulation", this.toString())
 

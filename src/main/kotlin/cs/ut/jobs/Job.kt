@@ -62,6 +62,11 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
     open fun beforeInterrupt() = Unit
 
     /**
+     * In case job wants to handle errors itself
+     */
+    open fun onError() = Unit
+
+    /**
      * Running the job
      */
     override fun run() {

@@ -10,10 +10,15 @@ import cs.ut.util.GridColumns
 import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.PROPERTY
 import org.zkoss.zk.ui.Component
-import org.zkoss.zk.ui.Executions
-import org.zkoss.zk.ui.event.CheckEvent
-import org.zkoss.zk.ui.event.Events
-import org.zkoss.zul.*
+import org.zkoss.zul.Checkbox
+import org.zkoss.zul.Column
+import org.zkoss.zul.Columns
+import org.zkoss.zul.Combobox
+import org.zkoss.zul.Doublebox
+import org.zkoss.zul.Grid
+import org.zkoss.zul.Intbox
+import org.zkoss.zul.Row
+import org.zkoss.zul.Rows
 import org.zkoss.zul.impl.NumberInputElement
 
 /**
@@ -41,7 +46,7 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, priva
      * @param data to generate rows with
      * @param clear whether or not existing data should be cleared before appending new data
      */
-    fun generate(data: Collection<T>, clear: Boolean = true) {
+    fun generate(data: Collection<T>, clear: Boolean = true, reversedInsert: Boolean = false) {
         log.debug("Row generation start with ${data.size} properties")
         val start = System.currentTimeMillis()
 
@@ -50,7 +55,7 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, priva
             fields.clear()
         }
 
-        generateRows(data.toMutableList(), rows)
+        generateRows(data.toMutableList(), rows, reversedInsert)
 
         val end = System.currentTimeMillis()
         log.debug("Row generation finished in ${end - start} ms")
@@ -92,11 +97,17 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, priva
         }
     }
 
-    private tailrec fun generateRows(data: MutableList<T>, rows: Rows) {
+    private tailrec fun generateRows(data: MutableList<T>, rows: Rows, reversedInsert: Boolean) {
         if (data.isNotEmpty()) {
             val row = provider.provide(data.first())
-            rows.appendChild(row)
-            generateRows(data.tail(), rows)
+            
+            if (reversedInsert) {
+                rows.insertBefore(row, rows.firstChild)
+            } else {
+                rows.appendChild(row)
+            }
+
+            generateRows(data.tail(), rows, reversedInsert)
         }
     }
 

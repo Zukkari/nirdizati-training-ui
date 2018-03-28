@@ -98,7 +98,7 @@
         </Node>
     </Node>
     <Node Identifier="cookies">
-        <Value Identifier="maxAge">2147483648</Value>
+        <Value Identifier="maxAge">2147483647</Value>
     </Node>
     <Node Identifier="iconClass">
         <Value Identifier="download">z-icon-cloud-download</Value>
