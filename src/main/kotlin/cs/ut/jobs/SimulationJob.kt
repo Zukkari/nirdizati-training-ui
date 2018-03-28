@@ -101,7 +101,7 @@ class SimulationJob(
             process!!.waitFor()
             log.debug("Script finished running...")
 
-            val file = File(DirectoryConfiguration.dirPath(Dir.PKL_DIR) + this.toString())
+            val file = File(DirectoryConfiguration.dirPath(Dir.PKL_DIR)).listFiles().first { it.name.contains(this.id) }
             log.debug(file)
 
             if (!file.exists()) {
