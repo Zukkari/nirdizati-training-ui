@@ -60,8 +60,7 @@ class UserRightsJob(private val f: File) : Job() {
             log.debug("Updating ACL -> $f")
             val pb = ProcessBuilder(
                     "sudo",
-                    "chmod",
-                    if (f.isDirectory) "-R" else "",
+                    if (f.isDirectory) "chmod -R" else "chmod",
                     configNode.valueWithIdentifier("acp").value,
                     f.absolutePath
             )
