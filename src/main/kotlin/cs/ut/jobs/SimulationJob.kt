@@ -13,11 +13,9 @@ import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.OWNER
 import cs.ut.util.START_DATE
 import cs.ut.util.UI_DATA
-import org.apache.commons.io.IOUtils
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
-import java.io.InputStream
 
 
 class SimulationJob(
