@@ -93,10 +93,10 @@ class SimulationJob(
 
             val env = pb.environment()
             env["PYTHONPATH"] = DirectoryConfiguration.dirPath(Dir.SCRIPT_DIR)
+            pb.inheritIO()
 
             log.debug("Script call: ${pb.command()}")
             process = pb.start()
-            pb.inheritIO()
 
             log.debug("Waiting for process completion")
             process!!.waitFor()
