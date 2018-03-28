@@ -32,7 +32,6 @@ class SimulationJob(
 
     private var process: Process? = null
     private val configNode = ConfigurationReader.findNode("userPreferences")
-    private lateinit var errorStream: InputStream
 
     override fun preProcess() {
         log.debug("Generating training parameters for job $this")
@@ -97,7 +96,7 @@ class SimulationJob(
 
             log.debug("Script call: ${pb.command()}")
             process = pb.start()
-            errorStream = process!!.errorStream
+            pb.inheritIO()
 
             log.debug("Waiting for process completion")
             process!!.waitFor()
