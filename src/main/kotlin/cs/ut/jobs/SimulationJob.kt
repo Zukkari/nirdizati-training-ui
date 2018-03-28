@@ -93,7 +93,6 @@ class SimulationJob(
 
             val env = pb.environment()
             env["PYTHONPATH"] = DirectoryConfiguration.dirPath(Dir.SCRIPT_DIR)
-            pb.inheritIO()
 
             log.debug("Script call: ${pb.command()}")
             process = pb.start()
@@ -143,7 +142,10 @@ class SimulationJob(
     override fun isNotificationRequired() = true
     override fun getNotificationMessage() = NirdizatiTranslator.localizeText("job.completed.simulation", this.toString())
 
-    override fun errorOccurred(): Boolean = process?.exitValue() != 0
+    override fun errorOccurred(): Boolean {
+        log.debug("Process exit value = ${process?.exitValue()}")
+        return process?.exitValue() != 0
+    }
 
     override fun toString(): String {
         return logFile.nameWithoutExtension +
