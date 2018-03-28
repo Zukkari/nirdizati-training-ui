@@ -4,22 +4,26 @@ import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.Property
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
+import cs.ut.providers.Dir
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.ui.adapters.JobValueAdapter.Companion.jobArg
 import cs.ut.ui.controllers.validation.ValidationController
 import cs.ut.util.GridColumns
+import cs.ut.util.NirdizatiDownloader
 import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.Page
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Events
-import org.zkoss.zul.*
+import org.zkoss.zul.A
+import org.zkoss.zul.Html
+import org.zkoss.zul.Label
+import org.zkoss.zul.Popup
+import org.zkoss.zul.Row
 import java.text.SimpleDateFormat
 import java.time.Instant
-import java.util.Calendar
 import java.util.Date
-import javax.servlet.http.HttpServletResponse
 
 /**
  * Used to generate metadata info about the job in validation views
@@ -55,10 +59,7 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
             it.appendChild(A().apply {
                 this.iconSclass = icons.valueWithIdentifier("download").value
                 this.sclass = "n-download"
-                this.addEventListener(Events.ON_CLICK, { _ ->
-                    cs.ut.util.NirdizatiDownloader(cs.ut.providers.DirectoryConfiguration.dirPath(cs.ut.providers.Dir.PKL_DIR) + "BPI2012A_state_laststate_gbm_remtime.pkl")
-                            .execute()
-                })
+                this.addEventListener(Events.ON_CLICK, { _ -> NirdizatiDownloader(Dir.PKL_DIR, data.id).execute() })
             })
 
             if (addRedirectListener) {

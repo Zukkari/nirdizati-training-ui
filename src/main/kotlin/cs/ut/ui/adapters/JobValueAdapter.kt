@@ -243,7 +243,7 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
         deploy.hflex = "1"
 
         deploy.addEventListener(Events.ON_CLICK, { _ ->
-            NirdizatiDownloader(DirectoryConfiguration.dirPath(Dir.PKL_DIR) + this.id + ".pkl").execute()
+            NirdizatiDownloader(Dir.PKL_DIR, this.id).execute()
         })
 
         return deploy

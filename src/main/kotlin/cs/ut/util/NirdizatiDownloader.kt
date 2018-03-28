@@ -2,19 +2,22 @@ package cs.ut.util
 
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.logging.NirdizatiLogger
+import cs.ut.providers.Dir
+import cs.ut.providers.DirectoryConfiguration
 import org.zkoss.zul.Filedownload
 import java.io.File
 import java.io.FileInputStream
 
-class NirdizatiDownloader(private val pathToResource: String) {
+class NirdizatiDownloader(private val dir: Dir, private val resourceId: String) {
     init {
-        log.debug("Nirdizati downloader created with resource -> $pathToResource")
+        log.debug("Nirdizati downloader created with resource -> $resourceId")
     }
 
     fun execute() {
-        log.debug("Executing download operation for resource $pathToResource")
-        val file = File(pathToResource)
-        Filedownload.save(FileInputStream(file), configNode.valueWithIdentifier("mime").value, file.name)
+        log.debug("Executing download operation for resource $resourceId")
+        val file = File(DirectoryConfiguration.dirPath(dir))
+        val downloadFile = file.listFiles().first { it.name.contains(resourceId) }
+        Filedownload.save(FileInputStream(downloadFile), configNode.valueWithIdentifier("mime").value, downloadFile.name)
         log.debug("Finished file download")
     }
 
