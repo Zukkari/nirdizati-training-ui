@@ -61,7 +61,6 @@ class ModelParamProvider {
     private fun parseParameters() {
         val params = mutableListOf<ModelParameter>()
         config.childNodes.first { it.identifier == PARAM_NODE }.childNodes.forEach {
-            log.debug("Parsing parameter node: $it")
             params.add(ModelParameter().apply {
                 this.enabled = it.values.first { it.identifier == ENABLED }.booleanValue()
                 this.id = it.identifier
@@ -69,7 +68,7 @@ class ModelParamProvider {
                 this.parameter = it.values.first { it.identifier == PARAMETER }.value
 
                 val propNode = it.childNodes.firstOrNull { it.identifier == PROPERTIES }
-                this.properties = parseProperties(this, propNode)
+                this.properties = parseProperties(propNode)
             })
         }
 
@@ -87,9 +86,8 @@ class ModelParamProvider {
      * @see Property
      * @see ConfigNode
      */
-    private fun parseProperties(modelParameter: ModelParameter, propNode: ConfigNode?): MutableList<Property> {
+    private fun parseProperties(propNode: ConfigNode?): MutableList<Property> {
         val properties = mutableListOf<Property>()
-        log.debug("Parsing properties for $modelParameter")
 
         propNode?.childNodes?.forEach {
             properties.add(Property().apply {

@@ -12,7 +12,7 @@
         <Value Identifier="userName">zukkari</Value>
         <Value Identifier="userGroup">zukkari</Value>
         <Value Identifier="sudo"></Value>
-        <Value Identifier="acp">0660</Value>
+        <Value Identifier="acp">0770</Value>
         <Node Identifier="adminFunctionality">
             <!-- Admin page functionality -->
             <Value Identifier="isEnabled">true</Value>

@@ -3,6 +3,7 @@ package cs.ut.jobs
 
 import cs.ut.engine.IdProvider
 import cs.ut.engine.JobManager
+import cs.ut.exceptions.ProcessErrorException
 import cs.ut.logging.NirdizatiLogger
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -95,11 +96,21 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
 
             updateEvent()
             execute()
+
+            if (errorOccurred()) {
+                throw ProcessErrorException()
+            }
         } catch (e: Exception) {
-            log.debug("Job $id failed in execute stage", e)
-            status = JobStatus.FAILED
-            updateEvent()
-            return
+            try {
+                onError()
+            } catch (ex: Exception) {
+                log.error("Error occurred when handling exception for job $id", ex)
+            } finally {
+                log.error("Job $id failed in execute stage", e)
+                status = JobStatus.FAILED
+                updateEvent()
+                return
+            }
         }
 
         log.debug("Job $id finished execute step")
@@ -128,6 +139,8 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
     private fun updateEvent() {
         JobManager.statusUpdated(this)
     }
+
+    open fun errorOccurred() = false
 
     /**
      * Get start time for the job

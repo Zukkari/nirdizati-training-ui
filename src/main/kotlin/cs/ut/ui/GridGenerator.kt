@@ -100,7 +100,7 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, priva
     private tailrec fun generateRows(data: MutableList<T>, rows: Rows, reversedInsert: Boolean) {
         if (data.isNotEmpty()) {
             val row = provider.provide(data.first())
-            
+
             if (reversedInsert) {
                 rows.insertBefore(row, rows.firstChild)
             } else {
