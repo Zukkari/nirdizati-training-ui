@@ -25,7 +25,7 @@ import java.time.Instant
 class ValidationController : SelectorComposer<Component>(), Redirectable {
 
     @Wire
-    lateinit var mainContainer: Vbox
+    lateinit var gridContainer: Vbox
 
     @Wire
     private lateinit var grid: NirdizatiGrid<Job>
@@ -41,12 +41,12 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
      */
     private fun generate() {
         val userJobs =
-            JobManager
-                .cache
-                .retrieveFromCache((Cookies.getCookieKey(Executions.getCurrent().nativeRequest)))
-                .rawData().sortedByDescending { Instant.parse(it.startTime) }
+                JobManager
+                        .cache
+                        .retrieveFromCache((Cookies.getCookieKey(Executions.getCurrent().nativeRequest)))
+                        .rawData().sortedByDescending { Instant.parse(it.startTime) }
 
-        grid = NirdizatiGrid(ValidationViewAdapter(this, mainContainer)).apply {
+        grid = NirdizatiGrid(ValidationViewAdapter(this, gridContainer), "validation").apply {
             this.configure()
         }
 
@@ -56,7 +56,7 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
         }
 
         grid.generate(userJobs)
-        mainContainer.appendChild(grid)
+        gridContainer.appendChild(grid)
     }
 
     fun page() = this.page ?: throw NirdizatiRuntimeException("No current page set")
@@ -65,31 +65,31 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
      * Create empty layout when user has no trained models
      */
     private fun emptyLayout() {
-        mainContainer.appendChild(Vbox().apply {
+        gridContainer.appendChild(Vbox().apply {
             this.align = "center"
             this.pack = "center"
             this.appendChild(
-                Label(NirdizatiTranslator.localizeText("validation.empty1")).apply {
-                    this.sclass = "large-text"
-                })
+                    Label(NirdizatiTranslator.localizeText("validation.empty1")).apply {
+                        this.sclass = "large-text"
+                    })
             this.appendChild(
-                Label(NirdizatiTranslator.localizeText("validation.empty2")).apply {
-                    this.sclass = "large-text"
-                })
+                    Label(NirdizatiTranslator.localizeText("validation.empty2")).apply {
+                        this.sclass = "large-text"
+                    })
             this.appendChild(
-                Hlayout().apply {
-                    this.vflex = "min"
-                    this.hflex = "min"
-                    this.sclass = "margin-top-7px"
-                    this.appendChild(
-                        Button(NirdizatiTranslator.localizeText("validation.train")).also {
-                            it.addEventListener(Events.ON_CLICK, { _ ->
-                                this@ValidationController.setContent(Page.TRAINING.value, page)
-                            })
-                            it.sclass = "n-btn"
-                        }
-                    )
-                }
+                    Hlayout().apply {
+                        this.vflex = "min"
+                        this.hflex = "min"
+                        this.sclass = "margin-top-7px"
+                        this.appendChild(
+                                Button(NirdizatiTranslator.localizeText("validation.train")).also {
+                                    it.addEventListener(Events.ON_CLICK, { _ ->
+                                        this@ValidationController.setContent(Page.TRAINING.value, page)
+                                    })
+                                    it.sclass = "n-btn"
+                                }
+                        )
+                    }
 
             )
         }
@@ -101,14 +101,16 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
      */
     private fun NirdizatiGrid<Job>.configure() {
         this.setColumns(
-            mapOf(
-                "logfile" to "",
-                "predictiontype" to "",
-                "bucketing" to "",
-                "encoding" to "",
-                "learner" to "",
-                "hyperparameters" to "min"
-            )
+                mapOf(
+                        "logfile" to "",
+                        "predictiontype" to "",
+                        "bucketing" to "",
+                        "encoding" to "",
+                        "learner" to "",
+                        "hyperparameters" to "min",
+                        "timestamp" to "",
+                        "" to "min"
+                )
         )
         this.hflex = "1"
         this.vflex = "1"
@@ -130,21 +132,21 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
             is SimulationJob -> {
                 if (event.data.status == JobStatus.COMPLETED) {
                     Executions.schedule(
-                        self.desktop, { _ ->
-                            val userJobs =
+                            self.desktop, { _ ->
+                        val userJobs =
                                 JobManager
-                                    .cache
-                                    .retrieveFromCache(Cookies.getCookieKey(Executions.getCurrent().nativeRequest))
-                                    .rawData()
-                                    .reversed()
-                            if (grid.parent != mainContainer) {
-                                mainContainer.getChildren<Component>().clear()
-                                mainContainer.appendChild(grid)
-                            }
+                                        .cache
+                                        .retrieveFromCache(Cookies.getCookieKey(Executions.getCurrent().nativeRequest))
+                                        .rawData()
+                                        .reversed()
+                        if (grid.parent != gridContainer) {
+                            gridContainer.getChildren<Component>().clear()
+                            gridContainer.appendChild(grid)
+                        }
 
-                            grid.generate(userJobs, true)
-                        },
-                        Event("content_update")
+                        grid.generate(userJobs, true)
+                    },
+                            Event("content_update")
                     )
                 }
             }

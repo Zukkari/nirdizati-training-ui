@@ -1,13 +1,24 @@
 package cs.ut.ui
 
+import cs.ut.configuration.ConfigNode
+import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.ModelParameter
 import cs.ut.engine.item.Property
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.util.COMP_ID
+import cs.ut.util.GridColumns
 import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.PROPERTY
 import org.zkoss.zk.ui.Component
-import org.zkoss.zul.*
+import org.zkoss.zul.Checkbox
+import org.zkoss.zul.Column
+import org.zkoss.zul.Columns
+import org.zkoss.zul.Combobox
+import org.zkoss.zul.Doublebox
+import org.zkoss.zul.Grid
+import org.zkoss.zul.Intbox
+import org.zkoss.zul.Row
+import org.zkoss.zul.Rows
 import org.zkoss.zul.impl.NumberInputElement
 
 /**
@@ -18,8 +29,10 @@ data class FieldComponent(val label: Component, val control: Component)
 /**
  * Custom ZK grid implementation that allows to generate grid with custom row providers
  */
-class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Grid(), UIComponent {
+class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, private val namespace: String = "") : Grid(), UIComponent {
     private val log = NirdizatiLogger.getLogger(NirdizatiGrid::class.java, getSessionId())
+    private val configNode = if (namespace.isNotBlank()) ConfigurationReader.findNode("grids/$namespace") else ConfigNode()
+
     val fields = mutableListOf<FieldComponent>()
 
     init {
@@ -33,7 +46,7 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Gri
      * @param data to generate rows with
      * @param clear whether or not existing data should be cleared before appending new data
      */
-    fun generate(data: Collection<T>, clear: Boolean = true) {
+    fun generate(data: Collection<T>, clear: Boolean = true, reversedInsert: Boolean = false) {
         log.debug("Row generation start with ${data.size} properties")
         val start = System.currentTimeMillis()
 
@@ -42,7 +55,7 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Gri
             fields.clear()
         }
 
-        generateRows(data.toMutableList(), rows)
+        generateRows(data.toMutableList(), rows, reversedInsert)
 
         val end = System.currentTimeMillis()
         log.debug("Row generation finished in ${end - start} ms")
@@ -63,13 +76,38 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>) : Gri
             }
             cols.appendChild(column)
         }
+
+        if (namespace.isNotBlank()) {
+            log.debug("Namespace for grid -> $namespace")
+            setSortingRules()
+            columns.menupopup = "auto"
+        }
     }
 
-    private tailrec fun generateRows(data: MutableList<T>, rows: Rows) {
+    private fun setSortingRules() {
+        val sortable = configNode.childNodes.first { it.identifier == GridColumns.SORTABLE.value }
+        val values = sortable.itemListValues()
+
+        if (sortable.isEnabled()) {
+            columns.getChildren<Column>().forEach {
+                if (it.id in values) {
+                    it.setSort("auto")
+                }
+            }
+        }
+    }
+
+    private tailrec fun generateRows(data: MutableList<T>, rows: Rows, reversedInsert: Boolean) {
         if (data.isNotEmpty()) {
             val row = provider.provide(data.first())
-            rows.appendChild(row)
-            generateRows(data.tail(), rows)
+
+            if (reversedInsert) {
+                rows.insertBefore(row, rows.firstChild)
+            } else {
+                rows.appendChild(row)
+            }
+
+            generateRows(data.tail(), rows, reversedInsert)
         }
     }
 

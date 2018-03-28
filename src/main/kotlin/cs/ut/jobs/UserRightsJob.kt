@@ -59,9 +59,11 @@ class UserRightsJob(private val f: File) : Job() {
         private fun updateRights(f: File) {
             log.debug("Updating ACL -> $f")
             val pb = ProcessBuilder(
-                "chmod",
-                configNode.valueWithIdentifier("acp").value,
-                f.absolutePath
+                    "sudo",
+                    "chmod",
+                    if (f.isDirectory) "-R" else "",
+                    configNode.valueWithIdentifier("acp").value,
+                    f.absolutePath
             )
             pb.inheritIO()
             log.debug("Running -> ${pb.command()}")
@@ -82,11 +84,11 @@ class UserRightsJob(private val f: File) : Job() {
             log.debug("Updating ownership for $f -> " +
                     "new owner $userName:$userGroup")
             val pb = ProcessBuilder(
-                "sudo",
-                "-S",
-                "chown",
-                "$userName:$userGroup",
-                f.absolutePath
+                    "sudo",
+                    "-S",
+                    "chown",
+                    "$userName:$userGroup",
+                    f.absolutePath
             )
 
             log.debug("Command -> ${pb.command()}")

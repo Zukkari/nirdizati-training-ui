@@ -21,6 +21,7 @@ import org.zkoss.zul.Button
 import org.zkoss.zul.Hbox
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
+import java.time.Instant
 
 class JobTrackerController : SelectorComposer<Component>(), Redirectable {
     @Wire
@@ -53,17 +54,17 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
         }
 
         Executions.schedule(
-            self.desktop,
-            { _ ->
-                val subKey: String =
-                    Cookies.getCookieKey(Executions.getCurrent().nativeRequest)
-                if (subKey == event.data.owner) {
-                    val grid =
-                        Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
-                    event.data.updateJobStatus(grid.rows.getChildren())
-                }
-            },
-            Event("job_update")
+                self.desktop,
+                { _ ->
+                    val subKey: String =
+                            Cookies.getCookieKey(Executions.getCurrent().nativeRequest)
+                    if (subKey == event.data.owner) {
+                        val grid =
+                                Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
+                        event.data.updateJobStatus(grid.rows.getChildren())
+                    }
+                },
+                Event("job_update")
         )
     }
 
@@ -77,22 +78,24 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
             return
         }
 
+        event.data.sortedByDescending { Instant.parse(it.startTime) }
+
         Executions.schedule(
-            self.desktop,
-            { _ ->
-                val subKey: String =
-                    Cookies.getCookieKey(Executions.getCurrent().nativeRequest)
-                if (subKey == event.target) {
+                self.desktop,
+                { _ ->
+                    val subKey: String =
+                            Cookies.getCookieKey(Executions.getCurrent().nativeRequest)
+                    if (subKey == event.target) {
 
-                    val comps = Executions.getCurrent().desktop.components
-                    val tracker = comps.first { it.id == TRACKER_EAST }
-                    tracker.isVisible = true
+                        val comps = Executions.getCurrent().desktop.components
+                        val tracker = comps.first { it.id == TRACKER_EAST }
+                        tracker.isVisible = true
 
-                    val grid = comps.first { it.id == GRID_ID } as NirdizatiGrid<Job>
-                    grid.generate(event.data, false)
-                }
-            },
-            Event("deployment")
+                        val grid = comps.first { it.id == GRID_ID } as NirdizatiGrid<Job>
+                        grid.generate(event.data, false, true)
+                    }
+                },
+                Event("deployment")
         )
     }
 
@@ -113,8 +116,8 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
 
                 if (this.status == JobStatus.COMPLETED) {
                     NirdizatiTranslator.showNotificationAsync(
-                        NirdizatiTranslator.localizeText("job.completed.simulation", this),
-                        Executions.getCurrent().desktop
+                            NirdizatiTranslator.localizeText("job.completed.simulation", this),
+                            Executions.getCurrent().desktop
                     )
                 }
             } else {

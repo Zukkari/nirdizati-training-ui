@@ -1,5 +1,6 @@
 package cs.ut.util
 
+import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.IdProvider
 import cs.ut.engine.JobManager
 import cs.ut.jobs.Job
@@ -11,11 +12,13 @@ import javax.servlet.http.HttpServletResponse
 
 class Cookies {
     companion object {
+        private val configNode = ConfigurationReader.findNode("cookies")
         val log = Logger.getLogger(Cookies::class.java)!!
 
         fun setUpCookie(response: HttpServletResponse) {
             log.debug("Setting up new cookie")
             val cookie = Cookie(JOBS_KEY, IdProvider.getNextId())
+            cookie.maxAge = configNode.valueWithIdentifier("maxAge").intValue()
             response.addCookie(cookie)
             log.debug("Successfully generated new cookie and added it to response")
         }

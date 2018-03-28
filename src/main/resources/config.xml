@@ -12,7 +12,7 @@
         <Value Identifier="userName">ubuntu</Value>
         <Value Identifier="userGroup">ubuntu</Value>
         <Value Identifier="sudo"></Value>
-        <Value Identifier="acp">0660</Value>
+        <Value Identifier="acp">0770</Value>
         <Node Identifier="adminFunctionality">
             <!-- Admin page functionality -->
             <Value Identifier="isEnabled">true</Value>
@@ -81,6 +81,29 @@
             <Value Identifier="icon">z-icon-bug</Value>
         </Node>
     </Node>
+    <Node Identifier="grids">
+        <Value Identifier="timestampFormat">HH:mm:ss dd.MM.yyyy</Value>
+        <Node Identifier="validation">
+            <Node Identifier="sortableColumns">
+                <Value Identifier="isEnabled">true</Value>
+                <Node Identifier="itemList">
+                    <Value>logfile</Value>
+                    <Value>predictiontype</Value>
+                    <Value>bucketing</Value>
+                    <Value>encoding</Value>
+                    <Value>learner</Value>
+                    <Value>timestamp</Value>
+                </Node>
+            </Node>
+        </Node>
+    </Node>
+    <Node Identifier="cookies">
+        <Value Identifier="maxAge">2147483647</Value>
+    </Node>
+    <Node Identifier="iconClass">
+        <Value Identifier="download">z-icon-cloud-download</Value>
+        <Value Identifier="tooltip">z-icon-question-circle</Value>
+    </Node>
     <Node Identifier="csv">
         <Value Identifier="splitter">[,;]</Value>
         <Value Identifier="threshold">20</Value>
@@ -143,6 +166,9 @@
                 <Value Identifier="future_values">params.future_values</Value>
             </Node>
         </Node>
+    </Node>
+    <Node Identifier="modelDownload">
+        <Value Identifier="mime">application/octet-stream</Value>
     </Node>
     <Node Identifier="fileUpload">
         <Value Identifier="uploadBufferSize">2048</Value>

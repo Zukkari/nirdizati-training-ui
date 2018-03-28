@@ -6,12 +6,15 @@ import cs.ut.engine.item.ModelParameter
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
+import cs.ut.providers.Dir
+import cs.ut.providers.DirectoryConfiguration
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.controllers.JobTrackerController
 import cs.ut.ui.controllers.Redirectable
 import cs.ut.util.Algorithm
+import cs.ut.util.NirdizatiDownloader
 import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.Page
 import cs.ut.util.TRACKER_EAST
@@ -133,7 +136,7 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
 
         val hlayout = Hlayout()
         hlayout.appendChild(job.getVisualizeBtn())
-        hlayout.appendChild(getDeployBtn())
+        hlayout.appendChild(job.getDeployBtn())
         vlayout.appendChild(hlayout)
 
         return vlayout
@@ -232,12 +235,16 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
         return visualize
     }
 
-    private fun getDeployBtn(): Button {
+    private fun SimulationJob.getDeployBtn(): Button {
         val deploy = Button(NirdizatiTranslator.localizeText("job_tracker.deploy_to_runtime"))
         deploy.isDisabled = true
         deploy.sclass = "n-btn"
         deploy.vflex = "min"
         deploy.hflex = "1"
+
+        deploy.addEventListener(Events.ON_CLICK, { _ ->
+            NirdizatiDownloader(Dir.PKL_DIR, this.id).execute()
+        })
 
         return deploy
     }

@@ -6,24 +6,33 @@ import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.UserRightsJob.Companion.updateACL
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
-import cs.ut.util.*
+import cs.ut.util.Algorithm
+import cs.ut.util.FileWriter
+import cs.ut.util.LOG_FILE
+import cs.ut.util.NirdizatiTranslator
+import cs.ut.util.OWNER
+import cs.ut.util.START_DATE
+import cs.ut.util.UI_DATA
+import org.apache.commons.io.IOUtils
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
+import java.io.InputStream
 
 
 class SimulationJob(
-    val encoding: ModelParameter,
-    val bucketing: ModelParameter,
-    val learner: ModelParameter,
-    val outcome: ModelParameter,
-    val logFile: File,
-    val owner: String,
-    id: String = ""
+        val encoding: ModelParameter,
+        val bucketing: ModelParameter,
+        val learner: ModelParameter,
+        val outcome: ModelParameter,
+        val logFile: File,
+        val owner: String,
+        id: String = ""
 ) : Job(id) {
 
     private var process: Process? = null
     private val configNode = ConfigurationReader.findNode("userPreferences")
+    private lateinit var errorStream: InputStream
 
     override fun preProcess() {
         log.debug("Generating training parameters for job $this")
@@ -42,14 +51,14 @@ class SimulationJob(
         }
 
         json.put(
-            outcome.parameter,
-            JSONObject().put(
-                bucketing.parameter + "_" + encoding.parameter,
-                JSONObject().put(learner.parameter, params)
-            )
+                outcome.parameter,
+                JSONObject().put(
+                        bucketing.parameter + "_" + encoding.parameter,
+                        JSONObject().put(learner.parameter, params)
+                )
         )
         json.put(
-            UI_DATA, JSONObject()
+                UI_DATA, JSONObject()
                 .put(OWNER, owner)
                 .put(LOG_FILE, logFile.absoluteFile)
                 .put(START_DATE, startTime)
@@ -57,8 +66,8 @@ class SimulationJob(
 
         val writer = FileWriter()
         val f = writer.writeJsonToDisk(
-            json, id,
-            DirectoryConfiguration.dirPath(Dir.TRAIN_DIR)
+                json, id,
+                DirectoryConfiguration.dirPath(Dir.TRAIN_DIR)
         )
 
         updateACL(f)
@@ -82,13 +91,13 @@ class SimulationJob(
             val pb = ProcessBuilder(parameters)
 
             pb.directory(File(DirectoryConfiguration.dirPath(Dir.CORE_DIR)))
-            pb.inheritIO()
 
             val env = pb.environment()
             env["PYTHONPATH"] = DirectoryConfiguration.dirPath(Dir.SCRIPT_DIR)
 
             log.debug("Script call: ${pb.command()}")
             process = pb.start()
+            errorStream = process!!.errorStream
 
             log.debug("Waiting for process completion")
             process!!.waitFor()
@@ -120,8 +129,22 @@ class SimulationJob(
         }
     }
 
+    override fun onError() {
+        super.onError()
+        log.debug("Handling error for job $id")
+        val file = File(DirectoryConfiguration.dirPath(Dir.TRAIN_DIR) + "$id.json")
+        if (file.exists()) {
+            log.debug("File ${file.name} exists, deleting file")
+            val deleted = file.delete()
+            log.debug("File deleted successfully ? $deleted")
+        }
+        log.debug("Finished handling error for $id")
+    }
+
     override fun isNotificationRequired() = true
     override fun getNotificationMessage() = NirdizatiTranslator.localizeText("job.completed.simulation", this.toString())
+
+    override fun errorOccurred(): Boolean = process?.exitValue() != 0
 
     override fun toString(): String {
         return logFile.nameWithoutExtension +
@@ -137,11 +160,11 @@ class SimulationJob(
     }
 
     private fun convertToNumber(value: String): Number =
-        try {
-            value.toInt()
-        } catch (e: NumberFormatException) {
-            value.toDouble()
-        }
+            try {
+                value.toInt()
+            } catch (e: NumberFormatException) {
+                value.toDouble()
+            }
 
     companion object {
         const val TRAIN_PY = "train.py"

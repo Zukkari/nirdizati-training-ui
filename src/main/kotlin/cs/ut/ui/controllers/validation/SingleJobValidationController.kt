@@ -29,7 +29,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
     private lateinit var charts: Map<String, List<Chart>>
 
     @Wire
-    private lateinit var mainContainer: Vbox
+    private lateinit var gridContainer: Vbox
 
     @Wire
     private lateinit var propertyRows: Rows
@@ -59,7 +59,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         log.debug("Received job argument $job, initializing in read only mode")
         charts = ChartGenerator(job).getCharts().groupBy { it.javaClass.name }
 
-        val provider = ComparisonAdapter(mainContainer, this)
+        val provider = ComparisonAdapter(gridContainer, this)
         (listOf(job) +
                 JobService.findSimilarJobs(job))
             .map { provider.provide(it) }.forEach { compRows.appendChild(it) }
@@ -87,7 +87,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
      * Generate read only mode for this view
      */
     private fun generateReadOnlyMode() {
-        propertyRows.appendChild(ValidationViewAdapter(null, mainContainer).provide(job, false))
+        propertyRows.appendChild(ValidationViewAdapter(null, gridContainer).provide(job, false))
         generateChartOptions()
     }
 
