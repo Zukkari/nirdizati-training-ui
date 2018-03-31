@@ -98,11 +98,7 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
      * Create tooltip that contains info about hyper parameters for the job
      */
     private fun SimulationJob.formTooltip(): String {
-        val parameters = mutableListOf<Property>().also {
-            it.addAll(this.encoding.properties)
-            it.addAll(this.bucketing.properties)
-            it.addAll(this.learner.properties)
-        }
+        val parameters = mutableListOf<Property>().also { it.addAll(this.learner.properties) }
 
         return parameters.joinToString(
                 separator = "<br/>",

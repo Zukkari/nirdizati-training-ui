@@ -40,7 +40,7 @@ fun readTrainingJson(key: String): Map<String, List<ModelParameter>> =
 private fun readTrainingData(logName: String): TrainingData {
     val path: String = DirectoryConfiguration.dirPath(Dir.DATA_DIR)
 
-    val file = File(path + logName + ".json")
+    val file = File("$path$logName.json")
     val jsonReader = JsonReader(FileReader(file))
 
     return Gson().fromJson(jsonReader, TrainingData::class.java)
@@ -107,14 +107,19 @@ private tailrec fun parseJson(jsonItems: MutableMap<String, String>, map: Mutabl
         params.add(outcome)
 
         val secondLevel = json.getJSONObject(outcome)
-        val encAndBucket = secondLevel.keySet().first().split("_")
-        params.addAll(encAndBucket)
+        val enc = secondLevel.keySet().first()
+        params.add(enc)
 
-        val thirdLevel = secondLevel.getJSONObject(encAndBucket.joinToString(separator = "_"))
-        val learner = thirdLevel.keySet().first()
+
+        val thirdLevel = secondLevel.getJSONObject(enc)
+        val bucket = thirdLevel.keySet().first()
+        params.add(bucket)
+
+        val fourthLevel = thirdLevel.getJSONObject(bucket)
+        val learner = fourthLevel.keySet().first()
         params.add(learner)
 
-        val paramArray = thirdLevel.getJSONObject(learner).toMap()
+        val paramArray = fourthLevel.getJSONObject(learner).toMap()
         val properties = mutableSetOf<Property>()
         var collected = false
         paramArray.entries.forEach properties@ {
