@@ -50,8 +50,7 @@ class SimulationJob(
         json.put(
                 outcome.parameter,
                 JSONObject().put(
-                        bucketing.parameter + "_" + encoding.parameter,
-                        JSONObject().put(learner.parameter, params)
+                        bucketing.parameter, JSONObject().put(encoding.parameter, JSONObject().put(learner.parameter, params))
                 )
         )
         json.put(
