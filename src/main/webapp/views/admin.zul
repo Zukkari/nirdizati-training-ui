@@ -36,6 +36,12 @@
                         <button sclass="transparent-btn" id="showLogs">Execute</button>
                     </vbox>
                 </row>
+                <row align="center">
+                    <label>Flush cache</label>
+                    <vbox align="center" hflex="min" vflex="min">
+                        <button sclass="transparent-btn" id="flushCache">Execute</button>
+                    </vbox>
+                </row>
             </rows>
         </grid>
 

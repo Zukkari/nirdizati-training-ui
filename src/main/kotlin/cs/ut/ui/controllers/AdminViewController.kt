@@ -2,6 +2,8 @@ package cs.ut.ui.controllers
 
 import com.lowagie.text.pdf.codec.Base64
 import cs.ut.configuration.ConfigurationReader
+import cs.ut.engine.Cache
+import cs.ut.engine.JobCacheHolder
 import cs.ut.engine.NirdizatiThreadPool
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
@@ -43,6 +45,9 @@ class AdminViewController : SelectorComposer<Component>(), UIComponent {
     @Wire
     private lateinit var logData: Textbox
 
+    @Wire
+    private lateinit var flushCache: Button
+
     private val configNode = ConfigurationReader.findNode("userPreferences/adminFunctionality")
 
     private val logFile: File = File(DirectoryConfiguration.dirPath(Dir.LOG_FILE))
@@ -71,11 +76,14 @@ class AdminViewController : SelectorComposer<Component>(), UIComponent {
         showLogs.addEventListener(Events.ON_CLICK, { _ ->
             performTask(readLogFile())
         })
+
+        flushCache.addEventListener(Events.ON_CLICK, { _ ->
+            performTask(flushCache())
+        })
     }
 
     private fun performTask(task: Runnable) {
         if (isAuthorized()) {
-            passwordField.errorMessage = ""
             task.run()
         } else {
             log.debug("Not authorized: ${passwordField.value}")
@@ -112,7 +120,15 @@ class AdminViewController : SelectorComposer<Component>(), UIComponent {
         }
     }
 
+    private fun flushCache(): Runnable = Runnable {
+        log.debug("Flushing cache")
+        Cache.jobCache = JobCacheHolder()
+        Cache.chartCache = mutableMapOf()
+        log.debug("Caches successfully flushed")
+    }
+
     private fun isAuthorized(): Boolean {
+        passwordField.clearErrorMessage()
         return configNode.isEnabled() && (!configNode.valueWithIdentifier("isPasswordRequired").booleanValue() ||
                 Base64.encodeBytes(
                     (passwordField.value ?: "").toByteArray(Charset.forName("UTF-8"))

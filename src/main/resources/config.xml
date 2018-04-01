@@ -16,7 +16,7 @@
         <Node Identifier="adminFunctionality">
             <!-- Admin page functionality -->
             <Value Identifier="isEnabled">true</Value>
-            <Value Identifier="password">VjNyWUg0ckRQNFNzVzByRA</Value>
+            <Value Identifier="password">VjNyWUg0ckRQNFNzVzByRA==</Value>
             <Value Identifier="isPasswordRequired">true</Value>
         </Node>
     </Node>

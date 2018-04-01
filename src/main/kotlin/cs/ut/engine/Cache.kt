@@ -143,8 +143,8 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
  * Object that holds job and chart cache in Nirdizati Training System
  */
 object Cache {
-    val jobCache = JobCacheHolder()
+    var jobCache = JobCacheHolder()
 
-    val chartCache: MutableMap<String, CacheHolder<Chart>> = mutableMapOf()
+    var chartCache: MutableMap<String, CacheHolder<Chart>> = mutableMapOf()
 }
 
