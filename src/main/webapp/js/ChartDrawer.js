@@ -143,7 +143,19 @@ function lineChart(payload, chart_label, n_of_events, axis_label) {
                     tension: 0
                 }
             },
-            scales: scalesData('Number of events', axis_label)
+            scales: scalesData('Number of events', axis_label),
+            tooltips: {
+                enabled: true,
+                callbacks: {
+                    title: function (items) {
+                        return `${axis_label}: ${items[0].yLabel}`;
+                    },
+
+                    label: function (items) {
+                        return `Number of events: ${items.xLabel}`
+                    }
+                }
+            }
         }
     })
 }
