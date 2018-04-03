@@ -1,10 +1,13 @@
 <Configuration>
     <Node Identifier="threadPool">
         <!-- Thread pool cs.ut.configuration -->
-        <Value Identifier="core">10</Value>
-        <Value Identifier="max">20</Value>
-        <Value Identifier="keepAlive">10</Value>
-        <Value Identifier="capacity">1024</Value>
+        <Value Identifier="capacity">10</Value>
+        <Node Identifier="onStartUp">
+            <Value Identifier="package">cs.ut.jobs</Value>
+            <Node Identifier="itemList">
+                <Value>StartUpJob</Value>
+            </Node>
+        </Node>
     </Node>
     <Node Identifier="userPreferences">
         <!-- Whether the simulation process should be run under specific user (root by default) -->

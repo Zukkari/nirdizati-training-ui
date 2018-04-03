@@ -30,7 +30,7 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
 
     var status: JobStatus = JobStatus.PENDING
 
-    lateinit var startTime: String
+    var startTime: String = start()
 
     /**
      * Action to be performed before job execution
