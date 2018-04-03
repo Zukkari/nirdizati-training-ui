@@ -4,7 +4,6 @@ import com.lowagie.text.pdf.codec.Base64
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.Cache
 import cs.ut.engine.JobCacheHolder
-import cs.ut.engine.NirdizatiThreadPool
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
@@ -29,12 +28,6 @@ class AdminViewController : SelectorComposer<Component>(), UIComponent {
 
     @Wire
     private lateinit var flushMessages: Button
-
-    @Wire
-    private lateinit var killThreadPool: Button
-
-    @Wire
-    private lateinit var restartThreadPool: Button
 
     @Wire
     private lateinit var passwordField: Textbox
@@ -65,14 +58,6 @@ class AdminViewController : SelectorComposer<Component>(), UIComponent {
             performTask(flushMessages())
         })
 
-        killThreadPool.addEventListener(Events.ON_CLICK, { _ ->
-            performTask(killThreadPool())
-        })
-
-        restartThreadPool.addEventListener(Events.ON_CLICK, { _ ->
-            performTask(restartThreadPool())
-        })
-
         showLogs.addEventListener(Events.ON_CLICK, { _ ->
             performTask(readLogFile())
         })
@@ -90,20 +75,6 @@ class AdminViewController : SelectorComposer<Component>(), UIComponent {
             passwordField.errorMessage = "Invalid key"
         }
     }
-
-    private fun restartThreadPool(): Runnable = Runnable {
-        log.debug("Restarting threadpool")
-        NirdizatiThreadPool.restart()
-        log.debug("Successfully restarted threadpool")
-    }
-
-
-    private fun killThreadPool(): Runnable = Runnable {
-        log.debug("Killing threadpool")
-        NirdizatiThreadPool.shutDown()
-        log.debug("Successfully killed threadpool")
-    }
-
 
     private fun flushMessages(): Runnable = Runnable {
         log.debug("Flushing messages files")

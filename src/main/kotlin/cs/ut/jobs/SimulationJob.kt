@@ -98,10 +98,10 @@ class SimulationJob(
             process!!.waitFor()
             log.debug("Script finished running...")
 
-            val file = File(DirectoryConfiguration.dirPath(Dir.PKL_DIR)).listFiles().first { it.name.contains(this.id) }
+            val file = File(DirectoryConfiguration.dirPath(Dir.PKL_DIR)).listFiles().firstOrNull { it.name.contains(this.id) }
             log.debug(file)
 
-            if (!file.exists()) {
+            if (file?.exists() == false) {
                 status = JobStatus.FAILED
                 throw NirdizatiRuntimeException("Script failed to write model to disk, job failed")
             } else {

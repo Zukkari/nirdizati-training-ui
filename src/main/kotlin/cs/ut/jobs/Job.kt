@@ -12,7 +12,7 @@ import java.util.*
  * Enum that represents job status
  */
 enum class JobStatus {
-    PENDING,
+    QUEUED,
     PREPARING,
     RUNNING,
     FINISHING,
@@ -28,9 +28,9 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
 
     val id: String = if (generatedId.isBlank()) IdProvider.getNextId() else generatedId
 
-    var status: JobStatus = JobStatus.PENDING
+    var status: JobStatus = JobStatus.QUEUED
 
-    lateinit var startTime: String
+    var startTime: String = start()
 
     /**
      * Action to be performed before job execution

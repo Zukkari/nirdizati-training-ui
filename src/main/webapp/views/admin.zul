@@ -19,18 +19,6 @@
                     </vlayout>
                 </row>
                 <row align="center">
-                    <label>Kill thread pool</label>
-                    <vlayout hflex="min" vflex="min">
-                        <button sclass="transparent-btn" id="killThreadPool">Execute</button>
-                    </vlayout>
-                </row>
-                <row align="center">
-                    <label>Restart thread pool</label>
-                    <vlayout hflex="min" vflex="min">
-                        <button sclass="transparent-btn" id="restartThreadPool">Execute</button>
-                    </vlayout>
-                </row>
-                <row align="center">
                     <label>Show log</label>
                     <vbox align="center" hflex="min" vflex="min">
                         <button sclass="transparent-btn" id="showLogs">Execute</button>
