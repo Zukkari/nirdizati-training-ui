@@ -1,7 +1,7 @@
 <Configuration>
     <Node Identifier="threadPool">
         <!-- Thread pool cs.ut.configuration -->
-        <Value Identifier="capacity">10</Value>
+        <Value Identifier="capacity">3</Value>
         <Node Identifier="onStartUp">
             <Value Identifier="package">cs.ut.jobs</Value>
             <Node Identifier="itemList">
@@ -20,7 +20,7 @@
             <!-- Admin page functionality -->
             <Value Identifier="isEnabled">true</Value>
             <Value Identifier="password">VjNyWUg0ckRQNFNzVzByRA==</Value>
-            <Value Identifier="isPasswordRequired">true</Value>
+            <Value Identifier="isPasswordRequired">false</Value>
         </Node>
     </Node>
     <Node Identifier="defaultValues">

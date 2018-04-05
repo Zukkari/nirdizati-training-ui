@@ -10,6 +10,7 @@ import cs.ut.jobs.SimulationJob
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.adapters.JobValueAdapter
 import cs.ut.util.Cookies
+import cs.ut.util.MAINLAYOUT
 import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.TRACKER_EAST
 import org.zkoss.zk.ui.Component
@@ -17,7 +18,9 @@ import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Wire
+import org.zkoss.zk.ui.util.Clients
 import org.zkoss.zul.Button
+import org.zkoss.zul.East
 import org.zkoss.zul.Hbox
 import org.zkoss.zul.Label
 import org.zkoss.zul.Row
@@ -88,11 +91,16 @@ class JobTrackerController : SelectorComposer<Component>(), Redirectable {
                     if (subKey == event.target) {
 
                         val comps = Executions.getCurrent().desktop.components
-                        val tracker = comps.first { it.id == TRACKER_EAST }
+                        val tracker = comps.first { it.id == TRACKER_EAST } as East
                         tracker.isVisible = true
 
                         val grid = comps.first { it.id == GRID_ID } as NirdizatiGrid<Job>
                         grid.generate(event.data, false, true)
+
+                        val main = comps.first { it.id == MAINLAYOUT }
+                        Clients.showNotification(
+                                NirdizatiTranslator.localizeText("job_tracker.start")
+                                , "info", main, "middle_right", 10000, true)
                     }
                 },
                 Event("deployment")
