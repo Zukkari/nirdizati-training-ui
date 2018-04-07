@@ -1,9 +1,12 @@
-<vbox hflex="1" vflex="1" pack="center" align="center" apply="cs.ut.ui.controllers.LandingPageController">
-    <hlayout hflex="1" sclass="padding-bottom-20px">
-        <hlayout>
+<vbox hflex="1" vflex="1" align="center" apply="cs.ut.ui.controllers.LandingPageController">
+    <vlayout hflex="1" sclass="padding-bottom-20px">
+        <hlayout sclass="wm-cont">
+            <html id="welcomeMessage" sclass="start-font larger-text zk-font"/>
+        </hlayout>
+        <hlayout sclass="landing-btn-cont">
             <label value="${labels.landing.start}" sclass="start-font large-text"/>
         </hlayout>
-    </hlayout>
+    </vlayout>
     <hlayout hflex="1">
         <span>
             <button id="upload" sclass="n-btn" label="${labels.upload.log}"/>
