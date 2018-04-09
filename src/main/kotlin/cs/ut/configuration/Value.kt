@@ -29,6 +29,11 @@ data class Value(
     fun intValue() = value.toInt()
 
     /**
+     * Get long value
+     */
+    fun long() = value.toLong()
+
+    /**
      * Get node value as Boolean.class
      */
     fun booleanValue() = value.toBoolean()

@@ -61,7 +61,7 @@ class ChartGenerator(val job: SimulationJob) {
             // Fetch
             fetchCharts().apply {
                 log.debug("Fetched ${this.size} items from disk")
-                charts.addItems(this)
+                cached.addToCache(job.id, this)
                 log.debug("Added items to cache")
             }
         } else {

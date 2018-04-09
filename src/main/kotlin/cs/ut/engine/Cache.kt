@@ -7,6 +7,7 @@ import cs.ut.logging.NirdizatiLogger
 import cs.ut.util.Field
 import cs.ut.util.readTrainingJson
 import java.io.File
+import java.util.Date
 
 /**
  * Generic structure to represent cached items
@@ -14,25 +15,44 @@ import java.io.File
  * @param items list where to hold cached items
  */
 data class CacheItem<T>(private val items: MutableList<T> = mutableListOf()) {
+    private var lastAccessed: Date = Date()
 
     /**
      * Add item to cache
      *
      * @param item to add
      */
-    fun addItem(item: T) = items.add(item)
+    fun addItem(item: T) {
+        lastAccessed = Date()
+        items.add(item)
+    }
 
     /**
      * Add multiple items to cache
      *
      * @param items collection of items to add
      */
-    fun addItems(items: Collection<T>) = this.items.addAll(items)
+    fun addItems(items: Collection<T>) {
+        lastAccessed = Date()
+        this.items.addAll(items)
+    }
 
     /**
      * Retrieve raw items from cache
      */
-    fun rawData() = items
+    fun rawData(): List<T> {
+        lastAccessed = Date()
+        return items
+    }
+
+    /**
+     * Is item expired
+     * @param timeToLive how long is item supposed to live
+     * @return whether or not item is expired
+     */
+    fun isExpired(timeToLive: Long): Boolean {
+        return Date().time - lastAccessed.time > timeToLive
+    }
 }
 
 /**
@@ -68,6 +88,8 @@ open class CacheHolder<T> {
     open fun retrieveFromCache(key: String): CacheItem<T> = cachedItems[key] ?: CacheItem()
 
     private fun createNewItem(key: String): CacheItem<T> = CacheItem<T>().apply { cachedItems[key] = this }
+
+    fun cachedItems() = cachedItems
 
     fun flush() = cachedItems.clear()
 }

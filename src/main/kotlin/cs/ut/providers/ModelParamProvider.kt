@@ -20,9 +20,7 @@ class ModelParamProvider {
     var properties: Map<String, List<ModelParameter>> = mutableMapOf()
 
     init {
-        log.debug("Started parsing configuration with node $config")
         parseParameters()
-        log.debug("Successfully parsed model parameters from configuration")
     }
 
     /**
