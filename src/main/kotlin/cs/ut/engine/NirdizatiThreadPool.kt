@@ -1,6 +1,7 @@
 package cs.ut.engine
 
 import cs.ut.configuration.ConfigurationReader
+import cs.ut.engine.tasks.CacheCleanTask
 import cs.ut.jobs.Job
 import cs.ut.logging.NirdizatiLogger
 import org.apache.log4j.ConsoleAppender
@@ -8,12 +9,16 @@ import org.apache.log4j.FileAppender
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
 import org.apache.log4j.PatternLayout
+import java.util.Timer
+import java.util.TimerTask
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import javax.servlet.ServletContextEvent
 import javax.servlet.ServletContextListener
 import javax.servlet.annotation.WebListener
+import kotlin.concurrent.scheduleAtFixedRate
+import kotlin.concurrent.timerTask
 
 /**
  * Thread pool that executes jobs for Nirdizati Training
@@ -52,8 +57,9 @@ object NirdizatiThreadPool : ServletContextListener {
 }
 
 @WebListener
-class NirdizatiPoolContext : ServletContextListener {
-    private val log = NirdizatiLogger.getLogger(NirdizatiPoolContext::class.java)
+class NirdizatiContextInitializer : ServletContextListener {
+    private val log = NirdizatiLogger.getLogger(NirdizatiContextInitializer::class.java)
+    private lateinit var timer: Timer
 
     override fun contextInitialized(sce: ServletContextEvent?) {
         configureLogger()
@@ -65,6 +71,17 @@ class NirdizatiPoolContext : ServletContextListener {
 
         NirdizatiThreadPool.runStartUpRoutine()
         log.debug("Finished thread pool initialization")
+
+        val cacheNode = ConfigurationReader.findNode("cache")
+        if (cacheNode.isEnabled()) {
+            log.debug("Setting up timer")
+            timer = Timer("CacheCleanTimer", true)
+            timer.scheduleAtFixedRate(
+                    CacheCleanTask(),
+                    cacheNode.valueWithIdentifier("period").long(),
+                    cacheNode.valueWithIdentifier("period").long())
+            log.debug("Scheduled cache clean job")
+        }
     }
 
     override fun contextDestroyed(sce: ServletContextEvent?) {

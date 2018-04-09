@@ -9,6 +9,11 @@
             </Node>
         </Node>
     </Node>
+    <Node Identifier="cache">
+        <Value Identifier="isEnabled">true</Value>
+        <Value Identifier="timeToLive">600000</Value>
+        <Value Identifier="period">180000</Value>
+    </Node>
     <Node Identifier="userPreferences">
         <!-- Whether the simulation process should be run under specific user (root by default) -->
         <Value Identifier="isEnabled">true</Value>
