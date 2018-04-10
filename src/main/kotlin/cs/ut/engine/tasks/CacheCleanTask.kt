@@ -32,6 +32,6 @@ class CacheCleanTask : TimerTask() {
 
     companion object {
         private val log = NirdizatiLogger.getLogger(CacheCleanTask::class.java)
-        private val timeToLive = ConfigurationReader.findNode("cache").valueWithIdentifier("timeToLive").long()
+        private val timeToLive = ConfigurationReader.findNode("tasks/CacheCleanTask").valueWithIdentifier("timeToLive").long()
     }
 }

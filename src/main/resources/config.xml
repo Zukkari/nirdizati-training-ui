@@ -9,10 +9,18 @@
             </Node>
         </Node>
     </Node>
-    <Node Identifier="cache">
-        <Value Identifier="isEnabled">true</Value>
-        <Value Identifier="timeToLive">600000</Value>
-        <Value Identifier="period">180000</Value>
+    <Node Identifier="tasks">
+        <Value Identifier="package">cs.ut.engine.tasks</Value>
+        <Node Identifier="CacheCleanTask">
+            <Value Identifier="isEnabled">true</Value>
+            <Value Identifier="timeToLive">600000</Value>
+            <Value Identifier="period">180000</Value>
+        </Node>
+        <Node Identifier="DisposalTask">
+            <Value Identifier="isEnabled">true</Value>
+            <Value Identifier="age">2592000000</Value>
+            <Value Identifier="period">86400000</Value>
+        </Node>
     </Node>
     <Node Identifier="userPreferences">
         <!-- Whether the simulation process should be run under specific user (root by default) -->

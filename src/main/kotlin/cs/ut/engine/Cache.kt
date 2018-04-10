@@ -1,6 +1,7 @@
 package cs.ut.engine
 
 import cs.ut.charts.Chart
+import cs.ut.engine.item.UIData
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
@@ -134,30 +135,33 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
             }
 
 
-    private fun loadFromDisk(key: String): List<SimulationJob> {
-        return mutableListOf<SimulationJob>().also { c ->
-            LogManager.loadJobIds(key)
-                    .filter { it.id !in JobManager.queue.map { it.id } }
+    private fun loadFromDisk(key: String): List<SimulationJob> = parse(LogManager.loadJobIds(key))
+
+    companion object {
+        val log = NirdizatiLogger.getLogger(JobCacheHolder::class.java)
+
+        fun parse(uiData: List<UIData>): List<SimulationJob> {
+            val res = mutableListOf<SimulationJob>()
+
+            uiData.filter { it.id !in JobManager.queue.map { it.id } }
                     .forEach {
                         val params = readTrainingJson(it.id).flatMap { it.value }
-                        c.add(SimulationJob(
+                        res.add(SimulationJob(
                                 params.first { it.type == Field.ENCODING.value },
                                 params.first { it.type == Field.BUCKETING.value },
                                 params.first { it.type == Field.LEARNER.value },
                                 params.first { it.type == Field.PREDICTION.value },
                                 File(it.path),
-                                key,
+                                it.owner,
                                 it.id
                         ).apply {
                             this.status = JobStatus.COMPLETED
                             this.startTime = it.startTime
                         })
                     }
-        }
-    }
 
-    companion object {
-        val log = NirdizatiLogger.getLogger(JobCacheHolder::class.java)
+            return res
+        }
     }
 }
 

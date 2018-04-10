@@ -1,7 +1,7 @@
 package cs.ut.engine
 
 import cs.ut.configuration.ConfigurationReader
-import cs.ut.engine.item.UiData
+import cs.ut.engine.item.UIData
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
@@ -57,7 +57,7 @@ object LogManager {
      * @return List of all available file names contained in user log directory
      */
     fun getAllAvailableLogs(): List<File> =
-        File(logDirectory).listFiles().filter { it.extension in allowedExtensions }
+            File(logDirectory).listFiles().filter { it.extension in allowedExtensions }
 
 
     /**
@@ -66,9 +66,9 @@ object LogManager {
      * @param job for which job file should be retrieved
      * @return file that contains job results
      */
-    fun getDetailedFile(job: SimulationJob): File {
+    fun getDetailedFile(job: SimulationJob, safe: Boolean = false): File {
         log.debug("Getting detailed log information for job '$job'")
-        return getFile(detailedDir + job.getFileName(DETAILED))
+        return getFile(detailedDir + job.getFileName(DETAILED), safe)
     }
 
     /**
@@ -77,9 +77,9 @@ object LogManager {
      * @param job for which job file should be retrieved
      * @return file that contains job results
      */
-    fun getValidationFile(job: SimulationJob): File {
+    fun getValidationFile(job: SimulationJob, safe: Boolean = false): File {
         log.debug("Getting validation log file for job '$job'")
-        return getFile(validationDir + job.getFileName(VALIDATION))
+        return getFile(validationDir + job.getFileName(VALIDATION), safe)
     }
 
     /**
@@ -89,7 +89,7 @@ object LogManager {
      *
      * @return list of files that represent feature importance files for given job
      */
-    fun getFeatureImportanceFiles(job: SimulationJob): List<File> {
+    fun getFeatureImportanceFiles(job: SimulationJob, safe: Boolean = false): List<File> {
         log.debug("Getting feature importance log information for job: '$job'")
         if (Algorithm.PREFIX.value == job.bucketing.id) {
             log.debug("Prefix job, looking for all possible files for this job")
@@ -97,7 +97,7 @@ object LogManager {
             val files = mutableListOf<File>()
             (1..15).forEach { i ->
                 try {
-                    files.add(getFile(featureImportanceDir + job.getFileName(FEATURE) + "_$i"))
+                    files.add(getFile(featureImportanceDir + job.getFileName(FEATURE) + "_$i", safe))
                 } catch (e: Exception) {
                     log.debug("Found ${files.size} files for job: $job")
                     return files
@@ -106,7 +106,7 @@ object LogManager {
             log.debug("Found ${files.size} files for job: $job")
             return files
         } else {
-            return listOf(getFile(featureImportanceDir + job.getFileName(FEATURE) + "_1"))
+            return listOf(getFile(featureImportanceDir + job.getFileName(FEATURE) + "_1", safe))
         }
     }
 
@@ -117,11 +117,11 @@ object LogManager {
      *
      * @return file with given file name
      */
-    private fun getFile(fileName: String): File {
-        val file = File(fileName + ".csv")
+    private fun getFile(fileName: String, safe: Boolean): File {
+        val file = File("$fileName.csv")
         log.debug("Looking for file with name ${file.name}")
 
-        if (!file.exists()) {
+        if (!safe && !file.exists()) {
             throw NirdizatiRuntimeException("Result file with name ${file.absolutePath} could not be found")
         }
 
@@ -134,7 +134,7 @@ object LogManager {
      * @param job that needs to be categorized
      */
     fun isClassification(job: SimulationJob): Boolean =
-        !File(detailedDir + DETAILED + FilenameUtils.getBaseName(job.logFile.name) + "_" + job.id + REGRESSION + ".csv").exists()
+            !File(detailedDir + DETAILED + FilenameUtils.getBaseName(job.logFile.name) + "_" + job.id + REGRESSION + ".csv").exists()
 
     /**
      * Get file name for given job
@@ -142,33 +142,32 @@ object LogManager {
      * @param dir to include with the file name
      */
     private fun SimulationJob.getFileName(dir: String): String =
-        if (dir == FEATURE)
-            dir + this.logFile.nameWithoutExtension + "_" + this.id
-        else
-            dir + this.logFile.nameWithoutExtension + "_" + this.id + if (isClassification(this)) CLASSIFICATION else REGRESSION
+            if (dir == FEATURE)
+                dir + this.logFile.nameWithoutExtension + "_" + this.id
+            else
+                dir + this.logFile.nameWithoutExtension + "_" + this.id + if (isClassification(this)) CLASSIFICATION else REGRESSION
 
     /**
      * Load serialized jobs for given key
      *
      * @param key to load jobs for
      *
-     * @return list of UiData components which contain serialized job info
+     * @return list of UIData components which contain serialized job info
      *
-     * @see UiData
+     * @see UIData
      */
-    fun loadJobIds(key: String): List<UiData> {
-        return mutableListOf<UiData>().also { c ->
+    fun loadJobIds(key: String) = loadAllJobs().filter { it.owner == key }
+
+    fun loadAllJobs(): List<UIData> {
+        return mutableListOf<UIData>().also { c ->
             loadTrainingFiles().forEach {
                 val uiData = JSONObject(readFileContent(it)).getJSONObject(UI_DATA)
-                if (uiData[OWNER] == key) {
-                    c.add(
-                        UiData(
-                            it.nameWithoutExtension,
-                            uiData[LOG_FILE] as String,
-                            uiData[START_DATE] as String
-                        )
-                    )
-                }
+                c.add(UIData(
+                        it.nameWithoutExtension,
+                        uiData[LOG_FILE] as String,
+                        uiData[START_DATE] as String,
+                        uiData[OWNER] as String
+                ))
             }
         }
     }
@@ -187,7 +186,7 @@ object LogManager {
      *
      * @return list of files in training directory
      */
-    private fun loadTrainingFiles(): List<File> {
+    fun loadTrainingFiles(): List<File> {
         log.debug("Loading training files")
         val dir = File(DirectoryConfiguration.dirPath(Dir.TRAIN_DIR))
         log.debug("Looking for training files in ${dir.absolutePath}")

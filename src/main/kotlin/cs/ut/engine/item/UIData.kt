@@ -6,4 +6,4 @@ package cs.ut.engine.item
  * @param path to log file of the job
  * @param startTime when job was started (used for sorting jobs in chronological order)
  */
-data class UiData(val id: String, val path: String, val startTime: String)
+data class UIData(val id: String, val path: String, val startTime: String, val owner: String)

@@ -72,15 +72,20 @@ class NirdizatiContextInitializer : ServletContextListener {
         NirdizatiThreadPool.runStartUpRoutine()
         log.debug("Finished thread pool initialization")
 
-        val cacheNode = ConfigurationReader.findNode("cache")
-        if (cacheNode.isEnabled()) {
-            log.debug("Setting up timer")
-            timer = Timer("CacheCleanTimer", true)
-            timer.scheduleAtFixedRate(
-                    CacheCleanTask(),
-                    cacheNode.valueWithIdentifier("period").long(),
-                    cacheNode.valueWithIdentifier("period").long())
-            log.debug("Scheduled cache clean job")
+        timer = Timer("tasksScheduler", true)
+        val tasksNode = ConfigurationReader.findNode("tasks")
+        val pkg = tasksNode.valueWithIdentifier("package").value
+        tasksNode.childNodes.forEach {
+            log.debug("Task: ${it.identifier} -> enabled: ${it.isEnabled()}")
+            if (it.isEnabled()) {
+                val task = Class.forName("$pkg.${it.identifier}").newInstance() as TimerTask
+                timer.schedule(
+                        task,
+                        1,
+                        it.valueWithIdentifier("period").long())
+
+                log.debug("Scheduled $task")
+            }
         }
     }
 
