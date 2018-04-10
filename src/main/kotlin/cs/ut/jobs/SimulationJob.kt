@@ -80,7 +80,6 @@ class SimulationJob(
 
         parameters.add(python)
         parameters.add(TRAIN_PY)
-        parameters.add(logFile.name)
         parameters.add(id)
 
         try {
