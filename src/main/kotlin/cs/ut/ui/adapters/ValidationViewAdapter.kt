@@ -111,7 +111,10 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
      *
      * @return label with localized text
      */
-    private fun getLabel(str: String) = Label(NirdizatiTranslator.localizeText(str))
+    private fun getLabel(str: String) = Label().apply {
+        val labelText = NirdizatiTranslator.localizeText(str)
+        this.value = if (labelText.contains(".")) labelText.split(".")[1] else labelText
+    }
 
     companion object {
         const val PROP_POPUP = "propertyPopUpMenu"
