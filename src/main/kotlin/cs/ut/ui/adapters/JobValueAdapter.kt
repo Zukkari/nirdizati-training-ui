@@ -150,6 +150,7 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
         val labelStatusContainer = Hlayout()
         val labelContainer = Hlayout()
         labelContainer.appendChild(label)
+        labelContainer.vflex = "1"
         label.hflex = "1"
         labelStatusContainer.appendChild(labelContainer)
 
@@ -192,7 +193,7 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
     @Suppress("UNCHECKED_CAST")
     private fun SimulationJob.generateRemoveBtn(row: Row): Button {
         val btn = Button("x")
-        btn.vflex = "min"
+        btn.vflex = "1"
         btn.hflex = "min"
         btn.sclass = "job-remove"
 
