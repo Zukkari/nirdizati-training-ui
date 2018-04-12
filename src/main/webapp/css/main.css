@@ -81,7 +81,7 @@
   text-align: center;
   border-radius: 5px;
   padding: 40px 40px 40px 70px;
-  width: 100%;
+  width: 23vw;
   margin: auto; }
 
 .z-notification-error .z-notification-content {
@@ -244,6 +244,16 @@
   color: white !important;
   transition: all 0.34s; }
 
+.job-remove {
+  background: red;
+  font-size: 20pt !important;
+  color: lightgrey;
+  border: solid 0.2vh lightgrey; }
+  .job-remove:hover {
+    background: orangered;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.16);
+    transition: all 0.14s ease-in-out; }
+
 .file-upload-err, .file-upload {
   text-align: center;
   width: 80%;
@@ -277,6 +287,9 @@
 .extra-small {
   font-size: 8px; }
 
+input[type=checkbox] {
+  transform: scale(1.2) !important; }
+
 .graph-container {
   max-width: 80%;
   max-height: 80%;
@@ -284,7 +297,11 @@
   height: 80%; }
 
 .large-text {
-  font-size: larger;
+  font-size: large !important;
+  color: rgba(0, 0, 0, 0.5); }
+
+.larger-text {
+  font-size: 13pt !important;
   color: rgba(0, 0, 0, 0.5); }
 
 .margin-top-40px {
@@ -365,6 +382,16 @@
     margin-top: 3vh;
     margin-bottom: 3vh;
     transform: scale(0.9); } }
+.z-east-collapsed, .tracker-vbox {
+  border-radius: 0.7vh;
+  border-color: #0068b3;
+  border-style: solid;
+  border-width: 0.2vh;
+  transition: all 0.14s ease-in-out; }
+
+[class*="z-"]:not([class*="z-icon-"]) {
+  font-size: 14px; }
+
 .z-loading {
   top: 50% !important;
   left: 45% !important;
@@ -427,12 +454,22 @@
   word-break: normal; }
 
 .validation-btn > i {
-  margin: auto;
   padding-top: 5px;
-  font-size: 40px;
+  font-size: 20pt;
   color: #0093f9; }
 
 .n-popup {
   max-width: 240px; }
+
+.n-download > i {
+  font-size: 22px !important; }
+
+.wm-cont {
+  line-height: 17pt;
+  width: 43vw;
+  margin-top: 12vh; }
+
+.landing-btn-cont {
+  margin-top: 13vh; }
 
 /*# sourceMappingURL=main.css.map */
