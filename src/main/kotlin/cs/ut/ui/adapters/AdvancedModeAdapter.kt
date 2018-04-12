@@ -49,7 +49,7 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
                         val nameLabel = Label(NirdizatiTranslator.localizeText(param.type + "." + param.id))
                         it.appendChild(nameLabel)
 
-                        fields.add(FieldComponent(nameLabel, checkBox))
+                        fields.add(FieldComponent(label, checkBox))
 
                         it.appendChild(checkBox)
                         it.appendChild(nameLabel)
