@@ -16,7 +16,7 @@ $min-width: 680px
 .z-hlayout-inner
   z-index: 3
 
-$animation_lenght: 0.14s
+$animation_length: 0.14s
 $bradius: 40px
 $min-width: 48px
 $min-height: 48px
@@ -52,7 +52,7 @@ $height: 50px
     &:hover
       background: transparent
       color: $dark-blue
-      transition: all $animation_lenght ease-in-out
+      transition: all $animation_length ease-in-out
 
     &::before
       z-index: -1
@@ -74,7 +74,7 @@ $height: 50px
       left: 0
       right: 0
       border: solid 2px $dark-blue
-      transition: all $animation_lenght ease-in-out
+      transition: all $animation_length ease-in-out
 
   .n-btn, .n-upload-btn
     @extend %big-btn
@@ -129,3 +129,19 @@ $height: 50px
   background: $blue !important
   color: white !important
   transition: all 0.34s
+
+.job-remove
+  background: red
+  font-size: 20pt !important
+  color: lightgrey
+  border: solid 0.2vh lightgrey
+  border-radius: 100%
+  height: 125% !important
+  transition: all $animation_length ease-in-out
+  margin:
+    top: -0.1vh
+
+  &:hover
+    background: orangered
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.16)
+    transition: all $animation_length ease-in-out
