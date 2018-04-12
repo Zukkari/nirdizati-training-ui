@@ -34,3 +34,16 @@
       top: 3vh
       bottom: 3vh
     transform: scale(0.9)
+
+@mixin thick-blue-border
+  border:
+    radius: 0.7vh
+    color: $dark-blue
+    style: solid
+    width: 0.2vh
+  transition: all $animation_lenght ease-in-out
+
+.z-east-collapsed, .tracker-vbox
+  @include thick-blue-border
+
+
