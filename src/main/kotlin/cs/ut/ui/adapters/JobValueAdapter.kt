@@ -194,6 +194,7 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
         val btn = Button("x")
         btn.vflex = "min"
         btn.hflex = "min"
+        btn.sclass = "job-remove"
 
         val client = Executions.getCurrent().desktop
         btn.addEventListener(Events.ON_CLICK, { _ ->
