@@ -9,6 +9,7 @@ import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
 import cs.ut.providers.ModelParamProvider
+import cs.ut.ui.controllers.TrainingController.Companion.PREDICTION
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.File
@@ -28,14 +29,14 @@ fun readLogColumns(logName: String): List<String> {
 }
 
 fun readTrainingJson(key: String): Map<String, List<ModelParameter>> =
-    parseJsonFiles(
-        listOf(
-            File(
-                DirectoryConfiguration.dirPath(Dir.TRAIN_DIR) + "$key.json"
-            )
+        parseJsonFiles(
+                listOf(
+                        File(
+                                DirectoryConfiguration.dirPath(Dir.TRAIN_DIR) + "$key.json"
+                        )
+                )
         )
-    )
-        .apply { mapTypes(this) }
+                .apply { mapTypes(this) }
 
 private fun readTrainingData(logName: String): TrainingData {
     val path: String = DirectoryConfiguration.dirPath(Dir.DATA_DIR)
@@ -103,7 +104,7 @@ private tailrec fun parseJson(jsonItems: MutableMap<String, String>, map: Mutabl
 
         val params = mutableListOf<String>()
 
-        val outcome = json.keySet().first()
+        val outcome = json.keySet().first { it != UI_DATA }
         params.add(outcome)
 
         val secondLevel = json.getJSONObject(outcome)
@@ -122,7 +123,7 @@ private tailrec fun parseJson(jsonItems: MutableMap<String, String>, map: Mutabl
         val paramArray = fourthLevel.getJSONObject(learner).toMap()
         val properties = mutableSetOf<Property>()
         var collected = false
-        paramArray.entries.forEach properties@ {
+        paramArray.entries.forEach {
             try {
                 if (!collected) {
                     it.key.toInt()
@@ -150,7 +151,11 @@ private fun getModelParams(paramNames: List<String>): List<ModelParameter> {
     val alreadyDefined = ModelParamProvider().properties.flatMap { it.value }
 
     val rightParameters = mutableListOf<ModelParameter>()
-    paramNames.forEach { param -> rightParameters.add(ModelParameter(alreadyDefined.first { it.parameter == param })) }
+    paramNames.forEach { param ->
+        rightParameters.add(ModelParameter(
+                alreadyDefined.firstOrNull { it.parameter == param }
+                        ?: ModelParameter(param, param, PREDICTION, true, mutableListOf())))
+    }
 
     return rightParameters
 }
