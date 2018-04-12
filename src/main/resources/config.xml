@@ -452,32 +452,16 @@ Welcome to Nirdizati! This tool is designed for <a href="http://ceur-ws.org/Vol-
                 </Value>
             </Node>
             <Node Identifier="random_forest">
-                <Value Identifier="label">
-                    <![CDATA[
-<a href="https://en.wikipedia.org/wiki/Random_forest">Random forest</a>
-                ]]>
-                </Value>
+                <Value Identifier="label">Random forest</Value>
             </Node>
             <Node Identifier="gradient_boosting">
-                <Value Identifier="label">
-                    <![CDATA[
-<a href="https://en.wikipedia.org/wiki/Gradient_boosting">Gradient boosting</a>
-                ]]>
-                </Value>
+                <Value Identifier="label">Gradient boosting</Value>
             </Node>
             <Node Identifier="decision_tree">
-                <Value Identifier="label">
-                    <![CDATA[
-<a href="https://en.wikipedia.org/wiki/Decision_tree">Decision tree</a>
-                ]]>
-                </Value>
+                <Value Identifier="label">Decision tree</Value>
             </Node>
             <Node Identifier="xgboost">
-                <Value Identifier="label">
-                    <![CDATA[
-<a href="https://en.wikipedia.org/wiki/Xgboost">XGBoost</a>
-                ]]>
-                </Value>
+                <Value Identifier="label">XGBoost</Value>
             </Node>
         </Node>
     </Node>

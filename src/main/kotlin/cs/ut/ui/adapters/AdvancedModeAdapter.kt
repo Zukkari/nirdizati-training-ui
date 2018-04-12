@@ -25,6 +25,7 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
 
         val label = Label(NirdizatiTranslator.localizeText(data.id)).apply {
             this.sclass = "param-label"
+            this.hflex = "min"
             this.setAttribute(COMP_ID, data.params.first().type)
         }
 
@@ -32,22 +33,29 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
             this.vflex = "1"
             this.align = "center"
             this.appendChild(label)
+            this.appendChild(getTooltip(data.id))
         })
-        row.appendChild(getTooltip(data.id))
 
         data.params.forEach { param ->
             row.appendChild(Hlayout().also {
                 it.appendChild(
                     Hbox().also {
                         it.align = "center"
-                        it.appendChild(Checkbox().apply {
-                            this.label = NirdizatiTranslator.localizeText(param.type + "." + param.id)
+                        val checkBox = Checkbox().apply {
                             this.setValue(param)
-                            fields.add(FieldComponent(label, this))
-                        })
+                            this.sclass = "big-scale"
+                        }
+
+                        val nameLabel = Label(NirdizatiTranslator.localizeText(param.type + "." + param.id))
+                        it.appendChild(nameLabel)
+
+                        fields.add(FieldComponent(nameLabel, checkBox))
+
+                        it.appendChild(checkBox)
+                        it.appendChild(nameLabel)
+                        it.appendChild(getTooltip(param.id))
                     })
             })
-            row.appendChild(getTooltip(param.id))
         }
         return row
     }

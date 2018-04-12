@@ -23,7 +23,7 @@
         <center id="center" hflex="1" vflex="1" border="none">
             <include id="contentInclude" src="/views/landing.zul"/>
         </center>
-        <east id="trackerEast" vflex="1" border="none" open="false" size="400px">
+        <east id="trackerEast" vflex="1" border="none" open="false" size="400px" sclass="job-tracker">
             <include src="/views/components/tracker.zul"/>
         </east>
     </borderlayout>
