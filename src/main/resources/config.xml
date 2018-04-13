@@ -419,7 +419,7 @@ Welcome to Nirdizati! This tool is designed for <a href="http://ceur-ws.org/Vol-
             <Node Identifier="zero">
                 <Value Identifier="label">
                     <![CDATA[
-<b>Zero</b> - discard grouping, train a single predictor using all available process traces.
+<b>No bucketing</b> - discard grouping, train a single predictor using all available process traces.
                 ]]>
                 </Value>
             </Node>
