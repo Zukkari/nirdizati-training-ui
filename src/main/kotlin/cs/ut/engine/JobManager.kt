@@ -160,7 +160,7 @@ object JobManager {
      *
      * @return collection of simulation jobs
      */
-    private fun getJobsForKey(key: String): List<SimulationJob> {
+    fun getJobsForKey(key: String): List<SimulationJob> {
         val cached: List<SimulationJob> = cache.retrieveFromCache(key).rawData()
         val pending: List<SimulationJob> = queue.filter { it.owner == key }
         return (pending.toList() + cached.toList())
@@ -174,6 +174,6 @@ object JobManager {
      *
      * @return collection of jobs matching the predicate
      */
-    fun getJobByPredicate(key: String, predicate: (SimulationJob) -> Boolean = { it.status == JobStatus.COMPLETED }): List<SimulationJob> =
+    inline fun getJobByPredicate(key: String, predicate: (SimulationJob) -> Boolean = { it.status == JobStatus.COMPLETED }): List<SimulationJob> =
             getJobsForKey(key).filter(predicate)
 }
