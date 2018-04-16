@@ -49,7 +49,7 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
 //                        .rawData().sortedByDescending { Instant.parse(it.startTime) }
 
         val userJobs = JobCacheHolder.parse(LogManager.loadAllJobs())
-                .sortedBy { Instant.parse(it.startTime) }
+                .sortedByDescending { Instant.parse(it.startTime) }
 
         grid = NirdizatiGrid(ValidationViewAdapter(this, gridContainer), "validation").apply {
             this.configure()
