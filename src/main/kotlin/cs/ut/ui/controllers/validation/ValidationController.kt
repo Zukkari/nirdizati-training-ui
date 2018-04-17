@@ -42,14 +42,11 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
      * Generate the content for the controller
      */
     private fun generate() {
-//        val userJobs =
-//                JobManager
-//                        .cache
-//                        .retrieveFromCache((Cookies.getCookieKey(Executions.getCurrent().nativeRequest)))
-//                        .rawData().sortedByDescending { Instant.parse(it.startTime) }
-
-        val userJobs = JobCacheHolder.parse(LogManager.loadAllJobs())
-                .sortedByDescending { Instant.parse(it.startTime) }
+        val userJobs =
+                JobManager
+                        .cache
+                        .retrieveFromCache((Cookies.getCookieKey(Executions.getCurrent().nativeRequest)))
+                        .rawData().sortedByDescending { Instant.parse(it.startTime) }
 
         grid = NirdizatiGrid(ValidationViewAdapter(this, gridContainer), "validation").apply {
             this.configure()

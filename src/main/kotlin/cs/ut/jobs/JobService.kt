@@ -1,7 +1,6 @@
 package cs.ut.jobs
 
-import cs.ut.engine.JobCacheHolder
-import cs.ut.engine.LogManager
+import cs.ut.engine.JobManager
 
 class JobService {
     companion object {
@@ -12,9 +11,7 @@ class JobService {
          * @param job similar jobs to the given one
          */
         fun findSimilarJobs(job: SimulationJob): List<SimulationJob> {
-//            val allJobs = JobManager.getJobByPredicate(job.owner)
-
-            val allJobs = JobCacheHolder.parse(LogManager.loadAllJobs())
+            val allJobs = JobManager.getJobByPredicate(job.owner)
             return allJobs.filter { it.logFile == job.logFile && it.outcome.id == job.outcome.id && it.id != job.id }
         }
     }
