@@ -1,6 +1,8 @@
 package cs.ut.ui.controllers.validation
 
+import cs.ut.engine.JobCacheHolder
 import cs.ut.engine.JobManager
+import cs.ut.engine.LogManager
 import cs.ut.engine.events.Callback
 import cs.ut.engine.events.StatusUpdateEvent
 import cs.ut.exceptions.NirdizatiRuntimeException

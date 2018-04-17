@@ -373,9 +373,6 @@ input[type=checkbox] {
 
 @media screen and (max-height: 900px) {
   .training-grid {
-    transform: scale(0.74) translateX(-29vh); }
-
-  .training-cont {
     transform: scale(0.9); }
 
   .hyper-grid {

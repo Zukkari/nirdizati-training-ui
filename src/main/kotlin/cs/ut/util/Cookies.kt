@@ -32,7 +32,7 @@ class Cookies {
         fun getJobsByCookie(request: HttpServletRequest): List<Job> {
             val key: String = getCookieKey(request)
             log.debug("Looking for jobs with cookie key: $key")
-            return JobManager.getJobByPredicate(key, { it.status != JobStatus.COMPLETED })
+            return JobManager.getJobByPredicate(key, { it.status != JobStatus.COMPLETED && it.status != JobStatus.FAILED })
         }
     }
 }
