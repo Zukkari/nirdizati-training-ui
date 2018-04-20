@@ -37,6 +37,7 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import kotlin.system.measureTimeMillis
 
 class ParameterModalController : GenericAutowireComposer<Component>(), Redirectable, UIComponent {
     private val log = NirdizatiLogger.getLogger(ParameterModalController::class.java, getSessionId())
@@ -92,8 +93,12 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         if (validateDataPresent(header)) return
 
         val identifiedColumns = mutableMapOf<String, String>()
-        csvReader.identifyUserColumns(header.toMutableList(), identifiedColumns)
-        identifiedColumns[IdentColumns.TIMESTAMP.value] = csvReader.getTimeStamp()
+        measureTimeMillis {
+            csvReader.identifyUserColumns(header.toMutableList(), identifiedColumns)
+            identifiedColumns[IdentColumns.TIMESTAMP.value] = csvReader.getTimeStamp()
+        }.apply {
+            log.debug("User column auto detection finished in $this ms")
+        }
 
         val provider = ColumnRowValueAdapter(header, identifiedColumns)
         val grid = NirdizatiGrid(provider)
@@ -119,7 +124,9 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         okBtnListener = SerializableEventListener { _ ->
             okBtn.isDisabled = true
             try {
-                updateContent(csvReader.generateDataSetParams(grid.gatherValues()))
+                measureTimeMillis {
+                    updateContent(csvReader.generateDataSetParams(grid.gatherValues()))
+                }.apply { log.debug("User column classification finished in $this ms")}
             } catch (e: Exception) {
                 throw NirdizatiRuntimeException(NirdizatiTranslator.localizeText("log.parse.fail"))
             }
@@ -175,14 +182,14 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
             if (!isRecreation) {
                 NirdizatiTranslator.showNotificationAsync(
-                    Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))),
-                    Executions.getCurrent().desktop
+                        Labels.getLabel("upload.success", arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))),
+                        Executions.getCurrent().desktop
                 )
 
                 val target = Files.move(
-                    Paths.get(file.absolutePath),
-                    Paths.get(File(DirectoryConfiguration.dirPath(Dir.USER_LOGS) + file.name).absolutePath),
-                    StandardCopyOption.REPLACE_EXISTING
+                        Paths.get(file.absolutePath),
+                        Paths.get(File(DirectoryConfiguration.dirPath(Dir.USER_LOGS) + file.name).absolutePath),
+                        StandardCopyOption.REPLACE_EXISTING
                 )
 
                 Executions.getCurrent().desktop.setAttribute(UPLOADED_FILE, target.toFile())
@@ -190,7 +197,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
                 setContent("training", getPage(), 2000, Executions.getCurrent().desktop)
             } else {
                 NirdizatiTranslator.showNotificationAsync(
-                    NirdizatiTranslator.localizeText("param.modal.generated"), Executions.getCurrent().desktop
+                        NirdizatiTranslator.localizeText("param.modal.generated"), Executions.getCurrent().desktop
                 )
             }
 
@@ -240,12 +247,12 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
     private fun validateDataPresent(header: List<String>): Boolean {
         if (header.isEmpty()) {
             NirdizatiTranslator.showNotificationAsync(
-                Labels.getLabel(
-                    "modals.unknown_separator",
-                    arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))
-                ),
-                Executions.getCurrent().desktop,
-                "error"
+                    Labels.getLabel(
+                            "modals.unknown_separator",
+                            arrayOf(HtmlEscapers.htmlEscaper().escape(file.name))
+                    ),
+                    Executions.getCurrent().desktop,
+                    "error"
             )
             modal.detach()
             return true

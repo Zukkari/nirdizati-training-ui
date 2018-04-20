@@ -71,6 +71,7 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
      * Running the job
      */
     override fun run() {
+        val start = System.currentTimeMillis()
         log.debug("Started job execution: $this")
         startTime = start()
 
@@ -81,7 +82,7 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
             updateEvent()
             preProcess()
         } catch (e: Exception) {
-            log.debug("Job $id failed in preprocess stage", e)
+            log.debug("Job $id failed in preparation stage", e)
             status = JobStatus.FAILED
 
             updateEvent()
@@ -131,6 +132,9 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
         log.debug("Job $id completed successfully")
         status = JobStatus.COMPLETED
         updateEvent()
+
+        val end = System.currentTimeMillis()
+        log.debug("$this finished running in ${end - start} ms")
     }
 
     /**

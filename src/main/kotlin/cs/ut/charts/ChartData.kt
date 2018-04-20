@@ -77,6 +77,7 @@ class ChartGenerator(val job: SimulationJob) {
      * @return mutable list of charts
      */
     private fun fetchCharts(): MutableList<Chart> {
+        val start = System.currentTimeMillis()
         val charts = mutableListOf<Chart>()
 
         if (LogManager.isClassification(job)) {
@@ -88,6 +89,9 @@ class ChartGenerator(val job: SimulationJob) {
             charts.addAll(generateLineCharts())
             charts.addAll(generateBarCharts())
         }
+
+        val end = System.currentTimeMillis()
+        log.debug("Fetching all charts finished in ${end - start} ms")
 
         return charts
     }
