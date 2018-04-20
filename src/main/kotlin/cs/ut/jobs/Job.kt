@@ -3,7 +3,9 @@ package cs.ut.jobs
 
 import cs.ut.engine.IdProvider
 import cs.ut.engine.JobManager
+import cs.ut.exceptions.Left
 import cs.ut.exceptions.ProcessErrorException
+import cs.ut.exceptions.perform
 import cs.ut.logging.NirdizatiLogger
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -75,23 +77,25 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
         log.debug("Started job execution: $this")
         startTime = start()
 
-        try {
+
+        perform {
             log.debug("Stared pre process stage")
             status = JobStatus.PREPARING
 
             updateEvent()
             preProcess()
-        } catch (e: Exception) {
-            log.debug("Job $id failed in preparation stage", e)
-            status = JobStatus.FAILED
-
-            updateEvent()
-            return
+        }.apply {
+            when (this) {
+                is Left -> {
+                    handleError(this)
+                    return
+                }
+            }
         }
 
-        log.debug("Job $id finished preprocess step")
+        log.debug("Job $id finished pre process step")
 
-        try {
+        perform {
             log.debug("Job $id started execute stage")
             status = JobStatus.RUNNING
 
@@ -101,32 +105,43 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
             if (errorOccurred()) {
                 throw ProcessErrorException()
             }
-        } catch (e: Exception) {
-            try {
-                onError()
-            } catch (ex: Exception) {
-                log.error("Error occurred when handling exception for job $id", ex)
-            } finally {
-                log.error("Job $id failed in execute stage", e)
-                status = JobStatus.FAILED
-                updateEvent()
-                return
+        }.apply {
+            when (this) {
+                is Left -> {
+
+                    perform {
+                        onError()
+                    }.apply {
+                        when (this) {
+                            is Left -> log.error("Error occurred when handling exception for job $id", this.l)
+                        }
+                    }
+
+                    log.error("Job $id failed in execute stage", this.l)
+                    status = JobStatus.FAILED
+                    updateEvent()
+                    return
+                }
             }
         }
 
         log.debug("Job $id finished execute step")
 
-        try {
+
+        perform {
             log.debug("Job $id started post execute step")
             status = JobStatus.FINISHING
 
             updateEvent()
 
             postExecute()
-        } catch (e: Exception) {
-            log.debug("Job $id failed in post execute step")
-            status = JobStatus.FAILED
-            return
+        }.apply {
+            when (this) {
+                is Left -> {
+                    handleError(this)
+                    return
+                }
+            }
         }
 
         log.debug("Job $id completed successfully")
@@ -135,6 +150,12 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
 
         val end = System.currentTimeMillis()
         log.debug("$this finished running in ${end - start} ms")
+    }
+
+    private fun handleError(left: Left<Exception>) {
+        log.debug("Job $id failed", left.l)
+        status = JobStatus.FAILED
+        updateEvent()
     }
 
     /**
