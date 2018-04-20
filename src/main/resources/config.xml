@@ -25,8 +25,8 @@
     <Node Identifier="userPreferences">
         <!-- Whether the simulation process should be run under specific user (root by default) -->
         <Value Identifier="isEnabled">false</Value>
-        <Value Identifier="userName">stanislav</Value>
-        <Value Identifier="userGroup">stanislav</Value>
+        <Value Identifier="userName">zukkari</Value>
+        <Value Identifier="userGroup">zukkari</Value>
         <Value Identifier="sudo"></Value>
         <Value Identifier="acp">0770</Value>
         <Node Identifier="adminFunctionality">
@@ -56,19 +56,19 @@
         <!-- Directory cs.ut.configuration -->
         <Node Identifier="itemList">
             <Value Identifier="python">/usr/bin/python3</Value>
-            <Value Identifier="userLogDirectory">/home/stanislav/git/nirdizati-training-ui/PredictiveMethods/logdata/</Value>
-            <Value Identifier="userModelDirectory">/home/stanislav/git/nirdizati-training-ui/usermodels/</Value>
-            <Value Identifier="scriptDirectory">/home/stanislav/git/nirdizati-training-ui/PredictiveMethods/</Value>
-            <Value Identifier="coreDir">/home/stanislav/git/nirdizati-training-ui/PredictiveMethods/core/</Value>
-            <Value Identifier="trainDirectory">/home/stanislav/git/nirdizati-training-ui/PredictiveMethods/core/training_params/</Value>
-            <Value Identifier="datasetDirectory">/home/stanislav/git/nirdizati-training-ui/PredictiveMethods/core/dataset_params/</Value>
-            <Value Identifier="pklDirectory">/home/stanislav/git/nirdizati-training-ui/PredictiveMethods/pkl/</Value>
-            <Value Identifier="ohpdir">/home/stanislav/git/nirdizati-training-ui/PredictiveMethods/core/optimal_params/</Value>
-            <Value Identifier="detailedDir">/home/stanislav/git/nirdizati-training-ui/PredictiveMethods/results/detailed/</Value>
-            <Value Identifier="validationDir">/home/stanislav/git/nirdizati-training-ui/PredictiveMethods/results/validation/</Value>
-            <Value Identifier="featureDir">/home/stanislav/git/nirdizati-training-ui/PredictiveMethods/results/feature_importance/</Value>
-            <Value Identifier="tmpDir">/home/stanislav/git/nirdizati-training-ui/tmp/</Value>
-            <Value Identifier="logFile">/home/stanislav/apache-tomcat-8.5.24/logs/catalina.out</Value>
+            <Value Identifier="userLogDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/logdata/</Value>
+            <Value Identifier="userModelDirectory">/home/zukkari/git/nirdizati-training-ui/usermodels/</Value>
+            <Value Identifier="scriptDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/</Value>
+            <Value Identifier="coreDir">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/</Value>
+            <Value Identifier="trainDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/training_params/</Value>
+            <Value Identifier="datasetDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/dataset_params/</Value>
+            <Value Identifier="pklDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/pkl/</Value>
+            <Value Identifier="ohpdir">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/optimal_params/</Value>
+            <Value Identifier="detailedDir">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/results/detailed/</Value>
+            <Value Identifier="validationDir">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/results/validation/</Value>
+            <Value Identifier="featureDir">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/results/feature_importance/</Value>
+            <Value Identifier="tmpDir">/home/zukkari/git/nirdizati-training-ui/tmp/</Value>
+            <Value Identifier="logFile">/home/zukkari/apache-tomcat-8.5.24/logs/catalina.out</Value>
         </Node>
     </Node>
     <Node Identifier="header">
@@ -163,6 +163,7 @@
             <Node Identifier="itemList">
                 <Value>\d{4}[-/]\d{1,2}[-/]\d{1,2}[ T]\d{1,2}:\d{1,2}:\d{1,2}</Value>
                 <Value>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}</Value>
+                <Value>\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}(\.\d{3})?</Value>
             </Node>
         </Node>
         <Node Identifier="empty">
