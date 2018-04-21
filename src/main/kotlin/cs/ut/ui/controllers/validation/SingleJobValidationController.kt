@@ -10,6 +10,7 @@ import cs.ut.ui.adapters.ComparisonAdapter
 import cs.ut.ui.adapters.JobValueAdapter
 import cs.ut.ui.adapters.ValidationViewAdapter
 import cs.ut.ui.controllers.Redirectable
+import cs.ut.util.NirdizatiDownloader
 import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.Page
 import org.zkoss.zk.ui.Component
@@ -43,9 +44,17 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
     @Wire
     private lateinit var comparisonContainer: Vbox
 
+    @Wire
+    private lateinit var exportFile: Button
+
+    @Wire
+    private lateinit var exportAll: Button
+
     private var currentlySelected: String = ""
 
     var accuracyMode: String = ""
+
+    private lateinit var currentChart: Chart
 
     @Wire
     private lateinit var compRows: Rows
@@ -62,7 +71,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         val provider = ComparisonAdapter(gridContainer, this)
         (listOf(job) +
                 JobService.findSimilarJobs(job))
-            .map { provider.provide(it) }.forEach { compRows.appendChild(it) }
+                .map { provider.provide(it) }.forEach { compRows.appendChild(it) }
 
         generateReadOnlyMode()
     }
@@ -119,8 +128,8 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         })
 
         cell.addEventListener(
-            Events.ON_CLICK,
-            if (entry.value.size == 1) entry.value.first().generateListenerForOne() else entry.value.generateListenerForMany()
+                Events.ON_CLICK,
+                if (entry.value.size == 1) entry.value.first().generateListenerForOne() else entry.value.generateListenerForMany()
         )
 
         cell.appendChild(label)
@@ -135,6 +144,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
             removeChildren()
             comboLayout.parent.parent.isVisible = false
             this.render()
+            currentChart = this
             setVisibility()
         }
     }
@@ -195,20 +205,35 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
 
             comboBox.isReadonly = true
             comboBox.setConstraint("no empty")
-            (comboBox.selectedItem.getValue() as Chart).render()
+            (comboBox.selectedItem.getValue() as Chart)
+                    .apply {
+                        this.render()
+                        currentChart = this
+                    }
 
             comboBox.addEventListener(
-                Events.ON_SELECT,
-                { e ->
-                    (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).apply {
-                        accuracyMode = this.name
-                        this.render()
-                        addDataSets()
-                    }
-                })
+                    Events.ON_SELECT,
+                    { e ->
+                        (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).apply {
+                            accuracyMode = this.name
+                            this.render()
+                            currentChart = this
+                            addDataSets()
+                        }
+                    })
             comboLayout.appendChild(comboBox)
             setVisibility()
         }
+    }
+
+    @Listen("onClick=#exportFile")
+    fun exportFile() {
+        NirdizatiDownloader.executeOnSingleFile(currentChart.file)
+    }
+
+    @Listen("onClick=#exportAll")
+    fun exportAll() {
+        NirdizatiDownloader.downloadFilesAsZip(job)
     }
 
     companion object {

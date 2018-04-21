@@ -88,7 +88,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         val header: List<String>
         val res = perform { csvReader.readTableHeader().sorted() }
         header = when (res) {
-            is Right -> res.r
+            is Right -> res.result
             is Left -> throw NirdizatiRuntimeException("Log file does not meet the requirements")
         }
 
@@ -133,7 +133,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
             log.debug("User column classification finished in ${end - start} ms")
 
             when (r) {
-                is Right -> updateContent(r.r)
+                is Right -> updateContent(r.result)
                 is Left -> throw NirdizatiRuntimeException(NirdizatiTranslator.localizeText("log.parse.fail"))
             }
         }

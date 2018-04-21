@@ -113,11 +113,11 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
                         onError()
                     }.apply {
                         when (this) {
-                            is Left -> log.error("Error occurred when handling exception for job $id", this.l)
+                            is Left -> log.error("Error occurred when handling exception for job $id", this.error)
                         }
                     }
 
-                    log.error("Job $id failed in execute stage", this.l)
+                    log.error("Job $id failed in execute stage", this.error)
                     status = JobStatus.FAILED
                     updateEvent()
                     return
@@ -153,7 +153,7 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
     }
 
     private fun handleError(left: Left<Exception>) {
-        log.debug("Job $id failed", left.l)
+        log.debug("Job $id failed", left.error)
         status = JobStatus.FAILED
         updateEvent()
     }

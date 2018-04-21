@@ -48,11 +48,11 @@ class DisposalTask : TimerTask() {
             LogManager.getDetailedFile(this, safe = true).apply {
                 when (this) {
                     is Right -> {
-                        this.r.safeDelete()
-                        log.debug("Deleted detailed file for job -> ${this.r.absoluteFile}")
+                        this.result.safeDelete()
+                        log.debug("Deleted detailed file for job -> ${this.result.absoluteFile}")
                     }
                     is Left -> {
-                        log.error("Error occurred during disposal task", this.l)
+                        log.error("Error occurred during disposal task", this.error)
                     }
                 }
             }
@@ -66,11 +66,11 @@ class DisposalTask : TimerTask() {
             LogManager.getDetailedFile(this, safe = true).apply {
                 when (this) {
                     is Right -> {
-                        this.r.safeDelete()
-                        log.debug("Deleted detailed file -> ${this.r.absoluteFile}")
+                        this.result.safeDelete()
+                        log.debug("Deleted detailed file -> ${this.result.absoluteFile}")
                     }
                     is Left -> {
-                        log.error("Error occurred during disposal task", this.l)
+                        log.error("Error occurred during disposal task", this.error)
                     }
                 }
             }

@@ -184,8 +184,25 @@
             </Node>
         </Node>
     </Node>
-    <Node Identifier="modelDownload">
-        <Value Identifier="mime">application/octet-stream</Value>
+    <Node Identifier="downloads">
+        <Node Identifier="default">
+            <Value Identifier="mime">application/octet-stream</Value>
+        </Node>
+        <Node Identifier="pkl">
+            <Value Identifier="mime">application/octet-stream</Value>
+        </Node>
+        <Node Identifier="csv">
+            <Value Identifier="mime">text/csv</Value>
+        </Node>
+        <Node Identifier="zip">
+            <Value Identifier="scheme">jar:file</Value>
+            <Node Identifier="dirNames">
+                <Value Identifier="detailed">detailed</Value>
+                <Value Identifier="features">feature_importance</Value>
+                <Value Identifier="accuracy">validation</Value>
+            </Node>
+            <Value Identifier="mime">application/zip, application/octet-stream</Value>
+        </Node>
     </Node>
     <Node Identifier="fileUpload">
         <Value Identifier="uploadBufferSize">2048</Value>

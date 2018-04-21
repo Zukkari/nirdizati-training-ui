@@ -6,7 +6,6 @@ import cs.ut.exceptions.Either
 import cs.ut.exceptions.Left
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.exceptions.Right
-import cs.ut.exceptions.perform
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
@@ -103,7 +102,7 @@ object LogManager {
                 val f = getFile(featureImportanceDir + job.getFileName(FEATURE) + "_$i", safe)
 
                 when (f) {
-                    is Right -> files.add(f.r)
+                    is Right -> files.add(f.result)
                     is Left -> return files
                 }
             }
@@ -113,11 +112,11 @@ object LogManager {
 
             val f = getFile(featureImportanceDir + job.getFileName(FEATURE) + "_0", safe)
             return when (f) {
-                is Right -> listOf(f.r)
+                is Right -> listOf(f.result)
                 is Left -> {
                     val next = getFile(featureImportanceDir + job.getFileName(FEATURE) + "_1", safe)
                     when (next) {
-                        is Right -> listOf(next.r)
+                        is Right -> listOf(next.result)
                         is Left -> listOf()
                     }
                 }

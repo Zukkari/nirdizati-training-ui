@@ -10,14 +10,14 @@ sealed class Either<out L, out R>
  *
  * @see Nothing
  */
-data class Left<out L>(val l: L) : Either<L, Nothing>()
+data class Left<out L>(val error: L) : Either<L, Nothing>()
 
 /**
  * Right part of the result containing value on the right side and Nothing on the left side
  *
  * @see Nothing
  */
-data class Right<out R>(val r: R) : Either<Nothing, R>()
+data class Right<out R>(val result: R) : Either<Nothing, R>()
 
 /**
  * Perform an operation that returns an Either

@@ -17,7 +17,6 @@ import cs.ut.util.START_DATE
 import cs.ut.util.UI_DATA
 import org.json.JSONObject
 import java.io.File
-import java.io.IOException
 
 
 class SimulationJob(
@@ -113,7 +112,7 @@ class SimulationJob(
         }
 
         when (execRes) {
-            is Left -> throw NirdizatiRuntimeException("Script execution failed", execRes.l)
+            is Left -> throw NirdizatiRuntimeException("Script execution failed", execRes.error)
         }
     }
 

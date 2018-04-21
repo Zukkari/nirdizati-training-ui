@@ -8,6 +8,7 @@ import cs.ut.exceptions.Left
 import cs.ut.exceptions.Right
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
+import java.io.File
 
 /**
  * Class that acts as a service layer between controllers and filesystem data representation.
@@ -110,12 +111,12 @@ class ChartGenerator(val job: SimulationJob) {
 
         return when (res) {
             is Right -> {
-                val payload = getLinearPayload(res.r, Mode.SCATTER)
-                ScatterPlot(name, gson.toJson(payload))
+                val payload = getLinearPayload(res.result, Mode.SCATTER)
+                ScatterPlot(name, gson.toJson(payload), res.result)
             }
             is Left -> {
-                log.error("Error when loading charts", res.l)
-                ScatterPlot(res.l.message ?: "File not found", "{}")
+                log.error("Error when loading charts", res.error)
+                ScatterPlot(res.error.message ?: "File not found", "{}", File("NONE"))
             }
         }
     }
@@ -131,14 +132,14 @@ class ChartGenerator(val job: SimulationJob) {
 
         return when (res) {
             is Right -> {
-                val payload = getLinearPayload(res.r, Mode.LINE).groupBy { it.dataType }
+                val payload = getLinearPayload(res.result, Mode.LINE).groupBy { it.dataType }
                 var charts = listOf<LineChart>()
-                payload.forEach { charts += LineChart(job.id, it.key, gson.toJson(it.value), it.value.last().x.toInt()) }
+                payload.forEach { charts += LineChart(job.id, it.key, gson.toJson(it.value), it.value.last().x.toInt(), res.result) }
                 charts
             }
 
             is Left -> {
-                log.error("Error when loading line charts", res.l)
+                log.error("Error when loading line charts", res.error)
                 return listOf()
             }
         }
@@ -160,7 +161,8 @@ class ChartGenerator(val job: SimulationJob) {
                     BarChart(
                             it.first.toString(),
                             gson.toJson(payload.map { it.value }),
-                            gson.toJson(payload.map { it.label })
+                            gson.toJson(payload.map { it.label }),
+                            it.second
                     )
             )
         }
@@ -179,22 +181,24 @@ class ChartGenerator(val job: SimulationJob) {
 
         return when (file) {
             is Right -> {
-                val heatMap = getHeatMapPayload(file.r)
+                val heatMap = getHeatMapPayload(file.result)
                 HeatMap(
                         TRUE_VS_PREDICTED,
                         gson.toJson(heatMap.data.map { arrayOf(it.x, it.y, it.value) }),
                         gson.toJson(heatMap.xLabels),
-                        gson.toJson(heatMap.yLabels)
+                        gson.toJson(heatMap.yLabels),
+                        file.result
                 )
             }
 
             is Left -> {
-                log.error("Error occurred when loading heat map", file.l)
+                log.error("Error occurred when loading heat map", file.error)
                 HeatMap(
-                        file.l.message ?: "File not found",
+                        file.error.message ?: "File not found",
                         "{}",
                         "{}",
-                        "{}"
+                        "{}",
+                        File("NONE")
                 )
             }
         }
