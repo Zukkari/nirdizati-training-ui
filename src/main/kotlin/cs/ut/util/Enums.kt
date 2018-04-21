@@ -59,3 +59,10 @@ enum class GridColumns(val value: String) {
     HIDDEN("hiddenColumns"),
     TIMESTAMP("timestampFormat")
 }
+
+enum class ZipDirs(val value: String) {
+    FEATURES("features"),
+    DETAILED("detailed"),
+    ACCURACY("accuracy"),
+    SCHEME("scheme")
+}

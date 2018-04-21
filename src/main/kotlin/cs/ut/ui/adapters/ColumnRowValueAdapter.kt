@@ -1,5 +1,7 @@
 package cs.ut.ui.adapters
 
+import cs.ut.exceptions.Left
+import cs.ut.exceptions.perform
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.util.COMP_ID
@@ -41,11 +43,9 @@ class ColumnRowValueAdapter(private val valueList: List<String>, private val ide
             comboBox.appendItem(NirdizatiTranslator.localizeText(NO_RESOURCE)).setValue("")
         }
 
-
-        try {
-            comboBox.selectedItem
-        } catch (e: Throwable) {
-            comboBox.selectedItem = (comboBox.getItemAtIndex(0))
+        val res = perform { comboBox.selectedItem }
+        when (res) {
+            is Left -> comboBox.selectedItem = (comboBox.getItemAtIndex(0))
         }
 
         fields.add(FieldComponent(label, comboBox))

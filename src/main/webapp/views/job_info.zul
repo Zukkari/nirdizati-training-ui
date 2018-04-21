@@ -27,11 +27,17 @@
         <rows id="selectionRows" hflex="1" vflex="1"/>
     </grid>
     <hlayout hflex="1" vflex="1" sclass="margin-top-40px">
-        <vbox hflex="3" vflex="1" align="center">
+        <vlayout hflex="min" vflex="min">
+            <button id="exportFile" label="${labels.validation.export.single}" sclass="n-btn"/>
+            <button id="exportAll" label="${labels.validation.export.all}" sclass="n-btn"/>
+        </vlayout>
+
+        <vbox hflex="4" vflex="1" align="center">
             <include id="canvas" src="/views/graphs/graph_canvas.html" hflex="1" vflex="1"/>
         </vbox>
         <vbox id="infoContainer" align="start" hflex="2" vflex="1" sclass="info-container">
-            <panel title="${labels.validation.select_version}" collapsible="true" open="false" hflex="1" sclass="validation-panel">
+            <panel title="${labels.validation.select_version}" collapsible="true" open="false" hflex="1"
+                   sclass="validation-panel">
                 <panelchildren sclass="validation-panel-child">
                     <vbox pack="center" align="center" hflex="min" vflex="1" id="comboLayout"/>
                 </panelchildren>

@@ -4,7 +4,10 @@ import com.google.common.html.HtmlEscapers
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.configuration.Value
 import cs.ut.engine.JobManager
+import cs.ut.exceptions.Left
 import cs.ut.exceptions.NirdizatiRuntimeException
+import cs.ut.exceptions.Right
+import cs.ut.exceptions.perform
 import cs.ut.jobs.DataSetGenerationJob
 import cs.ut.jobs.UserRightsJob
 import cs.ut.logging.NirdizatiLogger
@@ -83,11 +86,10 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         log.debug("Received file with name ${file.name}")
 
         val header: List<String>
-        try {
-            header = csvReader.readTableHeader().sorted()
-            log.debug("Read header of users file: $header")
-        } catch (e: Exception) {
-            throw NirdizatiRuntimeException("Log file does not meet the requirements")
+        val res = perform { csvReader.readTableHeader().sorted() }
+        header = when (res) {
+            is Right -> res.result
+            is Left -> throw NirdizatiRuntimeException("Log file does not meet the requirements")
         }
 
         if (validateDataPresent(header)) return
@@ -123,12 +125,16 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
         okBtnListener = SerializableEventListener { _ ->
             okBtn.isDisabled = true
-            try {
-                measureTimeMillis {
-                    updateContent(csvReader.generateDataSetParams(grid.gatherValues()))
-                }.apply { log.debug("User column classification finished in $this ms")}
-            } catch (e: Exception) {
-                throw NirdizatiRuntimeException(NirdizatiTranslator.localizeText("log.parse.fail"))
+
+            val start = System.currentTimeMillis()
+            val r = perform { csvReader.generateDataSetParams(grid.gatherValues()) }
+            val end = System.currentTimeMillis()
+
+            log.debug("User column classification finished in ${end - start} ms")
+
+            when (r) {
+                is Right -> updateContent(r.result)
+                is Left -> throw NirdizatiRuntimeException(NirdizatiTranslator.localizeText("log.parse.fail"))
             }
         }
 
