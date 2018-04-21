@@ -2,7 +2,11 @@ package cs.ut.engine
 
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.UIData
+import cs.ut.exceptions.Either
+import cs.ut.exceptions.Left
 import cs.ut.exceptions.NirdizatiRuntimeException
+import cs.ut.exceptions.Right
+import cs.ut.exceptions.perform
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
@@ -66,7 +70,7 @@ object LogManager {
      * @param job for which job file should be retrieved
      * @return file that contains job results
      */
-    fun getDetailedFile(job: SimulationJob, safe: Boolean = false): File {
+    fun getDetailedFile(job: SimulationJob, safe: Boolean = false): Either<Exception, File> {
         log.debug("Getting detailed log information for job '$job'")
         return getFile(detailedDir + job.getFileName(DETAILED), safe)
     }
@@ -77,7 +81,7 @@ object LogManager {
      * @param job for which job file should be retrieved
      * @return file that contains job results
      */
-    fun getValidationFile(job: SimulationJob, safe: Boolean = false): File {
+    fun getValidationFile(job: SimulationJob, safe: Boolean = false): Either<Exception, File> {
         log.debug("Getting validation log file for job '$job'")
         return getFile(validationDir + job.getFileName(VALIDATION), safe)
     }
@@ -96,17 +100,28 @@ object LogManager {
 
             val files = mutableListOf<File>()
             (1..15).forEach { i ->
-                try {
-                    files.add(getFile(featureImportanceDir + job.getFileName(FEATURE) + "_$i", safe))
-                } catch (e: Exception) {
-                    log.debug("Found ${files.size} files for job: $job")
-                    return files
+                val f = getFile(featureImportanceDir + job.getFileName(FEATURE) + "_$i", safe)
+
+                when (f) {
+                    is Right -> files.add(f.r)
+                    is Left -> return files
                 }
             }
             log.debug("Found ${files.size} files for job: $job")
             return files
         } else {
-            return listOf(getFile(featureImportanceDir + job.getFileName(FEATURE) + "_1", safe))
+
+            val f = getFile(featureImportanceDir + job.getFileName(FEATURE) + "_0", safe)
+            return when (f) {
+                is Right -> listOf(f.r)
+                is Left -> {
+                    val next = getFile(featureImportanceDir + job.getFileName(FEATURE) + "_1", safe)
+                    when (next) {
+                        is Right -> listOf(next.r)
+                        is Left -> listOf()
+                    }
+                }
+            }
         }
     }
 
@@ -117,16 +132,16 @@ object LogManager {
      *
      * @return file with given file name
      */
-    private fun getFile(fileName: String, safe: Boolean): File {
+    private fun getFile(fileName: String, safe: Boolean): Either<Exception, File> {
         val file = File("$fileName.csv")
         log.debug("Looking for file with name ${file.name}")
 
         if (!safe && !file.exists()) {
-            throw NirdizatiRuntimeException("Result file with name ${file.absolutePath} could not be found")
+            return Left(NirdizatiRuntimeException("Result file with name ${file.absolutePath} could not be found"))
         }
 
         log.debug("Successfully found result file with name $fileName")
-        return file
+        return Right(file)
     }
 
     /**
@@ -186,7 +201,7 @@ object LogManager {
      *
      * @return list of files in training directory
      */
-    fun loadTrainingFiles(): List<File> {
+    private fun loadTrainingFiles(): List<File> {
         log.debug("Loading training files")
         val dir = File(DirectoryConfiguration.dirPath(Dir.TRAIN_DIR))
         log.debug("Looking for training files in ${dir.absolutePath}")

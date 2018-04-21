@@ -4,6 +4,8 @@ import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.Cache
 import cs.ut.engine.JobCacheHolder
 import cs.ut.engine.LogManager
+import cs.ut.exceptions.Left
+import cs.ut.exceptions.Right
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
@@ -44,8 +46,15 @@ class DisposalTask : TimerTask() {
             }
 
             LogManager.getDetailedFile(this, safe = true).apply {
-                this.safeDelete()
-                log.debug("Deleted detailed file for job -> ${this.absoluteFile}")
+                when (this) {
+                    is Right -> {
+                        this.r.safeDelete()
+                        log.debug("Deleted detailed file for job -> ${this.r.absoluteFile}")
+                    }
+                    is Left -> {
+                        log.error("Error occurred during disposal task", this.l)
+                    }
+                }
             }
 
             LogManager.getFeatureImportanceFiles(this, safe = true).apply {
@@ -55,8 +64,15 @@ class DisposalTask : TimerTask() {
             }
 
             LogManager.getDetailedFile(this, safe = true).apply {
-                this.safeDelete()
-                log.debug("Deleted detailed file -> ${this.absoluteFile}")
+                when (this) {
+                    is Right -> {
+                        this.r.safeDelete()
+                        log.debug("Deleted detailed file -> ${this.r.absoluteFile}")
+                    }
+                    is Left -> {
+                        log.error("Error occurred during disposal task", this.l)
+                    }
+                }
             }
 
             log.debug("Finished disposal of job ${this.id}")

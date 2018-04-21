@@ -2,7 +2,9 @@ package cs.ut.jobs
 
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.ModelParameter
+import cs.ut.exceptions.Left
 import cs.ut.exceptions.NirdizatiRuntimeException
+import cs.ut.exceptions.perform
 import cs.ut.jobs.UserRightsJob.Companion.updateACL
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
@@ -82,7 +84,8 @@ class SimulationJob(
         parameters.add(TRAIN_PY)
         parameters.add(id)
 
-        try {
+
+        val execRes = perform {
             val pb = ProcessBuilder(parameters)
 
             pb.directory(File(DirectoryConfiguration.dirPath(Dir.CORE_DIR)))
@@ -107,10 +110,10 @@ class SimulationJob(
                 log.debug("Script exited successfully")
                 process?.destroy()
             }
-        } catch (e: IOException) {
-            throw NirdizatiRuntimeException("Script execution failed", e)
-        } catch (e: InterruptedException) {
-            throw NirdizatiRuntimeException("Script execution failed", e)
+        }
+
+        when (execRes) {
+            is Left -> throw NirdizatiRuntimeException("Script execution failed", execRes.l)
         }
     }
 

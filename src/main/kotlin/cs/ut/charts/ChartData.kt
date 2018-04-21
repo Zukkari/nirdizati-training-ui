@@ -4,6 +4,8 @@ import com.google.gson.Gson
 import cs.ut.engine.Cache
 import cs.ut.engine.CacheHolder
 import cs.ut.engine.LogManager
+import cs.ut.exceptions.Left
+import cs.ut.exceptions.Right
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
 
@@ -104,8 +106,18 @@ class ChartGenerator(val job: SimulationJob) {
      * @return scatter plot entity filled with data for current job
      */
     private fun generateScatterPlot(name: String): ScatterPlot {
-        val payload = getLinearPayload(LogManager.getDetailedFile(job), Mode.SCATTER)
-        return ScatterPlot(name, gson.toJson(payload))
+        val res = LogManager.getDetailedFile(job)
+
+        return when (res) {
+            is Right -> {
+                val payload = getLinearPayload(res.r, Mode.SCATTER)
+                ScatterPlot(name, gson.toJson(payload))
+            }
+            is Left -> {
+                log.error("Error when loading charts", res.l)
+                ScatterPlot(res.l.message ?: "File not found", "{}")
+            }
+        }
     }
 
     /**
@@ -115,10 +127,21 @@ class ChartGenerator(val job: SimulationJob) {
      * @return list of line charts for current job filled with data for current job
      */
     private fun generateLineCharts(): List<LineChart> {
-        val payload = getLinearPayload(LogManager.getValidationFile(job), Mode.LINE).groupBy { it.dataType }
-        var charts = listOf<LineChart>()
-        payload.forEach { charts += LineChart(job.id, it.key, gson.toJson(it.value), it.value.last().x.toInt()) }
-        return charts
+        val res = LogManager.getValidationFile(job)
+
+        return when (res) {
+            is Right -> {
+                val payload = getLinearPayload(res.r, Mode.LINE).groupBy { it.dataType }
+                var charts = listOf<LineChart>()
+                payload.forEach { charts += LineChart(job.id, it.key, gson.toJson(it.value), it.value.last().x.toInt()) }
+                charts
+            }
+
+            is Left -> {
+                log.error("Error when loading line charts", res.l)
+                return listOf()
+            }
+        }
     }
 
     /**
@@ -134,11 +157,11 @@ class ChartGenerator(val job: SimulationJob) {
         (1..files.size).zip(files).forEach {
             val payload = getBarChartPayload(it.second)
             charts.add(
-                BarChart(
-                    it.first.toString(),
-                    gson.toJson(payload.map { it.value }),
-                    gson.toJson(payload.map { it.label })
-                )
+                    BarChart(
+                            it.first.toString(),
+                            gson.toJson(payload.map { it.value }),
+                            gson.toJson(payload.map { it.label })
+                    )
             )
         }
 
@@ -153,13 +176,27 @@ class ChartGenerator(val job: SimulationJob) {
      */
     private fun generateHeatMap(): HeatMap {
         val file = LogManager.getDetailedFile(job)
-        val heatMap = getHeatMapPayload(file)
 
-        return HeatMap(
-            TRUE_VS_PREDICTED,
-            gson.toJson(heatMap.data.map { arrayOf(it.x, it.y, it.value) }),
-            gson.toJson(heatMap.xLabels),
-            gson.toJson(heatMap.yLabels)
-        )
+        return when (file) {
+            is Right -> {
+                val heatMap = getHeatMapPayload(file.r)
+                HeatMap(
+                        TRUE_VS_PREDICTED,
+                        gson.toJson(heatMap.data.map { arrayOf(it.x, it.y, it.value) }),
+                        gson.toJson(heatMap.xLabels),
+                        gson.toJson(heatMap.yLabels)
+                )
+            }
+
+            is Left -> {
+                log.error("Error occurred when loading heat map", file.l)
+                HeatMap(
+                        file.l.message ?: "File not found",
+                        "{}",
+                        "{}",
+                        "{}"
+                )
+            }
+        }
     }
 }
