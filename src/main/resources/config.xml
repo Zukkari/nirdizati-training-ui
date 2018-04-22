@@ -265,6 +265,7 @@
                 </Node>
             </Node>
             <Node Identifier="prefix_length_based">
+                <Value Identifier="n_of_events">25</Value>
                 <Value Identifier="isEnabled">true</Value>
                 <Value Identifier="parameter">prefix</Value>
                 <Value Identifier="type">bucketing</Value>
@@ -343,7 +344,7 @@
                     <Node Identifier="learning_rate">
                         <Value Identifier="control">org.zkoss.zul.Doublebox</Value>
                         <Value Identifier="min">0.01</Value>
-                        <Value Identifier="default">0.1</Value>
+                        <Value Identifier="default">0.04</Value>
                     </Node>
                     <Node Identifier="subsample">
                         <Value Identifier="control">org.zkoss.zul.Doublebox</Value>

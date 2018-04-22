@@ -110,10 +110,16 @@
   text-transform: uppercase;
   background: transparent;
   border: solid 2px #0068b3;
-  color: #0068b3; }
+  color: #0068b3;
+  width: 100px;
+  height: 50px;
+  min-width: 24px;
+  min-height: 24px;
+  max-width: 100%;
+  max-height: 100%; }
 
 @media screen and (min-width: 48px) {
-  .n-btn, .n-upload-btn, .n-proceed, .n-block-btn {
+  .n-btn, .n-upload-btn, .n-proceed, .n-block-btn, .n-btn-small {
     z-index: 1;
     min-width: 48px;
     min-height: 48px;
@@ -128,11 +134,11 @@
     font-weight: bold !important;
     text-transform: uppercase;
     animation: btn-gradient 15s ease alternate infinite; }
-    .n-btn:hover, .n-upload-btn:hover, .n-proceed:hover, .n-block-btn:hover {
+    .n-btn:hover, .n-upload-btn:hover, .n-proceed:hover, .n-block-btn:hover, .n-btn-small:hover {
       background: transparent;
       color: #0068b3;
       transition: all 0.14s ease-in-out; }
-    .n-btn::before, .n-upload-btn::before, .n-proceed::before, .n-block-btn::before {
+    .n-btn::before, .n-upload-btn::before, .n-proceed::before, .n-block-btn::before, .n-btn-small::before {
       z-index: -1;
       content: "";
       position: absolute;
@@ -141,7 +147,7 @@
       left: 100%;
       right: 100%;
       background-color: #0068b3; }
-    .n-btn:hover::before, .n-upload-btn:hover::before, .n-proceed:hover::before, .n-block-btn:hover::before {
+    .n-btn:hover::before, .n-upload-btn:hover::before, .n-proceed:hover::before, .n-block-btn:hover::before, .n-btn-small:hover::before {
       max-height: 100%;
       max-width: 100%;
       background-color: white;
@@ -186,6 +192,23 @@
     .n-block-btn[disabled]:hover::before {
       display: none; }
     .n-block-btn[disabled]:hover {
+      color: rgba(0, 0, 0, 0.34); }
+
+  .n-btn-small {
+    background: linear-gradient(53deg, #0093f9, #0068b3);
+    background-size: 400% 400%;
+    width: 90px;
+    height: 50px;
+    min-width: 24px;
+    min-height: 24px;
+    max-width: 100%;
+    max-height: 100%; }
+    .n-btn-small[disabled] {
+      background: linear-gradient(53deg, #e6e6e6, #bbbbbb);
+      background-size: 600% 600%; }
+    .n-btn-small[disabled]:hover::before {
+      display: none; }
+    .n-btn-small[disabled]:hover {
       color: rgba(0, 0, 0, 0.34); } }
 @media screen and (max-width: 48px) {
   .n-btn, .n-upload-btn, .n-proceed {
