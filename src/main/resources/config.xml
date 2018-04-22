@@ -327,7 +327,7 @@
                         <Value Identifier="min">1</Value>
                         <Value Identifier="max">10</Value>
                         <Value Identifier="default">5</Value>
-                    </Node>z
+                    </Node>
                 </Node>
             </Node>
             <Node Identifier="xgboost">
