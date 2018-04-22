@@ -36,7 +36,7 @@ class NirdizatiDownloader(private val dir: Dir, private val resourceId: String) 
 
 
         fun downloadFilesAsZip(job: SimulationJob) {
-            fun prepareZip(featureFiles: List<File>, detailedFile: Either<Exception, File>, accuracyFile: Either<Exception, File>): String {
+            fun prepareZip(featureFiles: Either<Exception, List<File>>, detailedFile: Either<Exception, File>, accuracyFile: Either<Exception, File>): String {
                 val fileName = "validation_results_${job.id}"
                 val configNode = ConfigurationReader.findNode("downloads/zip")
 
@@ -60,8 +60,14 @@ class NirdizatiDownloader(private val dir: Dir, private val resourceId: String) 
                     Files.createDirectory(fs.getPath(detailedDir))
                     Files.createDirectory(fs.getPath(accuracyDir))
 
-                    featureFiles.forEach {
-                        Files.copy(it.toPath(), fs.getPath(featureImportanceDir + "/" + it.name), StandardCopyOption.REPLACE_EXISTING)
+                    when (featureFiles) {
+                        is Right -> {
+                            featureFiles.result.forEach {
+                                Files.copy(it.toPath(), fs.getPath(featureImportanceDir + "/" + it.name), StandardCopyOption.REPLACE_EXISTING)
+                            }
+                        }
+
+                        is Left -> log.error("Error occurred when fetching feature importance files", featureFiles.error)
                     }
 
                     when (detailedFile) {

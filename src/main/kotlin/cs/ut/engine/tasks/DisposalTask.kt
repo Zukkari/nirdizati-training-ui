@@ -58,9 +58,15 @@ class DisposalTask : TimerTask() {
             }
 
             LogManager.getFeatureImportanceFiles(this).apply {
-                log.debug("Deleting ${this.size} feature importance file")
-                this.forEach { it.safeDelete() }
-                log.debug("Finished feature importance file deletion")
+                when (this) {
+                    is Right -> {
+                        log.debug("Deleting ${this.result.size} feature importance file")
+                        this.result.forEach { it.safeDelete() }
+                        log.debug("Finished feature importance file deletion")
+                    }
+
+                    is Left -> log.error("Error occurred during disposal task", this.error)
+                }
             }
 
             LogManager.getDetailedFile(this, safe = true).apply {

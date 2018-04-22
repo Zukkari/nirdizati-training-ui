@@ -155,16 +155,21 @@ class ChartGenerator(val job: SimulationJob) {
         val files = LogManager.getFeatureImportanceFiles(job)
         val charts = mutableListOf<BarChart>()
 
-        (1..files.size).zip(files).forEach {
-            val payload = getBarChartPayload(it.second)
-            charts.add(
-                    BarChart(
-                            it.first.toString(),
-                            gson.toJson(payload.map { it.value }),
-                            gson.toJson(payload.map { it.label }),
-                            it.second
+        when (files) {
+            is Right -> {
+                (1..files.result.size).zip(files.result).forEach {
+                    val payload = getBarChartPayload(it.second)
+                    charts.add(
+                            BarChart(
+                                    it.first.toString(),
+                                    gson.toJson(payload.map { it.value }),
+                                    gson.toJson(payload.map { it.label }),
+                                    it.second
+                            )
                     )
-            )
+                }
+            }
+            is Left -> log.error("Error occurred when fetching feature importance files", files.error)
         }
 
         return charts.toList()
