@@ -316,18 +316,18 @@
                 <Value Identifier="parameter">dt</Value>
                 <Value Identifier="type">learner</Value>
                 <Node Identifier="properties">
-                    <Node Identifier="n_estimators">
-                        <Value Identifier="control">org.zkoss.zul.Intbox</Value>
-                        <Value Identifier="max">400</Value>
-                        <Value Identifier="min">1</Value>
-                        <Value Identifier="default">300</Value>
+                    <Node Identifier="max_features">
+                        <Value Identifier="control">org.zkoss.zul.Doublebox</Value>
+                        <Value Identifier="min">0.01</Value>
+                        <Value Identifier="default">0.8</Value>
+                        <Value Identifier="max">1.0</Value>
                     </Node>
                     <Node Identifier="max_depth">
                         <Value Identifier="control">org.zkoss.zul.Intbox</Value>
                         <Value Identifier="min">1</Value>
                         <Value Identifier="max">10</Value>
                         <Value Identifier="default">5</Value>
-                    </Node>
+                    </Node>z
                 </Node>
             </Node>
             <Node Identifier="xgboost">

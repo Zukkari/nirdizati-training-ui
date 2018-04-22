@@ -37,7 +37,7 @@ class NirdizatiDownloader(private val dir: Dir, private val resourceId: String) 
 
         fun downloadFilesAsZip(job: SimulationJob) {
             fun prepareZip(featureFiles: List<File>, detailedFile: Either<Exception, File>, accuracyFile: Either<Exception, File>): String {
-                val fileName = "validation_results_${job.id}_${job.owner}"
+                val fileName = "validation_results_${job.id}"
                 val configNode = ConfigurationReader.findNode("downloads/zip")
 
                 log.debug("Started zip composition")

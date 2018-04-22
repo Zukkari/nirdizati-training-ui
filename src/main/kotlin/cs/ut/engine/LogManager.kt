@@ -99,34 +99,10 @@ object LogManager {
      *
      * @return list of files that represent feature importance files for given job
      */
-    fun getFeatureImportanceFiles(job: SimulationJob, safe: Boolean = false): List<File> {
+    fun getFeatureImportanceFiles(job: SimulationJob): List<File> {
         log.debug("Getting feature importance log information for job: '$job'")
-        if (Algorithm.PREFIX.value == job.bucketing.id) {
-            log.debug("Prefix job, looking for all possible files for this job")
-            val files = mutableListOf<File>()
-            (1..eventNumber).forEach { i ->
-                val f = getFile(featureImportanceDir + job.getFileName(FEATURE) + "_$i", safe)
-
-                when (f) {
-                    is Right -> files.add(f.result)
-                    is Left -> return files
-                }
-            }
-            log.debug("Found ${files.size} files for job: $job")
-            return files
-        } else {
-
-            val f = getFile(featureImportanceDir + job.getFileName(FEATURE) + "_0", safe)
-            return when (f) {
-                is Right -> listOf(f.result)
-                is Left -> {
-                    val next = getFile(featureImportanceDir + job.getFileName(FEATURE) + "_1", safe)
-                    when (next) {
-                        is Right -> listOf(next.result)
-                        is Left -> listOf()
-                    }
-                }
-            }
+        return File(featureImportanceDir).listFiles().filter { job.id in it.name }.apply {
+            log.debug("Found ${this.size} feature importance files")
         }
     }
 
