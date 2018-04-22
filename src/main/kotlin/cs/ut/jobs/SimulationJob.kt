@@ -12,6 +12,7 @@ import cs.ut.util.Algorithm
 import cs.ut.util.FileWriter
 import cs.ut.util.LOG_FILE
 import cs.ut.util.NirdizatiTranslator
+import cs.ut.util.Node
 import cs.ut.util.OWNER
 import cs.ut.util.START_DATE
 import cs.ut.util.UI_DATA
@@ -41,7 +42,13 @@ class SimulationJob(
         if (bucketing.id == Algorithm.PREFIX.value) {
             val props = JSONObject()
             learner.properties.forEach { (k, _, v) -> props.put(k, convertToNumber(v)) }
-            for (i in 1..15) {
+
+            val eventNumber = ConfigurationReader
+                    .findNode("models/parameters/prefix_length_based")
+                    .valueWithIdentifier(Node.EVENT_NUMBER.value)
+                    .intValue()
+
+            for (i in 1..eventNumber) {
                 params.put(i.toString(), props)
             }
         } else {

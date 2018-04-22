@@ -29,6 +29,8 @@ object LogManager {
     private const val FEATURE = "feat_importance_"
     private const val VALIDATION = "validation_"
 
+    private val eventNumber: Int
+
     private val allowedExtensions: List<String>
 
     private val logDirectory: String
@@ -52,6 +54,11 @@ object LogManager {
         log.debug("Detailed log directory -> $detailedDir")
 
         allowedExtensions = ConfigurationReader.findNode("fileUpload/extensions").itemListValues()
+
+        eventNumber = ConfigurationReader
+                .findNode("models/parameters/prefix_length_based")
+                .valueWithIdentifier(Node.EVENT_NUMBER.value)
+                .intValue()
     }
 
     /**
@@ -96,9 +103,8 @@ object LogManager {
         log.debug("Getting feature importance log information for job: '$job'")
         if (Algorithm.PREFIX.value == job.bucketing.id) {
             log.debug("Prefix job, looking for all possible files for this job")
-
             val files = mutableListOf<File>()
-            (1..15).forEach { i ->
+            (1..eventNumber).forEach { i ->
                 val f = getFile(featureImportanceDir + job.getFileName(FEATURE) + "_$i", safe)
 
                 when (f) {

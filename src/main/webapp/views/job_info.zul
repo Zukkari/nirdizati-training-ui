@@ -28,8 +28,8 @@
     </grid>
     <hlayout hflex="1" vflex="1" sclass="margin-top-40px">
         <vlayout hflex="min" vflex="min">
-            <button id="exportFile" label="${labels.validation.export.single}" sclass="n-btn"/>
-            <button id="exportAll" label="${labels.validation.export.all}" sclass="n-btn"/>
+            <button id="exportFile" label="${labels.validation.export.single}" sclass="transparent-btn"/>
+            <button id="exportAll" label="${labels.validation.export.all}" sclass="transparent-btn"/>
         </vlayout>
 
         <vbox hflex="4" vflex="1" align="center">

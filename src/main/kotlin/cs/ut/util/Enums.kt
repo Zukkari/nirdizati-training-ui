@@ -66,3 +66,7 @@ enum class ZipDirs(val value: String) {
     ACCURACY("accuracy"),
     SCHEME("scheme")
 }
+
+enum class Node(val value: String) {
+    EVENT_NUMBER("n_of_events")
+}
