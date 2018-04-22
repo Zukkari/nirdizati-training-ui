@@ -57,7 +57,7 @@ class DisposalTask : TimerTask() {
                 }
             }
 
-            LogManager.getFeatureImportanceFiles(this, safe = true).apply {
+            LogManager.getFeatureImportanceFiles(this).apply {
                 log.debug("Deleting ${this.size} feature importance file")
                 this.forEach { it.safeDelete() }
                 log.debug("Finished feature importance file deletion")
