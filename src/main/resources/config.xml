@@ -1,7 +1,7 @@
 <Configuration>
     <Node Identifier="threadPool">
         <!-- Thread pool cs.ut.configuration -->
-        <Value Identifier="capacity">3</Value>
+        <Value Identifier="capacity">1</Value>
         <Node Identifier="onStartUp">
             <Value Identifier="package">cs.ut.jobs</Value>
             <Node Identifier="itemList">
@@ -12,12 +12,12 @@
     <Node Identifier="tasks">
         <Value Identifier="package">cs.ut.engine.tasks</Value>
         <Node Identifier="CacheCleanTask">
-            <Value Identifier="isEnabled">true</Value>
+            <Value Identifier="isEnabled">false</Value>
             <Value Identifier="timeToLive">600000</Value>
             <Value Identifier="period">180000</Value>
         </Node>
         <Node Identifier="DisposalTask">
-            <Value Identifier="isEnabled">true</Value>
+            <Value Identifier="isEnabled">false</Value>
             <Value Identifier="age">2592000000</Value>
             <Value Identifier="period">86400000</Value>
         </Node>

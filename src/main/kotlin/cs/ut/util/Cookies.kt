@@ -18,7 +18,7 @@ class Cookies {
         fun setUpCookie(response: HttpServletResponse) {
             log.debug("Setting up new cookie")
             val cookie = Cookie(JOBS_KEY, IdProvider.getNextId())
-            cookie.maxAge = configNode.valueWithIdentifier("maxAge").intValue()
+            cookie.maxAge = configNode.valueWithIdentifier("maxAge").value()
             response.addCookie(cookie)
             log.debug("Successfully generated new cookie and added it to response")
         }

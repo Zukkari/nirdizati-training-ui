@@ -96,7 +96,8 @@ class DisposalTask : TimerTask() {
 
     companion object {
         private val log = NirdizatiLogger.getLogger(DisposalTask::class.java)
-        private val age = ConfigurationReader.findNode("tasks/DisposalTask").valueWithIdentifier("age").long()
+        private val age: Long =
+                ConfigurationReader.findNode("tasks/DisposalTask").valueWithIdentifier("age").value()
 
         var disposed: Int = 0
     }

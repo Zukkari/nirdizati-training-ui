@@ -11,7 +11,7 @@ import java.io.Reader
 interface UploadItem {
 
     val bufferSize: Int
-        get() = ConfigurationReader.findNode("fileUpload").valueWithIdentifier("uploadBufferSize").intValue()
+        get() = ConfigurationReader.findNode("fileUpload").valueWithIdentifier("uploadBufferSize").value()
 
     fun write(file: File)
 

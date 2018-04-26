@@ -30,8 +30,8 @@ class CsvReader(private val f: File) {
 
         val configNode = ConfigurationReader.findNode("csv")
         splitter = configNode.valueWithIdentifier("splitter").value.toRegex()
-        confThreshold = configNode.valueWithIdentifier("threshold").intValue()
-        sampleSize = configNode.valueWithIdentifier("sampleSize").intValue()
+        confThreshold = configNode.valueWithIdentifier("threshold").value()
+        sampleSize = configNode.valueWithIdentifier("sampleSize").value()
 
         emptyValues = ConfigurationReader.findNode("csv/empty").itemListValues()
         activityId = ConfigurationReader.findNode("csv/activityId").itemListValues()

@@ -58,7 +58,7 @@ object LogManager {
         eventNumber = ConfigurationReader
                 .findNode("models/parameters/prefix_length_based")
                 .valueWithIdentifier(Node.EVENT_NUMBER.value)
-                .intValue()
+                .value()
     }
 
     /**

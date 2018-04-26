@@ -150,6 +150,10 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
 
         val end = System.currentTimeMillis()
         log.debug("$this finished running in ${end - start} ms")
+
+        if (this is SimulationJob) {
+            log.debug("${this.encoding} ${this.bucketing} ${this.learner}")
+        }
     }
 
     private fun handleError(left: Left<Exception>) {

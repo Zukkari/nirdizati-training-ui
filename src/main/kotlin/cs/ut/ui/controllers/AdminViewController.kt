@@ -100,7 +100,7 @@ class AdminViewController : SelectorComposer<Component>(), UIComponent {
 
     private fun isAuthorized(): Boolean {
         passwordField.clearErrorMessage()
-        return configNode.isEnabled() && (!configNode.valueWithIdentifier("isPasswordRequired").booleanValue() ||
+        return configNode.isEnabled() && (!configNode.valueWithIdentifier("isPasswordRequired").value<Boolean>() ||
                 Base64.encodeBytes(
                     (passwordField.value ?: "").toByteArray(Charset.forName("UTF-8"))
                 ) == configNode.valueWithIdentifier("password").value)

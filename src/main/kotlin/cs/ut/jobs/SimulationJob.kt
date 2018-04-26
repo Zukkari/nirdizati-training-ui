@@ -4,6 +4,7 @@ import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.ModelParameter
 import cs.ut.exceptions.Left
 import cs.ut.exceptions.NirdizatiRuntimeException
+import cs.ut.exceptions.Right
 import cs.ut.exceptions.perform
 import cs.ut.jobs.UserRightsJob.Companion.updateACL
 import cs.ut.providers.Dir
@@ -43,10 +44,10 @@ class SimulationJob(
             val props = JSONObject()
             learner.properties.forEach { (k, _, v) -> props.put(k, convertToNumber(v)) }
 
-            val eventNumber = ConfigurationReader
+            val eventNumber: Int = ConfigurationReader
                     .findNode("models/parameters/prefix_length_based")
                     .valueWithIdentifier(Node.EVENT_NUMBER.value)
-                    .intValue()
+                    .value()
 
             for (i in 1..eventNumber) {
                 params.put(i.toString(), props)
@@ -119,6 +120,7 @@ class SimulationJob(
         }
 
         when (execRes) {
+            is Right -> log.debug("Operation completed successfully")
             is Left -> throw NirdizatiRuntimeException("Script execution failed", execRes.error)
         }
     }

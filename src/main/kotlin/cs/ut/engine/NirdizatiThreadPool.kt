@@ -65,7 +65,7 @@ class NirdizatiContextInitializer : ServletContextListener {
         configureLogger()
 
         log.debug("Initializing thread pool")
-        val size = NirdizatiThreadPool.configNode.valueWithIdentifier("capacity").intValue()
+        val size: Int = NirdizatiThreadPool.configNode.valueWithIdentifier("capacity").value()
         log.debug("Thread pool size: $size")
         NirdizatiThreadPool.threadPool = Executors.newFixedThreadPool(size, { runnable -> Thread(runnable) })
 
@@ -82,7 +82,7 @@ class NirdizatiContextInitializer : ServletContextListener {
                 timer.schedule(
                         task,
                         1,
-                        it.valueWithIdentifier("period").long())
+                        it.valueWithIdentifier("period").value())
 
                 log.debug("Scheduled $task")
             }

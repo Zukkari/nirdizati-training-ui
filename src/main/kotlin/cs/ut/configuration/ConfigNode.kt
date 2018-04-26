@@ -50,11 +50,13 @@ data class ConfigNode(
      */
     fun valueWithIdentifier(identifier: String) = values.first { it.identifier == identifier }
 
+
+
     /**
      * Whether or not this configuration node is enabled. Looks for a value with identifier "isEnabled"
      * @return boolean value that node contains
      */
-    fun isEnabled() = valueWithIdentifier(IS_ENABLED).booleanValue()
+    fun isEnabled() = valueWithIdentifier(IS_ENABLED).value<Boolean>()
 
     companion object {
         const val itemList = "itemList"

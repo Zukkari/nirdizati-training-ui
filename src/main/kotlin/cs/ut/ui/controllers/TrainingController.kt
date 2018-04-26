@@ -38,7 +38,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
 
 
         private val configNode = ConfigurationReader.findNode("defaultValues")
-        val DEFAULT = configNode.values.first { it.identifier == "minimum" }.doubleValue()
+        val DEFAULT: Double = configNode.values.first { it.identifier == "minimum" }.value()
         val AVERAGE = configNode.values.first { it.identifier == "average" }.value
 
         const val START_TRAINING = "startTraining"
