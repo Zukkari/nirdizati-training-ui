@@ -18,23 +18,12 @@ data class Value(
 ) {
     constructor() : this("", "")
 
-    /**
-     * Get node value as a Double.class
-     */
-    fun doubleValue() = value.toDouble()
-
-    /**
-     * Get node value as a Int.class
-     */
-    fun intValue() = value.toInt()
-
-    /**
-     * Get long value
-     */
-    fun long() = value.toLong()
-
-    /**
-     * Get node value as Boolean.class
-     */
-    fun booleanValue() = value.toBoolean()
+    inline fun <reified T> value(): T = when (T::class) {
+        Long::class -> value.toLong() as T
+        Int::class -> value.toInt() as T
+        Boolean::class -> value.toBoolean() as T
+        Double::class -> value.toDouble() as T
+        String::class -> value as T
+        else -> throw IllegalArgumentException("Not supported")
+    }
 }

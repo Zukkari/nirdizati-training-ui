@@ -58,7 +58,7 @@ object LogManager {
         eventNumber = ConfigurationReader
                 .findNode("models/parameters/prefix_length_based")
                 .valueWithIdentifier(Node.EVENT_NUMBER.value)
-                .intValue()
+                .value()
     }
 
     /**
@@ -99,10 +99,15 @@ object LogManager {
      *
      * @return list of files that represent feature importance files for given job
      */
-    fun getFeatureImportanceFiles(job: SimulationJob): List<File> {
+    fun getFeatureImportanceFiles(job: SimulationJob): Either<Exception, List<File>> {
         log.debug("Getting feature importance log information for job: '$job'")
-        return File(featureImportanceDir).listFiles().filter { job.id in it.name }.apply {
-            log.debug("Found ${this.size} feature importance files")
+
+        return try {
+            Right(File(featureImportanceDir).listFiles().filter { job.id in it.name }.apply {
+                log.debug("Found ${this.size} feature importance files")
+            })
+        } catch (e: Exception) {
+            Left(e)
         }
     }
 

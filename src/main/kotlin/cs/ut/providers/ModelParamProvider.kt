@@ -60,7 +60,7 @@ class ModelParamProvider {
         val params = mutableListOf<ModelParameter>()
         config.childNodes.first { it.identifier == PARAM_NODE }.childNodes.forEach {
             params.add(ModelParameter().apply {
-                this.enabled = it.values.first { it.identifier == ENABLED }.booleanValue()
+                this.enabled = it.values.first { it.identifier == ENABLED }.value()
                 this.id = it.identifier
                 this.type = it.values.first { it.identifier == TYPE }.value
                 this.parameter = it.values.first { it.identifier == PARAMETER }.value
@@ -91,8 +91,8 @@ class ModelParamProvider {
             properties.add(Property().apply {
                 this.id = it.identifier
                 this.type = it.values.firstOrNull { it.identifier == CONTROL }?.value ?: ""
-                this.maxValue = it.values.firstOrNull { it.identifier == MAX }?.doubleValue() ?: -1.0
-                this.minValue = it.values.firstOrNull { it.identifier == MIN }?.doubleValue() ?: -1.0
+                this.maxValue = it.values.firstOrNull { it.identifier == MAX }?.value() ?: -1.0
+                this.minValue = it.values.firstOrNull { it.identifier == MIN }?.value() ?: -1.0
                 this.property = it.values.firstOrNull { it.identifier == DEFAULT }?.value ?: ""
             })
         }

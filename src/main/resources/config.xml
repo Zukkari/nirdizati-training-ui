@@ -1,7 +1,7 @@
 <Configuration>
     <Node Identifier="threadPool">
         <!-- Thread pool cs.ut.configuration -->
-        <Value Identifier="capacity">3</Value>
+        <Value Identifier="capacity">7</Value>
         <Node Identifier="onStartUp">
             <Value Identifier="package">cs.ut.jobs</Value>
             <Node Identifier="itemList">
