@@ -20,7 +20,7 @@ data class Value(
 
     inline fun <reified T> value(): T = when (T::class) {
         Long::class -> value.toLong() as T
-        Int::class -> value.toLong() as T
+        Int::class -> value.toInt() as T
         Boolean::class -> value.toBoolean() as T
         Double::class -> value.toDouble() as T
         String::class -> value as T

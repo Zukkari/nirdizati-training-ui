@@ -94,6 +94,7 @@ class SimulationJob(
 
         val execRes = perform {
             val pb = ProcessBuilder(parameters)
+            pb.inheritIO()
 
             pb.directory(File(DirectoryConfiguration.dirPath(Dir.CORE_DIR)))
 
