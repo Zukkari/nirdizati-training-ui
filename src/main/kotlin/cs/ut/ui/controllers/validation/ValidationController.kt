@@ -1,5 +1,6 @@
 package cs.ut.ui.controllers.validation
 
+import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.JobCacheHolder
 import cs.ut.engine.JobManager
 import cs.ut.engine.LogManager
@@ -42,11 +43,17 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
      * Generate the content for the controller
      */
     private fun generate() {
+        val isDemo = ConfigurationReader.findNode("demo").isEnabled()
+
         val userJobs =
-                JobManager
-                        .cache
-                        .retrieveFromCache((Cookies.getCookieKey(Executions.getCurrent().nativeRequest)))
-                        .rawData().sortedByDescending { Instant.parse(it.startTime) }
+                if (isDemo)
+                    JobCacheHolder.parse(LogManager.loadAllJobs())
+                        .sortedByDescending { Instant.parse(it.startTime) }
+                else
+                    JobManager
+                            .cache
+                            .retrieveFromCache((Cookies.getCookieKey(Executions.getCurrent().nativeRequest)))
+                            .rawData().sortedByDescending { Instant.parse(it.startTime) }
 
         grid = NirdizatiGrid(ValidationViewAdapter(this, gridContainer), "validation").apply {
             this.configure()
