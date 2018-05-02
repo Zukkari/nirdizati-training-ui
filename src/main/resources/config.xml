@@ -1,4 +1,7 @@
 <Configuration>
+    <Node Identifier="demo">
+        <Value Identifier="isEnabled">true</Value>
+    </Node>
     <Node Identifier="threadPool">
         <!-- Thread pool cs.ut.configuration -->
         <Value Identifier="capacity">7</Value>
