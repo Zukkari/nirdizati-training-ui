@@ -93,6 +93,25 @@ data class Reader(val file: File) {
 
                 if (cases.size == 100) return@forEach
             }
+
+            val eventAttributes: MutableSet<String> = mutableSetOf()
+
+            val attrs = cases.flatMap { it.value.attributes }
+            for (attr in attrs) {
+                if (attr.isEventAttribute) {
+                    eventAttributes.add(attr.name)
+                }
+            }
+
+            val isColumnNumeric: Map<String, Boolean> = attrs
+                    .groupBy { it.name }
+                    .mapValues { it.value
+                            .flatMap { it.values }
+                            .map { it.toFloatOrNull() } }
+                    .mapValues { null !in it.value && it.value.size >= threshold }
+
+            println(isColumnNumeric)
+            println(eventAttributes)
         }
 
         val end = System.currentTimeMillis()
@@ -130,6 +149,7 @@ data class Reader(val file: File) {
         private val activityValues = ConfigurationReader.findNode("csv/activityId").itemListValues()
         private val caseValues = ConfigurationReader.findNode("csv/caseId").itemListValues()
         private val resourceValues = ConfigurationReader.findNode("csv/resource").itemListValues()
+        private val threshold: Int = configNode.valueWithIdentifier("threshold").value()
 
         private val dateFormats = ConfigurationReader.findNode("csv/timestamp").itemListValues().map { it.toRegex() }
     }

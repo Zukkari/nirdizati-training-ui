@@ -1,5 +1,7 @@
 package cs.ut.csv
 
+import cs.ut.configuration.ConfigurationReader
+
 typealias Attributes = MutableList<Attribute>
 
 data class Case(val caseId: String,
@@ -9,8 +11,6 @@ data class Case(val caseId: String,
 
 
 data class Attribute(val name: String, var values: MutableSet<String> = hashSetOf()) {
-
-    val isNumeric by lazy { null in values.map { it.toFloatOrNull() } }
 
     val isEventAttribute by lazy { values.size == 1 }
 }
