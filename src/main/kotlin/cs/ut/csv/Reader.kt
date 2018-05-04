@@ -13,24 +13,24 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 
-data class Reader(val file: File) {
+data class Reader(val dataSource: DataSource<String>) {
     private var header: List<String> = listOf()
 
     private lateinit var deferred: Deferred<Unit>
 
-    private lateinit var classRes: ClassificationResult
+    private lateinit var classRes: MainColumns
     private var cases: MutableMap<String, Case> = mutableMapOf()
 
-    fun detectUserColumns(): Either<Exception, ClassificationResult> {
+    fun detectUserColumns(): Either<Exception, MainColumns> {
         val start = System.currentTimeMillis()
 
-        var res = ClassificationResult()
+        var res = MainColumns()
 
         var escapedHeader: List<String>
         var escapedContent: List<String>
-        BufferedReader(FileReader(file)).use {
-            val headerLine: String = it.readLine() ?: return Left(NirdizatiRuntimeException("Empty log"))
-            val content: String = it.readLine() ?: return Left(NirdizatiRuntimeException("No content"))
+        dataSource.use {
+            val headerLine: String = it.readOne() ?: return Left(NirdizatiRuntimeException("Empty log"))
+            val content: String = it.readOne() ?: return Left(NirdizatiRuntimeException("No content"))
 
             escapedHeader = escapeCSV(headerLine).split(splitter)
             if (escapedHeader.size < 3) {
@@ -60,7 +60,7 @@ data class Reader(val file: File) {
             }
             log.debug("Finished with content parsing: timestamp=$timestamp")
 
-            res = ClassificationResult(caseId, activity, timestamp, resource)
+            res = MainColumns(caseId, activity, timestamp, resource)
             classRes = res
         }
 
@@ -68,10 +68,10 @@ data class Reader(val file: File) {
             val caseId = classRes.caseId
             val index = header.indexOf(caseId)
 
-            val br = BufferedReader(FileReader(file))
-            br.readLine() // Skip header line
+            dataSource.reset()
+            dataSource.skip(1)
 
-            br.lines().forEach {
+            dataSource.stream().forEach {
                 val attrs = escapeCSV(it).split(splitter)
                 val case = cases[attrs[index]] ?: Case(attrs[index])
 
@@ -105,18 +105,19 @@ data class Reader(val file: File) {
 
             val isColumnNumeric: Map<String, Boolean> = attrs
                     .groupBy { it.name }
-                    .mapValues { it.value
-                            .flatMap { it.values }
-                            .map { it.toFloatOrNull() } }
+                    .mapValues {
+                        it.value
+                                .flatMap { it.values }
+                                .map { it.toFloatOrNull() }
+                    }
                     .mapValues { null !in it.value && it.value.size >= threshold }
 
-            println(isColumnNumeric)
-            println(eventAttributes)
+            dataSource.close()
         }
 
         val end = System.currentTimeMillis()
 
-        log.debug("Result aquired in ${end - start} ms.")
+        log.debug("Result acquired in ${end - start} ms.")
         return Right(res)
     }
 
@@ -156,7 +157,8 @@ data class Reader(val file: File) {
 }
 
 fun main(args: Array<String>) {
-    val reader = Reader(File("/home/zukkari/Downloads/nirdizati/BPI2012A.csv"))
+    val dataSource = FileDataSource(File("/home/zukkari/Downloads/nirdizati/BPI2012A.csv"))
+    val reader = Reader(dataSource)
     println(reader.detectUserColumns())
 
     runBlocking { println(reader.getCases()) }
