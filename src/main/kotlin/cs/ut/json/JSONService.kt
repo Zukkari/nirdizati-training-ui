@@ -42,7 +42,11 @@ object JSONService {
         val learnerMap = (thirdLevelMap[encoding] as Map<*, *>)
         val learner: String = learnerMap.keys.first() as String
 
-        val propertiesMap = (learnerMap[learner] as Map<*, *>)
+        var propertiesMap = (learnerMap[learner] as Map<*, *>)
+        val isIndex = (propertiesMap.keys.first() as String).toIntOrNull() != null
+        if (isIndex) {
+            propertiesMap = propertiesMap[propertiesMap.keys.first() as String] as Map<*, *>
+        }
 
         val provider = ModelParamProvider()
         val params: Map<String, List<ModelParameter>> = provider.properties

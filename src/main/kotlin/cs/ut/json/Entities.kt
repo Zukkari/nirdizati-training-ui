@@ -3,7 +3,10 @@ package cs.ut.json
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.ModelParameter
+import cs.ut.util.Algorithm
+import cs.ut.util.Node
 
 enum class JSONKeys(val value: String) {
     UI_DATA("ui_data"),
@@ -34,8 +37,23 @@ data class TrainingConfiguration(
         val map = mutableMapOf<String, Any>()
 
         val learnerMap = mutableMapOf<String, Any>()
-        learner.properties.forEach { learnerMap[it.id] = it.property.safeConvert() }
-        bucketing.properties.forEach { learnerMap[it.id] = it.property.safeConvert() }
+        if (bucketing.id == Algorithm.PREFIX.value) {
+            val propMap = mutableMapOf<String, Any>()
+            learner.properties.forEach { propMap[it.id] = it.property.safeConvert() }
+            bucketing.properties.forEach { propMap[it.id] = it.property.safeConvert() }
+
+
+            val node = ConfigurationReader.findNode("models/parameters/prefix_length_based").
+                    valueWithIdentifier(Node.EVENT_NUMBER.value).value<Int>()
+
+            for (i in 1..node) {
+                learnerMap[i.toString()] = propMap
+            }
+
+        } else {
+            learner.properties.forEach { learnerMap[it.id] = it.property.safeConvert() }
+            bucketing.properties.forEach { learnerMap[it.id] = it.property.safeConvert() }
+        }
 
         val encodingMap = mapOf<String, Any>(learner.parameter to learnerMap)
         val bucketingMap = mapOf<String, Any>(encoding.parameter to encodingMap)
