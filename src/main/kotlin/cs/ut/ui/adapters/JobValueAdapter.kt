@@ -7,7 +7,6 @@ import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
 import cs.ut.providers.Dir
-import cs.ut.providers.DirectoryConfiguration
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.ui.NirdizatiGrid
@@ -22,7 +21,12 @@ import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.event.Events
-import org.zkoss.zul.*
+import org.zkoss.zul.Button
+import org.zkoss.zul.Hbox
+import org.zkoss.zul.Hlayout
+import org.zkoss.zul.Label
+import org.zkoss.zul.Row
+import org.zkoss.zul.Vlayout
 
 /**
  * Adapter for job tracker grid
@@ -88,10 +92,12 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
     private fun Row.formJobLabel(job: Job): Vlayout {
         job as SimulationJob
 
-        val encoding = job.encoding
-        val bucketing = job.bucketing
-        val learner = job.learner
-        val outcome = job.outcome
+        val config = job.configuration
+
+        val encoding = config.encoding
+        val bucketing = config.bucketing
+        val learner = config.learner
+        val outcome = config.outcome
 
         val label = Label(
                 NirdizatiTranslator.localizeText(encoding.type + "." + encoding.id) + "\n" +
@@ -114,7 +120,7 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
 
         val labelsContainer = Vlayout()
         labelsContainer.appendChild(fileLayout)
-        labelsContainer.appendChild(job.outcome.generateResultLabel())
+        labelsContainer.appendChild(config.outcome.generateResultLabel())
         labelsContainer.hflex = "1"
 
         val fileContainer = Hlayout()

@@ -232,7 +232,11 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
         gridSlot.getChildren<Component>().clear()
         gridSlot.getChildren<Component>().add(grid)
 
-        grid.setColumns(mapOf("param.modal.name" to "", "param.modal.control" to ""))
+        grid.setColumns(listOf(
+                NirdizatiGrid.ColumnArgument(name = "param.modal.name"),
+                NirdizatiGrid.ColumnArgument("param.modal.control"))
+        )
+
         grid.mold = "paging"
         grid.pageSize = 10
         grid.hflex = "min"

@@ -5,32 +5,18 @@ package cs.ut.engine.item
  *
  * @see ModelParameter
  */
-open class Property(
-    var id: String,
+data class Property(
+        var id: String,
 
-    var type: String,
+        var type: String,
 
-    var property: String,
+        var property: String,
 
-    var maxValue: Double,
+        var maxValue: Double,
 
-    var minValue: Double
+        var minValue: Double
 ) {
-    constructor(property: Property) : this(
-        property.id,
-        property.type,
-        property.property,
-        property.maxValue,
-        property.minValue
-    )
-
     constructor() : this("", "", "", -1.0, -1.0)
-
-    operator fun component1(): String = id
-
-    operator fun component2(): String = type
-
-    operator fun component3(): String = property
 
 
     override fun equals(other: Any?): Boolean {

@@ -3,7 +3,7 @@ package cs.ut.ui.controllers.validation
 import cs.ut.charts.Chart
 import cs.ut.charts.ChartGenerator
 import cs.ut.charts.MAE
-import cs.ut.jobs.JobService
+import cs.ut.engine.JobManager
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.adapters.ComparisonAdapter
@@ -22,7 +22,15 @@ import org.zkoss.zk.ui.event.SerializableEventListener
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zul.*
+import org.zkoss.zul.Button
+import org.zkoss.zul.Cell
+import org.zkoss.zul.Checkbox
+import org.zkoss.zul.Combobox
+import org.zkoss.zul.Comboitem
+import org.zkoss.zul.Label
+import org.zkoss.zul.Row
+import org.zkoss.zul.Rows
+import org.zkoss.zul.Vbox
 
 class SingleJobValidationController : SelectorComposer<Component>(), Redirectable {
     private val log = NirdizatiLogger.getLogger(SingleJobValidationController::class.java)
@@ -70,8 +78,9 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
 
         val provider = ComparisonAdapter(gridContainer, this)
         (listOf(job) +
-                JobService.findSimilarJobs(job))
-                .map { provider.provide(it) }.forEach { compRows.appendChild(it) }
+                JobManager.findSimilarJobs(job))
+                .map { provider.provide(it) }
+                .forEach { compRows.appendChild(it) }
 
         generateReadOnlyMode()
     }

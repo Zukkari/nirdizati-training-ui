@@ -7,21 +7,13 @@ package cs.ut.engine.item
  * @param type type of the parameter (e.g. encoding, bucketing, learner or predictiontype)
  * @param properties hyper parameter properties for given model parameter
  */
-open class ModelParameter(
-    var id: String,
-    var parameter: String,
-    var type: String,
-    var enabled: Boolean,
-    var properties: MutableList<Property>
+data class ModelParameter(
+        var id: String,
+        var parameter: String,
+        var type: String,
+        var enabled: Boolean,
+        var properties: MutableList<Property>
 ) {
-
-    constructor(modelParameter: ModelParameter) : this(
-        modelParameter.id,
-        modelParameter.parameter,
-        modelParameter.type,
-        modelParameter.enabled,
-        modelParameter.properties
-    )
 
     var translate = true
 
@@ -31,15 +23,6 @@ open class ModelParameter(
     fun getTranslateName() = this.type + "." + this.id
 
     constructor() : this("", "", "", false, mutableListOf())
-
-    init {
-        val props = properties
-
-        val copied = mutableListOf<Property>()
-        props.forEach { copied.add(Property(it)) }
-
-        properties = copied
-    }
 
     override fun equals(other: Any?): Boolean {
         return other is ModelParameter

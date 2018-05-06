@@ -19,6 +19,7 @@
             <column align="center" label="${labels.learner.$}"/>
             <column align="center" label="${labels.hyperparameters}" hflex="min"/>
             <column align="center" label="${labels.timestamp}"/>
+            <column align="center" label="${labels.accuracy}"/>
             <column align="center" hflex="min"/>
         </columns>
         <rows id="propertyRows"/>

@@ -21,7 +21,7 @@ class DisposalTask : TimerTask() {
         val time = measureTimeMillis {
             log.debug("Running disposal task")
 
-            JobCacheHolder.parse(LogManager.loadAllJobs()).forEach { it.dispose() }
+            JobCacheHolder.simulationJobs().forEach { it.dispose() }
 
             log.debug("Disposed of $disposed jobs")
             disposed = 0

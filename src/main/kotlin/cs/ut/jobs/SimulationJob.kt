@@ -1,31 +1,25 @@
 package cs.ut.jobs
 
 import cs.ut.configuration.ConfigurationReader
-import cs.ut.engine.item.ModelParameter
 import cs.ut.exceptions.Left
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.exceptions.Right
 import cs.ut.exceptions.perform
 import cs.ut.jobs.UserRightsJob.Companion.updateACL
+import cs.ut.json.JSONHandler
+import cs.ut.json.JSONService
+import cs.ut.json.JobInformation
+import cs.ut.json.TrainingConfiguration
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
-import cs.ut.util.Algorithm
-import cs.ut.util.FileWriter
-import cs.ut.util.LOG_FILE
 import cs.ut.util.NirdizatiTranslator
-import cs.ut.util.Node
-import cs.ut.util.OWNER
-import cs.ut.util.START_DATE
-import cs.ut.util.UI_DATA
-import org.json.JSONObject
 import java.io.File
+import java.time.Instant
+import java.util.Date
 
 
 class SimulationJob(
-        val encoding: ModelParameter,
-        val bucketing: ModelParameter,
-        val learner: ModelParameter,
-        val outcome: ModelParameter,
+        val configuration: TrainingConfiguration,
         val logFile: File,
         val owner: String,
         id: String = ""
@@ -34,48 +28,15 @@ class SimulationJob(
     private var process: Process? = null
     private val configNode = ConfigurationReader.findNode("userPreferences")
 
+    val date: Date by lazy { Date.from(Instant.parse(startTime)) }
+
     override fun preProcess() {
         log.debug("Generating training parameters for job $this")
-        val json = JSONObject()
+        configuration.info = JobInformation(owner, logFile.absolutePath, startTime)
 
-        val params = JSONObject()
-
-        if (bucketing.id == Algorithm.PREFIX.value) {
-            val props = JSONObject()
-            learner.properties.forEach { (k, _, v) -> props.put(k, convertToNumber(v)) }
-
-            val eventNumber: Int = ConfigurationReader
-                    .findNode("models/parameters/prefix_length_based")
-                    .valueWithIdentifier(Node.EVENT_NUMBER.value)
-                    .value()
-
-            for (i in 1..eventNumber) {
-                params.put(i.toString(), props)
-            }
-        } else {
-            learner.properties.forEach { (k, _, v) -> params.put(k, convertToNumber(v)) }
+        JSONHandler().writeToFile(configuration, id, Dir.TRAIN_DIR).apply {
+            updateACL(this)
         }
-
-        json.put(
-                outcome.parameter,
-                JSONObject().put(
-                        bucketing.parameter, JSONObject().put(encoding.parameter, JSONObject().put(learner.parameter, params))
-                )
-        )
-        json.put(
-                UI_DATA, JSONObject()
-                .put(OWNER, owner)
-                .put(LOG_FILE, logFile.absoluteFile)
-                .put(START_DATE, startTime)
-        )
-
-        val writer = FileWriter()
-        val f = writer.writeJsonToDisk(
-                json, id,
-                DirectoryConfiguration.dirPath(Dir.TRAIN_DIR)
-        )
-
-        updateACL(f)
     }
 
     override fun execute() {
@@ -126,6 +87,15 @@ class SimulationJob(
         }
     }
 
+    override fun postExecute() {
+        val config = JSONService.getTrainingConfig(id)
+
+        when (config) {
+            is Right -> this.configuration.evaluation = config.result.evaluation
+            is Left -> log.debug("Error occurred when fetching evaluation result", config.error)
+        }
+    }
+
     override fun beforeInterrupt() {
         log.debug("Process ${super.id} has been stopped by the user")
         process?.destroy()
@@ -158,13 +128,13 @@ class SimulationJob(
     override fun toString(): String {
         return logFile.nameWithoutExtension +
                 "_" +
-                bucketing.parameter +
+                configuration.bucketing.parameter +
                 "_" +
-                encoding.parameter +
+                configuration.encoding.parameter +
                 "_" +
-                learner.parameter +
+                configuration.learner.parameter +
                 "_" +
-                outcome.parameter +
+                configuration.outcome.parameter +
                 ".pkl"
     }
 

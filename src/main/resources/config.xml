@@ -1,6 +1,6 @@
 <Configuration>
     <Node Identifier="demo">
-        <Value Identifier="isEnabled">true</Value>
+        <Value Identifier="isEnabled">false</Value>
     </Node>
     <Node Identifier="threadPool">
         <!-- Thread pool cs.ut.configuration -->
@@ -102,6 +102,7 @@
     </Node>
     <Node Identifier="grids">
         <Value Identifier="timestampFormat">yyyy-MM-dd HH:mm:ss</Value>
+        <Value Identifier="decimalFormat">#0.0000</Value>
         <Node Identifier="validation">
             <Node Identifier="sortableColumns">
                 <Value Identifier="isEnabled">true</Value>
@@ -112,6 +113,7 @@
                     <Value>encoding</Value>
                     <Value>learner</Value>
                     <Value>timestamp</Value>
+                    <Value>accuracy</Value>
                 </Node>
             </Node>
         </Node>

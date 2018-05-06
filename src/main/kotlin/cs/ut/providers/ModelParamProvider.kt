@@ -4,9 +4,9 @@ import cs.ut.configuration.ConfigNode
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.ModelParameter
 import cs.ut.engine.item.Property
+import cs.ut.json.JSONService
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.util.Field
-import cs.ut.util.readHyperParameterJson
 
 /**
  * Parses model parameters from configuration
@@ -113,6 +113,6 @@ class ModelParamProvider {
         const val DEFAULT = "default"
         const val PARAMETER = "parameter"
 
-        fun getOptimizedParameters() = readHyperParameterJson()
+        fun getOptimizedParameters(fileName: String) = JSONService.getTrainingConfig(fileName, Dir.OHP_DIR)
     }
 }

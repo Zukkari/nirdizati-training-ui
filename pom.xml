@@ -13,6 +13,7 @@
         <packname>-${project.version}-FL-${maven.build.timestamp}</packname>
         <kotlin.version>1.2.41</kotlin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jackson.version>2.9.5</jackson.version>
     </properties>
     <packaging>war</packaging>
     <name>The nirdizati-training-ui Project</name>
@@ -120,15 +121,28 @@
             <version>2.7.0</version>
         </dependency>
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.8.2</version>
-        </dependency>
-        <dependency>
             <groupId>zukkari</groupId>
             <artifactId>sass-compile-maven-plugin</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
 
 
         <!-- Other dependencies -->
@@ -141,11 +155,6 @@
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
             <version>2.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20171018</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

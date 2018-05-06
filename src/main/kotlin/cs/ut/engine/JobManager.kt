@@ -1,5 +1,6 @@
 package cs.ut.engine
 
+import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.events.DeployEvent
 import cs.ut.engine.events.NirdizatiEvent
 import cs.ut.engine.events.StatusUpdateEvent
@@ -176,4 +177,16 @@ object JobManager {
      */
     inline fun getJobByPredicate(key: String, predicate: (SimulationJob) -> Boolean = { it.status == JobStatus.COMPLETED }): List<SimulationJob> =
             getJobsForKey(key).filter(predicate)
+
+    /**
+     * Find similar jobs to the given one so they can be used in comparison
+     *
+     * @param job similar jobs to the given one
+     */
+    fun findSimilarJobs(job: SimulationJob): List<SimulationJob> {
+        val config = ConfigurationReader.findNode("demo").isEnabled()
+
+        val allJobs = if (config) JobCacheHolder.simulationJobs() else JobManager.getJobByPredicate(job.owner)
+        return allJobs.filter { it.logFile == job.logFile && it.configuration.outcome.id == job.configuration.outcome.id && it.id != job.id }
+    }
 }
