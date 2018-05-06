@@ -157,6 +157,7 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
                             this.status = JobStatus.COMPLETED
                         }
                     }
+                    .filter { it.id !in JobManager.queue.map { it.id } }
                     .toList()
         }
     }
