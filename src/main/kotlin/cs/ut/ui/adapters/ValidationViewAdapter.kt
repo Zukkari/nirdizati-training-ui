@@ -46,14 +46,16 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
      */
     fun provide(data: Job, addRedirectListener: Boolean = true): Row {
         data as SimulationJob
+        val config = data.configuration
+
         return Row().also {
             it.sclass = if (addRedirectListener) "pointer" else "no-hover-effect"
             it.align = "center"
             it.appendChild(Label(data.logFile.nameWithoutExtension))
-            it.appendChild(getLabel(data.outcome.toString()))
-            it.appendChild(getLabel(data.bucketing.toString()))
-            it.appendChild(getLabel(data.encoding.toString()))
-            it.appendChild(getLabel(data.learner.toString()))
+            it.appendChild(getLabel(config.outcome.toString()))
+            it.appendChild(getLabel(config.bucketing.toString()))
+            it.appendChild(getLabel(config.encoding.toString()))
+            it.appendChild(getLabel(config.learner.toString()))
             it.appendChild(A().apply { loadTooltip(this, data) })
             it.appendChild(getLabel(timeFormat.format(Date.from(Instant.parse(data.startTime)))))
             it.appendChild(A().apply {
@@ -98,7 +100,7 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
      * Create tooltip that contains info about hyper parameters for the job
      */
     private fun SimulationJob.formTooltip(): String {
-        val parameters = mutableListOf<Property>().also { it.addAll(this.learner.properties) }
+        val parameters = mutableListOf<Property>().also { it.addAll(this.configuration.learner.properties) }
 
         return parameters.joinToString(
                 separator = "<br/>",

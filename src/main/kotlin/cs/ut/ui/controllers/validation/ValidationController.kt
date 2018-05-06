@@ -3,7 +3,6 @@ package cs.ut.ui.controllers.validation
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.JobCacheHolder
 import cs.ut.engine.JobManager
-import cs.ut.engine.LogManager
 import cs.ut.engine.events.Callback
 import cs.ut.engine.events.StatusUpdateEvent
 import cs.ut.exceptions.NirdizatiRuntimeException
@@ -22,7 +21,11 @@ import org.zkoss.zk.ui.event.Event
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zul.*
+import org.zkoss.zul.Button
+import org.zkoss.zul.Column
+import org.zkoss.zul.Hlayout
+import org.zkoss.zul.Label
+import org.zkoss.zul.Vbox
 import java.time.Instant
 
 class ValidationController : SelectorComposer<Component>(), Redirectable {
@@ -47,7 +50,7 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
 
         val userJobs =
                 if (isDemo)
-                    JobCacheHolder.parse(LogManager.loadAllJobs())
+                    JobCacheHolder.simulationJobs()
                         .sortedByDescending { Instant.parse(it.startTime) }
                 else
                     JobManager

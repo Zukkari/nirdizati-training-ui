@@ -1,14 +1,17 @@
 package cs.ut.engine
 
 import cs.ut.charts.Chart
-import cs.ut.engine.item.UIData
+import cs.ut.exceptions.Right
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
+import cs.ut.json.JSONService
 import cs.ut.logging.NirdizatiLogger
-import cs.ut.util.Field
-import cs.ut.util.readTrainingJson
+import cs.ut.providers.Dir
+import cs.ut.providers.DirectoryConfiguration
 import java.io.File
+import java.nio.file.Files
 import java.util.Date
+import kotlin.streams.toList
 
 /**
  * Generic structure to represent cached items
@@ -129,38 +132,32 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
      */
     private fun fetchFromDisk(key: String): CacheItem<SimulationJob> =
             CacheItem<SimulationJob>().apply {
-                val items = loadFromDisk(key)
+                val items = trainingFiles(key)
                 this.addItems(items)
                 cachedItems[key] = this
             }
 
 
-    private fun loadFromDisk(key: String): List<SimulationJob> = parse(LogManager.loadJobIds(key))
-
     companion object {
         val log = NirdizatiLogger.getLogger(JobCacheHolder::class.java)
 
-        fun parse(uiData: List<UIData>): List<SimulationJob> {
-            val res = mutableListOf<SimulationJob>()
+        fun trainingFiles(key: String): List<SimulationJob> = simulationJobs().filter { it.owner == key }.toList()
 
-            uiData.filter { it.id !in JobManager.queue.map { it.id } }
-                    .forEach {
-                        val params = readTrainingJson(it.id).flatMap { it.value }
-                        res.add(SimulationJob(
-                                params.first { it.type == Field.ENCODING.value },
-                                params.first { it.type == Field.BUCKETING.value },
-                                params.first { it.type == Field.LEARNER.value },
-                                params.first { it.type == Field.PREDICTION.value },
-                                File(it.path),
-                                it.owner,
-                                it.id
-                        ).apply {
+
+        fun simulationJobs(): List<SimulationJob> {
+            val trainingDir = File(DirectoryConfiguration.dirPath(Dir.TRAIN_DIR)).toPath()
+
+            return Files.walk(trainingDir)
+                    .map { it.toFile().nameWithoutExtension to JSONService.getTrainingConfig(it.toFile().nameWithoutExtension) }
+                    .filter { it.second is Right }
+                    .map {
+                        val config = (it.second as Right).result
+                        SimulationJob(config, File(config.info.logFile), config.info.owner, it.first).apply {
+                            this.startTime = config.info.startTime
                             this.status = JobStatus.COMPLETED
-                            this.startTime = it.startTime
-                        })
+                        }
                     }
-
-            return res
+                    .toList()
         }
     }
 }

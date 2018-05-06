@@ -12,7 +12,7 @@ import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
 import cs.ut.util.*
 import org.apache.commons.io.FilenameUtils
-import org.json.JSONObject
+// import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
@@ -147,31 +147,6 @@ object LogManager {
                 dir + this.logFile.nameWithoutExtension + "_" + this.id
             else
                 dir + this.logFile.nameWithoutExtension + "_" + this.id + if (isClassification(this)) CLASSIFICATION else REGRESSION
-
-    /**
-     * Load serialized jobs for given key
-     *
-     * @param key to load jobs for
-     *
-     * @return list of UIData components which contain serialized job info
-     *
-     * @see UIData
-     */
-    fun loadJobIds(key: String) = loadAllJobs().filter { it.owner == key }
-
-    fun loadAllJobs(): List<UIData> {
-        return mutableListOf<UIData>().also { c ->
-            loadTrainingFiles().forEach {
-                val uiData = JSONObject(readFileContent(it)).getJSONObject(UI_DATA)
-                c.add(UIData(
-                        it.nameWithoutExtension,
-                        uiData[LOG_FILE] as String,
-                        uiData[START_DATE] as String,
-                        uiData[OWNER] as String
-                ))
-            }
-        }
-    }
 
     /**
      * Read contents of the file and return it as string data

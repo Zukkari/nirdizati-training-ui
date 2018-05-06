@@ -29,8 +29,8 @@ data class Reader(val dataSource: DataSource<String>) {
         var escapedHeader: List<String>
         var escapedContent: List<String>
         dataSource.use {
-            val headerLine: String = it.readOne() ?: return Left(NirdizatiRuntimeException("Empty log"))
-            val content: String = it.readOne() ?: return Left(NirdizatiRuntimeException("No content"))
+            val headerLine: String = it.readOne()
+            val content: String = it.readOne()
 
             escapedHeader = escapeCSV(headerLine).split(splitter)
             if (escapedHeader.size < 3) {

@@ -5,6 +5,7 @@ import cs.ut.engine.IdProvider
 import cs.ut.engine.JobManager
 import cs.ut.exceptions.Left
 import cs.ut.exceptions.ProcessErrorException
+import cs.ut.exceptions.Right
 import cs.ut.exceptions.perform
 import cs.ut.logging.NirdizatiLogger
 import java.time.format.DateTimeFormatter
@@ -86,14 +87,13 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
             preProcess()
         }.apply {
             when (this) {
+                is Right -> log.debug("Job $id finished pre process step")
                 is Left -> {
                     handleError(this)
                     return
                 }
             }
         }
-
-        log.debug("Job $id finished pre process step")
 
         perform {
             log.debug("Job $id started execute stage")
@@ -107,6 +107,8 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
             }
         }.apply {
             when (this) {
+                is Right -> log.debug("Job $id finished execute step")
+
                 is Left -> {
 
                     perform {
@@ -125,9 +127,6 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
             }
         }
 
-        log.debug("Job $id finished execute step")
-
-
         perform {
             log.debug("Job $id started post execute step")
             status = JobStatus.FINISHING
@@ -137,6 +136,7 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
             postExecute()
         }.apply {
             when (this) {
+                is Right -> log.debug("Job $id completed successfully")
                 is Left -> {
                     handleError(this)
                     return
@@ -144,16 +144,11 @@ abstract class Job protected constructor(generatedId: String = "") : Runnable {
             }
         }
 
-        log.debug("Job $id completed successfully")
         status = JobStatus.COMPLETED
         updateEvent()
 
         val end = System.currentTimeMillis()
         log.debug("$this finished running in ${end - start} ms")
-
-        if (this is SimulationJob) {
-            log.debug("${this.encoding} ${this.bucketing} ${this.learner}")
-        }
     }
 
     private fun handleError(left: Left<Exception>) {

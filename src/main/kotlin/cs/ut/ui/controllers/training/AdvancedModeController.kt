@@ -145,7 +145,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
                 val copy = mutableListOf<ModelParameter>()
                 params.forEach { param ->
                     param as ModelParameter
-                    val parameter = ModelParameter(param)
+                    val parameter = param.copy()
                     if (parameter.id == keys[1]) {
                         parameter.properties.clear()
                         v.forEach {

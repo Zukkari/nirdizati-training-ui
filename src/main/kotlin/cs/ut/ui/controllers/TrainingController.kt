@@ -5,8 +5,12 @@ import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.JobManager
 import cs.ut.engine.LogManager
 import cs.ut.engine.item.ModelParameter
+import cs.ut.exceptions.Left
+import cs.ut.exceptions.Right
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
+import cs.ut.json.JSONService
+import cs.ut.json.TrainingConfiguration
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.ModelParamProvider
 import cs.ut.ui.UIComponent
@@ -15,7 +19,10 @@ import cs.ut.ui.controllers.modal.ParameterModalController.Companion.IS_RECREATI
 import cs.ut.ui.controllers.training.AdvancedModeController
 import cs.ut.ui.controllers.training.BasicModeController
 import cs.ut.ui.controllers.training.ModeController
-import cs.ut.util.*
+import cs.ut.util.Algorithm
+import cs.ut.util.Cookies
+import cs.ut.util.NirdizatiTranslator
+import cs.ut.util.UPLOADED_FILE
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
@@ -24,7 +31,16 @@ import org.zkoss.zk.ui.event.SelectEvent
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
-import org.zkoss.zul.*
+import org.zkoss.zul.A
+import org.zkoss.zul.Button
+import org.zkoss.zul.Checkbox
+import org.zkoss.zul.Combobox
+import org.zkoss.zul.Comboitem
+import org.zkoss.zul.Doublebox
+import org.zkoss.zul.Radio
+import org.zkoss.zul.Radiogroup
+import org.zkoss.zul.Vlayout
+import org.zkoss.zul.Window
 import java.io.File
 
 class TrainingController : SelectorComposer<Component>(), Redirectable, UIComponent {
@@ -114,11 +130,21 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
 
         val logFile: File = clientLogs.selectedItem.getValue<File>() ?: return false
 
-        val dataSetColumns: List<String> = readLogColumns(logFile.nameWithoutExtension)
+        val res = JSONService
+                .getTrainingData(logFile.nameWithoutExtension)
+
+        val dataSetColumns: List<String> =
+                when (res) {
+                    is Right -> res.result.getAllColumns()
+                    is Left -> {
+                        log.debug("Error occurred when fetching dataset columns", res.error)
+                        listOf()
+                    }
+                }
 
         params.forEach {
             val item: Comboitem = predictionType.appendItem(NirdizatiTranslator.localizeText("${it.type}.${it.id}"))
-            val modelParam = ModelParameter(it)
+            val modelParam = it.copy()
             item.setValue(modelParam)
 
             if (modelParam.id == Algorithm.OUTCOME.value) {
@@ -282,12 +308,10 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
             bucketings.forEach { bucketing ->
                 learners.forEach { learner ->
                     predictionTypes.forEach { pred ->
+                        val config = TrainingConfiguration(encoding, bucketing, learner, pred)
                         jobs.add(
                                 SimulationJob(
-                                        encoding,
-                                        bucketing,
-                                        learner,
-                                        pred,
+                                        config,
                                         clientLogs.selectedItem.getValue(),
                                         Cookies.getCookieKey(Executions.getCurrent().nativeRequest)
                                 )

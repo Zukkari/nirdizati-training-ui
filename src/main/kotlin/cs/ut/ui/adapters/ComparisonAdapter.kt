@@ -51,9 +51,12 @@ class ComparisonAdapter(container: Component, private val controller: SingleJobV
                     this.sclass = "color-box c${data.id}"
                 })
             })
-            this.appendChild(Label(NirdizatiTranslator.localizeText("${data.bucketing.type}.${data.bucketing.id}")))
-            this.appendChild(Label(NirdizatiTranslator.localizeText("${data.encoding.type}.${data.encoding.id}")))
-            this.appendChild(Label(NirdizatiTranslator.localizeText("${data.learner.type}.${data.learner.id}")))
+
+            val config = data.configuration
+
+            this.appendChild(Label(NirdizatiTranslator.localizeText("${config.bucketing.type}.${config.bucketing.id}")))
+            this.appendChild(Label(NirdizatiTranslator.localizeText("${config.encoding.type}.${config.encoding.id}")))
+            this.appendChild(Label(NirdizatiTranslator.localizeText("${config.learner.type}.${config.learner.id}")))
             this.appendChild(A().apply {
                 adapter.loadTooltip(this, data)
             })
