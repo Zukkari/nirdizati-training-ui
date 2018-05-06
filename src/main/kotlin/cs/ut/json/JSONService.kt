@@ -47,7 +47,8 @@ object JSONService {
         val provider = ModelParamProvider()
         val params: Map<String, List<ModelParameter>> = provider.properties
 
-        val targetParam = params[Field.PREDICTION.value]!!.first { it.parameter == target }.copy(properties = mutableListOf())
+        val targetParam = params[Field.PREDICTION.value]!!.firstOrNull { it.parameter == target }?.copy(properties = mutableListOf())
+         ?: params[Field.PREDICTION.value]!!.first { it.parameter == "-1" }.copy(parameter = target)
 
         val encodingParam = params[Field.ENCODING.value]!!.first { it.parameter == encoding }.copy(properties = mutableListOf())
         encodingParam.properties = mutableListOf()
