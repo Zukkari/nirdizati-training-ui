@@ -62,25 +62,43 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, priva
     }
 
     /**
-     * Set grid columns.
-     * @param properties where key is column name and value is column width
+     * Column argument holder class
+     * @param name column name that will be translated
+     * @param flex for the column
+     * @param comp comparators to use for column sorting
      */
-    fun setColumns(properties: Map<String, String>) {
+    data class ColumnArgument(val name: String = "", val flex: String = "", val comp: GridComparator = Empty())
+
+    /**
+     * Set grid columnArguments.
+     * @param columnArguments list of column arguments
+     */
+    fun setColumns(columnArguments: List<ColumnArgument>) {
         val cols = Columns()
         appendChild(cols)
-        properties.entries.forEach {
-            val column = if (it.key.isNotBlank()) Column(NirdizatiTranslator.localizeText(it.key)) else Column()
-            column.id = it.key
-            if (it.value.isNotEmpty()) {
-                column.hflex = it.value
+        columnArguments.forEach {
+            val column = if (it.name.isNotBlank()) Column(NirdizatiTranslator.localizeText(it.name)) else Column()
+            column.id = it.name
+            if (it.flex.isNotEmpty()) {
+                column.hflex = it.flex
             }
+
+            when (it.comp) {
+                is ComparatorPair<*> -> {
+                    column.sortAscending = it.comp.asc
+                    column.sortDescending = it.comp.desc
+                }
+
+                is Empty -> Unit
+            }
+
             cols.appendChild(column)
         }
 
         if (namespace.isNotBlank()) {
             log.debug("Namespace for grid -> $namespace")
             setSortingRules()
-            columns.menupopup = "auto"
+            cols.menupopup = "auto"
         }
     }
 

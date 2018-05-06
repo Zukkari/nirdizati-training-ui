@@ -80,8 +80,8 @@ object JSONService {
                 info[JSONKeys.START.value] as String)
 
         config.evaluation = Report().apply {
-            this.metric = evaluation[JSONKeys.METRIC.value] as? String ?: ""
-            this.value = (evaluation[JSONKeys.VALUE.value] as? String)?.toDouble() ?: 0.0
+            this.metric = (evaluation[JSONKeys.METRIC.value] ?: "") as String
+            this.value = evaluation[JSONKeys.VALUE.value] as? Double ?: -1.0
         }
 
         return Right(config)

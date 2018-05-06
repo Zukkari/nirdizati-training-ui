@@ -8,9 +8,9 @@ import cs.ut.engine.item.ModelParameter
 enum class JSONKeys(val value: String) {
     UI_DATA("ui_data"),
     EVALUATION("evaluation"),
-    OWNER("job_owner"),
+    OWNER("owner"),
     LOG_FILE("log_file"),
-    START("start_time"),
+    START("startTime"),
     METRIC("metric"),
     VALUE("value")
 }
@@ -29,11 +29,13 @@ data class TrainingConfiguration(
 
     @JsonAnyGetter
     fun getProperties(): Map<String, Any> {
+        fun String.safeConvert() : Number = this.toIntOrNull() ?: this.toFloat()
+
         val map = mutableMapOf<String, Any>()
 
         val learnerMap = mutableMapOf<String, Any>()
-        learner.properties.forEach { learnerMap[it.id] = it.property }
-        bucketing.properties.forEach { learnerMap[it.id] = it.property }
+        learner.properties.forEach { learnerMap[it.id] = it.property.safeConvert() }
+        bucketing.properties.forEach { learnerMap[it.id] = it.property.safeConvert() }
 
         val encodingMap = mapOf<String, Any>(learner.parameter to learnerMap)
         val bucketingMap = mapOf<String, Any>(encoding.parameter to encodingMap)
@@ -48,7 +50,7 @@ data class TrainingConfiguration(
 
 data class JobInformation(
         var owner: String,
-        var logFile: String,
+        @field:JsonProperty(value = "log_file") var logFile: String,
         var startTime: String
 ) {
     constructor() : this("", "", "")

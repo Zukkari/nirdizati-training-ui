@@ -95,9 +95,9 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
 
         val propGrid = NirdizatiGrid(PropertyValueAdapter())
         propGrid.setColumns(
-                mapOf(
-                        key.type + "." + key.id to "min",
-                        "" to "min"
+                listOf(
+                        NirdizatiGrid.ColumnArgument(key.type + "." + key.id, "min"),
+                        NirdizatiGrid.ColumnArgument(flex = "min")
                 )
         )
 

@@ -9,6 +9,8 @@ import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
+import cs.ut.ui.ComparatorPair
+import cs.ut.ui.GridComparator
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.adapters.ValidationViewAdapter
 import cs.ut.ui.controllers.Redirectable
@@ -25,6 +27,7 @@ import org.zkoss.zul.Button
 import org.zkoss.zul.Column
 import org.zkoss.zul.Hlayout
 import org.zkoss.zul.Label
+import org.zkoss.zul.Row
 import org.zkoss.zul.Vbox
 import java.time.Instant
 
@@ -51,7 +54,7 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
         val userJobs =
                 if (isDemo)
                     JobCacheHolder.simulationJobs()
-                        .sortedByDescending { Instant.parse(it.startTime) }
+                            .sortedByDescending { Instant.parse(it.startTime) }
                 else
                     JobManager
                             .cache
@@ -113,21 +116,58 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
      */
     private fun NirdizatiGrid<Job>.configure() {
         this.setColumns(
-                mapOf(
-                        "logfile" to "",
-                        "predictiontype" to "",
-                        "bucketing" to "",
-                        "encoding" to "",
-                        "learner" to "",
-                        "hyperparameters" to "min",
-                        "timestamp" to "",
-                        "" to "min"
+                listOf(
+                        NirdizatiGrid.ColumnArgument(name = "logfile"),
+                        NirdizatiGrid.ColumnArgument(name = "predictiontype"),
+                        NirdizatiGrid.ColumnArgument(name = "bucketing"),
+                        NirdizatiGrid.ColumnArgument(name = "encoding"),
+                        NirdizatiGrid.ColumnArgument(name = "learner"),
+                        NirdizatiGrid.ColumnArgument(name = "hyperparameters"),
+                        NirdizatiGrid.ColumnArgument(name = "timestamp", comp = jobDateComparator()),
+                        NirdizatiGrid.ColumnArgument(name = "accuracy", flex = "1", comp = accuracyComparator()),
+                        NirdizatiGrid.ColumnArgument(flex = "min")
                 )
         )
+
         this.hflex = "1"
         this.vflex = "1"
         this.columns.getChildren<Column>().forEach { it.align = "center" }
     }
+
+    private fun jobDateComparator(): GridComparator {
+        return ComparatorPair<Row>(
+                Comparator { r0, r1 ->
+                    val job0: SimulationJob = r0.getValue<SimulationJob>()
+                    val job1: SimulationJob = r1.getValue<SimulationJob>()
+
+                    job0.date.compareTo(job1.date)
+                },
+
+                Comparator { r0, r1 ->
+                    val job0: SimulationJob = r0.getValue<SimulationJob>()
+                    val job1: SimulationJob = r1.getValue<SimulationJob>()
+
+                    job1.date.compareTo(job0.date)
+                }
+        )
+    }
+
+    private fun accuracyComparator(): GridComparator =
+            ComparatorPair<Row>(
+                    Comparator { r0, r1 ->
+                        val job0: SimulationJob = r0.getValue<SimulationJob>()
+                        val job1: SimulationJob = r1.getValue<SimulationJob>()
+
+                        job0.configuration.evaluation.value.compareTo(job1.configuration.evaluation.value)
+                    },
+
+                    Comparator { r0, r1 ->
+                        val job0: SimulationJob = r0.getValue<SimulationJob>()
+                        val job1: SimulationJob = r1.getValue<SimulationJob>()
+
+                        job1.configuration.evaluation.value.compareTo(job0.configuration.evaluation.value)
+                    }
+            )
 
     /**
      * Call back function to receive updates from JobManager

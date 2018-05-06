@@ -35,7 +35,7 @@ class CsvReader(private val f: File) {
 
         emptyValues = ConfigurationReader.findNode("csv/empty").itemListValues()
         activityId = ConfigurationReader.findNode("csv/activityId").itemListValues()
-        caseId = ConfigurationReader.findNode("csv/id").itemListValues()
+        caseId = ConfigurationReader.findNode("csv/caseId").itemListValues()
         dateFormats = ConfigurationReader.findNode("csv/timestamp").itemListValues().map { it.toRegex() }
         resourceId = ConfigurationReader.findNode("csv/resource").itemListValues()
 

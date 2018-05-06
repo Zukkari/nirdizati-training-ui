@@ -4,6 +4,7 @@ import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.Property
 import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
+import cs.ut.json.TrainingConfiguration
 import cs.ut.providers.Dir
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
@@ -21,6 +22,7 @@ import org.zkoss.zul.Html
 import org.zkoss.zul.Label
 import org.zkoss.zul.Popup
 import org.zkoss.zul.Row
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.Date
@@ -58,6 +60,7 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
             it.appendChild(getLabel(config.learner.toString()))
             it.appendChild(A().apply { loadTooltip(this, data) })
             it.appendChild(getLabel(timeFormat.format(Date.from(Instant.parse(data.startTime)))))
+            it.appendChild(config.getEvaluationLabel())
             it.appendChild(A().apply {
                 this.iconSclass = icons.valueWithIdentifier("download").value
                 this.sclass = "n-download"
@@ -70,8 +73,19 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
                     this.parentController!!.setContent(Page.VALIDATION.value, parentController.page())
                 })
             }
+
+            it.setValue(data)
         }
     }
+
+    private fun Double.format(): String = DecimalFormat(decimalFormat).format(this)
+
+    private fun TrainingConfiguration.getEvaluationLabel(): Component =
+            if (this.evaluation.metric == "") {
+                Label("-")
+            } else {
+                Label("${this.evaluation.metric.toUpperCase()}: ${this.evaluation.value.format()}")
+            }
 
     /**
      * Load tooltip for given job and attach to given element
@@ -122,5 +136,6 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
         const val PROP_POPUP = "propertyPopUpMenu"
         val timeFormat = SimpleDateFormat(ConfigurationReader.findNode("grids").valueWithIdentifier(GridColumns.TIMESTAMP.value).value)
         val icons = ConfigurationReader.findNode("iconClass")
+        val decimalFormat = ConfigurationReader.findNode("grids").valueWithIdentifier("decimalFormat").value
     }
 }

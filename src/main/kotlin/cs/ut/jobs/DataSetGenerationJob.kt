@@ -15,11 +15,14 @@ import java.io.File
  * @param currentFile file name to include in JSON
  */
 class DataSetGenerationJob(
-    val parameters: MutableMap<String, MutableList<String>>,
-    currentFile: File
+        val parameters: MutableMap<String, MutableList<String>>,
+        currentFile: File
 ) : Job() {
 
     private val fileName = currentFile.nameWithoutExtension
+    private val finalParameters: MutableMap<String, Any> = mutableMapOf()
+
+    private val cols by lazy { Columns.values().map { it.value } }
 
     @Suppress("UNCHECKED_CAST")
     override fun preProcess() {
@@ -30,10 +33,20 @@ class DataSetGenerationJob(
                 this.add(resource)
             }
         }
+
+        parameters.forEach {
+            if (it.value.size == 1 && !isColumn(it.key)) {
+                finalParameters[it.key] = it.value[0]
+            } else {
+                finalParameters[it.key] = it.value
+            }
+        }
     }
 
+    private fun isColumn(key: String): Boolean = key in cols
+
     override fun execute() {
-        JSONHandler().writeToFile(parameters, fileName, Dir.DATA_DIR)
+        JSONHandler().writeToFile(finalParameters, fileName, Dir.DATA_DIR)
     }
 
     override fun postExecute() {

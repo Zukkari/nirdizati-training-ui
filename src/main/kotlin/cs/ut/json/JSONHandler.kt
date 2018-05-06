@@ -47,7 +47,7 @@ class JSONHandler {
     }
 
     fun writeToFile(any: Any, fileName: String, directory: Dir): File {
-        val f = File(DirectoryConfiguration.dirPath(directory) + fileName)
+        val f = File(DirectoryConfiguration.dirPath(directory) + "$fileName.json")
         log.debug("Writing $any to file $fileName to $directory")
         mapper.writeValue(FileWriter(f), any)
 

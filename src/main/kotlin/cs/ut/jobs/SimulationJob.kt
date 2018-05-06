@@ -7,12 +7,15 @@ import cs.ut.exceptions.Right
 import cs.ut.exceptions.perform
 import cs.ut.jobs.UserRightsJob.Companion.updateACL
 import cs.ut.json.JSONHandler
+import cs.ut.json.JSONService
 import cs.ut.json.JobInformation
 import cs.ut.json.TrainingConfiguration
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
 import cs.ut.util.NirdizatiTranslator
 import java.io.File
+import java.time.Instant
+import java.util.Date
 
 
 class SimulationJob(
@@ -25,11 +28,13 @@ class SimulationJob(
     private var process: Process? = null
     private val configNode = ConfigurationReader.findNode("userPreferences")
 
+    val date: Date by lazy { Date.from(Instant.parse(startTime)) }
+
     override fun preProcess() {
         log.debug("Generating training parameters for job $this")
         configuration.info = JobInformation(owner, logFile.absolutePath, startTime)
 
-        JSONHandler().writeToFile(configuration, "$id.json", Dir.TRAIN_DIR).apply {
+        JSONHandler().writeToFile(configuration, id, Dir.TRAIN_DIR).apply {
             updateACL(this)
         }
     }
@@ -79,6 +84,15 @@ class SimulationJob(
         when (execRes) {
             is Right -> log.debug("Operation completed successfully")
             is Left -> throw NirdizatiRuntimeException("Script execution failed", execRes.error)
+        }
+    }
+
+    override fun postExecute() {
+        val config = JSONService.getTrainingConfig(id)
+
+        when (config) {
+            is Right -> this.configuration.evaluation = config.result.evaluation
+            is Left -> log.debug("Error occurred when fetching evaluation result", config.error)
         }
     }
 
