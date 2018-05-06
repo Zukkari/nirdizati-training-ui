@@ -40,8 +40,6 @@ data class TrainingConfiguration(
         if (bucketing.id == Algorithm.PREFIX.value) {
             val propMap = mutableMapOf<String, Any>()
             learner.properties.forEach { propMap[it.id] = it.property.safeConvert() }
-            bucketing.properties.forEach { propMap[it.id] = it.property.safeConvert() }
-
 
             val node = ConfigurationReader.findNode("models/parameters/prefix_length_based").
                     valueWithIdentifier(Node.EVENT_NUMBER.value).value<Int>()
@@ -52,7 +50,6 @@ data class TrainingConfiguration(
 
         } else {
             learner.properties.forEach { learnerMap[it.id] = it.property.safeConvert() }
-            bucketing.properties.forEach { learnerMap[it.id] = it.property.safeConvert() }
         }
 
         val encodingMap = mapOf<String, Any>(learner.parameter to learnerMap)
