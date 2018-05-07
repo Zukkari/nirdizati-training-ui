@@ -1,12 +1,12 @@
 package cs.ut.charts
 
-import com.google.gson.Gson
 import cs.ut.engine.Cache
 import cs.ut.engine.CacheHolder
 import cs.ut.engine.LogManager
 import cs.ut.exceptions.Left
 import cs.ut.exceptions.Right
 import cs.ut.jobs.SimulationJob
+import cs.ut.json.JSONHandler
 import cs.ut.logging.NirdizatiLogger
 import java.io.File
 
@@ -15,15 +15,9 @@ import java.io.File
  * This is used to provide structured data to controllers based on job.
  */
 class ChartGenerator(val job: SimulationJob) {
-    val log = NirdizatiLogger.getLogger(ChartGenerator::class.java)
-
-    companion object {
-        const val TRUE_VS_PREDICTED = "true_vs_predicted"
-    }
-
+    private val log = NirdizatiLogger.getLogger(ChartGenerator::class.java)
     private val chartCache = Cache.chartCache[job.owner]
-
-    private val gson = Gson()
+    private val handler = JSONHandler()
 
     /**
      * Get all available charts a job given in constructor
@@ -112,7 +106,7 @@ class ChartGenerator(val job: SimulationJob) {
         return when (res) {
             is Right -> {
                 val payload = getLinearPayload(res.result, Mode.SCATTER)
-                ScatterPlot(name, gson.toJson(payload), res.result)
+                ScatterPlot(name, handler.convert2String(payload), res.result)
             }
             is Left -> {
                 log.error("Error when loading charts", res.error)
@@ -134,7 +128,7 @@ class ChartGenerator(val job: SimulationJob) {
             is Right -> {
                 val payload = getLinearPayload(res.result, Mode.LINE).groupBy { it.dataType }
                 var charts = listOf<LineChart>()
-                payload.forEach { charts += LineChart(job.id, it.key, gson.toJson(it.value), it.value.last().x.toInt(), res.result) }
+                payload.forEach { charts += LineChart(job.id, it.key, handler.convert2String(it.value), it.value.last().x.toInt(), res.result) }
                 charts
             }
 
@@ -162,8 +156,8 @@ class ChartGenerator(val job: SimulationJob) {
                     charts.add(
                             BarChart(
                                     it.first.toString(),
-                                    gson.toJson(payload.map { it.value }),
-                                    gson.toJson(payload.map { it.label }),
+                                    handler.convert2String(payload.map { it.value }),
+                                    handler.convert2String(payload.map { it.label }),
                                     it.second
                             )
                     )
@@ -189,9 +183,9 @@ class ChartGenerator(val job: SimulationJob) {
                 val heatMap = getHeatMapPayload(file.result)
                 HeatMap(
                         TRUE_VS_PREDICTED,
-                        gson.toJson(heatMap.data.map { arrayOf(it.x, it.y, it.value) }),
-                        gson.toJson(heatMap.xLabels),
-                        gson.toJson(heatMap.yLabels),
+                        handler.convert2String(heatMap.data.map { arrayOf(it.x, it.y, it.value) }),
+                        handler.convert2String(heatMap.xLabels),
+                        handler.convert2String(heatMap.yLabels),
                         file.result
                 )
             }
@@ -207,5 +201,9 @@ class ChartGenerator(val job: SimulationJob) {
                 )
             }
         }
+    }
+
+    companion object {
+        const val TRUE_VS_PREDICTED = "true_vs_predicted"
     }
 }
