@@ -33,26 +33,42 @@
         <Value Identifier="sudo"></Value>
         <Value Identifier="acp">0770</Value>
         <Node Identifier="adminFunctionality">
-            <!-- Admin page functionality -->
+            <!-- Admin p functionality -->
             <Value Identifier="isEnabled">true</Value>
             <Value Identifier="password">VjNyWUg0ckRQNFNzVzByRA==</Value>
             <Value Identifier="isPasswordRequired">true</Value>
         </Node>
     </Node>
     <Node Identifier="defaultValues">
-        <!-- Default values for training page -->
+        <!-- Default values for training p -->
         <Value Identifier="minimum">0.1</Value>
         <Value Identifier="average">-1</Value>
     </Node>
     <Node Identifier="pages">
         <!-- Page cs.ut.configuration -->
-        <Node Identifier="itemList">
-            <Value Identifier="upload">/views/upload_page.zul</Value>
-            <Value Identifier="landing">/views/landing.zul</Value>
-            <Value Identifier="training">/views/training.zul</Value>
-            <Value Identifier="validation">/views/job_info.zul</Value>
-            <Value Identifier="admin">/views/admin.zul</Value>
-            <Value Identifier="jobOverview">/views/job_overview.zul</Value>
+        <Node Identifier="upload">
+            <Value Identifier="page">/views/upload_page.zul</Value>
+            <Value Identifier="parameters">false</Value>
+        </Node>
+        <Node Identifier="landing">
+            <Value Identifier="page">/views/landing.zul</Value>
+            <Value Identifier="parameters">false</Value>
+        </Node>
+        <Node Identifier="training">
+            <Value Identifier="page">/views/training.zul</Value>
+            <Value Identifier="parameters">false</Value>
+        </Node>
+        <Node Identifier="validation">
+            <Value Identifier="page">/views/job_info.zul</Value>
+            <Value Identifier="parameters">true</Value>
+        </Node>
+        <Node Identifier="admin">
+            <Value Identifier="page">/views/admin.zul</Value>
+            <Value Identifier="parameters">false</Value>
+        </Node>
+        <Node Identifier="jobs">
+            <Value Identifier="page">/views/job_overview.zul</Value>
+            <Value Identifier="parameters">false</Value>
         </Node>
     </Node>
     <Node Identifier="directories">
@@ -89,7 +105,7 @@
         </Node>
         <Node Identifier="validation">
             <Value Identifier="label">header.validation</Value>
-            <Value Identifier="redirect">jobOverview</Value>
+            <Value Identifier="redirect">jobs</Value>
             <Value Identifier="isEnabled">true</Value>
             <Value Identifier="icon">z-icon-line-chart</Value>
         </Node>

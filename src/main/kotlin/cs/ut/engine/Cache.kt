@@ -137,17 +137,19 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
                 cachedItems[key] = this
             }
 
+    fun findJob(key: String) = cachedItems.flatMap { it.value.rawData() }.firstOrNull { it.id == key }
+            ?: simulationJobs().firstOrNull { it.id == key }
+
 
     companion object {
         val log = NirdizatiLogger.getLogger(JobCacheHolder::class.java)
 
         fun trainingFiles(key: String): List<SimulationJob> = simulationJobs().filter { it.owner == key }.toList()
 
-
         fun simulationJobs(): List<SimulationJob> {
             val trainingDir = File(DirectoryConfiguration.dirPath(Dir.TRAIN_DIR)).toPath()
 
-            return Files.walk(trainingDir)
+            val jobs = Files.walk(trainingDir)
                     .map { it.toFile().nameWithoutExtension to JSONService.getTrainingConfig(it.toFile().nameWithoutExtension) }
                     .filter { it.second is Right }
                     .map {
@@ -159,6 +161,10 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
                     }
                     .filter { it.id !in JobManager.queue.map { it.id } }
                     .toList()
+
+            jobs.forEach { JobManager.cache.addToCache(it.owner, it) }
+
+            return jobs
         }
     }
 }

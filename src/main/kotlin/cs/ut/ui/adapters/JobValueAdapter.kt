@@ -9,6 +9,7 @@ import cs.ut.jobs.SimulationJob
 import cs.ut.providers.Dir
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
+import cs.ut.ui.Navigator
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.controllers.JobTrackerController
 import cs.ut.ui.controllers.Redirectable
@@ -237,7 +238,8 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
 
         visualize.addEventListener(Events.ON_CLICK, { _ ->
             Executions.getCurrent().setAttribute(jobArg, this)
-            setContent(Page.VALIDATION.value, Executions.getCurrent().desktop.firstPage)
+            setContent(Page.VALIDATION.value, Executions.getCurrent().desktop.firstPage,
+                    Navigator.createParameters(Navigator.RequestParameter.JOB.value to this.id))
         })
 
         return visualize

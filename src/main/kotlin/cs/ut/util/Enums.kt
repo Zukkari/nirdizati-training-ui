@@ -44,7 +44,7 @@ enum class Page(val value: String) {
     UPLOAD("upload"),
     TRAINING("training"),
     VALIDATION("validation"),
-    MODEL_OVERVIEW("jobOverview")
+    MODEL_OVERVIEW("jobs")
 }
 
 enum class Field(val value: String) {
