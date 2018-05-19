@@ -1,5 +1,6 @@
 package cs.ut.ui.controllers
 
+import cs.ut.configuration.ConfigNode
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.configuration.Value
 import cs.ut.util.DEST
@@ -26,11 +27,12 @@ interface Redirectable {
      * @param dest - id of the page to which the content should be changed (defined in configuration.xml)
      * @param page        - caller page where Include element should be looked for.
      */
-    fun setContent(dest: String, page: Page) {
+    fun setContent(dest: String, page: Page, params: String = "") {
+        Executions.getCurrent().desktop.setBookmark(dest + (if (params.isNotBlank()) "?" else "") + params, false)
         page.title = "${Labels.getLabel("header.$dest")} - Nirdizati"
         val include = Selectors.iterable(page, "#contentInclude").iterator().next() as Include
         include.src = null
-        include.src = pages.first { it.identifier == dest }.value
+        include.src = pages.first { it.identifier == dest }.valueWithIdentifier("page").value
         activateHeaderButton(if (dest == PageEnum.VALIDATION.value) PageEnum.MODEL_OVERVIEW.value else dest, page)
     }
 
@@ -67,6 +69,6 @@ interface Redirectable {
     }
 
     companion object {
-        private val pages: List<Value> = ConfigurationReader.findNode("pages").itemList()
+        val pages: List<ConfigNode> = ConfigurationReader.findNode("pages").childNodes
     }
 }
