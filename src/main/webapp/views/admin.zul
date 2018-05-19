@@ -33,6 +33,6 @@
             </rows>
         </grid>
 
-        <textbox id="logData" visible="false" vflex="1" hflex="1" multiline="true" readonly="true"/>
+        <textbox id="logData" sclass="selectable" visible="false" vflex="1" hflex="1" multiline="true" readonly="true"/>
     </hlayout>
 </vlayout>

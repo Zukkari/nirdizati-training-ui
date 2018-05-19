@@ -3,6 +3,7 @@ package cs.ut.ui.controllers
 import cs.ut.engine.item.ClientInfo
 import cs.ut.jobs.Job
 import cs.ut.logging.NirdizatiLogger
+import cs.ut.ui.Navigator
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.UIComponent
 import cs.ut.ui.controllers.JobTrackerController.Companion.GRID_ID
@@ -11,14 +12,18 @@ import cs.ut.util.NAVBAR
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.Session
+import org.zkoss.zk.ui.event.BookmarkEvent
 import org.zkoss.zk.ui.event.ClientInfoEvent
+import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Listen
 import org.zkoss.zk.ui.select.annotation.Wire
 import org.zkoss.zkmax.zul.Navbar
 import org.zkoss.zul.Borderlayout
 import org.zkoss.zul.East
-import java.util.*
+import java.net.URLDecoder
+import java.nio.charset.Charset
+import java.util.NoSuchElementException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -29,19 +34,30 @@ class MainPageController : SelectorComposer<Component>(), Redirectable, UICompon
     @Wire
     private lateinit var mainLayout: Borderlayout
 
+    private val navigator: Navigator = Navigator()
+
     @Wire
     private lateinit var trackerEast: East
+
+    override fun doAfterCompose(comp: Component?) {
+        super.doAfterCompose(comp)
+
+        mainLayout.addEventListener(Events.ON_BOOKMARK_CHANGE, { event ->
+            event as BookmarkEvent
+            navigator.resolveRoute(event.bookmark)
+        })
+    }
 
     @Listen("onClientInfo = #mainLayout")
     fun gatherInformation(e: ClientInfoEvent) {
         log.debug("Client info event, gathering browser information")
         val info = ClientInfo(
-            e.screenWidth,
-            e.screenHeight,
-            e.desktopWidth,
-            e.desktopHeight,
-            e.colorDepth,
-            e.orientation
+                e.screenWidth,
+                e.screenHeight,
+                e.desktopWidth,
+                e.desktopHeight,
+                e.colorDepth,
+                e.orientation
         )
 
         if (e.desktopWidth <= 680) {
@@ -81,7 +97,7 @@ class MainPageController : SelectorComposer<Component>(), Redirectable, UICompon
             Cookies.setUpCookie(Executions.getCurrent().nativeResponse as HttpServletResponse)
         } else {
             val jobGrid: NirdizatiGrid<Job> =
-                Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
+                    Executions.getCurrent().desktop.components.first { it.id == GRID_ID } as NirdizatiGrid<Job>
             val jobs: List<Job> = Cookies.getJobsByCookie(request)
             if (jobs.isNotEmpty()) {
                 jobGrid.generate(jobs)

@@ -8,6 +8,7 @@ import cs.ut.json.TrainingConfiguration
 import cs.ut.providers.Dir
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
+import cs.ut.ui.Navigator
 import cs.ut.ui.adapters.JobValueAdapter.Companion.jobArg
 import cs.ut.ui.controllers.validation.ValidationController
 import cs.ut.util.GridColumns
@@ -70,7 +71,8 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
             if (addRedirectListener) {
                 it.addEventListener(Events.ON_CLICK, { _ ->
                     Executions.getCurrent().setAttribute(jobArg, data)
-                    this.parentController!!.setContent(Page.VALIDATION.value, parentController.page())
+                    this.parentController!!.setContent(Page.VALIDATION.value, parentController.page(),
+                            Navigator.createParameters(Navigator.RequestParameter.JOB.value to data.id))
                 })
             }
 
