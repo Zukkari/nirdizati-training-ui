@@ -43,14 +43,16 @@ class Navigator : Redirectable {
 
     private fun resolveParameters(it: String): Boolean {
         val params = it.split("=")
-        if (params.size == 2) {
-            RequestParameter.fromString(params[0])?.apply {
+        return if (params.size != 2) {
+            false
+        } else {
+            RequestParameter.fromString(params[0])?.run {
                 when (this) {
                     RequestParameter.JOB -> {
                         val start = System.currentTimeMillis()
 
                         val matching = JobManager.cache.findJob(params[1])
-                        return if (matching != null) {
+                        if (matching != null) {
                             log.debug("Matching job found $matching")
                             Executions.getCurrent().setAttribute(this.name, matching)
 
@@ -69,9 +71,8 @@ class Navigator : Redirectable {
                         }
                     }
                 }
-            }
+            } ?: false
         }
-        return false
     }
 
     private fun navigateTo(page: String, params: String = "") {
