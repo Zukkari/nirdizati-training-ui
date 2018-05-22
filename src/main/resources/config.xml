@@ -510,18 +510,22 @@ Welcome to Nirdizati! This tool is designed for <a href="http://ceur-ws.org/Vol-
             <Node Identifier="copyUrl">
                 <Value Identifier="label">context.copyUrl</Value>
                 <Value Identifier="operation">CopyURLOperation</Value>
+                <Value Identifier="icon">z-icon-copy</Value>
             </Node>
             <Node Identifier="deleteJob">
                 <Value Identifier="label">context.deleteJob</Value>
                 <Value Identifier="operation">DeleteJobOperation</Value>
+                <Value Identifier="icon">z-icon-trash</Value>
             </Node>
             <Node Identifier="downloadModel">
                 <Value Identifier="label">context.downloadModel</Value>
                 <Value Identifier="operation">DownloadModelOperation</Value>
+                <Value Identifier="icon">z-icon-download</Value>
             </Node>
             <Node Identifier="downloadResults">
                 <Value Identifier="label">context.downloadResults</Value>
                 <Value Identifier="operation">ExportResultsOperation</Value>
+                <Value Identifier="icon">z-icon-archive</Value>
             </Node>
         </Node>
     </Node>

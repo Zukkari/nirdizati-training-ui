@@ -29,6 +29,8 @@ class MenuGenerator<T>(private val menuMode: MenuMode) {
                     Class.forName(pkg + it.valueWithIdentifier("operation").value))
 
             menuItem.id = it.identifier
+            menuItem.iconSclass = it.valueWithIdentifier("icon").value
+            menuItem.sclass = "n-menu-item"
 
             menu.appendChild(menuItem)
         }

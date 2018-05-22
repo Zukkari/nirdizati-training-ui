@@ -397,6 +397,9 @@ input[type=checkbox] {
 .selectedContext > td {
   background: rgba(0, 104, 179, 0.1) !important; }
 
+.n-menu-item i {
+  vertical-align: middle; }
+
 @media screen and (max-height: 900px) {
   .hyper-grid {
     animation: fade-in 0.5s ease;
