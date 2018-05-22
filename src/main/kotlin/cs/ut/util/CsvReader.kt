@@ -10,10 +10,12 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 import java.lang.Double.max
-import java.util.*
+import java.util.Collections
+import java.util.HashMap
+import java.util.LinkedHashMap
 
 class CsvReader(private val f: File) {
-    private val log = NirdizatiLogger.getLogger(CsvReader::class.java)
+    private val log = NirdizatiLogger.getLogger(CsvReader::class)
 
     private val splitter: Regex
     private val emptyValues: List<String>

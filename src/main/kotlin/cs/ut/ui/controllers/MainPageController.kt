@@ -21,14 +21,12 @@ import org.zkoss.zk.ui.select.annotation.Wire
 import org.zkoss.zkmax.zul.Navbar
 import org.zkoss.zul.Borderlayout
 import org.zkoss.zul.East
-import java.net.URLDecoder
-import java.nio.charset.Charset
 import java.util.NoSuchElementException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class MainPageController : SelectorComposer<Component>(), Redirectable, UIComponent {
-    val log = NirdizatiLogger.getLogger(MainPageController::class.java, getSessionId())
+    val log = NirdizatiLogger.getLogger(MainPageController::class, getSessionId())
     private var clientInformation: Map<Session, ClientInfo> = mapOf()
 
     @Wire

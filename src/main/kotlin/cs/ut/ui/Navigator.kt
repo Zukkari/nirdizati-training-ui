@@ -80,7 +80,7 @@ class Navigator : Redirectable {
     }
 
     companion object {
-        private val log = NirdizatiLogger.getLogger(Navigator::class.java, Cookies.getCookieKey(Executions.getCurrent().nativeRequest))
+        private val log = NirdizatiLogger.getLogger(Navigator::class, Cookies.getCookieKey(Executions.getCurrent().nativeRequest))
 
         fun createParameters(vararg p: Pair<String, String>): String = p.joinToString(separator = "&") { "${it.first}=${it.second}" }
     }

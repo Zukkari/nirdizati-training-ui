@@ -8,7 +8,6 @@ import cs.ut.ui.UIComponent
 import cs.ut.ui.controllers.modal.ParameterModalController.Companion.FILE
 import cs.ut.util.NirdizatiInputStream
 import cs.ut.util.NirdizatiReader
-import cs.ut.util.UploadItem
 import org.apache.commons.io.FilenameUtils
 import org.zkoss.util.media.Media
 import org.zkoss.util.resource.Labels
@@ -23,10 +22,9 @@ import org.zkoss.zul.Label
 import org.zkoss.zul.Vbox
 import org.zkoss.zul.Window
 import java.io.File
-import java.io.FileOutputStream
 
 class UploadLogController : SelectorComposer<Component>(), Redirectable, UIComponent {
-    private val log = NirdizatiLogger.getLogger(UploadLogController::class.java, getSessionId())
+    private val log = NirdizatiLogger.getLogger(UploadLogController::class, getSessionId())
 
     @Wire
     private lateinit var fileName: Label

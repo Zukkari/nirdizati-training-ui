@@ -142,7 +142,7 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
 
 
     companion object {
-        val log = NirdizatiLogger.getLogger(JobCacheHolder::class.java)
+        val log = NirdizatiLogger.getLogger(JobCacheHolder::class)
 
         fun trainingFiles(key: String): List<SimulationJob> = simulationJobs().filter { it.owner == key }.toList()
 

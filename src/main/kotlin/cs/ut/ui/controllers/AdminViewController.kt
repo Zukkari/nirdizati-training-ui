@@ -21,7 +21,7 @@ import java.io.FileReader
 import java.nio.charset.Charset
 
 class AdminViewController : SelectorComposer<Component>(), UIComponent {
-    val log = NirdizatiLogger.getLogger(AdminViewController::class.java, getSessionId())
+    val log = NirdizatiLogger.getLogger(AdminViewController::class, getSessionId())
 
     @Wire
     private lateinit var flushConfig: Button

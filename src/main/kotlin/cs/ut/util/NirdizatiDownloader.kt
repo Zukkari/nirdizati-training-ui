@@ -31,7 +31,7 @@ class NirdizatiDownloader(private val dir: Dir, private val resourceId: String) 
     }
 
     companion object {
-        private val log = NirdizatiLogger.getLogger(NirdizatiDownloader::class.java)
+        private val log = NirdizatiLogger.getLogger(NirdizatiDownloader::class)
         private val configNode = ConfigurationReader.findNode("downloads")
 
 

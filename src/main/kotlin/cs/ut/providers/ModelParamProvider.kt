@@ -5,7 +5,6 @@ import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.ModelParameter
 import cs.ut.engine.item.Property
 import cs.ut.json.JSONService
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.util.Field
 
 /**
@@ -101,8 +100,6 @@ class ModelParamProvider {
     }
 
     companion object {
-        private val log = NirdizatiLogger.getLogger(ModelParamProvider::class.java)
-
         const val PARAM_NODE = "parameters"
         const val ENABLED = "isEnabled"
         const val TYPE = "type"

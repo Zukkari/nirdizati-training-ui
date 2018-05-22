@@ -505,4 +505,24 @@ Welcome to Nirdizati! This tool is designed for <a href="http://ceur-ws.org/Vol-
             </Node>
         </Node>
     </Node>
+    <Node Identifier="context">
+        <Node Identifier="validation">
+            <Node Identifier="copyUrl">
+                <Value Identifier="label">context.copyUrl</Value>
+                <Value Identifier="operation">CopyURLOperation</Value>
+            </Node>
+            <Node Identifier="deleteJob">
+                <Value Identifier="label">context.deleteJob</Value>
+                <Value Identifier="operation">DeleteJobOperation</Value>
+            </Node>
+            <Node Identifier="downloadModel">
+                <Value Identifier="label">context.downloadModel</Value>
+                <Value Identifier="operation">DownloadModelOperation</Value>
+            </Node>
+            <Node Identifier="downloadResults">
+                <Value Identifier="label">context.downloadResults</Value>
+                <Value Identifier="operation">ExportResultsOperation</Value>
+            </Node>
+        </Node>
+    </Node>
 </Configuration>
