@@ -10,7 +10,7 @@ import cs.ut.providers.ModelParamProvider
 import cs.ut.util.Field
 
 object JSONService {
-    private val log = NirdizatiLogger.getLogger(JSONService::class.java)
+    private val log = NirdizatiLogger.getLogger(JSONService::class)
     private val handler = JSONHandler()
 
     fun getTrainingData(id: String) = handler.fromFile<TrainingData>(id, Dir.DATA_DIR)

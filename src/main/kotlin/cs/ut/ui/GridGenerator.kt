@@ -5,6 +5,7 @@ import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.ModelParameter
 import cs.ut.engine.item.Property
 import cs.ut.logging.NirdizatiLogger
+import cs.ut.ui.context.NirdizatiContextMenu.Companion.COMPONENT_VALUE
 import cs.ut.util.COMP_ID
 import cs.ut.util.GridColumns
 import cs.ut.util.NirdizatiTranslator
@@ -17,6 +18,7 @@ import org.zkoss.zul.Combobox
 import org.zkoss.zul.Doublebox
 import org.zkoss.zul.Grid
 import org.zkoss.zul.Intbox
+import org.zkoss.zul.Menupopup
 import org.zkoss.zul.Row
 import org.zkoss.zul.Rows
 import org.zkoss.zul.impl.NumberInputElement
@@ -30,8 +32,9 @@ data class FieldComponent(val label: Component, val control: Component)
  * Custom ZK grid implementation that allows to generate grid with custom row providers
  */
 class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, private val namespace: String = "") : Grid(), UIComponent {
-    private val log = NirdizatiLogger.getLogger(NirdizatiGrid::class.java, getSessionId())
+    private val log = NirdizatiLogger.getLogger(NirdizatiGrid::class, getSessionId())
     private val configNode = if (namespace.isNotBlank()) ConfigurationReader.findNode("grids/$namespace") else ConfigNode()
+    var contextMenu: Menupopup? = null
 
     val fields = mutableListOf<FieldComponent>()
 
@@ -118,6 +121,10 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, priva
     private tailrec fun generateRows(data: MutableList<T>, rows: Rows, reversedInsert: Boolean) {
         if (data.isNotEmpty()) {
             val row = provider.provide(data.first())
+            if (contextMenu != null) {
+                row.context = contextMenu!!.id
+                row.setAttribute(COMPONENT_VALUE, data.first())
+            }
 
             if (reversedInsert) {
                 rows.insertBefore(row, rows.firstChild)

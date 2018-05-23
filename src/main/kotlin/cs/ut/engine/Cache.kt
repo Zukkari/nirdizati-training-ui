@@ -49,6 +49,10 @@ data class CacheItem<T>(private val items: MutableList<T> = mutableListOf()) {
         return items
     }
 
+    fun removeItem(item: T) {
+        this.items.remove(item)
+    }
+
     /**
      * Is item expired
      * @param timeToLive how long is item supposed to live
@@ -142,7 +146,7 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
 
 
     companion object {
-        val log = NirdizatiLogger.getLogger(JobCacheHolder::class.java)
+        val log = NirdizatiLogger.getLogger(JobCacheHolder::class)
 
         fun trainingFiles(key: String): List<SimulationJob> = simulationJobs().filter { it.owner == key }.toList()
 

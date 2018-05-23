@@ -16,7 +16,7 @@ import java.util.concurrent.Future
  * Manages jobs
  */
 object JobManager {
-    val log = NirdizatiLogger.getLogger(JobManager::class.java)
+    val log = NirdizatiLogger.getLogger(JobManager::class)
 
     val cache: JobCacheHolder = Cache.jobCache
     private var subscribers: List<WeakReference<Any>> = listOf()

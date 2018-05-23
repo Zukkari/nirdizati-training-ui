@@ -4,14 +4,12 @@ import cs.ut.charts.Chart
 import cs.ut.charts.ChartGenerator
 import cs.ut.charts.MAE
 import cs.ut.engine.JobManager
-import cs.ut.engine.LogManager
 import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.adapters.ComparisonAdapter
 import cs.ut.ui.adapters.JobValueAdapter
 import cs.ut.ui.adapters.ValidationViewAdapter
 import cs.ut.ui.controllers.Redirectable
-import cs.ut.util.Cookies
 import cs.ut.util.NirdizatiDownloader
 import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.Page
@@ -35,7 +33,7 @@ import org.zkoss.zul.Rows
 import org.zkoss.zul.Vbox
 
 class SingleJobValidationController : SelectorComposer<Component>(), Redirectable {
-    private val log = NirdizatiLogger.getLogger(SingleJobValidationController::class.java)
+    private val log = NirdizatiLogger.getLogger(SingleJobValidationController::class)
     private lateinit var job: SimulationJob
     private lateinit var charts: Map<String, List<Chart>>
 

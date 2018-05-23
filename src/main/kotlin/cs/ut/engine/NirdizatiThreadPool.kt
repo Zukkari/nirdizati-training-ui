@@ -1,7 +1,6 @@
 package cs.ut.engine
 
 import cs.ut.configuration.ConfigurationReader
-import cs.ut.engine.tasks.CacheCleanTask
 import cs.ut.jobs.Job
 import cs.ut.logging.NirdizatiLogger
 import org.apache.log4j.ConsoleAppender
@@ -17,14 +16,12 @@ import java.util.concurrent.Future
 import javax.servlet.ServletContextEvent
 import javax.servlet.ServletContextListener
 import javax.servlet.annotation.WebListener
-import kotlin.concurrent.scheduleAtFixedRate
-import kotlin.concurrent.timerTask
 
 /**
  * Thread pool that executes jobs for Nirdizati Training
  */
 object NirdizatiThreadPool : ServletContextListener {
-    private val log = NirdizatiLogger.getLogger(NirdizatiLogger::class.java)
+    private val log = NirdizatiLogger.getLogger(NirdizatiLogger::class)
 
     internal lateinit var threadPool: ExecutorService
 
@@ -58,7 +55,7 @@ object NirdizatiThreadPool : ServletContextListener {
 
 @WebListener
 class NirdizatiContextInitializer : ServletContextListener {
-    private val log = NirdizatiLogger.getLogger(NirdizatiContextInitializer::class.java)
+    private val log = NirdizatiLogger.getLogger(NirdizatiContextInitializer::class)
     private lateinit var timer: Timer
 
     override fun contextInitialized(sce: ServletContextEvent?) {

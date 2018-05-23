@@ -76,7 +76,6 @@
         <Node Identifier="itemList">
             <Value Identifier="python">/usr/bin/python3</Value>
             <Value Identifier="userLogDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/logdata/</Value>
-            <Value Identifier="userModelDirectory">/home/zukkari/git/nirdizati-training-ui/usermodels/</Value>
             <Value Identifier="scriptDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/</Value>
             <Value Identifier="coreDir">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/</Value>
             <Value Identifier="trainDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/training_params/</Value>
@@ -502,6 +501,30 @@ Welcome to Nirdizati! This tool is designed for <a href="http://ceur-ws.org/Vol-
             </Node>
             <Node Identifier="xgboost">
                 <Value Identifier="label">XGBoost</Value>
+            </Node>
+        </Node>
+    </Node>
+    <Node Identifier="context">
+        <Node Identifier="validation">
+            <Node Identifier="copyUrl">
+                <Value Identifier="label">context.copyUrl</Value>
+                <Value Identifier="operation">CopyURLOperation</Value>
+                <Value Identifier="icon">z-icon-copy</Value>
+            </Node>
+            <Node Identifier="deleteJob">
+                <Value Identifier="label">context.deleteJob</Value>
+                <Value Identifier="operation">DeleteJobOperation</Value>
+                <Value Identifier="icon">z-icon-trash</Value>
+            </Node>
+            <Node Identifier="downloadModel">
+                <Value Identifier="label">context.downloadModel</Value>
+                <Value Identifier="operation">DownloadModelOperation</Value>
+                <Value Identifier="icon">z-icon-download</Value>
+            </Node>
+            <Node Identifier="downloadResults">
+                <Value Identifier="label">context.downloadResults</Value>
+                <Value Identifier="operation">ExportResultsOperation</Value>
+                <Value Identifier="icon">z-icon-archive</Value>
             </Node>
         </Node>
     </Node>

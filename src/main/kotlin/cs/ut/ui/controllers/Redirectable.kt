@@ -2,7 +2,6 @@ package cs.ut.ui.controllers
 
 import cs.ut.configuration.ConfigNode
 import cs.ut.configuration.ConfigurationReader
-import cs.ut.configuration.Value
 import cs.ut.util.DEST
 import cs.ut.util.NAVBAR
 import org.zkoss.util.resource.Labels
@@ -14,7 +13,7 @@ import org.zkoss.zk.ui.select.Selectors
 import org.zkoss.zkmax.zul.Navbar
 import org.zkoss.zkmax.zul.Navitem
 import org.zkoss.zul.Include
-import java.util.*
+import java.util.Timer
 import kotlin.concurrent.timerTask
 
 typealias PageEnum = cs.ut.util.Page

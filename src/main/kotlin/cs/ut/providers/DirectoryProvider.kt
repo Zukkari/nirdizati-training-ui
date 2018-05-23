@@ -31,7 +31,6 @@ object DirectoryConfiguration {
 enum class Dir(private val id: String) {
     PYTHON("python"),
     USER_LOGS("userLogDirectory"),
-    USER_MODEL("userModelDirectory"),
     SCRIPT_DIR("scriptDirectory"),
     TRAIN_DIR("trainDirectory"),
     DATA_DIR("datasetDirectory"),

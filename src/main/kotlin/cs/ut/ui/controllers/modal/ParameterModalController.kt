@@ -43,7 +43,7 @@ import java.nio.file.StandardCopyOption
 import kotlin.system.measureTimeMillis
 
 class ParameterModalController : GenericAutowireComposer<Component>(), Redirectable, UIComponent {
-    private val log = NirdizatiLogger.getLogger(ParameterModalController::class.java, getSessionId())
+    private val log = NirdizatiLogger.getLogger(ParameterModalController::class, getSessionId())
 
     @Wire
     private lateinit var modal: Window
