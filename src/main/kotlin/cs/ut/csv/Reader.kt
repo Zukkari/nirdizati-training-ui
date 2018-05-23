@@ -9,9 +9,7 @@ import cs.ut.logging.NirdizatiLogger
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
-import java.io.BufferedReader
 import java.io.File
-import java.io.FileReader
 
 data class Reader(val dataSource: DataSource<String>) {
     private var header: List<String> = listOf()
@@ -142,7 +140,7 @@ data class Reader(val dataSource: DataSource<String>) {
     }
 
     companion object {
-        private val log = NirdizatiLogger.getLogger(Reader::class.java)
+        private val log = NirdizatiLogger.getLogger(Reader::class)
         private val escapeNode = ConfigurationReader.findNode("csv/escape")
 
         private val configNode = ConfigurationReader.findNode("csv")

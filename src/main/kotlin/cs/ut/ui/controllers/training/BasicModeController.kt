@@ -12,7 +12,7 @@ import org.zkoss.zul.Vlayout
 
 class BasicModeController(gridContainer: Vlayout, private val logName: String) : AbstractModeController(gridContainer),
         ModeController, UIComponent {
-    private val log = NirdizatiLogger.getLogger(BasicModeController::class.java, getSessionId())
+    private val log = NirdizatiLogger.getLogger(BasicModeController::class, getSessionId())
     private val optimized: Either<Exception, TrainingConfiguration> = ModelParamProvider.getOptimizedParameters(logName)
 
     init {

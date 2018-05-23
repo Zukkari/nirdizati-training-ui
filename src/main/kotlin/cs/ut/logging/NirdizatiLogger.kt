@@ -2,6 +2,7 @@ package cs.ut.logging
 
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
+import kotlin.reflect.KClass
 
 /**
  * Logger wrapper that logs data with specific tag so it is easier to track different UI actions
@@ -34,8 +35,8 @@ class NirdizatiLogger(name: String) : Logger(name) {
     }
 
     companion object {
-        fun getLogger(clazz: Class<*>, id: String = "GLOBAL") =
-            (Logger.getLogger(clazz.name, factory) as NirdizatiLogger).apply { this.id = id }
+        fun getLogger(clazz: KClass<*>, id: String = "GLOBAL") =
+                (Logger.getLogger(clazz.java.name, factory) as NirdizatiLogger).apply { this.id = id }
 
         @JvmStatic
         private val factory = NirdizatiLoggerFactory()

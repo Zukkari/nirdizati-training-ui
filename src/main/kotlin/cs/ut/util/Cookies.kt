@@ -5,7 +5,7 @@ import cs.ut.engine.IdProvider
 import cs.ut.engine.JobManager
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
-import org.apache.log4j.Logger
+import cs.ut.logging.NirdizatiLogger
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse
 class Cookies {
     companion object {
         private val configNode = ConfigurationReader.findNode("cookies")
-        val log = Logger.getLogger(Cookies::class.java)!!
+        val log = NirdizatiLogger.getLogger(Cookies::class)
 
         fun setUpCookie(response: HttpServletResponse) {
             log.debug("Setting up new cookie")

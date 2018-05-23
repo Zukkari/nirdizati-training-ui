@@ -13,6 +13,7 @@ import cs.ut.ui.ComparatorPair
 import cs.ut.ui.GridComparator
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.adapters.ValidationViewAdapter
+import cs.ut.ui.context.MenuGenerator
 import cs.ut.ui.controllers.Redirectable
 import cs.ut.util.Cookies
 import cs.ut.util.NirdizatiTranslator
@@ -27,6 +28,7 @@ import org.zkoss.zul.Button
 import org.zkoss.zul.Column
 import org.zkoss.zul.Hlayout
 import org.zkoss.zul.Label
+import org.zkoss.zul.Menupopup
 import org.zkoss.zul.Row
 import org.zkoss.zul.Vbox
 import java.time.Instant
@@ -34,13 +36,19 @@ import java.time.Instant
 class ValidationController : SelectorComposer<Component>(), Redirectable {
 
     @Wire
-    lateinit var gridContainer: Vbox
+    private lateinit var gridContainer: Vbox
 
     @Wire
     private lateinit var grid: NirdizatiGrid<Job>
 
+    private val menuMode = MenuGenerator.MenuMode.VALIDATION
+    private lateinit var contextMenu: Menupopup
+
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
+        contextMenu = MenuGenerator<SimulationJob>(menuMode).generate()
+        gridContainer.appendChild(contextMenu)
+
         generate()
         JobManager.subscribe(this)
     }
@@ -70,7 +78,9 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
             return
         }
 
+        grid.contextMenu = contextMenu
         grid.generate(userJobs)
+
         gridContainer.appendChild(grid)
     }
 
@@ -131,6 +141,7 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
 
         this.hflex = "1"
         this.vflex = "1"
+        this.id = gridId
         this.columns.getChildren<Column>().forEach { it.align = "center" }
     }
 
@@ -203,5 +214,9 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
                 }
             }
         }
+    }
+
+    companion object {
+        const val gridId = "validationGrid"
     }
 }

@@ -58,6 +58,6 @@ class JSONHandler {
     fun convert2String(any: Any): String = mapper.writeValueAsString(any)
 
     companion object {
-        val log = NirdizatiLogger.getLogger(JSONHandler::class.java)
+        val log = NirdizatiLogger.getLogger(JSONHandler::class)
     }
 }

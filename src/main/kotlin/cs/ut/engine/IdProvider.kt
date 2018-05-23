@@ -4,14 +4,14 @@ import cs.ut.logging.NirdizatiLogger
 import org.apache.commons.codec.binary.Hex
 import java.nio.charset.Charset
 import java.security.MessageDigest
-import java.util.*
+import java.util.Calendar
 
 /**
  * Has to be singleton in order to be thread safe. If used from different threads there is a danger of collision
  * if id is going to be generated at the same time (which is unlikely but possible)
  */
 object IdProvider {
-    private val log= NirdizatiLogger.getLogger(IdProvider::class.java)
+    private val log= NirdizatiLogger.getLogger(IdProvider::class)
 
     private val digest = MessageDigest.getInstance("MD5")!!
     private var previous: String = ""

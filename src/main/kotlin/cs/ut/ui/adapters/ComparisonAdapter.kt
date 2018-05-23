@@ -11,7 +11,11 @@ import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.event.CheckEvent
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.util.Clients
-import org.zkoss.zul.*
+import org.zkoss.zul.A
+import org.zkoss.zul.Checkbox
+import org.zkoss.zul.Hlayout
+import org.zkoss.zul.Label
+import org.zkoss.zul.Row
 
 /**
  * Adapter which is used when generating comparison grid in validation view

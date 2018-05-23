@@ -20,7 +20,7 @@ import org.zkoss.zul.Hlayout
 import org.zkoss.zul.Vlayout
 
 class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gridContainer), ModeController, UIComponent {
-    private val log = NirdizatiLogger.getLogger(AdvancedModeController::class.java, getSessionId())
+    private val log = NirdizatiLogger.getLogger(AdvancedModeController::class, getSessionId())
 
     private val grid: NirdizatiGrid<GeneratorArgument> = NirdizatiGrid(AdvancedModeAdapter())
     private val hyperParamsContainer: Hlayout =

@@ -44,7 +44,7 @@ import org.zkoss.zul.Window
 import java.io.File
 
 class TrainingController : SelectorComposer<Component>(), Redirectable, UIComponent {
-    private val log = NirdizatiLogger.getLogger(TrainingController::class.java, getSessionId())
+    private val log = NirdizatiLogger.getLogger(TrainingController::class, getSessionId())
 
     companion object {
         const val LEARNER = "learner"

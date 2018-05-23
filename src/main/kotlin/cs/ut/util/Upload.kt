@@ -43,7 +43,7 @@ class NirdizatiReader(private val reader: Reader) : UploadItem {
     }
 
     companion object {
-        private val log = NirdizatiLogger.getLogger(NirdizatiReader::class.java)
+        private val log = NirdizatiLogger.getLogger(NirdizatiReader::class)
     }
 
 }
@@ -72,7 +72,7 @@ class NirdizatiInputStream(private val inputStream: InputStream) : UploadItem {
     }
 
     companion object {
-        private val log = NirdizatiLogger.getLogger(NirdizatiInputStream::class.java)
+        private val log = NirdizatiLogger.getLogger(NirdizatiInputStream::class)
         private const val NULL: Byte = 0x00
     }
 }

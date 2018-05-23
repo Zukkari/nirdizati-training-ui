@@ -394,6 +394,15 @@ input[type=checkbox] {
   max-width: 100%;
   max-height: 100%; }
 
+<<<<<<< HEAD
+=======
+.selectedContext > td {
+  background: rgba(0, 104, 179, 0.1) !important; }
+
+.n-menu-item i {
+  vertical-align: middle; }
+
+>>>>>>> features
 @media screen and (max-height: 900px) {
   .hyper-grid {
     animation: fade-in 0.5s ease;

@@ -15,7 +15,7 @@ import java.io.File
  * This is used to provide structured data to controllers based on job.
  */
 class ChartGenerator(val job: SimulationJob) {
-    private val log = NirdizatiLogger.getLogger(ChartGenerator::class.java)
+    private val log = NirdizatiLogger.getLogger(ChartGenerator::class)
     private val chartCache = Cache.chartCache[job.owner]
     private val handler = JSONHandler()
 

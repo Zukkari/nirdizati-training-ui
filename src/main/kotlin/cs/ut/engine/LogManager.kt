@@ -1,7 +1,7 @@
 package cs.ut.engine
 
+// import org.json.JSONObject
 import cs.ut.configuration.ConfigurationReader
-import cs.ut.engine.item.UIData
 import cs.ut.exceptions.Either
 import cs.ut.exceptions.Left
 import cs.ut.exceptions.NirdizatiRuntimeException
@@ -10,9 +10,8 @@ import cs.ut.jobs.SimulationJob
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
-import cs.ut.util.*
+import cs.ut.util.Node
 import org.apache.commons.io.FilenameUtils
-// import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
@@ -21,7 +20,7 @@ import java.io.FileReader
  * Responsible for communication between file system and managing user log files
  */
 object LogManager {
-    private val log = NirdizatiLogger.getLogger(LogManager::class.java)
+    private val log = NirdizatiLogger.getLogger(LogManager::class)
 
     private const val REGRESSION = "_regr"
     private const val CLASSIFICATION = "_class"

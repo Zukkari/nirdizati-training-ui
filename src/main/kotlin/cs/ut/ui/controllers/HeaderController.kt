@@ -6,7 +6,6 @@ import cs.ut.util.DEST
 import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.Page
 import org.zkoss.zk.ui.Component
-import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zk.ui.select.SelectorComposer
 import org.zkoss.zk.ui.select.annotation.Listen
