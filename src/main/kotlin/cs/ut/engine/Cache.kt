@@ -49,6 +49,10 @@ data class CacheItem<T>(private val items: MutableList<T> = mutableListOf()) {
         return items
     }
 
+    fun removeItem(item: T) {
+        this.items.remove(item)
+    }
+
     /**
      * Is item expired
      * @param timeToLive how long is item supposed to live

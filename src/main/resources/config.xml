@@ -76,7 +76,6 @@
         <Node Identifier="itemList">
             <Value Identifier="python">/usr/bin/python3</Value>
             <Value Identifier="userLogDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/logdata/</Value>
-            <Value Identifier="userModelDirectory">/home/zukkari/git/nirdizati-training-ui/usermodels/</Value>
             <Value Identifier="scriptDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/</Value>
             <Value Identifier="coreDir">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/</Value>
             <Value Identifier="trainDirectory">/home/zukkari/git/nirdizati-training-ui/PredictiveMethods/core/training_params/</Value>

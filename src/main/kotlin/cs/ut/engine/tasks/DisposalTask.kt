@@ -21,7 +21,7 @@ class DisposalTask : TimerTask() {
         val time = measureTimeMillis {
             log.debug("Running disposal task")
 
-            JobCacheHolder.simulationJobs().forEach { it.dispose() }
+            JobCacheHolder.simulationJobs().forEach { if (it.isExpired()) this dispose it }
 
             log.debug("Disposed of $disposed jobs")
             disposed = 0
@@ -36,54 +36,52 @@ class DisposalTask : TimerTask() {
 
     private fun SimulationJob.isExpired() = Date().time - Date.from(Instant.parse(this.startTime)).time >= age
 
-    private fun SimulationJob.dispose() {
-        if (this.isExpired()) {
-            log.debug("${this.id} is expired, disposing of the job")
+    infix fun dispose(job: SimulationJob) {
+        log.debug("${job.id} is expired, disposing of the job")
 
-            File(DirectoryConfiguration.dirPath(Dir.TRAIN_DIR) + "${this.id}.json").apply {
-                this.safeDelete()
-                log.debug("Deleted training file for job ${this.absoluteFile}")
-            }
-
-            LogManager.getDetailedFile(this, safe = true).apply {
-                when (this) {
-                    is Right -> {
-                        this.result.safeDelete()
-                        log.debug("Deleted detailed file for job -> ${this.result.absoluteFile}")
-                    }
-                    is Left -> {
-                        log.error("Error occurred during disposal task", this.error)
-                    }
-                }
-            }
-
-            LogManager.getFeatureImportanceFiles(this).apply {
-                when (this) {
-                    is Right -> {
-                        log.debug("Deleting ${this.result.size} feature importance file")
-                        this.result.forEach { it.safeDelete() }
-                        log.debug("Finished feature importance file deletion")
-                    }
-
-                    is Left -> log.error("Error occurred during disposal task", this.error)
-                }
-            }
-
-            LogManager.getDetailedFile(this, safe = true).apply {
-                when (this) {
-                    is Right -> {
-                        this.result.safeDelete()
-                        log.debug("Deleted detailed file -> ${this.result.absoluteFile}")
-                    }
-                    is Left -> {
-                        log.error("Error occurred during disposal task", this.error)
-                    }
-                }
-            }
-
-            log.debug("Finished disposal of job ${this.id}")
-            disposed++
+        File(DirectoryConfiguration.dirPath(Dir.TRAIN_DIR) + "${job.id}.json").apply {
+            this.safeDelete()
+            log.debug("Deleted training file for job ${this.absoluteFile}")
         }
+
+        LogManager.getDetailedFile(job, safe = true).apply {
+            when (this) {
+                is Right -> {
+                    this.result.safeDelete()
+                    log.debug("Deleted detailed file for job -> ${this.result.absoluteFile}")
+                }
+                is Left -> {
+                    log.error("Error occurred during disposal task", this.error)
+                }
+            }
+        }
+
+        LogManager.getFeatureImportanceFiles(job).apply {
+            when (this) {
+                is Right -> {
+                    log.debug("Deleting ${this.result.size} feature importance file")
+                    this.result.forEach { it.safeDelete() }
+                    log.debug("Finished feature importance file deletion")
+                }
+
+                is Left -> log.error("Error occurred during disposal task", this.error)
+            }
+        }
+
+        LogManager.getDetailedFile(job, safe = true).apply {
+            when (this) {
+                is Right -> {
+                    this.result.safeDelete()
+                    log.debug("Deleted detailed file -> ${this.result.absoluteFile}")
+                }
+                is Left -> {
+                    log.error("Error occurred during disposal task", this.error)
+                }
+            }
+        }
+
+        log.debug("Finished disposal of job ${job.id}")
+        disposed++
     }
 
     private fun File.safeDelete() {

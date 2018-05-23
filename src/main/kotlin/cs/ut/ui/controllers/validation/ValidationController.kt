@@ -36,7 +36,7 @@ import java.time.Instant
 class ValidationController : SelectorComposer<Component>(), Redirectable {
 
     @Wire
-    lateinit var gridContainer: Vbox
+    private lateinit var gridContainer: Vbox
 
     @Wire
     private lateinit var grid: NirdizatiGrid<Job>
@@ -141,6 +141,7 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
 
         this.hflex = "1"
         this.vflex = "1"
+        this.id = gridId
         this.columns.getChildren<Column>().forEach { it.align = "center" }
     }
 
@@ -213,5 +214,9 @@ class ValidationController : SelectorComposer<Component>(), Redirectable {
                 }
             }
         }
+    }
+
+    companion object {
+        const val gridId = "validationGrid"
     }
 }
