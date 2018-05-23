@@ -20,7 +20,7 @@ class CopyURLOperation(context: SimulationJob) : Operation<SimulationJob>(contex
         sb.append(Executions.getCurrent().serverName)
 
         val port = Executions.getCurrent().serverPort
-        if (port != 80 || port != 443) {
+        if (port != 80 && port != 443) {
             sb.append(":$port")
         }
 
