@@ -8,6 +8,7 @@ import cs.ut.ui.UIComponent
 import cs.ut.ui.adapters.AdvancedModeAdapter
 import cs.ut.ui.adapters.GeneratorArgument
 import cs.ut.ui.adapters.PropertyValueAdapter
+import cs.ut.ui.components.CheckBoxGroup
 import cs.ut.ui.controllers.TrainingController
 import cs.ut.util.HYPER_PARAM_CONT
 import org.zkoss.zk.ui.Component
@@ -16,7 +17,6 @@ import org.zkoss.zk.ui.event.CheckEvent
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zul.Checkbox
 import org.zkoss.zul.Hlayout
-import org.zkoss.zul.Row
 import org.zkoss.zul.Vlayout
 
 class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gridContainer), ModeController, UIComponent {
@@ -38,11 +38,12 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
                 .map { GeneratorArgument(it.key, it.value) })
 
         gridContainer.appendChild(grid)
-
         grid.fields
                 .asSequence()
-                .filter { it.control is Checkbox }
-                .forEach { (it.control as Checkbox).generateListener() }
+                .forEach {
+                    val cont = it.control as CheckBoxGroup
+                    cont.applyToAll(this::generateListener)
+                }
 
         grid.sclass = "max-height max-width"
         grid.hflex = "min"
@@ -53,8 +54,8 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
     /**
      * Create listener when to show hyper parameter grid when checkbox is checked
      */
-    private fun Checkbox.generateListener() {
-        val parameter = getValue<ModelParameter>()
+    private fun generateListener(checkBox: Checkbox) {
+        val parameter = checkBox.getValue<ModelParameter>()
         if (TrainingController.LEARNER == parameter.type) {
             hyperParameters[parameter] = mutableListOf()
         }
@@ -77,7 +78,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
             }
         }
 
-        addEventListener(Events.ON_CHECK, { e ->
+        checkBox.addEventListener(Events.ON_CHECK, { e ->
             e as CheckEvent
             log.debug("$this value changed, regenerating grid")
             when (parameter.type) {

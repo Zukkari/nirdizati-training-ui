@@ -6,13 +6,13 @@ import cs.ut.engine.item.ModelParameter
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.ui.TooltipParser
+import cs.ut.ui.components.CheckBoxGroup
 import cs.ut.util.COMP_ID
 import cs.ut.util.NirdizatiTranslator
 import org.zkoss.zk.ui.event.Events
 import org.zkoss.zul.A
 import org.zkoss.zul.Checkbox
 import org.zkoss.zul.Hbox
-import org.zkoss.zul.Hlayout
 import org.zkoss.zul.Label
 import org.zkoss.zul.Popup
 import org.zkoss.zul.Row
@@ -43,6 +43,7 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
             this.appendChild(getTooltip(data.id, icons))
         })
 
+        val group = CheckBoxGroup(CheckBoxGroup.Mode.ANY)
         data.params.forEach { param ->
             row.appendChild(
                     Hbox().also {
@@ -52,7 +53,7 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
                             sclass = "big-scale"
                         }
 
-                        fields.add(FieldComponent(label, checkBox))
+                        group.addComponent(checkBox)
                         val nameLabel = Label(NirdizatiTranslator.localizeText(param.type + "." + param.id))
                         it.appendChild(nameLabel)
 
@@ -62,7 +63,7 @@ class AdvancedModeAdapter : GridValueProvider<GeneratorArgument, Row> {
                     })
         }
 
-        return FieldComponent(label, row) to row
+        return FieldComponent(label, group) to row
     }
 
     /**
