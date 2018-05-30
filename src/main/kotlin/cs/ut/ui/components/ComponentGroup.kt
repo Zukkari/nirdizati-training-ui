@@ -12,7 +12,6 @@ abstract class ComponentGroup<T : XulElement> {
 
     fun addComponent(element: T) {
         components.add(element)
-        components.any()
     }
 
     fun applyToAll(addition: (T) -> Unit) {
