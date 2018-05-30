@@ -85,7 +85,10 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
             val args = mapOf(FILE to file)
 
             // Detach all of the old windows
-            self.getChildren<Component>().filter { it is Window }.forEach { it.detach() }
+            self.getChildren<Component>()
+                    .asSequence()
+                    .filter { it is Window }
+                    .forEach { it.detach() }
             val window: Window = Executions.createComponents(
                     "/views/modals/params.zul",
                     self,

@@ -20,10 +20,8 @@ data class ComboArgument(val caption: String, val values: List<Value>, val selec
 /**
  * Adapter used when generating data set parameters stage 2
  */
-class ComboProvider : GridValueProvider<ComboArgument, Row> {
-    override lateinit var fields: MutableList<FieldComponent>
-
-    override fun provide(data: ComboArgument): Row {
+object ComboProvider : GridValueProvider<ComboArgument, Row> {
+    override fun provide(data: ComboArgument): Pair<FieldComponent, Row> {
         val label = Label(data.caption)
         label.setAttribute(COMP_ID, data.caption)
         label.sclass = "display-block"
@@ -44,8 +42,7 @@ class ComboProvider : GridValueProvider<ComboArgument, Row> {
         val row = Row()
         row.appendChild(label)
         row.appendChild(comboBox)
-        fields.add(FieldComponent(label, comboBox))
 
-        return row
+        return FieldComponent(label, comboBox) to row
     }
 }

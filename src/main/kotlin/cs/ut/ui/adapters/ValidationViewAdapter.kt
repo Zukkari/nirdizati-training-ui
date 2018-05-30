@@ -9,7 +9,7 @@ import cs.ut.providers.Dir
 import cs.ut.ui.FieldComponent
 import cs.ut.ui.GridValueProvider
 import cs.ut.ui.Navigator
-import cs.ut.ui.adapters.JobValueAdapter.Companion.jobArg
+import cs.ut.ui.adapters.JobValueAdapter.jobArg
 import cs.ut.ui.controllers.validation.ValidationController
 import cs.ut.util.GridColumns
 import cs.ut.util.NirdizatiDownloader
@@ -33,10 +33,8 @@ import java.util.Date
  */
 class ValidationViewAdapter(private val parentController: ValidationController?, private val container: Component?) :
         GridValueProvider<Job, Row> {
-    override var fields: MutableList<FieldComponent> = mutableListOf()
 
-
-    override fun provide(data: Job): Row {
+    override fun provide(data: Job): Pair<FieldComponent, Row> {
         return provide(data, true)
     }
 
@@ -47,37 +45,40 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
      *
      * @return row with generated data
      */
-    fun provide(data: Job, addRedirectListener: Boolean = true): Row {
+    fun provide(data: Job, addRedirectListener: Boolean = true): Pair<FieldComponent, Row> {
         data as SimulationJob
         val config = data.configuration
 
-        return Row().also {
-            it.sclass = if (addRedirectListener) "pointer" else "no-hover-effect"
-            it.align = "center"
-            it.appendChild(Label(data.logFile.nameWithoutExtension))
-            it.appendChild(getLabel(config.outcome.toString()))
-            it.appendChild(getLabel(config.bucketing.toString()))
-            it.appendChild(getLabel(config.encoding.toString()))
-            it.appendChild(getLabel(config.learner.toString()))
-            it.appendChild(A().apply { loadTooltip(this, data) })
-            it.appendChild(getLabel(timeFormat.format(Date.from(Instant.parse(data.startTime)))))
-            it.appendChild(config.getEvaluationLabel())
-            it.appendChild(A().apply {
-                this.iconSclass = icons.valueWithIdentifier("download").value
-                this.sclass = "n-download"
-                this.addEventListener(Events.ON_CLICK, { _ -> NirdizatiDownloader(Dir.PKL_DIR, data.id).execute() })
+        val row = Row()
+        with(row) {
+            sclass = if (addRedirectListener) "pointer" else "no-hover-effect"
+            align = "center"
+            appendChild(Label(data.logFile.nameWithoutExtension))
+            appendChild(getLabel(config.outcome.toString()))
+            appendChild(getLabel(config.bucketing.toString()))
+            appendChild(getLabel(config.encoding.toString()))
+            appendChild(getLabel(config.learner.toString()))
+            appendChild(A().apply { loadTooltip(this, data) })
+            appendChild(getLabel(timeFormat.format(Date.from(Instant.parse(data.startTime)))))
+            appendChild(config.getEvaluationLabel())
+            appendChild(A().apply {
+                iconSclass = icons.valueWithIdentifier("download").value
+                sclass = "n-download"
+                addEventListener(Events.ON_CLICK, { _ -> NirdizatiDownloader(Dir.PKL_DIR, data.id).execute() })
             })
 
             if (addRedirectListener) {
-                it.addEventListener(Events.ON_CLICK, { _ ->
+                addEventListener(Events.ON_CLICK, { _ ->
                     Executions.getCurrent().setAttribute(jobArg, data)
-                    this.parentController!!.setContent(Page.VALIDATION.value, parentController.page(),
+                    parentController!!.setContent(Page.VALIDATION.value, parentController.page(),
                             Navigator.createParameters(Navigator.RequestParameter.JOB.value to data.id))
                 })
             }
 
-            it.setValue(data)
+            setValue(data)
         }
+
+        return FieldComponent(Label(), Label()) to row
     }
 
     private fun Double.format(): String = DecimalFormat(decimalFormat).format(this)
@@ -108,7 +109,10 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
             }.open(a, "after_end ")
         })
         a.addEventListener(Events.ON_MOUSE_OUT, { _ ->
-            a.desktop.components.filter { it is Popup }.forEach { (it as Popup).close() }
+            a.desktop.components.
+                    asSequence()
+                    .filter { it is Popup }
+                    .forEach { (it as Popup).close() }
         })
     }
 

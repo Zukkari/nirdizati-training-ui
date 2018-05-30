@@ -17,6 +17,7 @@ import org.zkoss.zul.Columns
 import org.zkoss.zul.Combobox
 import org.zkoss.zul.Doublebox
 import org.zkoss.zul.Grid
+import org.zkoss.zul.Hbox
 import org.zkoss.zul.Intbox
 import org.zkoss.zul.Menupopup
 import org.zkoss.zul.Row
@@ -39,7 +40,6 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, priva
     val fields = mutableListOf<FieldComponent>()
 
     init {
-        provider.fields = fields
         appendChild(Rows())
     }
 
@@ -120,7 +120,8 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, priva
 
     private tailrec fun generateRows(data: MutableList<T>, rows: Rows, reversedInsert: Boolean) {
         if (data.isNotEmpty()) {
-            val row = provider.provide(data.first())
+            val (field, row) = provider.provide(data.first())
+            fields.add(field)
             if (contextMenu != null) {
                 row.context = contextMenu!!.id
                 row.setAttribute(COMPONENT_VALUE, data.first())
