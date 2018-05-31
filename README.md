@@ -17,3 +17,6 @@ More information on this can be found [here](https://eprints.qut.edu.au/109686/)
 Nirdizati Training component provides possibility for user to upload his own logs in ```.XES``` or ```.CSV``` format, analyze them, construct models using different parameters and then depoy them into Nirdizati Runtime component.
 
 Goal of this project is to remake UI for Nirdizati training component. As a result, Nirdizati Training UI will be remade into more user-friendly and intuitive system.
+
+## Student project contest info
+Poster repository can be found [here](https://github.com/Zukkari/nirdizati-poster).
