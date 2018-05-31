@@ -5,8 +5,6 @@ package cs.ut.ui
  */
 @FunctionalInterface
 interface GridValueProvider<in T, out Row> {
-    var fields: MutableList<FieldComponent>
-
     /**
      * Get row representation of given data
      *
@@ -14,5 +12,5 @@ interface GridValueProvider<in T, out Row> {
      *
      * @return row with the represented data
      */
-    fun provide(data: T): Row
+    fun provide(data: T): Pair<FieldComponent, Row>
 }

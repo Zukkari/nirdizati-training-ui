@@ -228,7 +228,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
      * Prepare grid for generation, set columns, css class and flex
      */
     private fun prepareGrid(): NirdizatiGrid<ComboArgument> {
-        val grid = NirdizatiGrid(ComboProvider())
+        val grid = NirdizatiGrid(ComboProvider)
         gridSlot.getChildren<Component>().clear()
         gridSlot.getChildren<Component>().add(grid)
 

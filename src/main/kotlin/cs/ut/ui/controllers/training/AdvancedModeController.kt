@@ -3,12 +3,12 @@ package cs.ut.ui.controllers.training
 import cs.ut.engine.item.ModelParameter
 import cs.ut.engine.item.Property
 import cs.ut.logging.NirdizatiLogger
-import cs.ut.ui.FieldComponent
 import cs.ut.ui.NirdizatiGrid
 import cs.ut.ui.UIComponent
 import cs.ut.ui.adapters.AdvancedModeAdapter
 import cs.ut.ui.adapters.GeneratorArgument
 import cs.ut.ui.adapters.PropertyValueAdapter
+import cs.ut.ui.components.CheckBoxGroup
 import cs.ut.ui.controllers.TrainingController
 import cs.ut.util.HYPER_PARAM_CONT
 import org.zkoss.zk.ui.Component
@@ -22,7 +22,8 @@ import org.zkoss.zul.Vlayout
 class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gridContainer), ModeController, UIComponent {
     private val log = NirdizatiLogger.getLogger(AdvancedModeController::class, getSessionId())
 
-    private val grid: NirdizatiGrid<GeneratorArgument> = NirdizatiGrid(AdvancedModeAdapter())
+    private val rowProvider = AdvancedModeAdapter()
+    private val grid: NirdizatiGrid<GeneratorArgument> = NirdizatiGrid(rowProvider)
     private val hyperParamsContainer: Hlayout =
             Executions.getCurrent().desktop.components.first { it.id == HYPER_PARAM_CONT } as Hlayout
     private var hyperParameters: MutableMap<ModelParameter, MutableList<Property>> = mutableMapOf()
@@ -31,12 +32,19 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
         log.debug("Initializing advanced mode controller")
         gridContainer.getChildren<Component>().clear()
 
+        rowProvider.fields = grid.fields
         grid.generate(parameters
                 .entries
                 .map { GeneratorArgument(it.key, it.value) })
 
         gridContainer.appendChild(grid)
-        grid.fields.forEach { it.generateListener() }
+        grid.fields
+                .asSequence()
+                .forEach {
+                    val cont = it.control as CheckBoxGroup
+                    cont.applyToAll(this::generateListener)
+                }
+
         grid.sclass = "max-height max-width"
         grid.hflex = "min"
         grid.vflex = "min"
@@ -46,9 +54,8 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
     /**
      * Create listener when to show hyper parameter grid when checkbox is checked
      */
-    private fun FieldComponent.generateListener() {
-        control as Checkbox
-        val parameter = control.getValue<ModelParameter>()
+    private fun generateListener(checkBox: Checkbox) {
+        val parameter = checkBox.getValue<ModelParameter>()
         if (TrainingController.LEARNER == parameter.type) {
             hyperParameters[parameter] = mutableListOf()
         }
@@ -71,7 +78,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
             }
         }
 
-        control.addEventListener(Events.ON_CHECK, { e ->
+        checkBox.addEventListener(Events.ON_CHECK, { e ->
             e as CheckEvent
             log.debug("$this value changed, regenerating grid")
             when (parameter.type) {
@@ -93,7 +100,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
 
         log.debug("Key: $key -> value: $value")
 
-        val propGrid = NirdizatiGrid(PropertyValueAdapter())
+        val propGrid = NirdizatiGrid(PropertyValueAdapter)
         propGrid.setColumns(
                 listOf(
                         NirdizatiGrid.ColumnArgument(key.type + "." + key.id, "min"),

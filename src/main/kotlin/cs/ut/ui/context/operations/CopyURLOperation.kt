@@ -20,7 +20,7 @@ class CopyURLOperation(context: SimulationJob) : Operation<SimulationJob>(contex
         sb.append(Executions.getCurrent().serverName)
 
         val port = Executions.getCurrent().serverPort
-        if (port != 80) {
+        if (port != 80 && port != 443) {
             sb.append(":$port")
         }
 
@@ -29,4 +29,9 @@ class CopyURLOperation(context: SimulationJob) : Operation<SimulationJob>(contex
 
         return sb.toString()
     }
+
+    /**
+     * Only allow on SSL port
+     */
+    override fun isEnabled(): Boolean = Executions.getCurrent().serverPort == 443
 }

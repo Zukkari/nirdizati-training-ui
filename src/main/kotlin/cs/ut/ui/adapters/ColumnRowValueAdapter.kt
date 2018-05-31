@@ -16,12 +16,12 @@ import org.zkoss.zul.Row
  */
 class ColumnRowValueAdapter(private val valueList: List<String>, private val identifiedCols: Map<String, String>) :
     GridValueProvider<String, Row> {
-    override var fields: MutableList<FieldComponent> = mutableListOf()
 
-    override fun provide(data: String): Row {
+    override fun provide(data: String): Pair<FieldComponent, Row> {
+        val noResource = "modals.param.no_resource"
         val row = Row()
 
-        val label = Label(NirdizatiTranslator.localizeText("modals.param." + data))
+        val label = Label(NirdizatiTranslator.localizeText("modals.param.$data"))
         label.setAttribute(COMP_ID, data)
         label.sclass = "param-modal-label"
 
@@ -40,7 +40,7 @@ class ColumnRowValueAdapter(private val valueList: List<String>, private val ide
 
         // Add empty value as well if resource column is not present
         if (data == IdentColumns.RESOURCE.value) {
-            comboBox.appendItem(NirdizatiTranslator.localizeText(NO_RESOURCE)).setValue("")
+            comboBox.appendItem(NirdizatiTranslator.localizeText(noResource)).setValue("")
         }
 
         val res = perform { comboBox.selectedItem }
@@ -48,14 +48,9 @@ class ColumnRowValueAdapter(private val valueList: List<String>, private val ide
             is Left -> comboBox.selectedItem = (comboBox.getItemAtIndex(0))
         }
 
-        fields.add(FieldComponent(label, comboBox))
         row.appendChild(label)
         row.appendChild(comboBox)
 
-        return row
-    }
-
-    companion object {
-        private const val NO_RESOURCE = "modals.param.no_resource"
+        return FieldComponent(label, comboBox) to row
     }
 }

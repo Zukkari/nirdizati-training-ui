@@ -11,6 +11,7 @@ import cs.ut.providers.DirectoryConfiguration
 import java.io.File
 import java.nio.file.Files
 import java.util.Date
+import kotlin.streams.asSequence
 import kotlin.streams.toList
 
 /**
@@ -154,6 +155,7 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
             val trainingDir = File(DirectoryConfiguration.dirPath(Dir.TRAIN_DIR)).toPath()
 
             val jobs = Files.walk(trainingDir)
+                    .asSequence()
                     .map { it.toFile().nameWithoutExtension to JSONService.getTrainingConfig(it.toFile().nameWithoutExtension) }
                     .filter { it.second is Right }
                     .map {

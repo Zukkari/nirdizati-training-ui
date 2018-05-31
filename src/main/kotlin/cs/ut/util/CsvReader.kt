@@ -215,7 +215,11 @@ class CsvReader(private val f: File) {
     }
 
     private fun identifyTimestampColumn(attributes: LinkedHashMap<String, MutableSet<String>>): String? {
-        return attributes.filter { isDateCol(it.value.first()) }.keys.firstOrNull()
+        return attributes
+                .asSequence()
+                .filter { isDateCol(it.value.first()) }
+                .first()
+                .key
     }
 
     private fun isDateCol(col: String): Boolean {
