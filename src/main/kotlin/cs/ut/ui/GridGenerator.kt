@@ -6,6 +6,7 @@ import cs.ut.engine.item.ModelParameter
 import cs.ut.engine.item.Property
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.components.CheckBoxGroup
+import cs.ut.ui.components.ComponentGroup
 import cs.ut.ui.context.NirdizatiContextMenu.Companion.COMPONENT_VALUE
 import cs.ut.util.COMP_ID
 import cs.ut.util.GridColumns
@@ -141,12 +142,12 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, priva
      * Validate that data in the grid is correct according to component definitions
      */
     fun validate(): Boolean {
-        val invalid = mutableListOf<Component>()
+        val invalid = mutableListOf<Any>()
         validateFields(fields, invalid)
         return invalid.isEmpty()
     }
 
-    private tailrec fun validateFields(fields: MutableList<FieldComponent>, invalid: MutableList<Component>) {
+    private tailrec fun validateFields(fields: MutableList<FieldComponent>, invalid: MutableList<Any>) {
         if (fields.isNotEmpty()) {
             val comp = fields.first().control
 
@@ -167,6 +168,8 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, priva
                     }
                     invalid.add(comp)
                 }
+
+                is ComponentGroup<*> -> if (!comp.valid) invalid.add(comp)
             }
             validateFields(fields.tail(), invalid)
         }
