@@ -66,7 +66,11 @@ object LogManager {
      * @return List of all available file names contained in user log directory
      */
     fun getAllAvailableLogs(): List<File> =
-            File(logDirectory).listFiles().filter { it.extension in allowedExtensions }
+            File(logDirectory)
+                    .listFiles()
+                    .asSequence()
+                    .filter { it.extension in allowedExtensions }
+                    .toList()
 
 
     /**
@@ -102,9 +106,11 @@ object LogManager {
         log.debug("Getting feature importance log information for job: '$job'")
 
         return try {
-            Right(File(featureImportanceDir).listFiles().filter { job.id in it.name }.apply {
-                log.debug("Found ${this.size} feature importance files")
-            })
+            Right(File(featureImportanceDir)
+                    .listFiles()
+                    .asSequence()
+                    .filter { job.id in it.name }
+                    .toList())
         } catch (e: Exception) {
             Left(e)
         }

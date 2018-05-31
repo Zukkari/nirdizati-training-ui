@@ -17,21 +17,19 @@ import org.zkoss.zul.impl.InputElement
 /**
  * Used to generate hyper parameter grids in training view
  */
-class PropertyValueAdapter : GridValueProvider<Property, Row> {
-    override var fields: MutableList<FieldComponent> = mutableListOf()
+object PropertyValueAdapter : GridValueProvider<Property, Row> {
 
-    override fun provide(data: Property): Row {
+    override fun provide(data: Property): Pair<FieldComponent, Row> {
         val row = Row()
 
         val label = Label(NirdizatiTranslator.localizeText("property." + data.id))
         label.setAttribute(COMP_ID, data.id)
         val control = generateControl(data)
 
-        fields.add(FieldComponent(label, control))
         row.appendChild(label)
         row.appendChild(control)
 
-        return row
+        return FieldComponent(label, control) to row
     }
 
     /**

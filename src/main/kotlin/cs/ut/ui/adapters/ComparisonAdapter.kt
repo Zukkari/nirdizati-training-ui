@@ -22,49 +22,51 @@ import org.zkoss.zul.Row
  */
 class ComparisonAdapter(container: Component, private val controller: SingleJobValidationController) :
     GridValueProvider<SimulationJob, Row> {
-    override var fields: MutableList<FieldComponent> = mutableListOf()
     private val adapter = ValidationViewAdapter(null, container)
 
     private var first = true
 
-    override fun provide(data: SimulationJob): Row {
-        return Row().apply {
-            this.appendChild(Hlayout().apply {
-                this.hflex = "1"
-                this.vflex = "1"
+    override fun provide(data: SimulationJob): Pair<FieldComponent, Row> {
+        val checkBox = Checkbox().apply {
+            isChecked = first
+            isDisabled = first
+            setValue(data)
+            if (first) first = false
 
-                this.appendChild(
-                    Checkbox().apply {
-                        this.isChecked = first
-                        this.isDisabled = first
-                        this.setValue(data)
-                        if (first) first = false
+            addEventListener(Events.ON_CHECK, { e ->
+                e as CheckEvent
+                if (e.isChecked) {
+                    addDataSet(data.id, getPayload(data, controller.accuracyMode))
+                } else {
+                    removeDataSet(data.id)
+                }
+            })
+            controller.checkBoxes.add(this)
+        }
 
-                        this.addEventListener(Events.ON_CHECK, { e ->
-                            e as CheckEvent
-                            if (e.isChecked) {
-                                addDataSet(data.id, getPayload(data, controller.accuracyMode))
-                            } else {
-                                removeDataSet(data.id)
-                            }
-                        })
-                        controller.checkBoxes.add(this)
-                    })
+        val row = with (Row()) {
+            appendChild(Hlayout().apply {
+                hflex = "1"
+                vflex = "1"
 
-                this.appendChild(Hlayout().apply {
-                    this.sclass = "color-box c${data.id}"
+                appendChild(checkBox)
+                appendChild(Hlayout().apply {
+                    sclass = "color-box c${data.id}"
                 })
             })
 
             val config = data.configuration
 
-            this.appendChild(Label(NirdizatiTranslator.localizeText("${config.bucketing.type}.${config.bucketing.id}")))
-            this.appendChild(Label(NirdizatiTranslator.localizeText("${config.encoding.type}.${config.encoding.id}")))
-            this.appendChild(Label(NirdizatiTranslator.localizeText("${config.learner.type}.${config.learner.id}")))
-            this.appendChild(A().apply {
+            appendChild(Label(NirdizatiTranslator.localizeText("${config.bucketing.type}.${config.bucketing.id}")))
+            appendChild(Label(NirdizatiTranslator.localizeText("${config.encoding.type}.${config.encoding.id}")))
+            appendChild(Label(NirdizatiTranslator.localizeText("${config.learner.type}.${config.learner.id}")))
+            appendChild(A().apply {
                 adapter.loadTooltip(this, data)
             })
+            this
         }
+
+        return FieldComponent(Label(), checkBox) to row
     }
 
     companion object {

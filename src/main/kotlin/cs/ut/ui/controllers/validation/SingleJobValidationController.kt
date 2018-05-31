@@ -80,7 +80,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         (listOf(job) +
                 JobManager.findSimilarJobs(job))
                 .map { provider.provide(it) }
-                .forEach { compRows.appendChild(it) }
+                .forEach { compRows.appendChild(it.second) }
 
         generateReadOnlyMode()
     }
@@ -105,7 +105,7 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
      * Generate read only mode for this view
      */
     private fun generateReadOnlyMode() {
-        propertyRows.appendChild(ValidationViewAdapter(null, gridContainer).provide(job, false))
+        propertyRows.appendChild(ValidationViewAdapter(null, gridContainer).provide(job, false).second)
         generateChartOptions()
     }
 
@@ -172,10 +172,13 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
      * Add data sets to the client view
      */
     private fun addDataSets() {
-        checkBoxes.filter { it.isChecked && (it.getValue() as? SimulationJob)?.id != job.id }.forEach {
-            val value = it.getValue<SimulationJob>() as SimulationJob
-            ComparisonAdapter.addDataSet(value.id, ComparisonAdapter.getPayload(value, accuracyMode))
-        }
+        checkBoxes
+                .asSequence()
+                .filter { it.isChecked && (it.getValue() as? SimulationJob)?.id != job.id }
+                .forEach {
+                    val value = it.getValue<SimulationJob>() as SimulationJob
+                    ComparisonAdapter.addDataSet(value.id, ComparisonAdapter.getPayload(value, accuracyMode))
+                }
     }
 
     /**

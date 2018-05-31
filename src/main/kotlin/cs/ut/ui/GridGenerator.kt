@@ -5,6 +5,8 @@ import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.ModelParameter
 import cs.ut.engine.item.Property
 import cs.ut.logging.NirdizatiLogger
+import cs.ut.ui.components.CheckBoxGroup
+import cs.ut.ui.components.ComponentGroup
 import cs.ut.ui.context.NirdizatiContextMenu.Companion.COMPONENT_VALUE
 import cs.ut.util.COMP_ID
 import cs.ut.util.GridColumns
@@ -26,7 +28,7 @@ import org.zkoss.zul.impl.NumberInputElement
 /**
  * Data class that stores grid components for easy data collection
  */
-data class FieldComponent(val label: Component, val control: Component)
+data class FieldComponent(val label: Component, val control: Any)
 
 /**
  * Custom ZK grid implementation that allows to generate grid with custom row providers
@@ -39,7 +41,6 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, priva
     val fields = mutableListOf<FieldComponent>()
 
     init {
-        provider.fields = fields
         appendChild(Rows())
     }
 
@@ -120,7 +121,8 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, priva
 
     private tailrec fun generateRows(data: MutableList<T>, rows: Rows, reversedInsert: Boolean) {
         if (data.isNotEmpty()) {
-            val row = provider.provide(data.first())
+            val (field, row) = provider.provide(data.first())
+            fields.add(field)
             if (contextMenu != null) {
                 row.context = contextMenu!!.id
                 row.setAttribute(COMPONENT_VALUE, data.first())
@@ -140,12 +142,12 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, priva
      * Validate that data in the grid is correct according to component definitions
      */
     fun validate(): Boolean {
-        val invalid = mutableListOf<Component>()
+        val invalid = mutableListOf<Any>()
         validateFields(fields, invalid)
         return invalid.isEmpty()
     }
 
-    private tailrec fun validateFields(fields: MutableList<FieldComponent>, invalid: MutableList<Component>) {
+    private tailrec fun validateFields(fields: MutableList<FieldComponent>, invalid: MutableList<Any>) {
         if (fields.isNotEmpty()) {
             val comp = fields.first().control
 
@@ -166,6 +168,8 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, priva
                     }
                     invalid.add(comp)
                 }
+
+                is ComponentGroup<*> -> if (!comp.valid) invalid.add(comp)
             }
             validateFields(fields.tail(), invalid)
         }
@@ -217,24 +221,33 @@ class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, priva
             val id = fields.first().label.getAttribute(COMP_ID) as String
 
             when (field) {
+                is CheckBoxGroup -> {
+                    field.gatherer = this::gatherFromCheckbox
+                    field.gather(valueMap, id)
+                }
+
                 is Intbox -> valueMap[id] = field.value
                 is Doublebox -> valueMap[id] = field.value
                 is Combobox -> valueMap[id] = field.selectedItem.getValue()
-                is Checkbox -> {
-                    if (field.isChecked) {
-                        if (valueMap.containsKey(id)) {
-                            (valueMap[id] as MutableList<ModelParameter>).add(field.getValue())
-                        } else {
-                            valueMap[id] = mutableListOf<ModelParameter>()
-                            val params = valueMap[id]
-                            when (params) {
-                                is MutableList<*> -> (params as MutableList<ModelParameter>).add(field.getValue())
-                            }
-                        }
-                    }
-                }
+                is Checkbox -> gatherFromCheckbox(field, valueMap, id)
+
             }
             gatherValueFromFields(valueMap, fields.tail())
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun gatherFromCheckbox(field: Checkbox, valueMap: MutableMap<String, Any>, id: String) {
+        if (field.isChecked) {
+            if (valueMap.containsKey(id)) {
+                (valueMap[id] as MutableList<ModelParameter>).add(field.getValue())
+            } else {
+                valueMap[id] = mutableListOf<ModelParameter>()
+                val params = valueMap[id]
+                when (params) {
+                    is MutableList<*> -> (params as MutableList<ModelParameter>).add(field.getValue())
+                }
+            }
         }
     }
 }

@@ -32,15 +32,13 @@ import org.zkoss.zul.Vlayout
 /**
  * Adapter for job tracker grid
  */
-class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
-    companion object {
-        const val jobArg = "JOB"
-        val AVERAGE = ConfigurationReader.findNode("defaultValues").valueWithIdentifier("average").value
-    }
+object JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
 
-    override var fields: MutableList<FieldComponent> = mutableListOf()
+    const val jobArg = "JOB"
+    private val AVERAGE = ConfigurationReader.findNode("defaultValues").valueWithIdentifier("average").value
 
-    override fun provide(data: Job): Row {
+
+    override fun provide(data: Job): Pair<FieldComponent, Row> {
         val status = Label(data.status.name)
 
         val row = Row()
@@ -51,9 +49,7 @@ class JobValueAdapter : GridValueProvider<Job, Row>, Redirectable {
         row.appendChild(label)
         row.setValue(data)
 
-        fields.add(FieldComponent(label, status))
-
-        return row
+        return FieldComponent(label, status) to row
     }
 
     /**
