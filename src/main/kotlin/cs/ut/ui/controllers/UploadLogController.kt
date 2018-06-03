@@ -75,7 +75,7 @@ class UploadLogController : SelectorComposer<Component>(), Redirectable, UICompo
     fun processLog() {
         val runnable = Runnable {
             val tmpDir = DirectoryConfiguration.dirPath(Dir.TMP_DIR)
-            val file = File(tmpDir + media.name.replace("/", "_"))
+            val file = File(tmpDir + media.name.replace(File.separator, "_"))
             log.debug("Creating file: ${file.absolutePath}")
             file.createNewFile()
 
