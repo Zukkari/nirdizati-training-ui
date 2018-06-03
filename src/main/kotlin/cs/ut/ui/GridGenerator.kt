@@ -24,6 +24,7 @@ import org.zkoss.zul.Menupopup
 import org.zkoss.zul.Row
 import org.zkoss.zul.Rows
 import org.zkoss.zul.impl.NumberInputElement
+import java.io.File
 
 /**
  * Data class that stores grid components for easy data collection
