@@ -1,6 +1,7 @@
 package cs.ut.ui.controllers
 
 import com.lowagie.text.pdf.codec.Base64
+import cs.ut.configuration.ConfigFetcher
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.Cache
 import cs.ut.engine.JobCacheHolder
@@ -41,7 +42,7 @@ class AdminViewController : SelectorComposer<Component>(), UIComponent {
     @Wire
     private lateinit var flushCache: Button
 
-    private val configNode = ConfigurationReader.findNode("userPreferences/adminFunctionality")
+    private val configNode by ConfigFetcher("userPreferences/adminFunctionality")
 
     private val logFile: File = File(DirectoryConfiguration.dirPath(Dir.LOG_FILE))
 
