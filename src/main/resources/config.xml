@@ -75,17 +75,17 @@
         <!-- Directory cs.ut.configuration -->
         <Node Identifier="itemList">
             <Value Identifier="python">/usr/bin/python3</Value>
-            <Value Identifier="userLogDirectory">/home/ubuntu/git/nirdizati-training-ui/PredictiveMethods/logdata/</Value>
-            <Value Identifier="scriptDirectory">/home/ubuntu/git/nirdizati-training-ui/PredictiveMethods/</Value>
-            <Value Identifier="coreDir">/home/ubuntu/git/nirdizati-training-ui/PredictiveMethods/core/</Value>
-            <Value Identifier="trainDirectory">/home/ubuntu/git/nirdizati-training-ui/PredictiveMethods/core/training_params/</Value>
-            <Value Identifier="datasetDirectory">/home/ubuntu/git/nirdizati-training-ui/PredictiveMethods/core/dataset_params/</Value>
-            <Value Identifier="pklDirectory">/home/ubuntu/git/nirdizati-training-ui/PredictiveMethods/pkl/</Value>
-            <Value Identifier="ohpdir">/home/ubuntu/git/nirdizati-training-ui/PredictiveMethods/core/optimal_params/</Value>
-            <Value Identifier="detailedDir">/home/ubuntu/git/nirdizati-training-ui/PredictiveMethods/results/detailed/</Value>
-            <Value Identifier="validationDir">/home/ubuntu/git/nirdizati-training-ui/PredictiveMethods/results/validation/</Value>
-            <Value Identifier="featureDir">/home/ubuntu/git/nirdizati-training-ui/PredictiveMethods/results/feature_importance/</Value>
-            <Value Identifier="tmpDir">/home/ubuntu/git/nirdizati-training-ui/tmp/</Value>
+            <Value Identifier="userLogDirectory">/home/ubuntu/git/nirdizati-training-backend/logdata/</Value>
+            <Value Identifier="scriptDirectory">/home/ubuntu/git/nirdizati-training-backend/</Value>
+            <Value Identifier="coreDir">/home/ubuntu/git/nirdizati-training-backend/core/</Value>
+            <Value Identifier="trainDirectory">/home/ubuntu/git/nirdizati-training-backend/core/training_params/</Value>
+            <Value Identifier="datasetDirectory">/home/ubuntu/git/nirdizati-training-backend/core/dataset_params/</Value>
+            <Value Identifier="pklDirectory">/home/ubuntu/git/nirdizati-training-backend/pkl/</Value>
+            <Value Identifier="ohpdir">/home/ubuntu/git/nirdizati-training-backend/core/optimal_params/</Value>
+            <Value Identifier="detailedDir">/home/ubuntu/git/nirdizati-training-backend/results/detailed/</Value>
+            <Value Identifier="validationDir">/home/ubuntu/git/nirdizati-training-backend/results/validation/</Value>
+            <Value Identifier="featureDir">/home/ubuntu/git/nirdizati-training-backend/results/feature_importance/</Value>
+            <Value Identifier="tmpDir">/home/ubuntu/git/nirdizati-training-backend/tmp/</Value>
             <Value Identifier="logFile">/home/ubuntu/apache-tomcat-8.5.23/logs/catalina.out</Value>
         </Node>
     </Node>
