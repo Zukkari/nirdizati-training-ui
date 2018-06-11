@@ -274,7 +274,7 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>zukkari</groupId>
+                <groupId>com.github.zukkari</groupId>
                 <artifactId>sass-compile-maven-plugin</artifactId>
                 <version>1.0-SNAPSHOT</version>
                 <executions>
