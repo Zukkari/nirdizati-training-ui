@@ -124,6 +124,7 @@
             <groupId>com.github.zukkari</groupId>
             <artifactId>sass-compile-maven-plugin</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Jackson -->
