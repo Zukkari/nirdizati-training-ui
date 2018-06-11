@@ -1,5 +1,20 @@
 package cs.ut.configuration
 
+import cs.ut.logging.NirdizatiLogger
+import kotlin.reflect.KProperty
+
+class ConfigFetcher(val path: String) {
+    operator fun getValue(caller: Any, prop: KProperty<*>): ConfigNode {
+        return ConfigurationReader.findNode(path).apply {
+            log.debug("Delegating $this to caller $caller")
+        }
+    }
+
+    companion object {
+        private val log = NirdizatiLogger.getLogger(ConfigFetcher::class)
+    }
+}
+
 /**
  * Helper object that reads traverses the configuration tree
  *

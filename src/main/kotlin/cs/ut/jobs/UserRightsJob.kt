@@ -1,6 +1,6 @@
 package cs.ut.jobs
 
-import cs.ut.configuration.ConfigurationReader
+import cs.ut.configuration.ConfigFetcher
 import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
@@ -32,7 +32,7 @@ class UserRightsJob(private val f: File) : Job() {
 
 
     companion object {
-        private val configNode = ConfigurationReader.findNode("userPreferences")
+        private val configNode by ConfigFetcher("userPreferences")
 
         val log = NirdizatiLogger.getLogger(UserRightsJob::class)
 

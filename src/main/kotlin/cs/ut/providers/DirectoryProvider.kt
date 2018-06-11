@@ -1,6 +1,6 @@
 package cs.ut.providers
 
-import cs.ut.configuration.ConfigurationReader
+import cs.ut.configuration.ConfigFetcher
 
 /**
  * Object that provides easy access to configured directories
@@ -8,7 +8,7 @@ import cs.ut.configuration.ConfigurationReader
 object DirectoryConfiguration {
 
     private const val NODE_NAME = "directories"
-    private val configNode = ConfigurationReader.findNode(NODE_NAME)
+    private val configNode by ConfigFetcher(NODE_NAME)
 
     private val dirs: Map<String, String>
 

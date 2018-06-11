@@ -1,6 +1,6 @@
 package cs.ut.jobs
 
-import cs.ut.configuration.ConfigurationReader
+import cs.ut.configuration.ConfigFetcher
 import cs.ut.exceptions.Left
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.exceptions.Right
@@ -26,7 +26,7 @@ class SimulationJob(
 ) : Job(id) {
 
     private var process: Process? = null
-    private val configNode = ConfigurationReader.findNode("userPreferences")
+    private val configNode by ConfigFetcher("userPreferences")
 
     val date: Date by lazy { Date.from(Instant.parse(startTime)) }
 

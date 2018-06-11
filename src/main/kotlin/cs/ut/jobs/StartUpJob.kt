@@ -1,6 +1,6 @@
 package cs.ut.jobs
 
-import cs.ut.configuration.ConfigurationReader
+import cs.ut.configuration.ConfigFetcher
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
@@ -10,7 +10,7 @@ import java.io.File
  * Verifies that directories specified in configuration exist if not - creates them.
  */
 class StartUpJob : Job() {
-    private val configNode = ConfigurationReader.findNode("userPreferences")
+    private val configNode by ConfigFetcher("userPreferences")
 
     override fun execute() {
         val start = System.currentTimeMillis()
