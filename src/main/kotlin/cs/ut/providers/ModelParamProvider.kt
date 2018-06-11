@@ -1,5 +1,6 @@
 package cs.ut.providers
 
+import cs.ut.configuration.ConfigFetcher
 import cs.ut.configuration.ConfigNode
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.ModelParameter
@@ -14,7 +15,7 @@ import cs.ut.util.Field
  * @see ConfigurationReader
  */
 class ModelParamProvider {
-    private val config = ConfigurationReader.findNode("models")
+    private val config by ConfigFetcher("models")
 
     var properties: Map<String, List<ModelParameter>> = mutableMapOf()
 

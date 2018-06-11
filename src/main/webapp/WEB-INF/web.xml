@@ -4,8 +4,27 @@
          xmlns="http://java.sun.com/xml/ns/j2ee"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-    <description><![CDATA[My ZK Application]]></description>
+    <description><![CDATA[Nirdizati Training UI]]></description>
     <display-name>nirdizati-training-ui</display-name>
+
+    <!--<security-constraint>
+        <web-resource-collection>
+            <web-resource-name>HTTPSOnly</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>HTTPSOrHTTP</web-resource-name>
+            <url-pattern>*.ico</url-pattern>
+            <url-pattern>/css/*</url-pattern>
+            <url-pattern>/js/*</url-pattern>
+            <url-pattern>/images/*</url-pattern>
+        </web-resource-collection>
+    </security-constraint> -->
 
     <!-- //// -->
     <!-- ZK -->
