@@ -16,11 +16,11 @@ class CheckBoxGroup(mode: Mode) : ComponentGroup<Checkbox>() {
         validator = when (mode) {
             Mode.ALL -> { items ->
                 items.asSequence()
-                        .any(Checkbox::getValue)
+                        .any(Checkbox::isChecked)
             }
             Mode.ANY -> { items ->
                 items.asSequence()
-                        .all(Checkbox::getValue)
+                        .all(Checkbox::isChecked)
             }
         }
 
