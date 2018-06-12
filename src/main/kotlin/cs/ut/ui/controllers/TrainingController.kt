@@ -1,7 +1,7 @@
 package cs.ut.ui.controllers
 
 import com.google.common.html.HtmlEscapers
-import cs.ut.configuration.ConfigurationReader
+import cs.ut.configuration.ConfigFetcher
 import cs.ut.engine.JobManager
 import cs.ut.engine.LogManager
 import cs.ut.engine.item.ModelParameter
@@ -53,7 +53,7 @@ class TrainingController : SelectorComposer<Component>(), Redirectable, UICompon
         const val PREDICTION = "predictiontype"
 
 
-        private val configNode = ConfigurationReader.findNode("defaultValues")
+        private val configNode by ConfigFetcher("defaultValues")
         val DEFAULT: Double = configNode.values.first { it.identifier == "minimum" }.value()
         val AVERAGE = configNode.values.first { it.identifier == "average" }.value
 

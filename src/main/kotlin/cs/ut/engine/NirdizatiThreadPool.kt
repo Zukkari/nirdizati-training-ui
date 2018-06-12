@@ -1,5 +1,6 @@
 package cs.ut.engine
 
+import cs.ut.configuration.ConfigFetcher
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.jobs.Job
 import cs.ut.logging.NirdizatiLogger
@@ -25,7 +26,7 @@ object NirdizatiThreadPool : ServletContextListener {
 
     internal lateinit var threadPool: ExecutorService
 
-    internal val configNode = ConfigurationReader.findNode("threadPool")
+    internal val configNode by ConfigFetcher("threadPool")
 
     /**
      * Execute a runnable in this thread pool

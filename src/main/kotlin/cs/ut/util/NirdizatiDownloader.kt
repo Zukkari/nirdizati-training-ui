@@ -63,7 +63,7 @@ class NirdizatiDownloader(private val dir: Dir, private val resourceId: String) 
                     when (featureFiles) {
                         is Right -> {
                             featureFiles.result.forEach {
-                                Files.copy(it.toPath(), fs.getPath(featureImportanceDir + "/" + it.name), StandardCopyOption.REPLACE_EXISTING)
+                                Files.copy(it.toPath(), fs.getPath(featureImportanceDir + File.separator + it.name), StandardCopyOption.REPLACE_EXISTING)
                             }
                         }
 
@@ -73,7 +73,7 @@ class NirdizatiDownloader(private val dir: Dir, private val resourceId: String) 
                     when (detailedFile) {
                         is Right -> Files.copy(
                                 detailedFile.result.toPath(),
-                                fs.getPath(detailedDir + "/" + detailedFile.result.name),
+                                fs.getPath(detailedDir + File.separator + detailedFile.result.name),
                                 StandardCopyOption.REPLACE_EXISTING)
 
                         is Left -> log.error("Error occurred when fetching detailed file", detailedFile.error)
@@ -82,7 +82,7 @@ class NirdizatiDownloader(private val dir: Dir, private val resourceId: String) 
                     when (accuracyFile) {
                         is Right -> Files.copy(
                                 accuracyFile.result.toPath(),
-                                fs.getPath(accuracyDir + "/" + accuracyFile.result.name),
+                                fs.getPath(accuracyDir + File.separator + accuracyFile.result.name),
                                 StandardCopyOption.REPLACE_EXISTING)
 
                         is Left -> log.error("Error occurred when fetching accuracy file", accuracyFile.error)

@@ -1,5 +1,6 @@
 package cs.ut.ui.adapters
 
+import cs.ut.configuration.ConfigFetcher
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.Property
 import cs.ut.jobs.Job
@@ -109,8 +110,7 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
             }.open(a, "after_end ")
         })
         a.addEventListener(Events.ON_MOUSE_OUT, { _ ->
-            a.desktop.components.
-                    asSequence()
+            a.desktop.components.asSequence()
                     .filter { it is Popup }
                     .forEach { (it as Popup).close() }
         })
@@ -141,7 +141,7 @@ class ValidationViewAdapter(private val parentController: ValidationController?,
     companion object {
         const val PROP_POPUP = "propertyPopUpMenu"
         val timeFormat = SimpleDateFormat(ConfigurationReader.findNode("grids").valueWithIdentifier(GridColumns.TIMESTAMP.value).value)
-        val icons = ConfigurationReader.findNode("iconClass")
+        val icons by ConfigFetcher("iconClass")
         val decimalFormat = ConfigurationReader.findNode("grids").valueWithIdentifier("decimalFormat").value
     }
 }

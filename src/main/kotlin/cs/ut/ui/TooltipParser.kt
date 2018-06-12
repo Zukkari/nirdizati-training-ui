@@ -1,6 +1,6 @@
 package cs.ut.ui
 
-import cs.ut.configuration.ConfigurationReader
+import cs.ut.configuration.ConfigFetcher
 import org.zkoss.zul.Html
 import org.zkoss.zul.Popup
 
@@ -8,7 +8,7 @@ import org.zkoss.zul.Popup
  * Parses tooltips from configuration into objects
  */
 class TooltipParser {
-    private val configNode = ConfigurationReader.findNode("tooltip/tooltips")
+    private val configNode by ConfigFetcher("tooltip/tooltips")
 
     /**
      * Read tooltip from configuration with given id
