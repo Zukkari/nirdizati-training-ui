@@ -32,6 +32,8 @@ Currently application building process is reliant on a [plugin](https://github.c
 
 The main configuration file is ```config.xml``` found in resources folder of the project. It contains various settings that can be changed when running the application. Most notable of those are directories that will be used by the application (found under the node ```directories``` node). Those should be configured to be existing paths on the filesystem, otherwise application will not be able to start up.
 
+Note that the project has only been built using Java 8 and building is not tested against Java 9 and beyond.
+
 ### Building
 
 Application is built using [Maven](https://maven.apache.org/) build system. Once Maven is installed on your system, you can package the project into a ```war``` package by running ```mvn package``` inside the root directory of the project. Please note that the application is relying on ZK EE repository, which requires an access key.
