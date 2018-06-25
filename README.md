@@ -18,5 +18,27 @@ Nirdizati Training component provides possibility for user to upload his own log
 
 Goal of this project is to remake UI for Nirdizati training component. As a result, Nirdizati Training UI will be remade into more user-friendly and intuitive system.
 
+## About this project
+
+This project contains UI of predictive monitoring web application that can be found [here](https://training.nirdizati.org/)
+
+## Setting up
+
+### Prerequisites
+
+Currently application building process is reliant on a [plugin](https://github.com/Zukkari/SASS-compile-maven-plugin) that compiles SASS to CSS. Once this plugin is installed in your local maven repository, you can configure the application.
+
+### Configuration
+
+The main configuration file is ```config.xml``` found in resources folder of the project. It contains various settings that can be changed when running the application. Most notable of those are directories that will be used by the application (found under the node ```directories``` node). Those should be configured to be existing paths on the filesystem, otherwise application will not be able to start up.
+
+### Building
+
+Application is built using [Maven](https://maven.apache.org/) build system. Once Maven is installed on your system, you can package the project into a ```war``` package by running ```mvn package``` inside the root directory of the project. Please note that the application is relying on ZK EE repository, which requires an access key.
+
+### Deploying
+
+Once application is built it can be deployed to a regular Java servlet container. We are running this on Tomcat 8.5, so other applications are not tested. 
+
 ## Student project contest info
 Poster repository can be found [here](https://github.com/Zukkari/nirdizati-poster).
