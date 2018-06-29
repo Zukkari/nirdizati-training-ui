@@ -80,12 +80,12 @@ object JSONService {
                 targetParam)
 
         config.info = JobInformation(
-                info[JSONKeys.OWNER.value] as String,
-                info[JSONKeys.LOG_FILE.value] as String,
-                info[JSONKeys.START.value] as String)
+                info[JSONKeys.OWNER.value] as? String ?: return Left(NullPointerException()),
+                info[JSONKeys.LOG_FILE.value] as? String?: return Left(NullPointerException()),
+                info[JSONKeys.START.value] as? String?: return Left(NullPointerException()))
 
         config.evaluation = Report().apply {
-            this.metric = (evaluation[JSONKeys.METRIC.value] ?: "") as String
+            this.metric = (evaluation[JSONKeys.METRIC.value] ?: "") as? String ?: return Left(NullPointerException())
             this.value = evaluation[JSONKeys.VALUE.value] as? Double ?: -1.0
         }
 
