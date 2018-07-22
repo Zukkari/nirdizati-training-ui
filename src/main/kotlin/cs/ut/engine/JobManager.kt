@@ -8,7 +8,7 @@ import cs.ut.engine.events.findCallback
 import cs.ut.jobs.Job
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
-import cs.ut.logging.NirdizatiLogger
+import org.apache.logging.log4j.LogManager
 import java.lang.ref.WeakReference
 import java.util.concurrent.Future
 
@@ -16,7 +16,7 @@ import java.util.concurrent.Future
  * Manages jobs
  */
 object JobManager {
-    val log = NirdizatiLogger.getLogger(JobManager::class)
+    val log = LogManager.getLogger(JobManager::class.java)!!
 
     val cache: JobCacheHolder = Cache.jobCache
     private var subscribers: List<WeakReference<Any>> = listOf()

@@ -3,12 +3,7 @@ package cs.ut.engine
 import cs.ut.configuration.ConfigFetcher
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.jobs.Job
-import cs.ut.logging.NirdizatiLogger
-import org.apache.log4j.ConsoleAppender
-import org.apache.log4j.FileAppender
-import org.apache.log4j.Level
-import org.apache.log4j.Logger
-import org.apache.log4j.PatternLayout
+import org.apache.logging.log4j.LogManager
 import java.util.Timer
 import java.util.TimerTask
 import java.util.concurrent.ExecutorService
@@ -22,7 +17,7 @@ import javax.servlet.annotation.WebListener
  * Thread pool that executes jobs for Nirdizati Training
  */
 object NirdizatiThreadPool : ServletContextListener {
-    private val log = NirdizatiLogger.getLogger(NirdizatiLogger::class)
+    private val log = LogManager.getLogger(NirdizatiThreadPool::class.java)
 
     internal lateinit var threadPool: ExecutorService
 
@@ -56,16 +51,14 @@ object NirdizatiThreadPool : ServletContextListener {
 
 @WebListener
 class NirdizatiContextInitializer : ServletContextListener {
-    private val log = NirdizatiLogger.getLogger(NirdizatiContextInitializer::class)
+    private val log = LogManager.getLogger(NirdizatiContextInitializer::class.java)
     private lateinit var timer: Timer
 
     override fun contextInitialized(sce: ServletContextEvent?) {
-        configureLogger()
-
         log.debug("Initializing thread pool")
         val size: Int = NirdizatiThreadPool.configNode.valueWithIdentifier("capacity").value()
         log.debug("Thread pool size: $size")
-        NirdizatiThreadPool.threadPool = Executors.newFixedThreadPool(size, { runnable -> Thread(runnable) })
+        NirdizatiThreadPool.threadPool = Executors.newFixedThreadPool(size) { runnable -> Thread(runnable) }
 
         NirdizatiThreadPool.runStartUpRoutine()
         log.debug("Finished thread pool initialization")
@@ -91,31 +84,5 @@ class NirdizatiContextInitializer : ServletContextListener {
         log.debug("Shutting down thread pool")
         NirdizatiThreadPool.threadPool.shutdown()
         log.debug("Thread pool successfully stopped")
-    }
-
-    /**
-     * Configures logger and Enables appenders for Log4j
-     */
-    private fun configureLogger() {
-        Logger.getRootLogger().level = Level.DEBUG
-        Logger.getRootLogger().removeAllAppenders()
-        Logger.getRootLogger().additivity = false
-
-        val ca = ConsoleAppender()
-        ca.layout = PatternLayout("<%d{ISO8601}> <%p> <%F:%L> <%m>%n")
-        ca.threshold = Level.DEBUG
-        ca.activateOptions()
-
-        Logger.getRootLogger().addAppender(ca)
-
-        val fileAppender = FileAppender()
-        fileAppender.layout = PatternLayout("<%d{ISO8601}> <%p> <%F:%L> <%m>%n")
-        fileAppender.name = "nirdizati_ui_log.log"
-        fileAppender.file = "nirdizati_ui_log.log"
-        fileAppender.threshold = Level.DEBUG
-        fileAppender.append = true
-        fileAppender.activateOptions()
-
-        Logger.getRootLogger().addAppender(fileAppender)
     }
 }

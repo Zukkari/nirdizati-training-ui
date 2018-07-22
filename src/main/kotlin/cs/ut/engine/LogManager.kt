@@ -7,7 +7,6 @@ import cs.ut.exceptions.Left
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.exceptions.Right
 import cs.ut.jobs.SimulationJob
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
 import cs.ut.util.Node
@@ -15,12 +14,13 @@ import org.apache.commons.io.FilenameUtils
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
+import org.apache.logging.log4j.LogManager as Logger
 
 /**
  * Responsible for communication between file system and managing user log files
  */
 object LogManager {
-    private val log = NirdizatiLogger.getLogger(LogManager::class)
+    private val log = Logger.getLogger(LogManager::class.java)
 
     private const val REGRESSION = "_regr"
     private const val CLASSIFICATION = "_class"

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import cs.ut.exceptions.Either
 import cs.ut.exceptions.Left
 import cs.ut.exceptions.Right
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
+import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.io.FileWriter
 
@@ -58,6 +58,6 @@ class JSONHandler {
     fun convert2String(any: Any): String = mapper.writeValueAsString(any)
 
     companion object {
-        val log = NirdizatiLogger.getLogger(JSONHandler::class)
+        val log = LogManager.getLogger(JSONHandler::class)
     }
 }

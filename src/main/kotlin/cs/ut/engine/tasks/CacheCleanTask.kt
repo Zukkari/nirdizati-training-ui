@@ -2,7 +2,7 @@ package cs.ut.engine.tasks
 
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.Cache
-import cs.ut.logging.NirdizatiLogger
+import org.apache.logging.log4j.LogManager
 import java.util.TimerTask
 import kotlin.system.measureTimeMillis
 
@@ -31,7 +31,7 @@ class CacheCleanTask : TimerTask() {
     }
 
     companion object {
-        private val log = NirdizatiLogger.getLogger(CacheCleanTask::class)
+        private val log = LogManager.getLogger(CacheCleanTask::class)
         private val timeToLive: Long =
                 ConfigurationReader.findNode("tasks/CacheCleanTask").valueWithIdentifier("timeToLive").value()
     }

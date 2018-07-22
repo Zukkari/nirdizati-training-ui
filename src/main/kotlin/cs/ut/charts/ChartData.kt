@@ -7,15 +7,15 @@ import cs.ut.exceptions.Left
 import cs.ut.exceptions.Right
 import cs.ut.jobs.SimulationJob
 import cs.ut.json.JSONHandler
-import cs.ut.logging.NirdizatiLogger
 import java.io.File
+import org.apache.logging.log4j.LogManager as Logger
 
 /**
  * Class that acts as a service layer between controllers and filesystem data representation.
  * This is used to provide structured data to controllers based on job.
  */
 class ChartGenerator(val job: SimulationJob) {
-    private val log = NirdizatiLogger.getLogger(ChartGenerator::class)
+    private val log = Logger.getLogger(ChartGenerator::class.java)
     private val chartCache = Cache.chartCache[job.owner]
     private val handler = JSONHandler()
 

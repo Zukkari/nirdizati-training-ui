@@ -1,0 +1,42 @@
+Configuration:
+  status: debug
+  name: NirdizatiLoggerConfig
+  packages: cs.ut.logging
+  properties:
+    property:
+      name: fileName
+      value: nirdizati.log
+  thresholdFilter:
+    level: debug
+  appenders:
+    Console:
+      name: STDOUT
+      PatternLayout:
+        Pattern: "<%d{ISO8601}> <%p> <%F:%L> <%connId %m>%n"
+    File:
+      name: File
+      fileName: ${fileName}
+      immediateFlush: false
+      PatternLayout:
+        Pattern: "<%d{ISO8601}> <%p> <%F:%L> <%connId %m>%n"
+
+  Loggers:
+    logger:
+      -
+        name: NirdizatiLogger1
+        level: debug
+        additivity: false
+        AppenderRef:
+          ref: STDOUT
+      -
+        name: NirdizatiLogger2
+        level: debug
+        additivity: false
+        AppenderRef:
+          ref: File
+
+    Root:
+      level: debug
+      includeLocation: true
+      AppenderRef:
+        ref: STDOUT

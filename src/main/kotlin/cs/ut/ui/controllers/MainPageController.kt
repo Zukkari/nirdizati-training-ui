@@ -2,13 +2,12 @@ package cs.ut.ui.controllers
 
 import cs.ut.engine.item.ClientInfo
 import cs.ut.jobs.Job
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.Navigator
 import cs.ut.ui.NirdizatiGrid
-import cs.ut.ui.UIComponent
 import cs.ut.ui.controllers.JobTrackerController.Companion.GRID_ID
 import cs.ut.util.Cookies
 import cs.ut.util.NAVBAR
+import org.apache.logging.log4j.LogManager
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.Session
@@ -25,8 +24,8 @@ import java.util.NoSuchElementException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class MainPageController : SelectorComposer<Component>(), Redirectable, UIComponent {
-    val log = NirdizatiLogger.getLogger(MainPageController::class, getSessionId())
+class MainPageController : SelectorComposer<Component>(), Redirectable {
+    val log = LogManager.getLogger(MainPageController::class.java)!!
     private var clientInformation: Map<Session, ClientInfo> = mapOf()
 
     @Wire
@@ -40,10 +39,10 @@ class MainPageController : SelectorComposer<Component>(), Redirectable, UICompon
     override fun doAfterCompose(comp: Component?) {
         super.doAfterCompose(comp)
 
-        mainLayout.addEventListener(Events.ON_BOOKMARK_CHANGE, { event ->
+        mainLayout.addEventListener(Events.ON_BOOKMARK_CHANGE) { event ->
             event as BookmarkEvent
             navigator.resolveRoute(event.bookmark)
-        })
+        }
     }
 
     @Listen("onClientInfo = #mainLayout")

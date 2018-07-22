@@ -1,10 +1,9 @@
 package cs.ut.ui
 
 import cs.ut.engine.JobManager
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.controllers.Redirectable
-import cs.ut.util.Cookies
 import cs.ut.util.Page
+import org.apache.logging.log4j.LogManager
 import org.zkoss.zk.ui.Executions
 
 class Navigator : Redirectable {
@@ -80,7 +79,7 @@ class Navigator : Redirectable {
     }
 
     companion object {
-        private val log = NirdizatiLogger.getLogger(Navigator::class, Cookies.getCookieKey(Executions.getCurrent().nativeRequest))
+        private val log = LogManager.getLogger(Navigator::class.java)
 
         fun createParameters(vararg p: Pair<String, String>): String = p.joinToString(separator = "&") { "${it.first}=${it.second}" }
     }

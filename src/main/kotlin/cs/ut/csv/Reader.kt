@@ -5,10 +5,10 @@ import cs.ut.exceptions.Either
 import cs.ut.exceptions.Left
 import cs.ut.exceptions.NirdizatiRuntimeException
 import cs.ut.exceptions.Right
-import cs.ut.logging.NirdizatiLogger
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
+import org.apache.logging.log4j.LogManager
 import java.io.File
 
 data class Reader(val dataSource: DataSource<String>) {
@@ -140,7 +140,7 @@ data class Reader(val dataSource: DataSource<String>) {
     }
 
     companion object {
-        private val log = NirdizatiLogger.getLogger(Reader::class)
+        private val log = LogManager.getLogger(Reader::class.java)
         private val escapeNode = ConfigurationReader.findNode("csv/escape")
 
         private val configNode = ConfigurationReader.findNode("csv")

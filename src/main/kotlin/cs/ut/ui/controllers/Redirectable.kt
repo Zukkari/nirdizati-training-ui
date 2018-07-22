@@ -2,8 +2,10 @@ package cs.ut.ui.controllers
 
 import cs.ut.configuration.ConfigNode
 import cs.ut.configuration.ConfigurationReader
+import cs.ut.util.Cookies
 import cs.ut.util.DEST
 import cs.ut.util.NAVBAR
+import org.apache.logging.log4j.ThreadContext
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Desktop
 import org.zkoss.zk.ui.Executions
@@ -27,6 +29,13 @@ interface Redirectable {
      * @param page        - caller page where Include element should be looked for.
      */
     fun setContent(dest: String, page: Page, params: String = "") {
+        fun setThreadContext() {
+            val currExecution = Executions.getCurrent() ?: return
+            ThreadContext.put("${Thread.currentThread().name}-connId", Cookies.getCookieKey(currExecution.nativeRequest))
+
+        }
+
+        setThreadContext()
         Executions.getCurrent().desktop.setBookmark(dest + (if (params.isNotBlank()) "?" else "") + params, false)
         page.title = "${Labels.getLabel("header.$dest")} - Nirdizati"
         val include = Selectors.iterable(page, "#contentInclude").iterator().next() as Include

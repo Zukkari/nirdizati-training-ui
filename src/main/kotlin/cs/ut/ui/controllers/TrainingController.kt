@@ -11,9 +11,7 @@ import cs.ut.jobs.Job
 import cs.ut.jobs.SimulationJob
 import cs.ut.json.JSONService
 import cs.ut.json.TrainingConfiguration
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.ModelParamProvider
-import cs.ut.ui.UIComponent
 import cs.ut.ui.controllers.modal.ParameterModalController.Companion.FILE
 import cs.ut.ui.controllers.modal.ParameterModalController.Companion.IS_RECREATION
 import cs.ut.ui.controllers.training.AdvancedModeController
@@ -42,9 +40,11 @@ import org.zkoss.zul.Radiogroup
 import org.zkoss.zul.Vlayout
 import org.zkoss.zul.Window
 import java.io.File
+import org.apache.logging.log4j.LogManager as Logger
 
-class TrainingController : SelectorComposer<Component>(), Redirectable, UIComponent {
-    private val log = NirdizatiLogger.getLogger(TrainingController::class, getSessionId())
+
+class TrainingController : SelectorComposer<Component>(), Redirectable {
+    private val log = Logger.getLogger(TrainingController::class.java)
 
     companion object {
         const val LEARNER = "learner"

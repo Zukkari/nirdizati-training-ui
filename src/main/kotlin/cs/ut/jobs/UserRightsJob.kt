@@ -1,9 +1,9 @@
 package cs.ut.jobs
 
 import cs.ut.configuration.ConfigFetcher
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
+import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.nio.charset.Charset
 
@@ -34,7 +34,7 @@ class UserRightsJob(private val f: File) : Job() {
     companion object {
         private val configNode by ConfigFetcher("userPreferences")
 
-        val log = NirdizatiLogger.getLogger(UserRightsJob::class)
+        val log = LogManager.getLogger(UserRightsJob::class)
 
         /**
          * Update user rights and ownership for file

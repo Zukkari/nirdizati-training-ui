@@ -1,7 +1,7 @@
 package cs.ut.engine
 
-import cs.ut.logging.NirdizatiLogger
 import org.apache.commons.codec.binary.Hex
+import org.apache.logging.log4j.LogManager
 import java.nio.charset.Charset
 import java.security.MessageDigest
 import java.util.Calendar
@@ -11,7 +11,7 @@ import java.util.Calendar
  * if id is going to be generated at the same time (which is unlikely but possible)
  */
 object IdProvider {
-    private val log= NirdizatiLogger.getLogger(IdProvider::class)
+    private val log= LogManager.getLogger(IdProvider::class)
 
     private val digest = MessageDigest.getInstance("MD5")!!
     private var previous: String = ""

@@ -5,7 +5,7 @@ import cs.ut.configuration.ConfigurationReader
 import cs.ut.configuration.Value
 import cs.ut.engine.item.Case
 import cs.ut.exceptions.NirdizatiRuntimeException
-import cs.ut.logging.NirdizatiLogger
+import org.apache.logging.log4j.LogManager
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
@@ -15,7 +15,7 @@ import java.util.HashMap
 import java.util.LinkedHashMap
 
 class CsvReader(private val f: File) {
-    private val log = NirdizatiLogger.getLogger(CsvReader::class)
+    private val log = LogManager.getLogger(CsvReader::class.java)
 
     private val splitter: Regex
     private val emptyValues: List<String>

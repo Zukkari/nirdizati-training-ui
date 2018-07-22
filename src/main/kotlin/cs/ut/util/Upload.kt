@@ -1,7 +1,7 @@
 package cs.ut.util
 
 import cs.ut.configuration.ConfigurationReader
-import cs.ut.logging.NirdizatiLogger
+import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.io.FileOutputStream
 import java.io.FileWriter
@@ -43,7 +43,7 @@ class NirdizatiReader(private val reader: Reader) : UploadItem {
     }
 
     companion object {
-        private val log = NirdizatiLogger.getLogger(NirdizatiReader::class)
+        private val log = LogManager.getLogger(NirdizatiReader::class)
     }
 
 }
@@ -72,7 +72,6 @@ class NirdizatiInputStream(private val inputStream: InputStream) : UploadItem {
     }
 
     companion object {
-        private val log = NirdizatiLogger.getLogger(NirdizatiInputStream::class)
-        private const val NULL: Byte = 0x00
+        private val log = LogManager.getLogger(NirdizatiInputStream::class)
     }
 }
