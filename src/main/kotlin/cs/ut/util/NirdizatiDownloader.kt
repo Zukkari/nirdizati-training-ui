@@ -6,7 +6,6 @@ import cs.ut.exceptions.Either
 import cs.ut.exceptions.Left
 import cs.ut.exceptions.Right
 import cs.ut.jobs.SimulationJob
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
 import org.zkoss.zul.Filedownload
@@ -16,6 +15,8 @@ import java.net.URI
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import org.apache.logging.log4j.LogManager as Logger
+
 
 class NirdizatiDownloader(private val dir: Dir, private val resourceId: String) {
     init {
@@ -31,7 +32,7 @@ class NirdizatiDownloader(private val dir: Dir, private val resourceId: String) 
     }
 
     companion object {
-        private val log = NirdizatiLogger.getLogger(NirdizatiDownloader::class)
+        private val log = Logger.getLogger(NirdizatiDownloader::class)
         private val configNode = ConfigurationReader.findNode("downloads")
 
 

@@ -7,7 +7,6 @@ import cs.ut.engine.LogManager
 import cs.ut.exceptions.Left
 import cs.ut.exceptions.Right
 import cs.ut.jobs.SimulationJob
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
 import java.io.File
@@ -15,6 +14,7 @@ import java.time.Instant
 import java.util.Date
 import java.util.TimerTask
 import kotlin.system.measureTimeMillis
+import org.apache.logging.log4j.LogManager as Logger
 
 class DisposalTask : TimerTask() {
     override fun run() {
@@ -93,7 +93,7 @@ class DisposalTask : TimerTask() {
     }
 
     companion object {
-        private val log = NirdizatiLogger.getLogger(DisposalTask::class)
+        private val log = Logger.getLogger(DisposalTask::class)
         private val age: Long =
                 ConfigurationReader.findNode("tasks/DisposalTask").valueWithIdentifier("age").value()
 

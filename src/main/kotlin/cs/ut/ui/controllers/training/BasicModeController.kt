@@ -4,15 +4,14 @@ import cs.ut.engine.item.ModelParameter
 import cs.ut.exceptions.Either
 import cs.ut.exceptions.Right
 import cs.ut.json.TrainingConfiguration
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.ModelParamProvider
-import cs.ut.ui.UIComponent
+import org.apache.logging.log4j.LogManager
 import org.zkoss.zk.ui.Component
 import org.zkoss.zul.Vlayout
 
 class BasicModeController(gridContainer: Vlayout, private val logName: String) : AbstractModeController(gridContainer),
-        ModeController, UIComponent {
-    private val log = NirdizatiLogger.getLogger(BasicModeController::class, getSessionId())
+        ModeController {
+    private val log = LogManager.getLogger(BasicModeController::class.java)
     private val optimized: Either<Exception, TrainingConfiguration> = ModelParamProvider.getOptimizedParameters(logName)
 
     init {

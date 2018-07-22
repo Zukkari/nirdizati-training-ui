@@ -7,7 +7,7 @@ import cs.ut.exceptions.Left
 import cs.ut.exceptions.ProcessErrorException
 import cs.ut.exceptions.Right
 import cs.ut.exceptions.perform
-import cs.ut.logging.NirdizatiLogger
+import org.apache.logging.log4j.LogManager
 import java.time.format.DateTimeFormatter
 import java.util.Date
 
@@ -27,7 +27,7 @@ enum class JobStatus {
  * Abstract class that represents job structure
  */
 abstract class Job protected constructor(generatedId: String = "") : Runnable {
-    val log = NirdizatiLogger.getLogger(Job::class)
+    val log = LogManager.getLogger(Job::class)!!
 
     val id: String = if (generatedId.isBlank()) IdProvider.getNextId() else generatedId
 

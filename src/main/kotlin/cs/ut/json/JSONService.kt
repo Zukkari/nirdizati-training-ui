@@ -4,13 +4,13 @@ import cs.ut.engine.item.ModelParameter
 import cs.ut.exceptions.Either
 import cs.ut.exceptions.Left
 import cs.ut.exceptions.Right
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
 import cs.ut.providers.ModelParamProvider
 import cs.ut.util.Field
+import org.apache.logging.log4j.LogManager
 
 object JSONService {
-    private val log = NirdizatiLogger.getLogger(JSONService::class)
+    private val log = LogManager.getLogger(JSONService::class)
     private val handler = JSONHandler()
 
     fun getTrainingData(id: String) = handler.fromFile<TrainingData>(id, Dir.DATA_DIR)

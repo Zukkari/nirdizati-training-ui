@@ -4,7 +4,6 @@ import cs.ut.configuration.ConfigNode
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.item.ModelParameter
 import cs.ut.engine.item.Property
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.components.CheckBoxGroup
 import cs.ut.ui.components.ComponentGroup
 import cs.ut.ui.context.NirdizatiContextMenu.Companion.COMPONENT_VALUE
@@ -12,6 +11,7 @@ import cs.ut.util.COMP_ID
 import cs.ut.util.GridColumns
 import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.PROPERTY
+import org.apache.logging.log4j.LogManager
 import org.zkoss.zk.ui.Component
 import org.zkoss.zul.Checkbox
 import org.zkoss.zul.Column
@@ -24,7 +24,7 @@ import org.zkoss.zul.Menupopup
 import org.zkoss.zul.Row
 import org.zkoss.zul.Rows
 import org.zkoss.zul.impl.NumberInputElement
-import java.io.File
+
 
 /**
  * Data class that stores grid components for easy data collection
@@ -34,8 +34,8 @@ data class FieldComponent(val label: Component, val control: Any)
 /**
  * Custom ZK grid implementation that allows to generate grid with custom row providers
  */
-class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, private val namespace: String = "") : Grid(), UIComponent {
-    private val log = NirdizatiLogger.getLogger(NirdizatiGrid::class, getSessionId())
+class NirdizatiGrid<in T>(private val provider: GridValueProvider<T, Row>, private val namespace: String = "") : Grid() {
+    private val log = LogManager.getLogger(NirdizatiGrid::class.java)
     private val configNode = if (namespace.isNotBlank()) ConfigurationReader.findNode("grids/$namespace") else ConfigNode()
     var contextMenu: Menupopup? = null
 

@@ -5,7 +5,6 @@ import cs.ut.charts.ChartGenerator
 import cs.ut.charts.MAE
 import cs.ut.engine.JobManager
 import cs.ut.jobs.SimulationJob
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.adapters.ComparisonAdapter
 import cs.ut.ui.adapters.JobValueAdapter
 import cs.ut.ui.adapters.ValidationViewAdapter
@@ -13,6 +12,7 @@ import cs.ut.ui.controllers.Redirectable
 import cs.ut.util.NirdizatiDownloader
 import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.Page
+import org.apache.logging.log4j.LogManager
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.Event
@@ -33,7 +33,7 @@ import org.zkoss.zul.Rows
 import org.zkoss.zul.Vbox
 
 class SingleJobValidationController : SelectorComposer<Component>(), Redirectable {
-    private val log = NirdizatiLogger.getLogger(SingleJobValidationController::class)
+    private val log = LogManager.getLogger(SingleJobValidationController::class)
     private lateinit var job: SimulationJob
     private lateinit var charts: Map<String, List<Chart>>
 
@@ -130,11 +130,11 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
         cell.align = "center"
         cell.valign = "center"
 
-        cell.addEventListener(Events.ON_CLICK, { _ ->
+        cell.addEventListener(Events.ON_CLICK) { _ ->
             selectionRows.getChildren<Row>().first().getChildren<Cell>().forEach { it.sclass = "val-cell" }
             cell.sclass = "val-cell selected-option"
             currentlySelected = entry.key
-        })
+        }
 
         cell.addEventListener(
                 Events.ON_CLICK,
@@ -224,15 +224,15 @@ class SingleJobValidationController : SelectorComposer<Component>(), Redirectabl
                     }
 
             comboBox.addEventListener(
-                    Events.ON_SELECT,
-                    { e ->
-                        (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).apply {
-                            accuracyMode = this.name
-                            this.render()
-                            currentChart = this
-                            addDataSets()
-                        }
-                    })
+                    Events.ON_SELECT
+            ) { e ->
+                (((e as SelectEvent<*, *>).selectedItems.first() as Comboitem).getValue() as Chart).apply {
+                    accuracyMode = this.name
+                    this.render()
+                    currentChart = this
+                    addDataSets()
+                }
+            }
             comboLayout.appendChild(comboBox)
             setVisibility()
         }

@@ -1,14 +1,13 @@
 package cs.ut.ui.controllers
 
 import cs.ut.configuration.ConfigurationReader
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
-import cs.ut.ui.UIComponent
 import cs.ut.ui.controllers.modal.ParameterModalController.Companion.FILE
 import cs.ut.util.NirdizatiInputStream
 import cs.ut.util.NirdizatiReader
 import org.apache.commons.io.FilenameUtils
+import org.apache.logging.log4j.LogManager
 import org.zkoss.util.media.Media
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
@@ -23,8 +22,8 @@ import org.zkoss.zul.Vbox
 import org.zkoss.zul.Window
 import java.io.File
 
-class UploadLogController : SelectorComposer<Component>(), Redirectable, UIComponent {
-    private val log = NirdizatiLogger.getLogger(UploadLogController::class, getSessionId())
+class UploadLogController : SelectorComposer<Component>(), Redirectable {
+    private val log = LogManager.getLogger(UploadLogController::class.java)
 
     @Wire
     private lateinit var fileName: Label

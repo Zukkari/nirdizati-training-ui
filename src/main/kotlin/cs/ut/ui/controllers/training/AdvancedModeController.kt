@@ -2,15 +2,14 @@ package cs.ut.ui.controllers.training
 
 import cs.ut.engine.item.ModelParameter
 import cs.ut.engine.item.Property
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.ui.NirdizatiGrid
-import cs.ut.ui.UIComponent
 import cs.ut.ui.adapters.AdvancedModeAdapter
 import cs.ut.ui.adapters.GeneratorArgument
 import cs.ut.ui.adapters.PropertyValueAdapter
 import cs.ut.ui.components.CheckBoxGroup
 import cs.ut.ui.controllers.TrainingController
 import cs.ut.util.HYPER_PARAM_CONT
+import org.apache.logging.log4j.LogManager
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
 import org.zkoss.zk.ui.event.CheckEvent
@@ -19,8 +18,8 @@ import org.zkoss.zul.Checkbox
 import org.zkoss.zul.Hlayout
 import org.zkoss.zul.Vlayout
 
-class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gridContainer), ModeController, UIComponent {
-    private val log = NirdizatiLogger.getLogger(AdvancedModeController::class, getSessionId())
+class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gridContainer), ModeController {
+    private val log = LogManager.getLogger(AdvancedModeController::class.java)
 
     private val rowProvider = AdvancedModeAdapter()
     private val grid: NirdizatiGrid<GeneratorArgument> = NirdizatiGrid(rowProvider)
@@ -78,7 +77,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
             }
         }
 
-        checkBox.addEventListener(Events.ON_CHECK, { e ->
+        checkBox.addEventListener(Events.ON_CHECK) { e ->
             e as CheckEvent
             log.debug("$this value changed, regenerating grid")
             when (parameter.type) {
@@ -89,7 +88,7 @@ class AdvancedModeController(gridContainer: Vlayout) : AbstractModeController(gr
                 hyperParamsContainer.getChildren<Component>().clear()
                 hyperParameters.entries.forEach { it.generateGrid() }
             }
-        })
+        }
     }
 
     /**

@@ -1,8 +1,8 @@
 package cs.ut.ui.context
 
 import cs.ut.configuration.ConfigurationReader
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.util.NirdizatiTranslator
+import org.apache.logging.log4j.LogManager
 import org.zkoss.zul.Menupopup
 
 
@@ -44,6 +44,6 @@ class MenuGenerator<T>(private val menuMode: MenuMode) {
     }
 
     companion object {
-        private val log = NirdizatiLogger.getLogger(MenuGenerator::class)
+        private val log = LogManager.getLogger(MenuGenerator::class)
     }
 }

@@ -5,10 +5,9 @@ import cs.ut.configuration.ConfigFetcher
 import cs.ut.configuration.ConfigurationReader
 import cs.ut.engine.Cache
 import cs.ut.engine.JobCacheHolder
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
-import cs.ut.ui.UIComponent
+import org.apache.logging.log4j.LogManager
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.event.Events
@@ -21,8 +20,8 @@ import java.io.File
 import java.io.FileReader
 import java.nio.charset.Charset
 
-class AdminViewController : SelectorComposer<Component>(), UIComponent {
-    val log = NirdizatiLogger.getLogger(AdminViewController::class, getSessionId())
+class AdminViewController : SelectorComposer<Component>() {
+    val log = LogManager.getLogger(AdminViewController::class.java)!!
 
     @Wire
     private lateinit var flushConfig: Button

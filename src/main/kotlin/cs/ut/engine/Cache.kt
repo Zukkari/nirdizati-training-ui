@@ -5,14 +5,13 @@ import cs.ut.exceptions.Right
 import cs.ut.jobs.JobStatus
 import cs.ut.jobs.SimulationJob
 import cs.ut.json.JSONService
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
+import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.nio.file.Files
 import java.util.Date
 import kotlin.streams.asSequence
-import kotlin.streams.toList
 
 /**
  * Generic structure to represent cached items
@@ -147,7 +146,7 @@ class JobCacheHolder : CacheHolder<SimulationJob>() {
 
 
     companion object {
-        val log = NirdizatiLogger.getLogger(JobCacheHolder::class)
+        val log = LogManager.getLogger(JobCacheHolder::class.java)!!
 
         fun trainingFiles(key: String): List<SimulationJob> = simulationJobs().filter { it.owner == key }.toList()
 

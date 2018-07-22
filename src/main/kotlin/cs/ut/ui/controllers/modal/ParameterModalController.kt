@@ -10,11 +10,9 @@ import cs.ut.exceptions.Right
 import cs.ut.exceptions.perform
 import cs.ut.jobs.DataSetGenerationJob
 import cs.ut.jobs.UserRightsJob
-import cs.ut.logging.NirdizatiLogger
 import cs.ut.providers.Dir
 import cs.ut.providers.DirectoryConfiguration
 import cs.ut.ui.NirdizatiGrid
-import cs.ut.ui.UIComponent
 import cs.ut.ui.adapters.ColumnRowValueAdapter
 import cs.ut.ui.adapters.ComboArgument
 import cs.ut.ui.adapters.ComboProvider
@@ -24,6 +22,7 @@ import cs.ut.util.CsvReader
 import cs.ut.util.IdentColumns
 import cs.ut.util.NirdizatiTranslator
 import cs.ut.util.UPLOADED_FILE
+import org.apache.logging.log4j.LogManager
 import org.zkoss.util.resource.Labels
 import org.zkoss.zk.ui.Component
 import org.zkoss.zk.ui.Executions
@@ -42,8 +41,8 @@ import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import kotlin.system.measureTimeMillis
 
-class ParameterModalController : GenericAutowireComposer<Component>(), Redirectable, UIComponent {
-    private val log = NirdizatiLogger.getLogger(ParameterModalController::class, getSessionId())
+class ParameterModalController : GenericAutowireComposer<Component>(), Redirectable {
+    private val log = LogManager.getLogger(ParameterModalController::class.java)
 
     @Wire
     private lateinit var modal: Window
@@ -110,7 +109,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
         grid.generate(cols)
 
-        cancelBtn.addEventListener(Events.ON_CLICK, { _ ->
+        cancelBtn.addEventListener(Events.ON_CLICK) { _ ->
             if (!isRecreation) {
                 Files.delete(Paths.get(file.absolutePath))
                 Executions.getCurrent().desktop.components.firstOrNull { it.id == "upload" }?.let {
@@ -121,7 +120,7 @@ class ParameterModalController : GenericAutowireComposer<Component>(), Redirecta
 
             enableGenerateButton()
             modal.detach()
-        })
+        }
 
         okBtnListener = SerializableEventListener { _ ->
             okBtn.isDisabled = true

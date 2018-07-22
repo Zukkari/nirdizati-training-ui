@@ -1,9 +1,9 @@
 package cs.ut.configuration
 
-import cs.ut.logging.NirdizatiLogger
+import org.apache.logging.log4j.LogManager
 import kotlin.reflect.KProperty
 
-class ConfigFetcher(val path: String) {
+class ConfigFetcher(private val path: String) {
     operator fun getValue(caller: Any, prop: KProperty<*>): ConfigNode {
         return ConfigurationReader.findNode(path).apply {
             log.debug("Delegating $this to caller $caller")
@@ -11,7 +11,7 @@ class ConfigFetcher(val path: String) {
     }
 
     companion object {
-        private val log = NirdizatiLogger.getLogger(ConfigFetcher::class)
+        private val log = LogManager.getLogger(ConfigFetcher::class.java)
     }
 }
 

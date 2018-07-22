@@ -34,13 +34,13 @@ class LandingPageController : SelectorComposer<Component>(), Redirectable {
      * In this case it buttons set content of the page based on uri-s defined in configuration.xml
      */
     private fun wireButtons() {
-        upload.addEventListener(Events.ON_CLICK, { _ ->
+        upload.addEventListener(Events.ON_CLICK) { _ ->
             setContent(Page.UPLOAD.value, page)
-        })
+        }
 
-        existingLog.addEventListener(Events.ON_CLICK, { _ ->
+        existingLog.addEventListener(Events.ON_CLICK) { _ ->
             setContent(Page.TRAINING.value, page)
-        })
+        }
     }
 
     private fun appendMessage() {

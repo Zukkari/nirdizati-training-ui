@@ -11,10 +11,10 @@ class NirdizatiContextMenu<T> : Menupopup() {
 
     class NirdizatiContextMenuItem(caption: String, private val operation: Class<*>) : Menuitem(caption) {
         fun finalize() {
-            this.addEventListener(Events.ON_CLICK, { _ ->
+            this.addEventListener(Events.ON_CLICK) { _ ->
                 val operationContext = (parent as NirdizatiContextMenu<*>).context!!
                 createOperation(operationContext).perform()
-            })
+            }
         }
 
         private fun createOperation(operationContext: Any): Operation<*> {
@@ -30,7 +30,7 @@ class NirdizatiContextMenu<T> : Menupopup() {
 
     @Suppress("UNCHECKED_CAST")
     fun finalize() {
-        this.addEventListener(Events.ON_OPEN, { e ->
+        this.addEventListener(Events.ON_OPEN) { e ->
             e as OpenEvent
             if (e.isOpen) {
                 val ref: XulElement = e.reference as XulElement
@@ -46,7 +46,7 @@ class NirdizatiContextMenu<T> : Menupopup() {
                 selectedComponent?.sclass = selectedComponent?.sclass?.replace(styleName, "")
                 context = null
             }
-        })
+        }
 
         this.getChildren<NirdizatiContextMenuItem>().forEach {
             it.finalize()

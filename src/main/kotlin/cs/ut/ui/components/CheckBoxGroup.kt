@@ -1,6 +1,6 @@
 package cs.ut.ui.components
 
-import cs.ut.logging.NirdizatiLogger
+import org.apache.logging.log4j.LogManager
 import org.zkoss.zul.Checkbox
 
 
@@ -33,6 +33,6 @@ class CheckBoxGroup(mode: Mode) : ComponentGroup<Checkbox>() {
     }
 
     companion object {
-        val log = NirdizatiLogger.getLogger(CheckBoxGroup::class)
+        val log = LogManager.getLogger(CheckBoxGroup::class.java)
     }
 }
