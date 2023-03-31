@@ -13,7 +13,7 @@
         <packname>-${project.version}-FL-${maven.build.timestamp}</packname>
         <kotlin.version>1.2.51</kotlin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jackson.version>2.13.4.1</jackson.version>
+        <jackson.version>2.13.4.2</jackson.version>
     </properties>
     <packaging>war</packaging>
     <name>The nirdizati-training-ui Project</name>
